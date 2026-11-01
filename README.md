@@ -16,6 +16,8 @@ diglot splits markdown documents into segments (paragraphs, headings, list items
 | [`@diglot/mdast`](./packages/mdast) | Extract and apply for markdown parsed with remark (`remark-parse`, `remark-gfm`, `remark-frontmatter`, `remark-mdc`). |
 | [`@diglot/code`](./packages/code) | Comment extraction and apply for fenced code blocks. |
 | [`@diglot/store`](./packages/store) | Git record store, source manifests, locale bundles, `sources.yml` and `diglot.config.ts` loading. |
+| [`@diglot/mt`](./packages/mt) | Machine translation with the AI SDK: page-batched translation, minimal updates of existing translations, glossary and style rules, model-free QA. |
+| [`@diglot/action`](./packages/action) | GitHub Action that extracts sources, machine-translates what changed and commits the records. |
 | [`@diglot/cli`](./packages/cli) | The `diglot` command: `extract`, `diff`, `validate`, `build`, `status`. |
 
 ## Quick start

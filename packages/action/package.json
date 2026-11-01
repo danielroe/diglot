@@ -1,0 +1,53 @@
+{
+  "name": "@diglot/action",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "GitHub Action that keeps diglot translations in sync with their sources",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielroe/diglot.git",
+    "directory": "packages/action"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "action.yml",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@diglot/comark": "workspace:*",
+    "@diglot/core": "workspace:*",
+    "@diglot/mdast": "workspace:*",
+    "@diglot/mt": "workspace:*",
+    "@diglot/store": "workspace:*",
+    "pathe": "^2.0.3"
+  },
+  "devDependencies": {
+    "ai": "^7.0.159"
+  }
+}

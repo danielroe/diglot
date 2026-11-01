@@ -227,6 +227,31 @@ importers:
         specifier: 5.0.5
         version: 5.0.5(@types/node@24.19.2)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))
 
+  packages/action:
+    dependencies:
+      '@diglot/comark':
+        specifier: workspace:*
+        version: link:../comark
+      '@diglot/core':
+        specifier: workspace:*
+        version: link:../core
+      '@diglot/mdast':
+        specifier: workspace:*
+        version: link:../mdast
+      '@diglot/mt':
+        specifier: workspace:*
+        version: link:../mt
+      '@diglot/store':
+        specifier: workspace:*
+        version: link:../store
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
+    devDependencies:
+      ai:
+        specifier: ^7.0.159
+        version: 7.0.159(zod@4.6.7)
+
   packages/cli:
     dependencies:
       '@diglot/comark':

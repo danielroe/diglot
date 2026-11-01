@@ -1,0 +1,84 @@
+name: diglot
+description: Extract segments from documentation sources, machine-translate what changed, and commit the records
+author: Daniel Roe
+
+inputs:
+  working-directory:
+    description: Root of the translations repository (where diglot.config.ts lives)
+    default: .
+  locales:
+    description: Only these locales (comma or space separated). Defaults to every configured locale with mt enabled
+    default: ''
+  sources:
+    description: Only these sources (comma or space separated). Defaults to every source in sources.yml
+    default: ''
+  model:
+    description: Model id for the Vercel AI Gateway. Defaults to mt.model from diglot.config.ts, then DIGLOT_MT_MODEL
+    default: ''
+  ai-gateway-api-key:
+    description: Vercel AI Gateway key. Defaults to the AI_GATEWAY_API_KEY environment variable
+    default: ''
+  limit:
+    description: Most segments per locale sent to the model in one run; the rest are picked up by later runs
+    default: ''
+  retry-rejected:
+    description: Translate segments rejected by QA in earlier runs again
+    default: 'false'
+  commit:
+    description: Commit the changes to the current branch
+    default: 'true'
+  git-user-name:
+    description: Commit author name
+    default: diglot[bot]
+  git-user-email:
+    description: Commit author email
+    default: diglot[bot]@users.noreply.github.com
+
+outputs:
+  translated:
+    description: Segments translated from scratch
+    value: ${{ steps.run.outputs.translated }}
+  updated:
+    description: Translations updated from their predecessor
+    value: ${{ steps.run.outputs.updated }}
+  carried:
+    description: Translations carried over unchanged from their predecessor
+    value: ${{ steps.run.outputs.carried }}
+  rejected:
+    description: Segments rejected by QA
+    value: ${{ steps.run.outputs.rejected }}
+  costUsd:
+    description: Model cost in USD, when the provider reports it
+    value: ${{ steps.run.outputs.costUsd }}
+  committed:
+    description: Whether a commit was made
+    value: ${{ steps.run.outputs.committed }}
+  sha:
+    description: The commit, when one was made
+    value: ${{ steps.run.outputs.sha }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+    - name: Install diglot
+      shell: bash
+      working-directory: ${{ github.action_path }}/../..
+      run: npx --yes pnpm@12 install --frozen-lockfile --prod --filter "@diglot/action..."
+    - id: run
+      name: Translate
+      shell: bash
+      run: node "${{ github.action_path }}/src/cli.ts"
+      env:
+        INPUT_WORKING-DIRECTORY: ${{ inputs.working-directory }}
+        INPUT_LOCALES: ${{ inputs.locales }}
+        INPUT_SOURCES: ${{ inputs.sources }}
+        INPUT_MODEL: ${{ inputs.model }}
+        INPUT_LIMIT: ${{ inputs.limit }}
+        INPUT_RETRY-REJECTED: ${{ inputs.retry-rejected }}
+        INPUT_COMMIT: ${{ inputs.commit }}
+        INPUT_GIT-USER-NAME: ${{ inputs.git-user-name }}
+        INPUT_GIT-USER-EMAIL: ${{ inputs.git-user-email }}
+        AI_GATEWAY_API_KEY: ${{ inputs.ai-gateway-api-key || env.AI_GATEWAY_API_KEY }}
