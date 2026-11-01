@@ -64,4 +64,10 @@ describe('matchGlossary', () => {
     expect(matchGlossary(glossary, 'Layers extend {0}Nitro{/0}').map(e => e.term)).toEqual(['layer', 'Nitro'])
     expect(matchGlossary(glossary, 'composables{0}')).toEqual([])
   })
+
+  it('should match case-sensitively when asked', () => {
+    const glossary = { terms: [{ term: 'Vue', decision: 'keep' as const, caseSensitive: true }] }
+    expect(matchGlossary(glossary, 'Vue components')).toHaveLength(1)
+    expect(matchGlossary(glossary, 'the vue of the city')).toEqual([])
+  })
 })

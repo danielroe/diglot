@@ -18,6 +18,35 @@ export interface SourceConfig {
   exclude?: string[]
 }
 
+/** Machine translation settings of a translations repository. */
+export interface MtConfig {
+  /** Model id for the default provider (the Vercel AI Gateway), for example `anthropic/claude-sonnet-5.5`. */
+  model?: string
+  /** What is being translated, for prompts, for example `the documentation of Nuxt, a Vue web framework`. */
+  subject?: string
+  /** Segments per request, or `page` for one request per page. Defaults to `page`. */
+  batch?: 'page' | number
+  /** Retries for segments that fail an error-level QA check. Defaults to `1`. */
+  qaRetries?: number
+}
+
+/** Per-locale state, as stored in `<locale>/locale.yml`. */
+export interface LocaleState {
+  /** Machine translation runs only for locales with `enabled: true`. */
+  mt?: { enabled?: boolean }
+  /** Review metrics behind the `mt.enabled` decision, as written by a governance job. */
+  governance?: {
+    /** GitHub logins that reviewed something recently. */
+    activeReviewers?: string[]
+    /** Share of machine translations accepted by reviewers, 0 to 1. */
+    approvalRate?: number
+    /** Median days from machine translation to review. */
+    reviewLatencyDays?: number
+    /** ISO 8601 timestamp. */
+    updatedAt?: string
+  }
+}
+
 /** Configuration of a translations repository (`diglot.config.ts`). */
 export interface DiglotConfig {
   /** Target locales. */
@@ -32,6 +61,9 @@ export interface DiglotConfig {
   outDir?: string
   /** Directory for generated state such as manifests. Defaults to `.diglot`. */
   stateDir?: string
+  /** Glossary shared by every locale, in x18n's `glossary` shape. Defaults to `glossary.yml` when it exists. */
+  glossary?: string
+  mt?: MtConfig
 }
 
 /** Identity helper that types a `diglot.config.ts`. */
