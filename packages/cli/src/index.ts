@@ -1,0 +1,14 @@
+import type { CommandDef } from 'citty'
+import { defineCommand, runMain } from 'citty'
+import { subCommands } from './commands.ts'
+
+/** The `diglot` command. */
+export const main: CommandDef = defineCommand({
+  meta: { name: 'diglot', description: 'Segment-level translation for markdown documentation' },
+  subCommands,
+})
+
+/** Runs the CLI with `process.argv`. */
+export function run(): Promise<void> {
+  return runMain(main)
+}
