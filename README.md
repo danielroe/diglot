@@ -5,7 +5,12 @@
 
 > Segment-level, human-first translation for markdown documentation
 
-diglot splits markdown documents into segments (paragraphs, headings, list items, table cells, prose props, frontmatter fields, code comments) and identifies each one by the hash of its placeholder form: the text with emphasis markers and numbered placeholders for links, inline code, components and HTML. Translations are stored in git, one record per locale and hash, so identical text is translated once across pages, branches and repositories, and edits that only touch URLs or code keep their translation. A translation can only reference the placeholders of its source, never their content, and every translation is validated before it is applied, so a translation cannot break a page or change a link target.
+Keeping markdown documents in-sync is tricky, and diglot exists to help solve these problems.
+
+1. diglot splits markdown documents into segments + uniquely hashes them
+2. translations are stored in git, with one record per locale and hash
+3. identical text is translated only once
+4. changes to URLs, components and HTML can skip re-translation
 
 ## Packages
 
@@ -60,6 +65,8 @@ Records live at `<locale>/segments/<hh>/<hash>.json`.
 - Run the corpus checks against shallow clones of `nuxt/nuxt` (branches `main`, `4.x`, `3.x` in `nuxt-main`, `nuxt-4.x`, `nuxt-3.x`) and `nuxt/fonts` under `$DIGLOT_CORPUS` (default `/tmp/repos`) with `pnpm corpus`
 
 ## License
+
+Made with ❤️
 
 Published under [MIT License](./LICENCE).
 
