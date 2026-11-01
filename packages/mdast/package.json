@@ -1,0 +1,42 @@
+{
+  "name": "@diglot/mdast",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "remark / mdast adapter for diglot",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielroe/diglot.git",
+    "directory": "packages/mdast"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "dependencies": { "@diglot/code": "workspace:*", "@diglot/core": "workspace:*", "remark-frontmatter": "^5.0.0", "remark-gfm": "^4.0.1", "remark-mdc": "^3.11.1", "remark-parse": "^11.0.0", "unified": "^11.0.5", "yaml": "^2.9.1" }
+}

@@ -1,7 +1,7 @@
 {
-  "name": "package-name",
+  "name": "diglot-monorepo",
   "type": "module",
-  "version": "0.0.0",
+  "private": true,
   "devEngines": {
     "runtime": {
       "name": "node",
@@ -14,44 +14,18 @@
       "onFail": "download"
     }
   },
-  "description": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielroe/package-name.git"
-  },
-  "sideEffects": false,
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "types": "./dist/index.d.mts",
-  "publishConfig": {
-    "exports": {
-      ".": "./dist/index.mjs",
-      "./package.json": "./package.json"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/index.d.mts"
-      ]
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "engines": {
-    "node": ">=22"
+    "url": "git+https://github.com/danielroe/diglot.git"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "pnpm -r build",
     "dev": "vitest dev",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "simple-git-hooks",
-    "prepack": "pnpm build",
+    "corpus": "node scripts/corpus.ts",
     "test": "pnpm test:unit && pnpm test:types && pnpm test:knip",
     "test:unit": "vitest",
     "test:knip": "knip",
@@ -61,6 +35,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "9.3.0",
     "@arethetypeswrong/core": "0.18.5",
+    "@diglot/code": "workspace:*",
+    "@diglot/comark": "workspace:*",
+    "@diglot/core": "workspace:*",
+    "@diglot/mdast": "workspace:*",
+    "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",
     "installed-check": "11.0.0",

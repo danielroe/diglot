@@ -1,0 +1,46 @@
+{
+  "name": "@diglot/cli",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Command line interface for diglot",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielroe/diglot.git",
+    "directory": "packages/cli"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "bin": {
+    "diglot": "./bin/diglot.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "dependencies": { "@diglot/comark": "workspace:*", "@diglot/core": "workspace:*", "@diglot/mdast": "workspace:*", "@diglot/store": "workspace:*", "citty": "^0.2.2", "pathe": "^2.0.3" }
+}

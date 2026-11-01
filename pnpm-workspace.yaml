@@ -3,11 +3,8 @@ shellEmulator: true
 trustPolicy: no-downgrade
 
 packages:
-  - playground
+  - packages/*
 
 allowBuilds:
   esbuild: false
   simple-git-hooks: true
-
-overrides:
-  package-name: 'workspace:*'

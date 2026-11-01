@@ -1,47 +1,69 @@
-# package-name
+# diglot
 
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![Github Actions][github-actions-src]][github-actions-href]
 [![Codecov][codecov-src]][codecov-href]
 
-> Package description
+> Segment-level, human-first translation for markdown documentation
 
-## Usage
+diglot splits markdown documents into segments (paragraphs, headings, list items, table cells, prose props, frontmatter fields, code comments) and identifies each one by the hash of its placeholder form: the text with emphasis markers and numbered placeholders for links, inline code, components and HTML. Translations are stored in git, one record per locale and hash, so identical text is translated once across pages, branches and repositories, and edits that only touch URLs or code keep their translation. A translation can only reference the placeholders of its source, never their content, and every translation is validated before it is applied, so a translation cannot break a page or change a link target.
 
-Install package:
+## Packages
 
-```sh
-# npm
-npm install package-name
+| Package | Description |
+| --- | --- |
+| [`@diglot/core`](./packages/core) | Segment model, placeholder form and hashing, validation, apply helpers, segment diff, sentence diff, translation records, policy and glossary types. No parser dependencies. |
+| [`@diglot/comark`](./packages/comark) | Extract and apply for [comark](https://github.com/comarkdown/comark) documents, plus `.navigation.yml` files. |
+| [`@diglot/mdast`](./packages/mdast) | Extract and apply for markdown parsed with remark (`remark-parse`, `remark-gfm`, `remark-frontmatter`, `remark-mdc`). |
+| [`@diglot/code`](./packages/code) | Comment extraction and apply for fenced code blocks. |
+| [`@diglot/store`](./packages/store) | Git record store, source manifests, locale bundles, `sources.yml` and `diglot.config.ts` loading. |
+| [`@diglot/cli`](./packages/cli) | The `diglot` command: `extract`, `diff`, `validate`, `build`, `status`. |
 
-# pnpm
-pnpm install package-name
+## Quick start
+
+In a translations repository:
+
+```ts
+// diglot.config.ts
+import { defineConfig } from '@diglot/core'
+
+export default defineConfig({
+  locales: ['fr', 'ja'],
+})
 ```
 
-```js
-import {} from 'package-name'
+```yaml
+# sources.yml
+sources:
+  - name: nuxt-main
+    repo: nuxt/nuxt
+    ref: main
+    path: ../nuxt
+    dir: docs
 ```
 
-## 💻 Development
+```bash
+pnpm dlx @diglot/cli extract   # write .diglot/manifest/<source>.json
+pnpm dlx @diglot/cli status    # coverage per locale and source
+pnpm dlx @diglot/cli validate  # check every record
+pnpm dlx @diglot/cli build     # write dist/<locale>.json
+```
+
+Records live at `<locale>/segments/<hh>/<hash>.json`.
+
+## Development
 
 - Clone this repository
 - Install dependencies using `pnpm install`
-- Run interactive tests using `pnpm dev`
+- Run tests using `pnpm test`
+- Run the corpus checks against shallow clones of `nuxt/nuxt` (branches `main`, `4.x`, `3.x` in `nuxt-main`, `nuxt-4.x`, `nuxt-3.x`) and `nuxt/fonts` under `$DIGLOT_CORPUS` (default `/tmp/repos`) with `pnpm corpus`
 
 ## License
-
-Made with ❤️
 
 Published under [MIT License](./LICENCE).
 
 <!-- Badges -->
 
-[npm-version-src]: https://npmx.dev/api/registry/badge/version/package-name
-[npm-version-href]: https://npmx.dev/package/package-name
-[npm-downloads-src]: https://npmx.dev/api/registry/badge/downloads/package-name
-[npm-downloads-href]: https://npm.chart.dev/package-name
-[github-actions-src]: https://img.shields.io/github/actions/workflow/status/danielroe/package-name/ci.yml?branch=main&style=flat-square
-[github-actions-href]: https://github.com/danielroe/package-name/actions?query=workflow%3Aci
-[codecov-src]: https://img.shields.io/codecov/c/gh/danielroe/package-name/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/danielroe/package-name
+[github-actions-src]: https://img.shields.io/github/actions/workflow/status/danielroe/diglot/ci.yml?branch=main&style=flat-square
+[github-actions-href]: https://github.com/danielroe/diglot/actions?query=workflow%3Aci
+[codecov-src]: https://img.shields.io/codecov/c/gh/danielroe/diglot/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/danielroe/diglot

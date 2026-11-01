@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2024",
     "lib": [
-      "es2022"
+      "es2024",
+      "esnext.collection"
     ],
     "moduleDetection": "force",
     "module": "preserve",
     "resolveJsonModule": true,
-    "allowJs": true,
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
@@ -16,11 +18,12 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
     "skipLibCheck": true
   },
   "include": [
-    "src",
-    "test",
-    "playground"
+    "packages/*/src",
+    "packages/*/test",
+    "scripts"
   ]
 }
