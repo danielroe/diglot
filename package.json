@@ -39,6 +39,7 @@
     "@diglot/comark": "workspace:*",
     "@diglot/core": "workspace:*",
     "@diglot/mdast": "workspace:*",
+    "@diglot/store": "workspace:*",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",

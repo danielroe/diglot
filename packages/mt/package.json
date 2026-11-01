@@ -1,0 +1,47 @@
+{
+  "name": "@diglot/mt",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Machine translation of diglot segments with glossary, style rules and QA",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielroe/diglot.git",
+    "directory": "packages/mt"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@ai-sdk/gateway": "^4.0.132",
+    "@diglot/core": "workspace:*",
+    "ai": "^7.0.159",
+    "zod": "^4.6.7"
+  }
+}
