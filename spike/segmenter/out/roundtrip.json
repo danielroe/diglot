@@ -1,0 +1,156 @@
+{
+  "refs": [
+    "3.x",
+    "4.x",
+    "HEAD"
+  ],
+  "totals": {
+    "files": 735,
+    "docOk": 682,
+    "placeholderOnly": 4530,
+    "units": 22471,
+    "unitTextOk": 22468,
+    "unitHashOk": 22468,
+    "identityValid": 22471
+  },
+  "byCategory": [
+    {
+      "category": "doc:text->text",
+      "count": 35,
+      "examples": [
+        {
+          "ref": "3.x",
+          "file": "docs/1.getting-started/10.data-fetching.md",
+          "category": "doc:text->text",
+          "detail": "\". \"\n    => \".\""
+        },
+        {
+          "ref": "3.x",
+          "file": "docs/1.getting-started/18.upgrade.md",
+          "category": "doc:text->text",
+          "detail": "\":\"\n    => \":\\n\""
+        },
+        {
+          "ref": "3.x",
+          "file": "docs/2.directory-structure/1.pages.md",
+          "category": "doc:text->text",
+          "detail": "\". \"\n    => \".\""
+        },
+        {
+          "ref": "3.x",
+          "file": "docs/2.directory-structure/1.plugins.md",
+          "category": "doc:text->text",
+          "detail": "\"If you are using the object-syntax, the properties are statically analyzed to produce a more optimized build. So you should not define them at runtime. \"\n    => \"If you are using the object-syntax, the properties are statically analyzed to produce a more optimized build. So you should not define them at runtime.\""
+        }
+      ]
+    },
+    {
+      "category": "doc:text->undefined",
+      "count": 9,
+      "examples": [
+        {
+          "ref": "3.x",
+          "file": "docs/3.guide/1.concepts/3.auto-imports.md",
+          "category": "doc:text->undefined",
+          "detail": "\" \"\n    => undefined"
+        },
+        {
+          "ref": "3.x",
+          "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+          "category": "doc:text->undefined",
+          "detail": "\"\\n\"\n    => undefined"
+        },
+        {
+          "ref": "3.x",
+          "file": "docs/5.community/6.roadmap.md",
+          "category": "doc:text->undefined",
+          "detail": "\" \"\n    => undefined"
+        },
+        {
+          "ref": "4.x",
+          "file": "docs/3.guide/1.concepts/3.auto-imports.md",
+          "category": "doc:text->undefined",
+          "detail": "\" \"\n    => undefined"
+        }
+      ]
+    },
+    {
+      "category": "doc:undefined->callout",
+      "count": 6,
+      "examples": [
+        {
+          "ref": "3.x",
+          "file": "docs/1.getting-started/02.installation.md",
+          "category": "doc:undefined->callout",
+          "detail": "undefined\n    => [\"callout\",{},[\"collapsible\",{\"name\":\"additional notes for an optimal setup\"},[\"ul\",{},[\"li\",{},[\"p\",{},[\"strong\",{},\"Node.js\"],\": Make sure to use an even numbered version (22, 24, etc.)\"]],[\"li\",{},[\"p\",{},[\"strong\",{},\"Neovim\"],\": When configuring the Vue TypeScript plugin, make sure \",[\"code\",{}"
+        },
+        {
+          "ref": "3.x",
+          "file": "docs/3.guide/1.concepts/2.nuxt-lifecycle.md",
+          "category": "doc:undefined->callout",
+          "detail": "undefined\n    => [\"callout\",{\"icon\":\"i-lucide-lightbulb\"},[\"p\",{},\"Nitro plugins are executed only once when the server starts. In a serverless environment, the server boots on each incoming request, and so do the Nitro plugins. However, they are not awaited.\"]]"
+        },
+        {
+          "ref": "4.x",
+          "file": "docs/1.getting-started/02.installation.md",
+          "category": "doc:undefined->callout",
+          "detail": "undefined\n    => [\"callout\",{},[\"collapsible\",{\"name\":\"additional notes for an optimal setup\"},[\"ul\",{},[\"li\",{},[\"p\",{},[\"strong\",{},\"Node.js\"],\": Make sure to use an even numbered version (22, 24, etc.)\"]],[\"li\",{},[\"p\",{},[\"strong\",{},\"Neovim\"],\": When configuring the Vue TypeScript plugin, make sure \",[\"code\",{}"
+        },
+        {
+          "ref": "4.x",
+          "file": "docs/3.guide/1.concepts/2.nuxt-lifecycle.md",
+          "category": "doc:undefined->callout",
+          "detail": "undefined\n    => [\"callout\",{\"icon\":\"i-lucide-lightbulb\"},[\"p\",{},\"Nitro plugins are executed only once when the server starts. In a serverless environment, the server boots on each incoming request, and so do the Nitro plugins. However, they are not awaited.\"]]"
+        }
+      ]
+    },
+    {
+      "category": "doc:strong->text",
+      "count": 3,
+      "examples": [
+        {
+          "ref": "3.x",
+          "file": "docs/4.api/3.utils/define-page-meta.md",
+          "category": "doc:strong->text",
+          "detail": "[\"strong\",{},\"Experimental feature, only available when \",[\"a\",{\"href\":\"/docs/3.x/getting-started/transitions#view-transitions-api-experimental\"},\"enabled in your nuxt.config file\"]]\n    => \"**Experimental feature, only available when \""
+        },
+        {
+          "ref": "4.x",
+          "file": "docs/4.api/3.utils/define-page-meta.md",
+          "category": "doc:strong->text",
+          "detail": "[\"strong\",{},\"Experimental feature, only available when \",[\"a\",{\"href\":\"/docs/getting-started/transitions#view-transitions-api-experimental\"},\"enabled in your nuxt.config file\"]]\n    => \"**Experimental feature, only available when \""
+        },
+        {
+          "ref": "HEAD",
+          "file": "docs/4.api/3.utils/define-page-meta.md",
+          "category": "doc:strong->text",
+          "detail": "[\"strong\",{},\"Experimental feature, only available when \",[\"a\",{\"href\":\"/docs/getting-started/transitions#view-transitions-api-experimental\"},\"enabled in your nuxt.config file\"]]\n    => \"**Experimental feature, only available when \""
+        }
+      ]
+    },
+    {
+      "category": "unit:skeleton-changed",
+      "count": 3,
+      "examples": [
+        {
+          "ref": "3.x",
+          "file": "docs/4.api/3.utils/define-page-meta.md",
+          "category": "unit:skeleton-changed",
+          "detail": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.\n    => \\*\\*Experimental feature, only available when {0}enabled in your nuxt.config file{/0}\\*\\*Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition."
+        },
+        {
+          "ref": "4.x",
+          "file": "docs/4.api/3.utils/define-page-meta.md",
+          "category": "unit:skeleton-changed",
+          "detail": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.\n    => \\*\\*Experimental feature, only available when {0}enabled in your nuxt.config file{/0}\\*\\*Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition."
+        },
+        {
+          "ref": "HEAD",
+          "file": "docs/4.api/3.utils/define-page-meta.md",
+          "category": "unit:skeleton-changed",
+          "detail": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.\n    => \\*\\*Experimental feature, only available when {0}enabled in your nuxt.config file{/0}\\*\\*Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition."
+        }
+      ]
+    }
+  ]
+}

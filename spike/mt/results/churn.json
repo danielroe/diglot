@@ -1,0 +1,14 @@
+{
+ "commits": 217,
+ "modified": 1113,
+ "carry": 802,
+ "whitespaceOrMarkupOnly": 5,
+ "model": 306,
+ "added": 1980,
+ "removed": 442,
+ "sentencesChangedHistogram": {
+  "1": 207,
+  "2": 73,
+  "3+": 26
+ }
+}

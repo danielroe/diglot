@@ -1,0 +1,96 @@
+{
+  "files": 257,
+  "segments": 10626,
+  "applied": 10622,
+  "rejected": 4,
+  "rejectedExamples": [
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "hash": "a00644508de97e85",
+      "errors": [
+        "did not parse to a single paragraph"
+      ],
+      "skeleton": "{0}"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "hash": "a00644508de97e85",
+      "errors": [
+        "did not parse to a single paragraph"
+      ],
+      "skeleton": "{0}"
+    }
+  ],
+  "reextractMismatch": 5,
+  "mismatchExamples": [
+    {
+      "file": "docs/4.api/3.utils/define-page-meta.md",
+      "expected": "list-item|**Éxpéríméntál féátúré, ónly áváíláblé whén {0}énábléd ín yóúr núxt.cónfíg fílé{/0}**Énáblé/dísáblé Víéw Tránsítíóns fór thé cúrrént págé. Íf sét tó trúé, Núxt wíll nót ápply thé tránsítíón ",
+      "nearest": "list-item|**Typé**: {0}|`PageMeta`"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "expected": "table-cell|{0}|<a href=\"https://www.npmjs.com/package/nuxt?activeTab=versions\"><img alt=\"Nuxt latest version\" src=\"https://img.shields.io/npm/v/nuxt.svg?logo=nuxt&amp;label=&amp;style=flat&amp;colorA=",
+      "nearest": "table-cell|Míléstóné|"
+    }
+  ],
+  "headingIdsKept": 2041,
+  "headingIdsLost": 0,
+  "corruption": {
+    "drop placeholder": {
+      "tried": 5792,
+      "caught": 5792,
+      "missed": []
+    },
+    "duplicate placeholder": {
+      "tried": 5792,
+      "caught": 5792,
+      "missed": []
+    },
+    "inline code": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "link": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "raw HTML": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "inline component": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "binding": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "blank line": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "unbalanced emphasis": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "block syntax": {
+      "tried": 9724,
+      "caught": 9724,
+      "missed": []
+    },
+    "newline in heading": {
+      "tried": 2041,
+      "caught": 2041,
+      "missed": []
+    }
+  }
+}

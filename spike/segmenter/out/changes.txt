@@ -1,0 +1,751 @@
+{
+  "since": "6 months ago",
+  "range": {
+    "from": "2026-05-07",
+    "to": "2026-11-01",
+    "weeks": 25.4
+  },
+  "totals": {
+    "commits": 217,
+    "docCommits": 216,
+    "filesChanged": 750,
+    "unchanged": 59452,
+    "added": 1968,
+    "removed": 602,
+    "modified": 380,
+    "unambiguous": 376,
+    "sourceModified": 3205,
+    "sourceUnchanged": 58595
+  },
+  "corpus": {
+    "disappeared": 685,
+    "disappearedWords": 12675,
+    "needsTranslation": 1991,
+    "needsTranslationWords": 40704,
+    "seededFromModified": 315,
+    "perWeek": {
+      "disappeared": 26.9,
+      "needsTranslation": 78.3,
+      "needsTranslationWords": 1601,
+      "medianWeekNeedsTranslation": 23
+    }
+  },
+  "thresholds": {
+    "0.3": {
+      "modified": 489,
+      "unambiguous": 452,
+      "added": 1859,
+      "removed": 493
+    },
+    "0.4": {
+      "modified": 422,
+      "unambiguous": 414,
+      "added": 1926,
+      "removed": 560
+    },
+    "0.5": {
+      "modified": 380,
+      "unambiguous": 376,
+      "added": 1968,
+      "removed": 602
+    },
+    "0.6": {
+      "modified": 341,
+      "unambiguous": 340,
+      "added": 2007,
+      "removed": 641
+    },
+    "0.7": {
+      "modified": 295,
+      "unambiguous": 295,
+      "added": 2053,
+      "removed": 687
+    }
+  },
+  "similarityHistogram": {
+    "0.9-1": 151,
+    "0.8-0.9": 110,
+    "0.6-0.7": 45,
+    "0.5-0.6": 40,
+    "0.7-0.8": 34
+  },
+  "modificationClasses": {
+    "content": 340,
+    "case": 34,
+    "whitespace-punctuation": 5,
+    "markup": 1
+  },
+  "cosmeticExamples": [
+    {
+      "cls": "whitespace-punctuation",
+      "before": "Parameters are exactly the same as with {0}",
+      "after": "Parameters are exactly the same as with {0}."
+    },
+    {
+      "cls": "case",
+      "before": "View Transitions API (experimental)",
+      "after": "View Transitions API (Experimental)"
+    },
+    {
+      "cls": "case",
+      "before": "The need for {0} and {1}",
+      "after": "The Need for {0} and {1}"
+    },
+    {
+      "cls": "case",
+      "before": "Using third-party libraries",
+      "after": "Using Third-Party Libraries"
+    },
+    {
+      "cls": "markup",
+      "before": "Full Example with extends",
+      "after": "Full Example with {0}"
+    },
+    {
+      "cls": "case",
+      "before": "Access plugin injections",
+      "after": "Access Plugin Injections"
+    },
+    {
+      "cls": "case",
+      "before": "Directory structure",
+      "after": "Directory Structure"
+    },
+    {
+      "cls": "case",
+      "before": "Server lifecycle",
+      "after": "Server Lifecycle"
+    },
+    {
+      "cls": "case",
+      "before": "Client lifecycle",
+      "after": "Client Lifecycle"
+    },
+    {
+      "cls": "case",
+      "before": "Auto-import from Third-Party Packages",
+      "after": "Auto-Import from Third-Party Packages"
+    }
+  ],
+  "ambiguousExamples": [
+    {
+      "sim": 0.64,
+      "before": "You can extend the generated {0} TypeScript configuration using this option.",
+      "after": "You can extend the generated {0} TypeScript configuration using this option. Options set here take p"
+    },
+    {
+      "sim": 0.58,
+      "before": "Every key has a default in Nuxt describing a build without the feature (an empty manifest, no inline",
+      "after": "As an app builder, provide only what your build produces. Every key has a default describing a build"
+    },
+    {
+      "sim": 0.58,
+      "before": "Testing Nuxt 5",
+      "after": "Migrating to Nuxt 5"
+    },
+    {
+      "sim": 0.66,
+      "before": "This flag is enabled when {0} is set to {1} or higher, but you can disable this feature:",
+      "after": "This flag is enabled by default, but you can disable this feature:"
+    }
+  ],
+  "lowSimilarityExamples": [
+    {
+      "sim": 0.6,
+      "before": "{0}: watch reactive sources to auto-refresh",
+      "after": "Array of reactive sources to watch and auto-refresh."
+    },
+    {
+      "sim": 0.53,
+      "before": "{0}: only pick specified keys in this array from the {1} function result",
+      "after": "Only pick specified keys from the result."
+    },
+    {
+      "sim": 0.51,
+      "before": "{0}: a function that can be used to alter {1} function result after resolving",
+      "after": "Function to transform the result after resolving."
+    },
+    {
+      "sim": 0.56,
+      "before": "{0}: a function that can be used to set {1} to {2} (or the value of {3} if provided), set {4} to {5}",
+      "after": "Resets {0} to {1} (or the value of {2} if provided), {3} to {4}, set {5} to {6}, and cancels any pen"
+    },
+    {
+      "sim": 0.52,
+      "before": "**{0}**: The value for that key. For every key except {1} this is a (possibly async) function return",
+      "after": "**{0}**: The value for that key: a (possibly async) function returning the module body as a string, "
+    },
+    {
+      "sim": 0.52,
+      "before": "Prerendered routes (at build time)",
+      "after": "Prerendered routes generate their payload file at build time."
+    },
+    {
+      "sim": 0.54,
+      "before": "The default is {0}, or {1} when {2} is set.",
+      "after": "The default is {0}, or {1} when {2} is set. It is forced to {3} when {4} is set."
+    },
+    {
+      "sim": 0.52,
+      "before": "{0} - Payload is inlined in HTML for the initial server render, and extracted to {1} files for clien",
+      "after": "{0} - Payload is inlined in HTML for the initial server render, and extracted to {1} files for clien"
+    }
+  ],
+  "sentence": {
+    "modifiedContent": 340,
+    "multiSentence": 181,
+    "exactlyOneChanged": 255,
+    "exactlyOneChangedMulti": 96,
+    "changedCounts": {
+      "1": 255,
+      "2": 72,
+      "3": 11,
+      "4+": 2
+    },
+    "suspiciousSplits": 0,
+    "examples": [
+      {
+        "before": [],
+        "after": [
+          "See {2}Named Views{/2} for the {3} filename convention."
+        ],
+        "of": 2
+      },
+      {
+        "before": [
+          "{0}This{/0} command of {1} allows to analyze the production bundle or your Nuxt application."
+        ],
+        "after": [
+          "{0}This{/0} command of {1} allows you to analyze the production bundle of your Nuxt application."
+        ],
+        "of": 2
+      },
+      {
+        "before": [
+          "**options**: A object to pass to the route configuration."
+        ],
+        "after": [
+          "**options**: An object to pass to the route configuration."
+        ],
+        "of": 2
+      },
+      {
+        "before": [
+          "This means even if you await {1} on client-side, {2} will remain null within {3}."
+        ],
+        "after": [
+          "This means even if you await {1} on client-side, {2} will remain undefined within {3}."
+        ],
+        "of": 2
+      },
+      {
+        "before": [
+          "This means even if you await {1} on client-side, {2} will remain null within {3}."
+        ],
+        "after": [
+          "This means even if you await {1} on client-side, {2} will remain undefined within {3}."
+        ],
+        "of": 2
+      },
+      {
+        "before": [],
+        "after": [
+          "Function to manually refresh the data."
+        ],
+        "of": 2
+      }
+    ]
+  },
+  "weeks": [
+    {
+      "week": "2026-05-04",
+      "commits": 1,
+      "disappeared": 0,
+      "needsTranslation": 2,
+      "needsTranslationWords": 94,
+      "seeded": 0,
+      "modified": 0
+    },
+    {
+      "week": "2026-05-11",
+      "commits": 4,
+      "disappeared": 9,
+      "needsTranslation": 12,
+      "needsTranslationWords": 158,
+      "seeded": 3,
+      "modified": 3
+    },
+    {
+      "week": "2026-05-18",
+      "commits": 4,
+      "disappeared": 1,
+      "needsTranslation": 14,
+      "needsTranslationWords": 302,
+      "seeded": 1,
+      "modified": 1
+    },
+    {
+      "week": "2026-05-25",
+      "commits": 4,
+      "disappeared": 6,
+      "needsTranslation": 58,
+      "needsTranslationWords": 1432,
+      "seeded": 2,
+      "modified": 4
+    },
+    {
+      "week": "2026-06-01",
+      "commits": 2,
+      "disappeared": 4,
+      "needsTranslation": 10,
+      "needsTranslationWords": 209,
+      "seeded": 3,
+      "modified": 4
+    },
+    {
+      "week": "2026-06-08",
+      "commits": 2,
+      "disappeared": 1,
+      "needsTranslation": 1,
+      "needsTranslationWords": 34,
+      "seeded": 1,
+      "modified": 2
+    },
+    {
+      "week": "2026-06-15",
+      "commits": 1,
+      "disappeared": 1,
+      "needsTranslation": 0,
+      "needsTranslationWords": 0,
+      "seeded": 0,
+      "modified": 0
+    },
+    {
+      "week": "2026-07-13",
+      "commits": 50,
+      "disappeared": 116,
+      "needsTranslation": 490,
+      "needsTranslationWords": 8326,
+      "seeded": 67,
+      "modified": 121
+    },
+    {
+      "week": "2026-07-20",
+      "commits": 6,
+      "disappeared": 1,
+      "needsTranslation": 20,
+      "needsTranslationWords": 422,
+      "seeded": 1,
+      "modified": 1
+    },
+    {
+      "week": "2026-07-27",
+      "commits": 21,
+      "disappeared": 36,
+      "needsTranslation": 279,
+      "needsTranslationWords": 5489,
+      "seeded": 10,
+      "modified": 10
+    },
+    {
+      "week": "2026-08-03",
+      "commits": 3,
+      "disappeared": 5,
+      "needsTranslation": 13,
+      "needsTranslationWords": 164,
+      "seeded": 1,
+      "modified": 2
+    },
+    {
+      "week": "2026-08-10",
+      "commits": 10,
+      "disappeared": 23,
+      "needsTranslation": 57,
+      "needsTranslationWords": 1279,
+      "seeded": 15,
+      "modified": 18
+    },
+    {
+      "week": "2026-08-17",
+      "commits": 3,
+      "disappeared": 132,
+      "needsTranslation": 19,
+      "needsTranslationWords": 460,
+      "seeded": 0,
+      "modified": 0
+    },
+    {
+      "week": "2026-08-24",
+      "commits": 7,
+      "disappeared": 2,
+      "needsTranslation": 15,
+      "needsTranslationWords": 495,
+      "seeded": 1,
+      "modified": 1
+    },
+    {
+      "week": "2026-08-31",
+      "commits": 13,
+      "disappeared": 46,
+      "needsTranslation": 214,
+      "needsTranslationWords": 4814,
+      "seeded": 16,
+      "modified": 16
+    },
+    {
+      "week": "2026-09-07",
+      "commits": 7,
+      "disappeared": 94,
+      "needsTranslation": 191,
+      "needsTranslationWords": 4818,
+      "seeded": 64,
+      "modified": 64
+    },
+    {
+      "week": "2026-09-14",
+      "commits": 10,
+      "disappeared": 8,
+      "needsTranslation": 97,
+      "needsTranslationWords": 1916,
+      "seeded": 5,
+      "modified": 5
+    },
+    {
+      "week": "2026-09-21",
+      "commits": 14,
+      "disappeared": 90,
+      "needsTranslation": 191,
+      "needsTranslationWords": 3485,
+      "seeded": 51,
+      "modified": 53
+    },
+    {
+      "week": "2026-09-28",
+      "commits": 5,
+      "disappeared": 5,
+      "needsTranslation": 23,
+      "needsTranslationWords": 612,
+      "seeded": 3,
+      "modified": 3
+    },
+    {
+      "week": "2026-10-05",
+      "commits": 19,
+      "disappeared": 53,
+      "needsTranslation": 145,
+      "needsTranslationWords": 2688,
+      "seeded": 23,
+      "modified": 23
+    },
+    {
+      "week": "2026-10-12",
+      "commits": 8,
+      "disappeared": 4,
+      "needsTranslation": 10,
+      "needsTranslationWords": 236,
+      "seeded": 3,
+      "modified": 3
+    },
+    {
+      "week": "2026-10-19",
+      "commits": 9,
+      "disappeared": 38,
+      "needsTranslation": 52,
+      "needsTranslationWords": 1442,
+      "seeded": 35,
+      "modified": 36
+    },
+    {
+      "week": "2026-10-26",
+      "commits": 14,
+      "disappeared": 10,
+      "needsTranslation": 78,
+      "needsTranslationWords": 1829,
+      "seeded": 10,
+      "modified": 10
+    }
+  ],
+  "topCommits": [
+    {
+      "sha": "84261aa377",
+      "date": "2026-09-08",
+      "subject": "feat(nitro): nitro v2 compatibility layer + `nitroLegacy` (#36318)",
+      "files": 4,
+      "unchanged": 339,
+      "added": 121,
+      "removed": 28,
+      "modified": 62,
+      "unambiguous": 61,
+      "cosmetic": 0,
+      "sourceOnly": 6,
+      "disappeared": 90,
+      "disappearedWords": 2488,
+      "newHashes": 179,
+      "needsTranslation": 179,
+      "needsTranslationWords": 4330,
+      "seeded": 62
+    },
+    {
+      "sha": "5d67c9ed90",
+      "date": "2026-07-18",
+      "subject": "feat: error code system (#35429)",
+      "files": 24,
+      "unchanged": 0,
+      "added": 136,
+      "removed": 0,
+      "modified": 0,
+      "unambiguous": 0,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 0,
+      "disappearedWords": 0,
+      "newHashes": 111,
+      "needsTranslation": 111,
+      "needsTranslationWords": 1149,
+      "seeded": 0
+    },
+    {
+      "sha": "a837f28500",
+      "date": "2026-07-27",
+      "subject": "docs: add server components guide and mostly-static site recipe (#35778)",
+      "files": 8,
+      "unchanged": 611,
+      "added": 116,
+      "removed": 26,
+      "modified": 4,
+      "unambiguous": 4,
+      "cosmetic": 0,
+      "sourceOnly": 1,
+      "disappeared": 28,
+      "disappearedWords": 673,
+      "newHashes": 111,
+      "needsTranslation": 111,
+      "needsTranslationWords": 2004,
+      "seeded": 4
+    },
+    {
+      "sha": "c437915cd6",
+      "date": "2026-07-15",
+      "subject": "docs: add builder guide (#35576)",
+      "files": 2,
+      "unchanged": 86,
+      "added": 75,
+      "removed": 0,
+      "modified": 0,
+      "unambiguous": 0,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 0,
+      "disappearedWords": 0,
+      "newHashes": 72,
+      "needsTranslation": 72,
+      "needsTranslationWords": 1259,
+      "seeded": 0
+    },
+    {
+      "sha": "43dac2aea9",
+      "date": "2026-09-23",
+      "subject": "docs: reconcile nuxt 5 upgrade guide with version-gated behaviour",
+      "files": 1,
+      "unchanged": 323,
+      "added": 84,
+      "removed": 2,
+      "modified": 3,
+      "unambiguous": 3,
+      "cosmetic": 1,
+      "sourceOnly": 1,
+      "disappeared": 5,
+      "disappearedWords": 118,
+      "newHashes": 55,
+      "needsTranslation": 54,
+      "needsTranslationWords": 960,
+      "seeded": 3
+    },
+    {
+      "sha": "4f3e416b21",
+      "date": "2026-10-05",
+      "subject": "docs: complete `nuxt/server` migration + module guides",
+      "files": 4,
+      "unchanged": 605,
+      "added": 49,
+      "removed": 5,
+      "modified": 5,
+      "unambiguous": 5,
+      "cosmetic": 1,
+      "sourceOnly": 0,
+      "disappeared": 10,
+      "disappearedWords": 222,
+      "newHashes": 53,
+      "needsTranslation": 53,
+      "needsTranslationWords": 762,
+      "seeded": 5
+    },
+    {
+      "sha": "5247c3ab7c",
+      "date": "2026-09-06",
+      "subject": "feat(nuxt,kit,schema,nitro,vite-server): add `nuxt/server` (#36275)",
+      "files": 6,
+      "unchanged": 500,
+      "added": 57,
+      "removed": 1,
+      "modified": 1,
+      "unambiguous": 1,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 2,
+      "disappearedWords": 32,
+      "newHashes": 52,
+      "needsTranslation": 52,
+      "needsTranslationWords": 882,
+      "seeded": 1
+    },
+    {
+      "sha": "06b691a8fd",
+      "date": "2026-09-02",
+      "subject": "feat(nuxt)!: type `$fetch` and `useFetch` from generated server routes (#36238)",
+      "files": 7,
+      "unchanged": 913,
+      "added": 52,
+      "removed": 1,
+      "modified": 1,
+      "unambiguous": 1,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 1,
+      "disappearedWords": 9,
+      "newHashes": 49,
+      "needsTranslation": 49,
+      "needsTranslationWords": 1175,
+      "seeded": 1
+    },
+    {
+      "sha": "8f94474936",
+      "date": "2026-09-23",
+      "subject": "docs: rewrite nuxt 5 section as a migration guide",
+      "files": 3,
+      "unchanged": 513,
+      "added": 22,
+      "removed": 19,
+      "modified": 25,
+      "unambiguous": 24,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 42,
+      "disappearedWords": 752,
+      "newHashes": 47,
+      "needsTranslation": 46,
+      "needsTranslationWords": 841,
+      "seeded": 25
+    },
+    {
+      "sha": "5a4614be47",
+      "date": "2026-07-19",
+      "subject": "docs: standardize section order and headings across docs (#35685)",
+      "files": 53,
+      "unchanged": 2417,
+      "added": 19,
+      "removed": 4,
+      "modified": 77,
+      "unambiguous": 77,
+      "cosmetic": 33,
+      "sourceOnly": 0,
+      "disappeared": 39,
+      "disappearedWords": 119,
+      "newHashes": 44,
+      "needsTranslation": 44,
+      "needsTranslationWords": 189,
+      "seeded": 31
+    },
+    {
+      "sha": "c331151e15",
+      "date": "2026-05-26",
+      "subject": "feat(nitro,nuxt,schema): add experimental SSR streaming (#34411)",
+      "files": 1,
+      "unchanged": 210,
+      "added": 40,
+      "removed": 0,
+      "modified": 0,
+      "unambiguous": 0,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 0,
+      "disappearedWords": 0,
+      "newHashes": 40,
+      "needsTranslation": 40,
+      "needsTranslationWords": 1168,
+      "seeded": 0
+    },
+    {
+      "sha": "d5a56a2ab0",
+      "date": "2026-09-26",
+      "subject": "feat(nuxt): add addon support to `createUseFetch` and `createUseAsyncData` (#357",
+      "files": 6,
+      "unchanged": 206,
+      "added": 48,
+      "removed": 0,
+      "modified": 0,
+      "unambiguous": 0,
+      "cosmetic": 0,
+      "sourceOnly": 0,
+      "disappeared": 0,
+      "disappearedWords": 0,
+      "newHashes": 32,
+      "needsTranslation": 32,
+      "needsTranslationWords": 580,
+      "seeded": 0
+    }
+  ],
+  "skeletonHashAbsorbed": {
+    "count": 857,
+    "byChangedType": {
+      "link-atomic": 465,
+      "link-url": 335,
+      "code": 32,
+      "link-atomic+link-url": 15,
+      "link-url+link-atomic": 6,
+      "component": 4
+    },
+    "examples": [
+      {
+        "sha": "3d701aa6ce",
+        "changed": [
+          "link-atomic"
+        ],
+        "before": "**Node.js** - [`20.x`](https://nodejs.org/en) or newer (but we recommend the [active LTS release](https://github.com/nodejs/release#release-schedule))",
+        "after": "**Node.js** - [`22.x`](https://nodejs.org/en) or newer (but we recommend the [active LTS release](https://github.com/nodejs/release#release-schedule))"
+      },
+      {
+        "sha": "5c86d30962",
+        "changed": [
+          "code"
+        ],
+        "before": "**type**: `Ref<boolean>`",
+        "after": "**type**: `Readonly<ShallowRef<boolean>>`"
+      },
+      {
+        "sha": "5c86d30962",
+        "changed": [
+          "code"
+        ],
+        "before": "**type**: `Ref<boolean>`",
+        "after": "**type**: `Readonly<ShallowRef<boolean>>`"
+      },
+      {
+        "sha": "5c86d30962",
+        "changed": [
+          "code"
+        ],
+        "before": "**type**: `Ref<number>`",
+        "after": "**type**: `Readonly<ShallowRef<number>>`"
+      },
+      {
+        "sha": "a2138f19c5",
+        "changed": [
+          "link-url"
+        ],
+        "before": "**See**: [Nuxt View Transition API docs](https://nuxt.com/docs/4.x/getting-started/transitions#view-transitions-api-experimental)",
+        "after": "**See**: [Nuxt View Transition API docs](/docs/4.x/getting-started/transitions#view-transitions-api-experimental)"
+      }
+    ]
+  }
+}

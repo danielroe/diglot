@@ -1,0 +1,558 @@
+[
+  {
+    "id": "1.getting-started/10.data-fetching.md#0",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "title",
+    "text": "Data Fetching",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#1",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "description",
+    "text": "Nuxt provides composables to handle data fetching within your application.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#2",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "Nuxt comes with two composables and a built-in library to perform data-fetching in browser or server environments: `useFetch`, [`useAsyncData`](/docs/api/composables/use-async-data) and `$fetch`.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#3",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "In a nutshell:",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#4",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "list-item",
+    "text": "[`$fetch`](/docs/api/utils/dollarfetch) is the simplest way to make a network request.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#5",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "list-item",
+    "text": "[`useFetch`](/docs/api/composables/use-fetch) is a wrapper around `$fetch` that fetches data only once in [universal rendering](/docs/guide/concepts/rendering#universal-rendering).",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#6",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "list-item",
+    "text": "[`useAsyncData`](/docs/api/composables/use-async-data) is similar to `useFetch` but offers more fine-grained control.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#7",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "Both `useFetch` and `useAsyncData` share a common set of options and patterns that we will detail in the last sections.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#8",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "heading",
+    "level": 2,
+    "text": "The Need for `useFetch` and `useAsyncData`",
+    "pageTitle": "Data Fetching",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#9",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "Nuxt is a framework which can run isomorphic (or universal) code in both server and client environments. If the [`$fetch` function](/docs/api/utils/dollarfetch) is used to perform data fetching in the setup function of a Vue component, this may cause data to be fetched twice, once on the server (to render the HTML) and once again on the client (when the HTML is hydrated). This can cause hydration issues, increase the time to interactivity and cause unpredictable behavior.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`"
+    ]
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#10",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "The [`useFetch`](/docs/api/composables/use-fetch) and [`useAsyncData`](/docs/api/composables/use-async-data) composables solve this problem by ensuring that if an API call is made on the server, the data is forwarded to the client in the payload.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`"
+    ]
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#11",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "The payload is a JavaScript object accessible through [`useNuxtApp().payload`](/docs/api/composables/use-nuxt-app#payload). It is used on the client to avoid refetching the same data when the code is executed in the browser [during hydration](/docs/guide/concepts/rendering#universal-rendering).",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`"
+    ]
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#12",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "callout",
+    "text": "Use the [Nuxt DevTools](/modules/devtools) to inspect this data in the **Payload tab**.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`"
+    ]
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#13",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "In the example above, `useFetch` would make sure that the request would occur on the server and is properly forwarded to the browser. `$fetch` has no such mechanism and is a better option to use when the request is solely made from the browser.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`"
+    ]
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#14",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "heading",
+    "level": 3,
+    "text": "Suspense",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`"
+    ]
+  },
+  {
+    "id": "1.getting-started/10.data-fetching.md#15",
+    "file": "1.getting-started/10.data-fetching.md",
+    "kind": "paragraph",
+    "text": "Nuxt uses Vue's [`<Suspense>`](https://vuejs.org/guide/built-ins/suspense) component under the hood to prevent navigation before every async data is available to the view. The data fetching composables can help you leverage this feature and use what suits best on a per-call basis.",
+    "pageTitle": "Data Fetching",
+    "headingTrail": [
+      "The Need for `useFetch` and `useAsyncData`",
+      "Suspense"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#0",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "title",
+    "text": "Layers",
+    "pageTitle": "Layers",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/14.layers.md#1",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "description",
+    "text": "Nuxt provides a powerful system that allows you to extend the default files, configs, and much more.",
+    "pageTitle": "Layers",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/14.layers.md#2",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "paragraph",
+    "text": "One of the core features of Nuxt is the layers and extending support. You can extend a default Nuxt application to reuse components, utils, and configuration. The layers structure is almost identical to a standard Nuxt application which makes them easy to author and maintain.",
+    "pageTitle": "Layers",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/14.layers.md#3",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "heading",
+    "level": 2,
+    "text": "Use Cases",
+    "pageTitle": "Layers",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/14.layers.md#4",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Share reusable configuration presets across projects using `nuxt.config` and `app.config`",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#5",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Create a component library using [`app/components/`](/docs/directory-structure/app/components) directory",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#6",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Create utility and composable library using [`app/composables/`](/docs/directory-structure/app/composables) and [`app/utils/`](/docs/directory-structure/app/utils) directories",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#7",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Create Nuxt module presets",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#8",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Share standard setup across projects",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#9",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Create Nuxt themes",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#10",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "list-item",
+    "text": "Enhance code organization by implementing a modular architecture and support Domain-Driven Design (DDD) pattern in large scale projects.",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Use Cases"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#11",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "heading",
+    "level": 2,
+    "text": "Usage",
+    "pageTitle": "Layers",
+    "headingTrail": []
+  },
+  {
+    "id": "1.getting-started/14.layers.md#12",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "paragraph",
+    "text": "By default, any layers within your project in the `~~/layers` directory will be automatically registered as layers in your project.",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#13",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "callout",
+    "text": "Layer auto-registration was introduced in Nuxt v3.12.0.",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#14",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "paragraph",
+    "text": "In addition, named layer aliases to the `srcDir` of each of these layers will automatically be created. For example, you will be able to access the `~~/layers/test` layer via `#layers/test`.",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#15",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "callout",
+    "text": "Named layer aliases were introduced in Nuxt v3.16.0.",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#16",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "paragraph",
+    "text": "In addition, you can extend from a layer by adding the [extends](/docs/api/nuxt-config#extends) property to your [`nuxt.config`](/docs/directory-structure/nuxt-config) file.",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "1.getting-started/14.layers.md#17",
+    "file": "1.getting-started/14.layers.md",
+    "kind": "paragraph",
+    "text": "You can also pass an authentication token if you are extending from a private GitHub repository:",
+    "pageTitle": "Layers",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#0",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "title",
+    "text": "components",
+    "pageTitle": "components",
+    "headingTrail": []
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#1",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "description",
+    "text": "The components/ directory is where you put all your Vue components.",
+    "pageTitle": "components",
+    "headingTrail": []
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#2",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "Nuxt automatically imports any components in this directory (along with components that are registered by any modules you may be using).",
+    "pageTitle": "components",
+    "headingTrail": []
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#3",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "heading",
+    "level": 2,
+    "text": "Component Names",
+    "pageTitle": "components",
+    "headingTrail": []
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#4",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "If you have a component in nested directories such as:",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#5",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "... then the component's name will be based on its own path directory and filename, with duplicate segments being removed. Therefore, the component's name will be:",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#6",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "callout",
+    "text": "For clarity, we recommend that the component's filename matches its name. So, in the example above, you could rename `Button.vue` to be `BaseFooButton.vue`.",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#7",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "If you want to group components in a directory without affecting their name, you can use the parenthesis `(` `)` to name the grouping directory.",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#8",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "... then the component's name will skip the grouping directory, resulting in:",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#9",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "If you want to auto-import components based only on its name, not path, then you need to set `pathPrefix` option to `false` using extended form of the configuration object:",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#10",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "This registers the components using the same strategy as used in Nuxt 2. For example, `~/components/Some/MyComponent.vue` will be usable as `<MyComponent>` and not `<SomeMyComponent>`.",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Component Names"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#11",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "heading",
+    "level": 2,
+    "text": "Dynamic Components",
+    "pageTitle": "components",
+    "headingTrail": []
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#12",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "If you want to use the Vue `<component :is=\"someComputedComponent\">`{lang=vue} syntax, you need to use the `resolveComponent` helper provided by Vue or import the component directly from `#components` and pass it into `is` prop.",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Dynamic Components"
+    ]
+  },
+  {
+    "id": "2.directory-structure/1.app/1.components.md#13",
+    "file": "2.directory-structure/1.app/1.components.md",
+    "kind": "paragraph",
+    "text": "For example:",
+    "pageTitle": "components",
+    "headingTrail": [
+      "Dynamic Components"
+    ]
+  },
+  {
+    "id": "4.api/2.composables/use-fetch.md#0",
+    "file": "4.api/2.composables/use-fetch.md",
+    "kind": "title",
+    "text": "useFetch",
+    "pageTitle": "useFetch",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/2.composables/use-fetch.md#1",
+    "file": "4.api/2.composables/use-fetch.md",
+    "kind": "description",
+    "text": "Fetch data from an API endpoint with an SSR-friendly composable.",
+    "pageTitle": "useFetch",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/2.composables/use-fetch.md#2",
+    "file": "4.api/2.composables/use-fetch.md",
+    "kind": "paragraph",
+    "text": "This composable provides a convenient wrapper around [`useAsyncData`](/docs/api/composables/use-async-data) and [`$fetch`](/docs/api/utils/dollarfetch).\nIt automatically generates a key for the request, provides type hints for request url based on server routes, and infers API response type.",
+    "pageTitle": "useFetch",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/2.composables/use-fetch.md#3",
+    "file": "4.api/2.composables/use-fetch.md",
+    "kind": "callout",
+    "text": "`useFetch` is a composable meant to be called directly in a setup function, plugin, or route middleware. It returns reactive composables and handles adding responses to the Nuxt payload so they can be passed from server to client without re-fetching the data on client side when the page hydrates.",
+    "pageTitle": "useFetch",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/2.composables/use-fetch.md#4",
+    "file": "4.api/2.composables/use-fetch.md",
+    "kind": "heading",
+    "level": 2,
+    "text": "Usage",
+    "pageTitle": "useFetch",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/2.composables/use-fetch.md#5",
+    "file": "4.api/2.composables/use-fetch.md",
+    "kind": "callout",
+    "text": "Need a custom `useFetch` with pre-defined defaults (like `baseURL` or auth headers)? Use `createUseFetch` to create a fully typed custom composable.",
+    "pageTitle": "useFetch",
+    "headingTrail": [
+      "Usage"
+    ]
+  },
+  {
+    "id": "4.api/1.components/4.nuxt-link.md#0",
+    "file": "4.api/1.components/4.nuxt-link.md",
+    "kind": "title",
+    "text": "<NuxtLink>",
+    "pageTitle": "<NuxtLink>",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/1.components/4.nuxt-link.md#1",
+    "file": "4.api/1.components/4.nuxt-link.md",
+    "kind": "description",
+    "text": "Nuxt provides <NuxtLink> component to handle any kind of links within your application.",
+    "pageTitle": "<NuxtLink>",
+    "headingTrail": []
+  },
+  {
+    "id": "4.api/1.components/4.nuxt-link.md#2",
+    "file": "4.api/1.components/4.nuxt-link.md",
+    "kind": "callout",
+    "text": "`<NuxtLink>` is a drop-in replacement for both Vue Router's `<RouterLink>` component and HTML's `<a>` tag. It intelligently determines whether the link is _internal_ or _external_ and renders it accordingly with available optimizations (prefetching, default attributes, etc.)",
+    "pageTitle": "<NuxtLink>",
+    "headingTrail": []
+  },
+  {
+    "kind": "paragraph",
+    "text": "The :badge{label=\"Nuxt 4\" color=\"success\"} release renames the source directory to `app/`; see the [upgrade guide](/docs/getting-started/upgrade#new-directory-structure) for details.",
+    "id": "synthetic#0",
+    "file": "synthetic",
+    "pageTitle": "Synthetic placeholder stress cases",
+    "headingTrail": []
+  },
+  {
+    "kind": "paragraph",
+    "text": "Press :kbd{value=\"Ctrl\"} + :kbd{value=\"K\"} to open the search, then type <code>useState</code> and hit <kbd>Enter</kbd>.",
+    "id": "synthetic#1",
+    "file": "synthetic",
+    "pageTitle": "Synthetic placeholder stress cases",
+    "headingTrail": []
+  },
+  {
+    "kind": "paragraph",
+    "text": "Inside the template you can interpolate values with `{{ count }}`, but writing {{ $t('welcome') }} directly in markdown renders the raw expression.",
+    "id": "synthetic#2",
+    "file": "synthetic",
+    "pageTitle": "Synthetic placeholder stress cases",
+    "headingTrail": []
+  },
+  {
+    "kind": "list-item",
+    "text": ":u-icon{name=\"i-lucide-check\"} **Server routes** in `server/api/` are auto-imported by Nitro and exposed under [`/api`](/docs/directory-structure/server#api-routes).",
+    "id": "synthetic#3",
+    "file": "synthetic",
+    "pageTitle": "Synthetic placeholder stress cases",
+    "headingTrail": []
+  }
+]

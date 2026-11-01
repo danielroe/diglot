@@ -1,0 +1,1885 @@
+{
+ "options": {
+  "glossary": true,
+  "context": "none",
+  "batchSize": 1,
+  "final": true,
+  "locale": "ja"
+ },
+ "model": "anthropic/claude-sonnet-5.5",
+ "segments": [
+  {
+   "id": "1.getting-started/10.data-fetching.md#0",
+   "kind": "title",
+   "source": "Data Fetching",
+   "sourceMasked": "Data Fetching",
+   "tokens": [],
+   "targetMasked": "データ取得",
+   "target": "データ取得",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#1",
+   "kind": "description",
+   "source": "Nuxt provides composables to handle data fetching within your application.",
+   "sourceMasked": "Nuxt provides composables to handle data fetching within your application.",
+   "tokens": [],
+   "targetMasked": "Nuxt は、アプリケーション内のデータ取得を扱うためのコンポーザブルを提供します。",
+   "target": "Nuxt は、アプリケーション内のデータ取得を扱うためのコンポーザブルを提供します。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#2",
+   "kind": "paragraph",
+   "source": "Nuxt comes with two composables and a built-in library to perform data-fetching in browser or server environments: `useFetch`, [`useAsyncData`](/docs/api/composables/use-async-data) and `$fetch`.",
+   "sourceMasked": "Nuxt comes with two composables and a built-in library to perform data-fetching in browser or server environments: {0}, [{1}]({2}) and {3}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`$fetch`"
+    }
+   ],
+   "targetMasked": "Nuxt には、ブラウザーまたはサーバー環境でデータ取得を行うための 2 つのコンポーザブルと組み込みライブラリが用意されています。{0}、[{1}]({2})、{3} です。",
+   "target": "Nuxt には、ブラウザーまたはサーバー環境でデータ取得を行うための 2 つのコンポーザブルと組み込みライブラリが用意されています。`useFetch`、[`useAsyncData`](/docs/api/composables/use-async-data)、`$fetch` です。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#3",
+   "kind": "paragraph",
+   "source": "In a nutshell:",
+   "sourceMasked": "In a nutshell:",
+   "tokens": [],
+   "targetMasked": "要点をまとめると次のとおりです。",
+   "target": "要点をまとめると次のとおりです。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#4",
+   "kind": "list-item",
+   "source": "[`$fetch`](/docs/api/utils/dollarfetch) is the simplest way to make a network request.",
+   "sourceMasked": "[{0}]({1}) is the simplest way to make a network request.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/utils/dollarfetch"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) は、ネットワークリクエストを行うための最もシンプルな方法です。",
+   "target": "[`$fetch`](/docs/api/utils/dollarfetch) は、ネットワークリクエストを行うための最もシンプルな方法です。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#5",
+   "kind": "list-item",
+   "source": "[`useFetch`](/docs/api/composables/use-fetch) is a wrapper around `$fetch` that fetches data only once in [universal rendering](/docs/guide/concepts/rendering#universal-rendering).",
+   "sourceMasked": "[{0}]({1}) is a wrapper around {2} that fetches data only once in [universal rendering]({3}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-fetch"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/guide/concepts/rendering#universal-rendering"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) は {2} のラッパーで、[ユニバーサルレンダリング]({3})においてデータを一度だけ取得します。",
+   "target": "[`useFetch`](/docs/api/composables/use-fetch) は `$fetch` のラッパーで、[ユニバーサルレンダリング](/docs/guide/concepts/rendering#universal-rendering)においてデータを一度だけ取得します。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#6",
+   "kind": "list-item",
+   "source": "[`useAsyncData`](/docs/api/composables/use-async-data) is similar to `useFetch` but offers more fine-grained control.",
+   "sourceMasked": "[{0}]({1}) is similar to {2} but offers more fine-grained control.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`useFetch`"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) は {2} と似ていますが、より細かな制御が可能です。",
+   "target": "[`useAsyncData`](/docs/api/composables/use-async-data) は `useFetch` と似ていますが、より細かな制御が可能です。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#7",
+   "kind": "paragraph",
+   "source": "Both `useFetch` and `useAsyncData` share a common set of options and patterns that we will detail in the last sections.",
+   "sourceMasked": "Both {0} and {1} share a common set of options and patterns that we will detail in the last sections.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    }
+   ],
+   "targetMasked": "{0} と {1} はどちらも共通のオプションとパターンを備えており、これらについては最後のセクションで詳しく説明します。",
+   "target": "`useFetch` と `useAsyncData` はどちらも共通のオプションとパターンを備えており、これらについては最後のセクションで詳しく説明します。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#8",
+   "kind": "heading",
+   "source": "The Need for `useFetch` and `useAsyncData`",
+   "sourceMasked": "The Need for {0} and {1}",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    }
+   ],
+   "targetMasked": "{0} と {1} が必要な理由",
+   "target": "`useFetch` と `useAsyncData` が必要な理由",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#9",
+   "kind": "paragraph",
+   "source": "Nuxt is a framework which can run isomorphic (or universal) code in both server and client environments. If the [`$fetch` function](/docs/api/utils/dollarfetch) is used to perform data fetching in the setup function of a Vue component, this may cause data to be fetched twice, once on the server (to render the HTML) and once again on the client (when the HTML is hydrated). This can cause hydration issues, increase the time to interactivity and cause unpredictable behavior.",
+   "sourceMasked": "Nuxt is a framework which can run isomorphic (or universal) code in both server and client environments. If the [{0} function]({1}) is used to perform data fetching in the setup function of a Vue component, this may cause data to be fetched twice, once on the server (to render the HTML) and once again on the client (when the HTML is hydrated). This can cause hydration issues, increase the time to interactivity and cause unpredictable behavior.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/utils/dollarfetch"
+    }
+   ],
+   "targetMasked": "Nuxt は、サーバーとクライアントの両方の環境でアイソモーフィック (ユニバーサル) なコードを実行できるフレームワークです。Vue コンポーネントの setup 関数内でデータ取得を行うために [{0} 関数]({1}) を使用すると、サーバー (HTML をレンダリングするとき) とクライアント (HTML がハイドレートされるとき) で、データが二重に取得される場合があります。これはハイドレーションの問題を引き起こし、操作可能になるまでの時間を延ばし、予期しない動作の原因となることがあります。",
+   "target": "Nuxt は、サーバーとクライアントの両方の環境でアイソモーフィック (ユニバーサル) なコードを実行できるフレームワークです。Vue コンポーネントの setup 関数内でデータ取得を行うために [`$fetch` 関数](/docs/api/utils/dollarfetch) を使用すると、サーバー (HTML をレンダリングするとき) とクライアント (HTML がハイドレートされるとき) で、データが二重に取得される場合があります。これはハイドレーションの問題を引き起こし、操作可能になるまでの時間を延ばし、予期しない動作の原因となることがあります。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#10",
+   "kind": "paragraph",
+   "source": "The [`useFetch`](/docs/api/composables/use-fetch) and [`useAsyncData`](/docs/api/composables/use-async-data) composables solve this problem by ensuring that if an API call is made on the server, the data is forwarded to the client in the payload.",
+   "sourceMasked": "The [{0}]({1}) and [{2}]({3}) composables solve this problem by ensuring that if an API call is made on the server, the data is forwarded to the client in the payload.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-fetch"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) と [{2}]({3}) のコンポーザブルは、サーバー上で API 呼び出しが行われた場合に、そのデータがペイロードに含まれてクライアントへ転送されるようにすることで、この問題を解決します。",
+   "target": "[`useFetch`](/docs/api/composables/use-fetch) と [`useAsyncData`](/docs/api/composables/use-async-data) のコンポーザブルは、サーバー上で API 呼び出しが行われた場合に、そのデータがペイロードに含まれてクライアントへ転送されるようにすることで、この問題を解決します。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#11",
+   "kind": "paragraph",
+   "source": "The payload is a JavaScript object accessible through [`useNuxtApp().payload`](/docs/api/composables/use-nuxt-app#payload). It is used on the client to avoid refetching the same data when the code is executed in the browser [during hydration](/docs/guide/concepts/rendering#universal-rendering).",
+   "sourceMasked": "The payload is a JavaScript object accessible through [{0}]({1}). It is used on the client to avoid refetching the same data when the code is executed in the browser [during hydration]({2}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useNuxtApp().payload`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-nuxt-app#payload"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/guide/concepts/rendering#universal-rendering"
+    }
+   ],
+   "targetMasked": "ペイロードは、[{0}]({1}) からアクセスできる JavaScript オブジェクトです。ブラウザーでコードが実行される際に、[ハイドレーション時]({2})に同じデータを再取得しないように、クライアントで使用されます。",
+   "target": "ペイロードは、[`useNuxtApp().payload`](/docs/api/composables/use-nuxt-app#payload) からアクセスできる JavaScript オブジェクトです。ブラウザーでコードが実行される際に、[ハイドレーション時](/docs/guide/concepts/rendering#universal-rendering)に同じデータを再取得しないように、クライアントで使用されます。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#12",
+   "kind": "callout",
+   "source": "Use the [Nuxt DevTools](/modules/devtools) to inspect this data in the **Payload tab**.",
+   "sourceMasked": "Use the [Nuxt DevTools]({0}) to inspect this data in the **Payload tab**.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "url",
+     "value": "/modules/devtools"
+    }
+   ],
+   "targetMasked": "[Nuxt DevTools]({0}) を使用すると、**Payload タブ**でこのデータを確認できます。",
+   "target": "[Nuxt DevTools](/modules/devtools) を使用すると、**Payload タブ**でこのデータを確認できます。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#13",
+   "kind": "paragraph",
+   "source": "In the example above, `useFetch` would make sure that the request would occur on the server and is properly forwarded to the browser. `$fetch` has no such mechanism and is a better option to use when the request is solely made from the browser.",
+   "sourceMasked": "In the example above, {0} would make sure that the request would occur on the server and is properly forwarded to the browser. {1} has no such mechanism and is a better option to use when the request is solely made from the browser.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`$fetch`"
+    }
+   ],
+   "targetMasked": "上記の例では、{0} によって、リクエストがサーバー上で実行され、ブラウザーに適切に転送されます。{1} にはそのような仕組みがないため、リクエストがブラウザーからのみ行われる場合に使用するのに適しています。",
+   "target": "上記の例では、`useFetch` によって、リクエストがサーバー上で実行され、ブラウザーに適切に転送されます。`$fetch` にはそのような仕組みがないため、リクエストがブラウザーからのみ行われる場合に使用するのに適しています。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#14",
+   "kind": "heading",
+   "source": "Suspense",
+   "sourceMasked": "Suspense",
+   "tokens": [],
+   "targetMasked": "Suspense",
+   "target": "Suspense",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#15",
+   "kind": "paragraph",
+   "source": "Nuxt uses Vue's [`<Suspense>`](https://vuejs.org/guide/built-ins/suspense) component under the hood to prevent navigation before every async data is available to the view. The data fetching composables can help you leverage this feature and use what suits best on a per-call basis.",
+   "sourceMasked": "Nuxt uses Vue's [{0}]({1}) component under the hood to prevent navigation before every async data is available to the view. The data fetching composables can help you leverage this feature and use what suits best on a per-call basis.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`<Suspense>`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "https://vuejs.org/guide/built-ins/suspense"
+    }
+   ],
+   "targetMasked": "Nuxt は内部で Vue の [{0}]({1}) コンポーネントを使用し、すべての非同期データがビューで利用可能になるまでナビゲーションを行わないようにしています。データ取得コンポーザブルを使えば、この機能を活用しながら、呼び出しごとに最適なものを選んで使うことができます。",
+   "target": "Nuxt は内部で Vue の [`<Suspense>`](https://vuejs.org/guide/built-ins/suspense) コンポーネントを使用し、すべての非同期データがビューで利用可能になるまでナビゲーションを行わないようにしています。データ取得コンポーザブルを使えば、この機能を活用しながら、呼び出しごとに最適なものを選んで使うことができます。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#0",
+   "kind": "title",
+   "source": "Layers",
+   "sourceMasked": "Layers",
+   "tokens": [],
+   "targetMasked": "レイヤー",
+   "target": "レイヤー",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#1",
+   "kind": "description",
+   "source": "Nuxt provides a powerful system that allows you to extend the default files, configs, and much more.",
+   "sourceMasked": "Nuxt provides a powerful system that allows you to extend the default files, configs, and much more.",
+   "tokens": [],
+   "targetMasked": "Nuxt には、デフォルトのファイルや設定などを拡張できる強力なシステムが用意されています。",
+   "target": "Nuxt には、デフォルトのファイルや設定などを拡張できる強力なシステムが用意されています。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#2",
+   "kind": "paragraph",
+   "source": "One of the core features of Nuxt is the layers and extending support. You can extend a default Nuxt application to reuse components, utils, and configuration. The layers structure is almost identical to a standard Nuxt application which makes them easy to author and maintain.",
+   "sourceMasked": "One of the core features of Nuxt is the layers and extending support. You can extend a default Nuxt application to reuse components, utils, and configuration. The layers structure is almost identical to a standard Nuxt application which makes them easy to author and maintain.",
+   "tokens": [],
+   "targetMasked": "Nuxt のコア機能の 1 つが、レイヤーと拡張のサポートです。デフォルトの Nuxt アプリケーションを拡張して、コンポーネント、ユーティリティ、設定を再利用できます。レイヤーの構造は標準的な Nuxt アプリケーションとほぼ同じであるため、作成や保守が簡単です。",
+   "target": "Nuxt のコア機能の 1 つが、レイヤーと拡張のサポートです。デフォルトの Nuxt アプリケーションを拡張して、コンポーネント、ユーティリティ、設定を再利用できます。レイヤーの構造は標準的な Nuxt アプリケーションとほぼ同じであるため、作成や保守が簡単です。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#3",
+   "kind": "heading",
+   "source": "Use Cases",
+   "sourceMasked": "Use Cases",
+   "tokens": [],
+   "targetMasked": "ユースケース",
+   "target": "ユースケース",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#4",
+   "kind": "list-item",
+   "source": "Share reusable configuration presets across projects using `nuxt.config` and `app.config`",
+   "sourceMasked": "Share reusable configuration presets across projects using {0} and {1}",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`nuxt.config`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`app.config`"
+    }
+   ],
+   "targetMasked": "{0} と {1} を使用して、再利用可能な設定プリセットをプロジェクト間で共有します",
+   "target": "`nuxt.config` と `app.config` を使用して、再利用可能な設定プリセットをプロジェクト間で共有します",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#5",
+   "kind": "list-item",
+   "source": "Create a component library using [`app/components/`](/docs/directory-structure/app/components) directory",
+   "sourceMasked": "Create a component library using [{0}]({1}) directory",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`app/components/`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/components"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) ディレクトリを使用してコンポーネントライブラリを作成します",
+   "target": "[`app/components/`](/docs/directory-structure/app/components) ディレクトリを使用してコンポーネントライブラリを作成します",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#6",
+   "kind": "list-item",
+   "source": "Create utility and composable library using [`app/composables/`](/docs/directory-structure/app/composables) and [`app/utils/`](/docs/directory-structure/app/utils) directories",
+   "sourceMasked": "Create utility and composable library using [{0}]({1}) and [{2}]({3}) directories",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`app/composables/`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/composables"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`app/utils/`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/utils"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) ディレクトリと [{2}]({3}) ディレクトリを使用して、ユーティリティとコンポーザブルのライブラリを作成します",
+   "target": "[`app/composables/`](/docs/directory-structure/app/composables) ディレクトリと [`app/utils/`](/docs/directory-structure/app/utils) ディレクトリを使用して、ユーティリティとコンポーザブルのライブラリを作成します",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#7",
+   "kind": "list-item",
+   "source": "Create Nuxt module presets",
+   "sourceMasked": "Create Nuxt module presets",
+   "tokens": [],
+   "targetMasked": "Nuxt モジュールプリセットの作成",
+   "target": "Nuxt モジュールプリセットの作成",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#8",
+   "kind": "list-item",
+   "source": "Share standard setup across projects",
+   "sourceMasked": "Share standard setup across projects",
+   "tokens": [],
+   "targetMasked": "プロジェクト間で標準的なセットアップを共有する",
+   "target": "プロジェクト間で標準的なセットアップを共有する",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#9",
+   "kind": "list-item",
+   "source": "Create Nuxt themes",
+   "sourceMasked": "Create Nuxt themes",
+   "tokens": [],
+   "targetMasked": "Nuxt テーマの作成",
+   "target": "Nuxt テーマの作成",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#10",
+   "kind": "list-item",
+   "source": "Enhance code organization by implementing a modular architecture and support Domain-Driven Design (DDD) pattern in large scale projects.",
+   "sourceMasked": "Enhance code organization by implementing a modular architecture and support Domain-Driven Design (DDD) pattern in large scale projects.",
+   "tokens": [],
+   "targetMasked": "モジュラーアーキテクチャを採用してコードの構成を改善し、大規模プロジェクトにおけるドメイン駆動設計 (DDD) パターンをサポートします。",
+   "target": "モジュラーアーキテクチャを採用してコードの構成を改善し、大規模プロジェクトにおけるドメイン駆動設計 (DDD) パターンをサポートします。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#11",
+   "kind": "heading",
+   "source": "Usage",
+   "sourceMasked": "Usage",
+   "tokens": [],
+   "targetMasked": "使い方",
+   "target": "使い方",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#12",
+   "kind": "paragraph",
+   "source": "By default, any layers within your project in the `~~/layers` directory will be automatically registered as layers in your project.",
+   "sourceMasked": "By default, any layers within your project in the {0} directory will be automatically registered as layers in your project.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`~~/layers`"
+    }
+   ],
+   "targetMasked": "デフォルトでは、プロジェクト内の {0} ディレクトリにあるレイヤーは、自動的にプロジェクトのレイヤーとして登録されます。",
+   "target": "デフォルトでは、プロジェクト内の `~~/layers` ディレクトリにあるレイヤーは、自動的にプロジェクトのレイヤーとして登録されます。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#13",
+   "kind": "callout",
+   "source": "Layer auto-registration was introduced in Nuxt v3.12.0.",
+   "sourceMasked": "Layer auto-registration was introduced in Nuxt v3.12.0.",
+   "tokens": [],
+   "targetMasked": "レイヤーの自動登録は Nuxt v3.12.0 で導入されました。",
+   "target": "レイヤーの自動登録は Nuxt v3.12.0 で導入されました。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#14",
+   "kind": "paragraph",
+   "source": "In addition, named layer aliases to the `srcDir` of each of these layers will automatically be created. For example, you will be able to access the `~~/layers/test` layer via `#layers/test`.",
+   "sourceMasked": "In addition, named layer aliases to the {0} of each of these layers will automatically be created. For example, you will be able to access the {1} layer via {2}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`srcDir`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`~~/layers/test`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`#layers/test`"
+    }
+   ],
+   "targetMasked": "さらに、これらの各レイヤーの {0} への名前付きレイヤーエイリアスが自動的に作成されます。たとえば、{2} を使って {1} レイヤーにアクセスできます。",
+   "target": "さらに、これらの各レイヤーの `srcDir` への名前付きレイヤーエイリアスが自動的に作成されます。たとえば、`#layers/test` を使って `~~/layers/test` レイヤーにアクセスできます。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#15",
+   "kind": "callout",
+   "source": "Named layer aliases were introduced in Nuxt v3.16.0.",
+   "sourceMasked": "Named layer aliases were introduced in Nuxt v3.16.0.",
+   "tokens": [],
+   "targetMasked": "名前付きレイヤーエイリアスは Nuxt v3.16.0 で導入されました。",
+   "target": "名前付きレイヤーエイリアスは Nuxt v3.16.0 で導入されました。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#16",
+   "kind": "paragraph",
+   "source": "In addition, you can extend from a layer by adding the [extends](/docs/api/nuxt-config#extends) property to your [`nuxt.config`](/docs/directory-structure/nuxt-config) file.",
+   "sourceMasked": "In addition, you can extend from a layer by adding the [extends]({0}) property to your [{1}]({2}) file.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "url",
+     "value": "/docs/api/nuxt-config#extends"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`nuxt.config`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/directory-structure/nuxt-config"
+    }
+   ],
+   "targetMasked": "また、[{1}]({2}) ファイルに [extends]({0}) プロパティを追加することで、レイヤーを拡張できます。",
+   "target": "また、[`nuxt.config`](/docs/directory-structure/nuxt-config) ファイルに [extends](/docs/api/nuxt-config#extends) プロパティを追加することで、レイヤーを拡張できます。",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#17",
+   "kind": "paragraph",
+   "source": "You can also pass an authentication token if you are extending from a private GitHub repository:",
+   "sourceMasked": "You can also pass an authentication token if you are extending from a private GitHub repository:",
+   "tokens": [],
+   "targetMasked": "プライベートな GitHub リポジトリから拡張する場合は、認証トークンを渡すこともできます。",
+   "target": "プライベートな GitHub リポジトリから拡張する場合は、認証トークンを渡すこともできます。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#0",
+   "kind": "title",
+   "source": "components",
+   "sourceMasked": "components",
+   "tokens": [],
+   "targetMasked": "components",
+   "target": "components",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#1",
+   "kind": "description",
+   "source": "The components/ directory is where you put all your Vue components.",
+   "sourceMasked": "The components/ directory is where you put all your Vue components.",
+   "tokens": [],
+   "targetMasked": "components/ ディレクトリは、すべての Vue コンポーネントを配置する場所です。",
+   "target": "components/ ディレクトリは、すべての Vue コンポーネントを配置する場所です。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#2",
+   "kind": "paragraph",
+   "source": "Nuxt automatically imports any components in this directory (along with components that are registered by any modules you may be using).",
+   "sourceMasked": "Nuxt automatically imports any components in this directory (along with components that are registered by any modules you may be using).",
+   "tokens": [],
+   "targetMasked": "Nuxt は、このディレクトリ内のコンポーネントを自動的にインポートします(使用しているモジュールによって登録されたコンポーネントも同様です)。",
+   "target": "Nuxt は、このディレクトリ内のコンポーネントを自動的にインポートします(使用しているモジュールによって登録されたコンポーネントも同様です)。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#3",
+   "kind": "heading",
+   "source": "Component Names",
+   "sourceMasked": "Component Names",
+   "tokens": [],
+   "targetMasked": "コンポーネント名",
+   "target": "コンポーネント名",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#4",
+   "kind": "paragraph",
+   "source": "If you have a component in nested directories such as:",
+   "sourceMasked": "If you have a component in nested directories such as:",
+   "tokens": [],
+   "targetMasked": "次のようにネストされたディレクトリ内にコンポーネントがある場合:",
+   "target": "次のようにネストされたディレクトリ内にコンポーネントがある場合:",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#5",
+   "kind": "paragraph",
+   "source": "... then the component's name will be based on its own path directory and filename, with duplicate segments being removed. Therefore, the component's name will be:",
+   "sourceMasked": "... then the component's name will be based on its own path directory and filename, with duplicate segments being removed. Therefore, the component's name will be:",
+   "tokens": [],
+   "targetMasked": "... この場合、コンポーネント名は、そのパスのディレクトリとファイル名に基づき、重複するセグメントは取り除かれます。したがって、コンポーネント名は次のようになります。",
+   "target": "... この場合、コンポーネント名は、そのパスのディレクトリとファイル名に基づき、重複するセグメントは取り除かれます。したがって、コンポーネント名は次のようになります。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#6",
+   "kind": "callout",
+   "source": "For clarity, we recommend that the component's filename matches its name. So, in the example above, you could rename `Button.vue` to be `BaseFooButton.vue`.",
+   "sourceMasked": "For clarity, we recommend that the component's filename matches its name. So, in the example above, you could rename {0} to be {1}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`Button.vue`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`BaseFooButton.vue`"
+    }
+   ],
+   "targetMasked": "わかりやすさのため、コンポーネントのファイル名はコンポーネント名と一致させることをおすすめします。上記の例では、{0} を {1} にリネームするとよいでしょう。",
+   "target": "わかりやすさのため、コンポーネントのファイル名はコンポーネント名と一致させることをおすすめします。上記の例では、`Button.vue` を `BaseFooButton.vue` にリネームするとよいでしょう。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#7",
+   "kind": "paragraph",
+   "source": "If you want to group components in a directory without affecting their name, you can use the parenthesis `(` `)` to name the grouping directory.",
+   "sourceMasked": "If you want to group components in a directory without affecting their name, you can use the parenthesis {0} {1} to name the grouping directory.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`(`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`)`"
+    }
+   ],
+   "targetMasked": "コンポーネントの名前に影響を与えずにディレクトリ内でグループ化したい場合は、括弧 {0} {1} を使ってグループ用のディレクトリに名前を付けることができます。",
+   "target": "コンポーネントの名前に影響を与えずにディレクトリ内でグループ化したい場合は、括弧 `(` `)` を使ってグループ用のディレクトリに名前を付けることができます。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#8",
+   "kind": "paragraph",
+   "source": "... then the component's name will skip the grouping directory, resulting in:",
+   "sourceMasked": "... then the component's name will skip the grouping directory, resulting in:",
+   "tokens": [],
+   "targetMasked": "... この場合、コンポーネント名ではグループ化用のディレクトリが省略され、次のようになります。",
+   "target": "... この場合、コンポーネント名ではグループ化用のディレクトリが省略され、次のようになります。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#9",
+   "kind": "paragraph",
+   "source": "If you want to auto-import components based only on its name, not path, then you need to set `pathPrefix` option to `false` using extended form of the configuration object:",
+   "sourceMasked": "If you want to auto-import components based only on its name, not path, then you need to set {0} option to {1} using extended form of the configuration object:",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`pathPrefix`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`false`"
+    }
+   ],
+   "targetMasked": "パスではなく名前のみに基づいてコンポーネントを自動インポートしたい場合は、設定オブジェクトの拡張形式を使用して、{0} オプションを {1} に設定する必要があります。",
+   "target": "パスではなく名前のみに基づいてコンポーネントを自動インポートしたい場合は、設定オブジェクトの拡張形式を使用して、`pathPrefix` オプションを `false` に設定する必要があります。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#10",
+   "kind": "paragraph",
+   "source": "This registers the components using the same strategy as used in Nuxt 2. For example, `~/components/Some/MyComponent.vue` will be usable as `<MyComponent>` and not `<SomeMyComponent>`.",
+   "sourceMasked": "This registers the components using the same strategy as used in Nuxt 2. For example, {0} will be usable as {1} and not {2}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`~/components/Some/MyComponent.vue`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`<MyComponent>`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`<SomeMyComponent>`"
+    }
+   ],
+   "targetMasked": "これにより、Nuxt 2 で使用されていたものと同じ戦略でコンポーネントが登録されます。たとえば、{0} は {1} として使用でき、{2} では使用できません。",
+   "target": "これにより、Nuxt 2 で使用されていたものと同じ戦略でコンポーネントが登録されます。たとえば、`~/components/Some/MyComponent.vue` は `<MyComponent>` として使用でき、`<SomeMyComponent>` では使用できません。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#11",
+   "kind": "heading",
+   "source": "Dynamic Components",
+   "sourceMasked": "Dynamic Components",
+   "tokens": [],
+   "targetMasked": "動的コンポーネント",
+   "target": "動的コンポーネント",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#12",
+   "kind": "paragraph",
+   "source": "If you want to use the Vue `<component :is=\"someComputedComponent\">`{lang=vue} syntax, you need to use the `resolveComponent` helper provided by Vue or import the component directly from `#components` and pass it into `is` prop.",
+   "sourceMasked": "If you want to use the Vue {0} syntax, you need to use the {1} helper provided by Vue or import the component directly from {2} and pass it into {3} prop.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`<component :is=\"someComputedComponent\">`{lang=vue}"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`resolveComponent`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`#components`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`is`"
+    }
+   ],
+   "targetMasked": "Vue の {0} 構文を使用したい場合は、Vue が提供する {1} ヘルパーを使用するか、{2} からコンポーネントを直接インポートして {3} プロパティに渡す必要があります。",
+   "target": "Vue の `<component :is=\"someComputedComponent\">`{lang=vue} 構文を使用したい場合は、Vue が提供する `resolveComponent` ヘルパーを使用するか、`#components` からコンポーネントを直接インポートして `is` プロパティに渡す必要があります。",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#13",
+   "kind": "paragraph",
+   "source": "For example:",
+   "sourceMasked": "For example:",
+   "tokens": [],
+   "targetMasked": "例:",
+   "target": "例:",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#0",
+   "kind": "title",
+   "source": "useFetch",
+   "sourceMasked": "useFetch",
+   "tokens": [],
+   "targetMasked": "useFetch",
+   "target": "useFetch",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#1",
+   "kind": "description",
+   "source": "Fetch data from an API endpoint with an SSR-friendly composable.",
+   "sourceMasked": "Fetch data from an API endpoint with an SSR-friendly composable.",
+   "tokens": [],
+   "targetMasked": "SSR に対応したコンポーザブルを使用して、API エンドポイントからデータを取得します。",
+   "target": "SSR に対応したコンポーザブルを使用して、API エンドポイントからデータを取得します。",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#2",
+   "kind": "paragraph",
+   "source": "This composable provides a convenient wrapper around [`useAsyncData`](/docs/api/composables/use-async-data) and [`$fetch`](/docs/api/utils/dollarfetch).\nIt automatically generates a key for the request, provides type hints for request url based on server routes, and infers API response type.",
+   "sourceMasked": "This composable provides a convenient wrapper around [{0}]({1}) and [{2}]({3}).\nIt automatically generates a key for the request, provides type hints for request url based on server routes, and infers API response type.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/api/utils/dollarfetch"
+    }
+   ],
+   "targetMasked": "このコンポーザブルは、[{0}]({1}) と [{2}]({3}) を便利にラップします。\nリクエスト用のキーを自動的に生成し、サーバールートに基づいてリクエスト URL の型ヒントを提供し、API レスポンスの型も推論します。",
+   "target": "このコンポーザブルは、[`useAsyncData`](/docs/api/composables/use-async-data) と [`$fetch`](/docs/api/utils/dollarfetch) を便利にラップします。\nリクエスト用のキーを自動的に生成し、サーバールートに基づいてリクエスト URL の型ヒントを提供し、API レスポンスの型も推論します。",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#3",
+   "kind": "callout",
+   "source": "`useFetch` is a composable meant to be called directly in a setup function, plugin, or route middleware. It returns reactive composables and handles adding responses to the Nuxt payload so they can be passed from server to client without re-fetching the data on client side when the page hydrates.",
+   "sourceMasked": "{0} is a composable meant to be called directly in a setup function, plugin, or route middleware. It returns reactive composables and handles adding responses to the Nuxt payload so they can be passed from server to client without re-fetching the data on client side when the page hydrates.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    }
+   ],
+   "targetMasked": "{0} は、setup 関数、プラグイン、またはルートミドルウェア内で直接呼び出すことを想定したコンポーザブルです。リアクティブなコンポーザブルを返し、レスポンスを Nuxt のペイロードに追加します。これにより、ページのハイドレーション時にクライアント側でデータを再取得することなく、サーバーからクライアントへデータを渡せます。",
+   "target": "`useFetch` は、setup 関数、プラグイン、またはルートミドルウェア内で直接呼び出すことを想定したコンポーザブルです。リアクティブなコンポーザブルを返し、レスポンスを Nuxt のペイロードに追加します。これにより、ページのハイドレーション時にクライアント側でデータを再取得することなく、サーバーからクライアントへデータを渡せます。",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#4",
+   "kind": "heading",
+   "source": "Usage",
+   "sourceMasked": "Usage",
+   "tokens": [],
+   "targetMasked": "使い方",
+   "target": "使い方",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#5",
+   "kind": "callout",
+   "source": "Need a custom `useFetch` with pre-defined defaults (like `baseURL` or auth headers)? Use `createUseFetch` to create a fully typed custom composable.",
+   "sourceMasked": "Need a custom {0} with pre-defined defaults (like {1} or auth headers)? Use {2} to create a fully typed custom composable.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`baseURL`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`createUseFetch`"
+    }
+   ],
+   "targetMasked": "事前定義されたデフォルト値（{1} や認証ヘッダーなど）を持つカスタム {0} が必要ですか？ {2} を使用して、完全に型付けされたカスタムコンポーザブルを作成できます。",
+   "target": "事前定義されたデフォルト値（`baseURL` や認証ヘッダーなど）を持つカスタム `useFetch` が必要ですか？ `createUseFetch` を使用して、完全に型付けされたカスタムコンポーザブルを作成できます。",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#0",
+   "kind": "title",
+   "source": "<NuxtLink>",
+   "sourceMasked": "{0}",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "html",
+     "value": "<NuxtLink>"
+    }
+   ],
+   "targetMasked": "{0}",
+   "target": "<NuxtLink>",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#1",
+   "kind": "description",
+   "source": "Nuxt provides <NuxtLink> component to handle any kind of links within your application.",
+   "sourceMasked": "Nuxt provides {0} component to handle any kind of links within your application.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "html",
+     "value": "<NuxtLink>"
+    }
+   ],
+   "targetMasked": "Nuxt は、アプリケーション内のあらゆる種類のリンクを処理するための {0} コンポーネントを提供します。",
+   "target": "Nuxt は、アプリケーション内のあらゆる種類のリンクを処理するための <NuxtLink> コンポーネントを提供します。",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#2",
+   "kind": "callout",
+   "source": "`<NuxtLink>` is a drop-in replacement for both Vue Router's `<RouterLink>` component and HTML's `<a>` tag. It intelligently determines whether the link is _internal_ or _external_ and renders it accordingly with available optimizations (prefetching, default attributes, etc.)",
+   "sourceMasked": "{0} is a drop-in replacement for both Vue Router's {1} component and HTML's {2} tag. It intelligently determines whether the link is _internal_ or _external_ and renders it accordingly with available optimizations (prefetching, default attributes, etc.)",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`<NuxtLink>`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`<RouterLink>`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`<a>`"
+    }
+   ],
+   "targetMasked": "{0} は、Vue Router の {1} コンポーネントと HTML の {2} タグの両方をそのまま置き換えられるコンポーネントです。リンクが*内部*か*外部*かを賢く判定し、利用可能な最適化(プリフェッチ、デフォルト属性など)を適用してレンダリングします。",
+   "target": "`<NuxtLink>` は、Vue Router の `<RouterLink>` コンポーネントと HTML の `<a>` タグの両方をそのまま置き換えられるコンポーネントです。リンクが*内部*か*外部*かを賢く判定し、利用可能な最適化(プリフェッチ、デフォルト属性など)を適用してレンダリングします。",
+   "qa": []
+  },
+  {
+   "id": "synthetic#0",
+   "kind": "paragraph",
+   "source": "The :badge{label=\"Nuxt 4\" color=\"success\"} release renames the source directory to `app/`; see the [upgrade guide](/docs/getting-started/upgrade#new-directory-structure) for details.",
+   "sourceMasked": "The {0} release renames the source directory to {1}; see the [upgrade guide]({2}) for details.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "mdc",
+     "value": ":badge{label=\"Nuxt 4\" color=\"success\"}"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`app/`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/getting-started/upgrade#new-directory-structure"
+    }
+   ],
+   "targetMasked": "{0} のリリースでは、ソースディレクトリの名前が {1} に変更されます。詳細は[アップグレードガイド]({2})をご覧ください。",
+   "target": ":badge{label=\"Nuxt 4\" color=\"success\"} のリリースでは、ソースディレクトリの名前が `app/` に変更されます。詳細は[アップグレードガイド](/docs/getting-started/upgrade#new-directory-structure)をご覧ください。",
+   "qa": []
+  },
+  {
+   "id": "synthetic#1",
+   "kind": "paragraph",
+   "source": "Press :kbd{value=\"Ctrl\"} + :kbd{value=\"K\"} to open the search, then type <code>useState</code> and hit <kbd>Enter</kbd>.",
+   "sourceMasked": "Press {0} + {1} to open the search, then type {2}useState{3} and hit {4}Enter{5}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "mdc",
+     "value": ":kbd{value=\"Ctrl\"}"
+    },
+    {
+     "id": 1,
+     "kind": "mdc",
+     "value": ":kbd{value=\"K\"}"
+    },
+    {
+     "id": 2,
+     "kind": "html",
+     "value": "<code>"
+    },
+    {
+     "id": 3,
+     "kind": "html",
+     "value": "</code>"
+    },
+    {
+     "id": 4,
+     "kind": "html",
+     "value": "<kbd>"
+    },
+    {
+     "id": 5,
+     "kind": "html",
+     "value": "</kbd>"
+    }
+   ],
+   "targetMasked": "{0} + {1} を押して検索を開き、{2}useState{3} と入力して {4}Enter{5} を押します。",
+   "target": ":kbd{value=\"Ctrl\"} + :kbd{value=\"K\"} を押して検索を開き、<code>useState</code> と入力して <kbd>Enter</kbd> を押します。",
+   "qa": []
+  },
+  {
+   "id": "synthetic#2",
+   "kind": "paragraph",
+   "source": "Inside the template you can interpolate values with `{{ count }}`, but writing {{ $t('welcome') }} directly in markdown renders the raw expression.",
+   "sourceMasked": "Inside the template you can interpolate values with {0}, but writing {1} directly in markdown renders the raw expression.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`{{ count }}`"
+    },
+    {
+     "id": 1,
+     "kind": "mustache",
+     "value": "{{ $t('welcome') }}"
+    }
+   ],
+   "targetMasked": "テンプレート内では {0} で値を埋め込めますが、markdown に {1} を直接書くと、式がそのまま表示されます。",
+   "target": "テンプレート内では `{{ count }}` で値を埋め込めますが、markdown に {{ $t('welcome') }} を直接書くと、式がそのまま表示されます。",
+   "qa": []
+  },
+  {
+   "id": "synthetic#3",
+   "kind": "list-item",
+   "source": ":u-icon{name=\"i-lucide-check\"} **Server routes** in `server/api/` are auto-imported by Nitro and exposed under [`/api`](/docs/directory-structure/server#api-routes).",
+   "sourceMasked": "{0} **Server routes** in {1} are auto-imported by Nitro and exposed under [{2}]({3}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "mdc",
+     "value": ":u-icon{name=\"i-lucide-check\"}"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`server/api/`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`/api`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/server#api-routes"
+    }
+   ],
+   "targetMasked": "{0} {1} 内の**サーバールート**は Nitro によって自動インポートされ、[{2}]({3}) 配下に公開されます。",
+   "target": ":u-icon{name=\"i-lucide-check\"} `server/api/` 内の**サーバールート**は Nitro によって自動インポートされ、[`/api`](/docs/directory-structure/server#api-routes) 配下に公開されます。",
+   "qa": []
+  }
+ ],
+ "requests": [
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1296,
+   "inputTokens": 1325,
+   "outputTokens": 27,
+   "costUsd": 0.00292
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1468,
+   "inputTokens": 1338,
+   "outputTokens": 61,
+   "costUsd": 0.003286
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1722,
+   "inputTokens": 1372,
+   "outputTokens": 100,
+   "costUsd": 0.003744
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1076,
+   "inputTokens": 1329,
+   "outputTokens": 37,
+   "costUsd": 0.003028
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1303,
+   "inputTokens": 1341,
+   "outputTokens": 58,
+   "costUsd": 0.003262
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1492,
+   "inputTokens": 1358,
+   "outputTokens": 74,
+   "costUsd": 0.003456
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1013,
+   "inputTokens": 1347,
+   "outputTokens": 54,
+   "costUsd": 0.003234
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1256,
+   "inputTokens": 1351,
+   "outputTokens": 69,
+   "costUsd": 0.003392
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 944,
+   "inputTokens": 1331,
+   "outputTokens": 36,
+   "costUsd": 0.003022
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2181,
+   "inputTokens": 1459,
+   "outputTokens": 225,
+   "costUsd": 0.005168000000000001
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#10"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1413,
+   "inputTokens": 1379,
+   "outputTokens": 111,
+   "costUsd": 0.003868
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#11"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1464,
+   "inputTokens": 1381,
+   "outputTokens": 111,
+   "costUsd": 0.0038719999999999996
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1318,
+   "inputTokens": 1353,
+   "outputTokens": 63,
+   "costUsd": 0.003336
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#13"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1449,
+   "inputTokens": 1384,
+   "outputTokens": 110,
+   "costUsd": 0.003868
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#14"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 994,
+   "inputTokens": 1324,
+   "outputTokens": 27,
+   "costUsd": 0.0029179999999999996
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#15"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1754,
+   "inputTokens": 1393,
+   "outputTokens": 138,
+   "costUsd": 0.0041659999999999996
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 977,
+   "inputTokens": 1322,
+   "outputTokens": 28,
+   "costUsd": 0.002924
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1387,
+   "inputTokens": 1348,
+   "outputTokens": 61,
+   "costUsd": 0.003306
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1632,
+   "inputTokens": 1400,
+   "outputTokens": 148,
+   "costUsd": 0.00428
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 992,
+   "inputTokens": 1325,
+   "outputTokens": 28,
+   "costUsd": 0.00293
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1295,
+   "inputTokens": 1342,
+   "outputTokens": 59,
+   "costUsd": 0.003274
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1043,
+   "inputTokens": 1338,
+   "outputTokens": 56,
+   "costUsd": 0.003236
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1180,
+   "inputTokens": 1351,
+   "outputTokens": 82,
+   "costUsd": 0.003522
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1112,
+   "inputTokens": 1331,
+   "outputTokens": 39,
+   "costUsd": 0.003052
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1266,
+   "inputTokens": 1330,
+   "outputTokens": 43,
+   "costUsd": 0.00309
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1320,
+   "inputTokens": 1330,
+   "outputTokens": 34,
+   "costUsd": 0.003
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#10"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1214,
+   "inputTokens": 1363,
+   "outputTokens": 86,
+   "costUsd": 0.0035859999999999998
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#11"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1083,
+   "inputTokens": 1323,
+   "outputTokens": 26,
+   "costUsd": 0.0029059999999999997
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1311,
+   "inputTokens": 1351,
+   "outputTokens": 81,
+   "costUsd": 0.003512
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#13"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1189,
+   "inputTokens": 1344,
+   "outputTokens": 52,
+   "costUsd": 0.003208
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#14"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1455,
+   "inputTokens": 1369,
+   "outputTokens": 92,
+   "costUsd": 0.003658
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#15"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1069,
+   "inputTokens": 1343,
+   "outputTokens": 56,
+   "costUsd": 0.003246
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#16"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1209,
+   "inputTokens": 1359,
+   "outputTokens": 69,
+   "costUsd": 0.003408
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#17"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1044,
+   "inputTokens": 1347,
+   "outputTokens": 60,
+   "costUsd": 0.003294
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 809,
+   "inputTokens": 1320,
+   "outputTokens": 24,
+   "costUsd": 0.00288
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1150,
+   "inputTokens": 1335,
+   "outputTokens": 54,
+   "costUsd": 0.00321
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1205,
+   "inputTokens": 1355,
+   "outputTokens": 81,
+   "costUsd": 0.0035199999999999997
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 905,
+   "inputTokens": 1324,
+   "outputTokens": 30,
+   "costUsd": 0.0029479999999999997
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1086,
+   "inputTokens": 1335,
+   "outputTokens": 50,
+   "costUsd": 0.00317
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1472,
+   "inputTokens": 1364,
+   "outputTokens": 90,
+   "costUsd": 0.003628
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1473,
+   "inputTokens": 1359,
+   "outputTokens": 89,
+   "costUsd": 0.003608
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1425,
+   "inputTokens": 1362,
+   "outputTokens": 92,
+   "costUsd": 0.0036439999999999997
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1331,
+   "inputTokens": 1343,
+   "outputTokens": 59,
+   "costUsd": 0.0032760000000000003
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1374,
+   "inputTokens": 1364,
+   "outputTokens": 94,
+   "costUsd": 0.0036680000000000003
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#10"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1213,
+   "inputTokens": 1363,
+   "outputTokens": 89,
+   "costUsd": 0.003616
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#11"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1379,
+   "inputTokens": 1327,
+   "outputTokens": 31,
+   "costUsd": 0.0029639999999999996
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1713,
+   "inputTokens": 1374,
+   "outputTokens": 97,
+   "costUsd": 0.003718
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#13"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 907,
+   "inputTokens": 1325,
+   "outputTokens": 25,
+   "costUsd": 0.0029
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1017,
+   "inputTokens": 1323,
+   "outputTokens": 27,
+   "costUsd": 0.0029159999999999998
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1065,
+   "inputTokens": 1342,
+   "outputTokens": 57,
+   "costUsd": 0.003254
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1758,
+   "inputTokens": 1390,
+   "outputTokens": 121,
+   "costUsd": 0.0039900000000000005
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1695,
+   "inputTokens": 1402,
+   "outputTokens": 160,
+   "costUsd": 0.004404
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 896,
+   "inputTokens": 1323,
+   "outputTokens": 26,
+   "costUsd": 0.0029059999999999997
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1877,
+   "inputTokens": 1365,
+   "outputTokens": 102,
+   "costUsd": 0.00375
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1245,
+   "inputTokens": 1322,
+   "outputTokens": 26,
+   "costUsd": 0.0029040000000000003
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1512,
+   "inputTokens": 1341,
+   "outputTokens": 68,
+   "costUsd": 0.003362
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1573,
+   "inputTokens": 1406,
+   "outputTokens": 134,
+   "costUsd": 0.0041519999999999994
+  },
+  {
+   "ids": [
+    "synthetic#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1188,
+   "inputTokens": 1354,
+   "outputTokens": 78,
+   "costUsd": 0.0034879999999999998
+  },
+  {
+   "ids": [
+    "synthetic#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1897,
+   "inputTokens": 1358,
+   "outputTokens": 64,
+   "costUsd": 0.0033559999999999996
+  },
+  {
+   "ids": [
+    "synthetic#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1172,
+   "inputTokens": 1358,
+   "outputTokens": 69,
+   "costUsd": 0.0034059999999999997
+  },
+  {
+   "ids": [
+    "synthetic#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1447,
+   "inputTokens": 1358,
+   "outputTokens": 72,
+   "costUsd": 0.003436
+  }
+ ]
+}

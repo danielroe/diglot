@@ -1,0 +1,886 @@
+{
+  "components": {
+    "read-more": {
+      "block": 928,
+      "inline": 9,
+      "html": 0,
+      "allowlisted": [
+        "title"
+      ],
+      "props": {
+        "title": {
+          "count": 114,
+          "proseLike": 98,
+          "examples": [
+            "\"Nuxt rendering modes\"",
+            "\"Nuxt server engine\"",
+            "\"Deployment section\""
+          ]
+        },
+        "to": {
+          "count": 934,
+          "proseLike": 0,
+          "examples": [
+            "\"/docs/3.x/guide/concepts/rendering\"",
+            "\"/docs/3.x/guide/concepts/server-engine\"",
+            "\"/docs/3.x/getting-started/deployment\""
+          ]
+        },
+        "icon": {
+          "count": 133,
+          "proseLike": 0,
+          "examples": [
+            "\"i-simple-icons-mdnwebdocs\"",
+            "\"i-lucide-star\"",
+            "\"i-simple-icons-vuedotjs\""
+          ]
+        },
+        "target": {
+          "count": 150,
+          "proseLike": 0,
+          "examples": [
+            "\"_blank\"",
+            "\"\\\\_blank\""
+          ]
+        },
+        "color": {
+          "count": 23,
+          "proseLike": 0,
+          "examples": [
+            "\"gray\""
+          ]
+        },
+        "link": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"/docs/3.x/directory-structure/plugins#creating-plugins\"",
+            "\"/docs/directory-structure/app/plugins#creating-plugins\""
+          ]
+        }
+      }
+    },
+    "note": {
+      "block": 762,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "icon": {
+          "count": 19,
+          "proseLike": 0,
+          "examples": [
+            "\"i-lucide-info\"",
+            "\"i-simple-icons-github\""
+          ]
+        },
+        "to": {
+          "count": 10,
+          "proseLike": 0,
+          "examples": [
+            "\"/docs/3.x/guide/going-further/experimental-features#clientfallback\"",
+            "\"/docs/3.x/guide/going-further/experimental-features#cookiestore\"",
+            "\"https://github.com/nuxt/nuxt/tree/main/packages/schema/src/config\""
+          ]
+        },
+        "color": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"blue\""
+          ]
+        },
+        "target": {
+          "count": 1,
+          "proseLike": 0,
+          "examples": [
+            "\"_blank\""
+          ]
+        }
+      }
+    },
+    "tip": {
+      "block": 458,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "icon": {
+          "count": 104,
+          "proseLike": 0,
+          "examples": [
+            "\"i-lucide-circle-check\"",
+            "\"i-lucide-newspaper\"",
+            "\"i-lucide-book\""
+          ]
+        },
+        "to": {
+          "count": 85,
+          "proseLike": 0,
+          "examples": [
+            "\"https://roe.dev/blog/nuxt-server-components\"",
+            "\"https://vueschool.io/lessons/creating-your-first-module-from-scratch?",
+            "\"https://v2.nuxt.com/docs/directory-structure/static/\""
+          ]
+        },
+        "target": {
+          "count": 62,
+          "proseLike": 0,
+          "examples": [
+            "\"_blank\""
+          ]
+        }
+      }
+    },
+    "warning": {
+      "block": 314,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "icon": {
+          "count": 9,
+          "proseLike": 0,
+          "examples": [
+            "\"i-lucide-alert-triangle\"",
+            "\"i-ph-warning-duotone\""
+          ]
+        },
+        "to": {
+          "count": 5,
+          "proseLike": 0,
+          "examples": [
+            "\"/docs/3.x/guide/recipes/custom-usefetch#custom-usefetchuseasyncdata\"",
+            "\"/modules/fonts/configuration#font-options\"",
+            "\"https://www.fontshare.com/licenses/itf-ffl\""
+          ]
+        }
+      }
+    },
+    "code-group": {
+      "block": 283,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "sync": {
+          "count": 59,
+          "proseLike": 0,
+          "examples": [
+            "\"pm\"",
+            "\"preprocessor\""
+          ]
+        }
+      }
+    },
+    "important": {
+      "block": 213,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {}
+    },
+    "card": {
+      "block": 128,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [
+        "title",
+        "description"
+      ],
+      "props": {
+        "title": {
+          "count": 128,
+          "proseLike": 68,
+          "examples": [
+            "\"Open on StackBlitz\"",
+            "\"Deno\"",
+            "\"Bun\""
+          ]
+        },
+        "color": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"info\""
+          ]
+        },
+        "icon": {
+          "count": 128,
+          "proseLike": 0,
+          "examples": [
+            "\"i-simple-icons-stackblitz\"",
+            "\"i-logos-deno\"",
+            "\"i-logos-bun\""
+          ]
+        },
+        "to": {
+          "count": 128,
+          "proseLike": 0,
+          "examples": [
+            "\"https://stackblitz.com/github/nuxt/starter?file=app%2Fapp.vue\"",
+            "\"https://deno.com\"",
+            "\"https://bun.com\""
+          ]
+        },
+        "target": {
+          "count": 66,
+          "proseLike": 0,
+          "examples": [
+            "\"_blank\""
+          ]
+        },
+        "ui.icon.base": {
+          "count": 33,
+          "proseLike": 0,
+          "examples": [
+            "\"text-black dark:text-white\""
+          ]
+        }
+      }
+    },
+    "video-accordion": {
+      "block": 116,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [
+        "title"
+      ],
+      "props": {
+        "title": {
+          "count": 116,
+          "proseLike": 116,
+          "examples": [
+            "\"Watch a video from Alexander Lichter about the env-aware nuxt.config.",
+            "\"Watch a video from Alexander Lichter to avoid using useFetch the wron",
+            "\"Watch a video from Alexander Lichter to dig deeper into the differenc"
+          ]
+        },
+        "videoId": {
+          "count": 116,
+          "proseLike": 0,
+          "examples": [
+            "\"DFZI2iVCrNc\"",
+            "\"njsGVmcWviY\"",
+            "\"0X-aOpSGabA\""
+          ]
+        },
+        "platform": {
+          "count": 23,
+          "proseLike": 0,
+          "examples": [
+            "\"vimeo\""
+          ]
+        }
+      }
+    },
+    "callout": {
+      "block": 83,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "icon": {
+          "count": 27,
+          "proseLike": 0,
+          "examples": [
+            "\"i-lucide-lightbulb\""
+          ]
+        },
+        "type": {
+          "count": 8,
+          "proseLike": 0,
+          "examples": [
+            "\"info\"",
+            "\"warning\""
+          ]
+        }
+      }
+    },
+    "link-example": {
+      "block": 75,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [
+        "title"
+      ],
+      "props": {
+        "to": {
+          "count": 75,
+          "proseLike": 0,
+          "examples": [
+            "\"/docs/3.x/examples/features/meta-tags\"",
+            "\"/docs/3.x/examples/features/data-fetching\"",
+            "\"/docs/3.x/examples/features/state-management\""
+          ]
+        },
+        "target": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"_blank\""
+          ]
+        }
+      }
+    },
+    "badge": {
+      "block": 0,
+      "inline": 70,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "color": {
+          "count": 70,
+          "proseLike": 0,
+          "examples": [
+            "\"info\"",
+            "\"primary\"",
+            "\"success\""
+          ]
+        },
+        "class": {
+          "count": 67,
+          "proseLike": 0,
+          "examples": [
+            "\"align-middle\""
+          ]
+        },
+        "size": {
+          "count": 62,
+          "proseLike": 0,
+          "examples": [
+            "\"xs\""
+          ]
+        },
+        "variant": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"subtle\""
+          ]
+        }
+      }
+    },
+    "card-group": {
+      "block": 33,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "class": {
+          "count": 6,
+          "proseLike": 0,
+          "examples": [
+            "\"sm:grid-cols-1\""
+          ]
+        }
+      }
+    },
+    "caution": {
+      "block": 19,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "icon": {
+          "count": 10,
+          "proseLike": 0,
+          "examples": [
+            "\"i-lucide-circle-x\""
+          ]
+        }
+      }
+    },
+    "kbd": {
+      "block": 0,
+      "inline": 10,
+      "html": 4,
+      "allowlisted": [],
+      "props": {
+        "value": {
+          "count": 10,
+          "proseLike": 0,
+          "examples": [
+            "\"Shift\"",
+            "\"Alt\"",
+            "\"⇧ Shift\""
+          ]
+        }
+      }
+    },
+    "video": {
+      "block": 1,
+      "inline": 0,
+      "html": 12,
+      "allowlisted": [],
+      "props": {
+        "controls": {
+          "count": 12,
+          "proseLike": 0,
+          "examples": [
+            "true"
+          ]
+        },
+        "class": {
+          "count": 12,
+          "proseLike": 0,
+          "examples": [
+            "\"rounded\""
+          ]
+        },
+        "poster": {
+          "count": 13,
+          "proseLike": 0,
+          "examples": [
+            "\"https://res.cloudinary.com/nuxt/video/upload/v1665061349/nuxt3/nuxt3-",
+            "\"https://res.cloudinary.com/nuxt/video/upload/v1665063233/nuxt3/nuxt3-",
+            "\"https://res.cloudinary.com/nuxt/video/upload/v1665065289/nuxt3/nuxt3-"
+          ]
+        },
+        "src": {
+          "count": 1,
+          "proseLike": 0,
+          "examples": [
+            "\"./images/demo.mp4\""
+          ]
+        },
+        ":controls": {
+          "count": 1,
+          "proseLike": 0,
+          "examples": [
+            "\"true\""
+          ]
+        },
+        "preload": {
+          "count": 1,
+          "proseLike": 0,
+          "examples": [
+            "\"none\""
+          ]
+        },
+        "width": {
+          "count": 1,
+          "proseLike": 0,
+          "examples": [
+            "\"1440\""
+          ]
+        },
+        "height": {
+          "count": 1,
+          "proseLike": 0,
+          "examples": [
+            "\"1080\""
+          ]
+        }
+      }
+    },
+    "source": {
+      "block": 0,
+      "inline": 0,
+      "html": 12,
+      "allowlisted": [],
+      "props": {
+        "src": {
+          "count": 12,
+          "proseLike": 0,
+          "examples": [
+            "\"https://res.cloudinary.com/nuxt/video/upload/v1665061349/nuxt3/nuxt3-",
+            "\"https://res.cloudinary.com/nuxt/video/upload/v1665063233/nuxt3/nuxt3-",
+            "\"https://res.cloudinary.com/nuxt/video/upload/v1665065289/nuxt3/nuxt3-"
+          ]
+        },
+        "type": {
+          "count": 12,
+          "proseLike": 0,
+          "examples": [
+            "\"video/mp4\""
+          ]
+        }
+      }
+    },
+    "steps": {
+      "block": 9,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {}
+    },
+    "span": {
+      "block": 0,
+      "inline": 6,
+      "html": 0,
+      "allowlisted": [],
+      "props": {}
+    },
+    "collapsible": {
+      "block": 3,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [
+        "name"
+      ],
+      "props": {
+        "name": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"additional notes for an optimal setup\""
+          ]
+        }
+      }
+    },
+    "details": {
+      "block": 0,
+      "inline": 0,
+      "html": 3,
+      "allowlisted": [],
+      "props": {}
+    },
+    "summary": {
+      "block": 0,
+      "inline": 0,
+      "html": 3,
+      "allowlisted": [],
+      "props": {}
+    },
+    "u-button": {
+      "block": 3,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [
+        "label"
+      ],
+      "props": {
+        "to": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"cursor://anysphere.cursor-deeplink/mcp/install?name=nuxt&config=eyJ0e"
+          ]
+        },
+        "label": {
+          "count": 3,
+          "proseLike": 3,
+          "examples": [
+            "\"Install MCP Server\""
+          ]
+        },
+        "color": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"neutral\""
+          ]
+        },
+        "icon": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"i-custom-cursor\""
+          ]
+        }
+      }
+    },
+    "code-tree": {
+      "block": 3,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {
+        "defaultValue": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"nuxt.config.ts\""
+          ]
+        },
+        ":expandAll": {
+          "count": 3,
+          "proseLike": 0,
+          "examples": [
+            "\"true\""
+          ]
+        }
+      }
+    },
+    "code-collapse": {
+      "block": 1,
+      "inline": 0,
+      "html": 0,
+      "allowlisted": [],
+      "props": {}
+    }
+  },
+  "frontmatterKeys": {
+    "title": 787,
+    "description": 785,
+    "links[].label": 327,
+    "links[].icon": 327,
+    "links[].to": 327,
+    "links[].size": 322,
+    "navigation.icon": 160,
+    "head.title": 85,
+    "navigation": 85,
+    "minimalVersion": 56,
+    "navigation.title": 33,
+    "titleTemplate": 12,
+    "surround": 9,
+    "redirect": 3,
+    "head.meta[].name": 2,
+    "head.meta[].content": 2
+  },
+  "navigationKeys": {
+    "title": 65,
+    "icon": 57,
+    "titleTemplate": 54,
+    "navigation.icon": 6,
+    "head.title": 2,
+    "defaultOpen": 2,
+    "navigation": 2
+  },
+  "code": {
+    "blocks": 1640,
+    "withProseComments": 413,
+    "lines": 13041,
+    "commentLines": 803,
+    "byLanguage": {
+      "bash": {
+        "blocks": 179,
+        "withComments": 9
+      },
+      "ts": {
+        "blocks": 839,
+        "withComments": 263
+      },
+      "ini": {
+        "blocks": 7,
+        "withComments": 2
+      },
+      "vue": {
+        "blocks": 384,
+        "withComments": 113
+      },
+      "css": {
+        "blocks": 2,
+        "withComments": 1
+      },
+      "scss": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "sass": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "json": {
+        "blocks": 74,
+        "withComments": 0
+      },
+      "diff": {
+        "blocks": 68,
+        "withComments": 6
+      },
+      "text": {
+        "blocks": 2,
+        "withComments": 0
+      },
+      "html": {
+        "blocks": 36,
+        "withComments": 8
+      },
+      "tsx": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "js": {
+        "blocks": 32,
+        "withComments": 9
+      },
+      "md": {
+        "blocks": 3,
+        "withComments": 0
+      },
+      "dockerfile": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "yaml": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "typescript": {
+        "blocks": 1,
+        "withComments": 1
+      },
+      "json5": {
+        "blocks": 2,
+        "withComments": 1
+      },
+      "terminal": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "txt": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "jsonc": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "markdown": {
+        "blocks": 1,
+        "withComments": 0
+      },
+      "(none)": {
+        "blocks": 2,
+        "withComments": 0
+      }
+    }
+  },
+  "main": {
+    "segments": 10664,
+    "byKind": {
+      "paragraph": 3193,
+      "heading": 2041,
+      "table-cell": 2034,
+      "list-item": 1633,
+      "component-slot": 819,
+      "frontmatter": 609,
+      "code-label": 154,
+      "prop": 124,
+      "navigation": 38,
+      "image-alt": 15,
+      "blockquote": 4
+    },
+    "wordsByKind": {
+      "paragraph": 65814,
+      "component-slot": 16132,
+      "list-item": 15754,
+      "table-cell": 6871,
+      "heading": 3622,
+      "frontmatter": 3542,
+      "prop": 663,
+      "code-label": 214,
+      "image-alt": 98,
+      "navigation": 80,
+      "blockquote": 73
+    },
+    "words": 112863,
+    "markdownUnits": 9742,
+    "placeholderBuckets": {
+      "0": 3932,
+      "1": 3711,
+      "2": 1093,
+      "3-5": 856,
+      "6+": 150
+    },
+    "placeholderTypes": {
+      "code": 8224,
+      "link": 1738,
+      "break": 43,
+      "component": 38,
+      "other": 18,
+      "image": 11,
+      "html": 2
+    },
+    "placeholderOnly": {
+      "count": 1584,
+      "byKind": {
+        "table-cell": 1142,
+        "heading": 356,
+        "list-item": 71,
+        "paragraph": 15
+      },
+      "examples": [
+        "`runtimeConfig`",
+        "`app.config`",
+        "~~`nitro.config.ts`~~",
+        "~~`postcss.config.js`~~",
+        "~~`vite.config.ts`~~",
+        "~~`webpack.config.ts`~~",
+        "`tsconfig.json`",
+        "`eslint.config.js`"
+      ]
+    },
+    "withEscapes": 67,
+    "escapeExamples": [
+      "{0}: Overrides the consola log level for the server subprocess. (use NUXT\\_TEST\\_LOG\\_LEVEL environment variable to override)",
+      "1\\. Migrate to use Vite plugins",
+      "2\\. Migrate Vite plugins to use environments",
+      "By always mocking these compiler dependencies, the default server bundle size is reduced by approximately 860KB (\\~59%).",
+      "1\\. VS Code Prompt",
+      "2\\. Command Palette"
+    ],
+    "longest": [
+      {
+        "words": 130,
+        "kind": "table-cell",
+        "file": "docs/4.api/2.composables/use-cookie.md",
+        "placeholders": 9,
+        "start": "Expiration date for the cookie, or a getter that returns one. When a function is provided, it is eva"
+      },
+      {
+        "words": 106,
+        "kind": "component-slot",
+        "file": "docs/3.guide/6.going-further/1.experimental-features.md",
+        "placeholders": 3,
+        "start": "**Route styles are streamed, JS hints are entry-only.** The shell is flushed before the route render"
+      },
+      {
+        "words": 102,
+        "kind": "paragraph",
+        "file": "docs/2.directory-structure/1.app/3.app-config.md",
+        "placeholders": 9,
+        "start": "The fully inferred type is only available in app code (components, composables, plugins and so on). "
+      },
+      {
+        "words": 101,
+        "kind": "component-slot",
+        "file": "docs/4.api/2.composables/use-async-data.md",
+        "placeholders": 9,
+        "start": "You do not need to {0} {1}. On the server, Nuxt waits for the promise to resolve before rendering in"
+      },
+      {
+        "words": 101,
+        "kind": "component-slot",
+        "file": "docs/4.api/2.composables/use-fetch.md",
+        "placeholders": 9,
+        "start": "You do not need to {0} {1}. On the server, Nuxt waits for the promise to resolve before rendering in"
+      }
+    ],
+    "wordsHistogram": {
+      "0-5": 5442,
+      "6-15": 2475,
+      "16-40": 2316,
+      "41-80": 414,
+      "81+": 17
+    },
+    "inlineComponents": {
+      "occurrences": 40,
+      "segments": 39,
+      "byName": {
+        "component:badge (hides text)": 32,
+        "component:read-more": 3,
+        "component:span (hides text)": 2,
+        "html:kbd (hides text)": 2,
+        "component:badge": 1
+      },
+      "hidingText": 36,
+      "hiddenExamples": [
+        ":badge[v4.4]{color=\"info\" size=\"xs\" .align-middle}",
+        ":badge[v4.3]{color=\"info\" size=\"xs\" .align-middle}",
+        ":badge[v4.5]{color=\"info\" size=\"xs\" .align-middle}",
+        "[`static/`]",
+        "[won't pick up environment variables that don't start with `NUXT_` in production]",
+        ":badge[once]{color=\"info\" .align-middle}",
+        "<kbd>Ctrl</kbd>",
+        "<kbd>S</kbd>",
+        ":badge[v4.2]{color=\"info\" size=\"xs\" .align-middle}",
+        ":badge[v3.8]{color=\"info\" size=\"xs\" .align-middle}",
+        ":badge[v3.9]{color=\"info\" size=\"xs\" .align-middle}",
+        ":badge[v4.6]{color=\"info\" size=\"xs\" .align-middle}"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "spike-segmenter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "roundtrip": "node scripts/roundtrip.ts > out/roundtrip.txt",
+    "survey": "node scripts/survey.ts > /dev/null",
+    "dedupe": "node scripts/dedupe.ts > /dev/null",
+    "changes": "node scripts/changes.ts > out/changes.txt",
+    "apply": "node scripts/apply-demo.ts > /dev/null",
+    "parsers": "node scripts/parser-independence.ts 3.x 4.x HEAD > out/parser-independence.txt",
+    "all": "npm run roundtrip && npm run survey && npm run dedupe && npm run changes && npm run apply && npm run parsers"
+  },
+  "dependencies": {
+    "comark": "^0.8.1",
+    "fastest-levenshtein": "^1.0.16",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdc": "^3.11.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "yaml": "^2.9.1"
+  }
+}

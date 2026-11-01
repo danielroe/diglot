@@ -1,0 +1,1694 @@
+{
+ "options": {
+  "glossary": true,
+  "context": "none",
+  "batchSize": 1,
+  "final": true,
+  "locale": "fr"
+ },
+ "model": "anthropic/claude-sonnet-5.5",
+ "segments": [
+  {
+   "id": "4.api/6.nuxt-config.md#510",
+   "kind": "paragraph",
+   "source": "You can extend the generated tsconfig files with shared options using this option. `compilerOptions` apply to all generated tsconfigs (`.nuxt/tsconfig.app.json`, `.nuxt/tsconfig.server.json`, `.nuxt/tsconfig.node.json` and `.nuxt/tsconfig.shared.json`), while `include`, `exclude` and `vueCompilerOptions` apply only to `.nuxt/tsconfig.app.json` (and the legacy `.nuxt/tsconfig.json`). Two groups of `compilerOptions` are exceptions: DOM- and Vue-specific options (such as `lib`, `jsx` and `jsxImportSource`) apply only to `.nuxt/tsconfig.app.json`, and `types`, `paths` and `noEmit` are managed by Nuxt per context, so they cannot be set globally for the `node`, `shared` and `server` tsconfigs. Use `appTsConfig`, `serverTsConfig`, `nodeTsConfig` or `sharedTsConfig` for context-specific overrides; they take precedence over this option.",
+   "sourceMasked": "You can extend the generated tsconfig files with shared options using this option. {0} apply to all generated tsconfigs ({1}, {2}, {3} and {4}), while {5}, {6} and {7} apply only to {1} (and the legacy {8}). Two groups of {0} are exceptions: DOM- and Vue-specific options (such as {9}, {10} and {11}) apply only to {1}, and {12}, {13} and {14} are managed by Nuxt per context, so they cannot be set globally for the {15}, {16} and {17} tsconfigs. Use {18}, {19}, {20} or {21} for context-specific overrides; they take precedence over this option.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`compilerOptions`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`.nuxt/tsconfig.app.json`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`.nuxt/tsconfig.server.json`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`.nuxt/tsconfig.node.json`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`.nuxt/tsconfig.shared.json`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`include`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`exclude`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`vueCompilerOptions`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`.nuxt/tsconfig.json`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`lib`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`jsx`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`jsxImportSource`"
+    },
+    {
+     "id": 12,
+     "kind": "code",
+     "value": "`types`"
+    },
+    {
+     "id": 13,
+     "kind": "code",
+     "value": "`paths`"
+    },
+    {
+     "id": 14,
+     "kind": "code",
+     "value": "`noEmit`"
+    },
+    {
+     "id": 15,
+     "kind": "code",
+     "value": "`node`"
+    },
+    {
+     "id": 16,
+     "kind": "code",
+     "value": "`shared`"
+    },
+    {
+     "id": 17,
+     "kind": "code",
+     "value": "`server`"
+    },
+    {
+     "id": 18,
+     "kind": "code",
+     "value": "`appTsConfig`"
+    },
+    {
+     "id": 19,
+     "kind": "code",
+     "value": "`serverTsConfig`"
+    },
+    {
+     "id": 20,
+     "kind": "code",
+     "value": "`nodeTsConfig`"
+    },
+    {
+     "id": 21,
+     "kind": "code",
+     "value": "`sharedTsConfig`"
+    }
+   ],
+   "targetMasked": "Cette option vous permet d'étendre les fichiers tsconfig générés avec des options partagées. {0} s'appliquent à tous les tsconfig générés ({1}, {2}, {3} et {4}), tandis que {5}, {6} et {7} s'appliquent uniquement à {1} (et à l'ancien {8}). Deux groupes de {0} font exception : les options spécifiques au DOM et à Vue (telles que {9}, {10} et {11}) s'appliquent uniquement à {1}, et {12}, {13} et {14} sont gérées par Nuxt selon le contexte, elles ne peuvent donc pas être définies globalement pour les tsconfig {15}, {16} et {17}. Utilisez {18}, {19}, {20} ou {21} pour des surcharges propres à un contexte ; elles ont priorité sur cette option.",
+   "target": "Cette option vous permet d'étendre les fichiers tsconfig générés avec des options partagées. `compilerOptions` s'appliquent à tous les tsconfig générés (`.nuxt/tsconfig.app.json`, `.nuxt/tsconfig.server.json`, `.nuxt/tsconfig.node.json` et `.nuxt/tsconfig.shared.json`), tandis que `include`, `exclude` et `vueCompilerOptions` s'appliquent uniquement à `.nuxt/tsconfig.app.json` (et à l'ancien `.nuxt/tsconfig.json`). Deux groupes de `compilerOptions` font exception : les options spécifiques au DOM et à Vue (telles que `lib`, `jsx` et `jsxImportSource`) s'appliquent uniquement à `.nuxt/tsconfig.app.json`, et `types`, `paths` et `noEmit` sont gérées par Nuxt selon le contexte, elles ne peuvent donc pas être définies globalement pour les tsconfig `node`, `shared` et `server`. Utilisez `appTsConfig`, `serverTsConfig`, `nodeTsConfig` ou `sharedTsConfig` pour des surcharges propres à un contexte ; elles ont priorité sur cette option.",
+   "qa": []
+  },
+  {
+   "id": "3.guide/6.going-further/5.server-imports.md#8",
+   "kind": "paragraph",
+   "source": "Types are exported alongside the utilities: `RequestEvent`, `RequestEventContext`, `NuxtRequestEvent`, `EventHandler`, `AppRouteRules`, `ServerRoutes`, `CorsOptions`, `ValidateResult`, `NuxtError`, `NuxtErrorDetails`, `NuxtErrorJSON`, `NuxtErrorLike`, `Session`, `SessionConfig`, `SessionData`, `SessionEvent`, `SessionManager`, `SessionPassword` and `SessionUpdate`.",
+   "sourceMasked": "Types are exported alongside the utilities: {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17} and {18}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`RequestEvent`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`RequestEventContext`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`NuxtRequestEvent`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`EventHandler`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`AppRouteRules`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`ServerRoutes`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`CorsOptions`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`ValidateResult`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`NuxtError`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`NuxtErrorDetails`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`NuxtErrorJSON`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`NuxtErrorLike`"
+    },
+    {
+     "id": 12,
+     "kind": "code",
+     "value": "`Session`"
+    },
+    {
+     "id": 13,
+     "kind": "code",
+     "value": "`SessionConfig`"
+    },
+    {
+     "id": 14,
+     "kind": "code",
+     "value": "`SessionData`"
+    },
+    {
+     "id": 15,
+     "kind": "code",
+     "value": "`SessionEvent`"
+    },
+    {
+     "id": 16,
+     "kind": "code",
+     "value": "`SessionManager`"
+    },
+    {
+     "id": 17,
+     "kind": "code",
+     "value": "`SessionPassword`"
+    },
+    {
+     "id": 18,
+     "kind": "code",
+     "value": "`SessionUpdate`"
+    }
+   ],
+   "targetMasked": "Les types sont exportés avec les utilitaires : {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17} et {18}.",
+   "target": "Les types sont exportés avec les utilitaires : `RequestEvent`, `RequestEventContext`, `NuxtRequestEvent`, `EventHandler`, `AppRouteRules`, `ServerRoutes`, `CorsOptions`, `ValidateResult`, `NuxtError`, `NuxtErrorDetails`, `NuxtErrorJSON`, `NuxtErrorLike`, `Session`, `SessionConfig`, `SessionData`, `SessionEvent`, `SessionManager`, `SessionPassword` et `SessionUpdate`.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/3.tsconfig.md#8",
+   "kind": "callout",
+   "source": "Most `compilerOptions` set in `typescript.tsConfig` are shared with every context, but a few are not. DOM- and Vue-specific options (such as `lib`, `jsx` and `jsxImportSource`) only make sense for your application code, so they are applied to `tsconfig.app.json` alone. Nuxt also manages `types`, `paths` and `noEmit` per context (the `node`, `shared` and `server` configs deliberately emit nothing and scan no ambient types), so setting these in `typescript.tsConfig` will not change them. Use the matching per-context option (`appTsConfig`, `nodeTsConfig`, `sharedTsConfig` or `serverTsConfig`) when you need to override them.",
+   "sourceMasked": "Most {0} set in {1} are shared with every context, but a few are not. DOM- and Vue-specific options (such as {2}, {3} and {4}) only make sense for your application code, so they are applied to {5} alone. Nuxt also manages {6}, {7} and {8} per context (the {9}, {10} and {11} configs deliberately emit nothing and scan no ambient types), so setting these in {1} will not change them. Use the matching per-context option ({12}, {13}, {14} or {15}) when you need to override them.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`compilerOptions`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`typescript.tsConfig`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`lib`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`jsx`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`jsxImportSource`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`tsconfig.app.json`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`types`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`paths`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`noEmit`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`node`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`shared`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`server`"
+    },
+    {
+     "id": 12,
+     "kind": "code",
+     "value": "`appTsConfig`"
+    },
+    {
+     "id": 13,
+     "kind": "code",
+     "value": "`nodeTsConfig`"
+    },
+    {
+     "id": 14,
+     "kind": "code",
+     "value": "`sharedTsConfig`"
+    },
+    {
+     "id": 15,
+     "kind": "code",
+     "value": "`serverTsConfig`"
+    }
+   ],
+   "targetMasked": "La plupart des {0} définis dans {1} sont partagés avec tous les contextes, mais quelques-uns ne le sont pas. Les options spécifiques au DOM et à Vue (telles que {2}, {3} et {4}) n'ont de sens que pour le code de votre application ; elles sont donc appliquées uniquement à {5}. Nuxt gère également {6}, {7} et {8} pour chaque contexte (les configurations {9}, {10} et {11} n'émettent volontairement rien et n'analysent aucun type ambiant) ; les définir dans {1} ne les modifiera donc pas. Utilisez l'option correspondante propre à chaque contexte ({12}, {13}, {14} ou {15}) lorsque vous devez les remplacer.",
+   "target": "La plupart des `compilerOptions` définis dans `typescript.tsConfig` sont partagés avec tous les contextes, mais quelques-uns ne le sont pas. Les options spécifiques au DOM et à Vue (telles que `lib`, `jsx` et `jsxImportSource`) n'ont de sens que pour le code de votre application ; elles sont donc appliquées uniquement à `tsconfig.app.json`. Nuxt gère également `types`, `paths` et `noEmit` pour chaque contexte (les configurations `node`, `shared` et `server` n'émettent volontairement rien et n'analysent aucun type ambiant) ; les définir dans `typescript.tsConfig` ne les modifiera donc pas. Utilisez l'option correspondante propre à chaque contexte (`appTsConfig`, `nodeTsConfig`, `sharedTsConfig` ou `serverTsConfig`) lorsque vous devez les remplacer.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/index.md#6",
+   "kind": "paragraph",
+   "source": "The `app/` directory is the main directory of the Nuxt application. It contains the following subdirectories:\n- [`assets/`](/docs/directory-structure/app/assets): website's assets that the build tool (Vite or webpack) will process\n- [`components/`](/docs/directory-structure/app/components): Vue components of the application\n- [`composables/`](/docs/directory-structure/app/composables): add your Vue composables\n- [`layouts/`](/docs/directory-structure/app/layouts): Vue components that wrap around your pages and avoid re-rendering between pages\n- [`middleware/`](/docs/directory-structure/app/middleware): run code before navigating to a particular route\n- [`pages/`](/docs/directory-structure/app/pages): file-based routing to create routes within your web application\n- [`plugins/`](/docs/directory-structure/app/plugins): use Vue plugins and more at the creation of your Nuxt application\n- [`utils/`](/docs/directory-structure/app/utils): add functions throughout your application that can be used in your components, composables, and pages.",
+   "sourceMasked": "The {0} directory is the main directory of the Nuxt application. It contains the following subdirectories:\n- [{1}]({2}): website's assets that the build tool (Vite or webpack) will process\n- [{3}]({4}): Vue components of the application\n- [{5}]({6}): add your Vue composables\n- [{7}]({8}): Vue components that wrap around your pages and avoid re-rendering between pages\n- [{9}]({10}): run code before navigating to a particular route\n- [{11}]({12}): file-based routing to create routes within your web application\n- [{13}]({14}): use Vue plugins and more at the creation of your Nuxt application\n- [{15}]({16}): add functions throughout your application that can be used in your components, composables, and pages.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`app/`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`assets/`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/assets"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`components/`"
+    },
+    {
+     "id": 4,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/components"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`composables/`"
+    },
+    {
+     "id": 6,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/composables"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`layouts/`"
+    },
+    {
+     "id": 8,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/layouts"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`middleware/`"
+    },
+    {
+     "id": 10,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/middleware"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`pages/`"
+    },
+    {
+     "id": 12,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/pages"
+    },
+    {
+     "id": 13,
+     "kind": "code",
+     "value": "`plugins/`"
+    },
+    {
+     "id": 14,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/plugins"
+    },
+    {
+     "id": 15,
+     "kind": "code",
+     "value": "`utils/`"
+    },
+    {
+     "id": 16,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/utils"
+    }
+   ],
+   "targetMasked": "Le répertoire {0} est le répertoire principal de l'application Nuxt. Il contient les sous-répertoires suivants :\n- [{1}]({2}) : les ressources du site web que l'outil de build (Vite ou webpack) va traiter\n- [{3}]({4}) : les composants Vue de l'application\n- [{5}]({6}) : ajoutez vos composables Vue\n- [{7}]({8}) : les composants Vue qui enveloppent vos pages et évitent un nouveau rendu entre les pages\n- [{9}]({10}) : exécutez du code avant de naviguer vers une route donnée\n- [{11}]({12}) : routage basé sur les fichiers pour créer des routes dans votre application web\n- [{13}]({14}) : utilisez des plugins Vue et plus encore lors de la création de votre application Nuxt\n- [{15}]({16}) : ajoutez des fonctions dans toute votre application, utilisables dans vos composants, composables et pages.",
+   "target": "Le répertoire `app/` est le répertoire principal de l'application Nuxt. Il contient les sous-répertoires suivants :\n- [`assets/`](/docs/directory-structure/app/assets) : les ressources du site web que l'outil de build (Vite ou webpack) va traiter\n- [`components/`](/docs/directory-structure/app/components) : les composants Vue de l'application\n- [`composables/`](/docs/directory-structure/app/composables) : ajoutez vos composables Vue\n- [`layouts/`](/docs/directory-structure/app/layouts) : les composants Vue qui enveloppent vos pages et évitent un nouveau rendu entre les pages\n- [`middleware/`](/docs/directory-structure/app/middleware) : exécutez du code avant de naviguer vers une route donnée\n- [`pages/`](/docs/directory-structure/app/pages) : routage basé sur les fichiers pour créer des routes dans votre application web\n- [`plugins/`](/docs/directory-structure/app/plugins) : utilisez des plugins Vue et plus encore lors de la création de votre application Nuxt\n- [`utils/`](/docs/directory-structure/app/utils) : ajoutez des fonctions dans toute votre application, utilisables dans vos composants, composables et pages.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/08.seo-meta.md#7",
+   "kind": "callout",
+   "source": "When you set [`app.cdnURL`](/docs/api/nuxt-config#cdnurl), assets in your [`public/`](/docs/directory-structure/public) directory (including `favicon.ico`) are served from that CDN. Nuxt resolves public assets against `cdnURL`, falling back to `app.baseURL`. However, a static `app.head` link such as `href: '/favicon.ico'` above is a literal path and is **not** resolved against `cdnURL`. To point the favicon at the resolved location, build the `href` from runtime config with [`useHead()`](/docs/api/composables/use-head) in `app.vue`:",
+   "sourceMasked": "When you set [{0}]({1}), assets in your [{2}]({3}) directory (including {4}) are served from that CDN. Nuxt resolves public assets against {5}, falling back to {6}. However, a static {7} link such as {8} above is a literal path and is **not** resolved against {5}. To point the favicon at the resolved location, build the {9} from runtime config with [{10}]({11}) in {12}:",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`app.cdnURL`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/nuxt-config#cdnurl"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`public/`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/public"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`favicon.ico`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`cdnURL`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`app.baseURL`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`app.head`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`href: '/favicon.ico'`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`href`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`useHead()`"
+    },
+    {
+     "id": 11,
+     "kind": "url",
+     "value": "/docs/api/composables/use-head"
+    },
+    {
+     "id": 12,
+     "kind": "code",
+     "value": "`app.vue`"
+    }
+   ],
+   "targetMasked": "Lorsque vous définissez [{0}]({1}), les assets de votre répertoire [{2}]({3}) (y compris {4}) sont servis depuis ce CDN. Nuxt résout les assets publics par rapport à {5}, avec {6} comme valeur de repli. Toutefois, un lien statique {7} tel que {8} ci-dessus est un chemin littéral et n'est **pas** résolu par rapport à {5}. Pour faire pointer le favicon vers l'emplacement résolu, construisez {9} à partir de la runtime config avec [{10}]({11}) dans {12} :",
+   "target": "Lorsque vous définissez [`app.cdnURL`](/docs/api/nuxt-config#cdnurl), les assets de votre répertoire [`public/`](/docs/directory-structure/public) (y compris `favicon.ico`) sont servis depuis ce CDN. Nuxt résout les assets publics par rapport à `cdnURL`, avec `app.baseURL` comme valeur de repli. Toutefois, un lien statique `app.head` tel que `href: '/favicon.ico'` ci-dessus est un chemin littéral et n'est **pas** résolu par rapport à `cdnURL`. Pour faire pointer le favicon vers l'emplacement résolu, construisez `href` à partir de la runtime config avec [`useHead()`](/docs/api/composables/use-head) dans `app.vue` :",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/create-use-async-data.md#9",
+   "kind": "paragraph",
+   "source": "`createUseAsyncData` accepts all the same options as [`useAsyncData`](/docs/api/composables/use-async-data#parameters), including `server`, `lazy`, `immediate`, `default`, `transform`, `pick`, `getCachedData`, `deep`, `dedupe`, `timeout`, and `watch`.",
+   "sourceMasked": "{0} accepts all the same options as [{1}]({2}), including {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, and {13}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`createUseAsyncData`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data#parameters"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`server`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`lazy`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`immediate`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`default`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`transform`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`pick`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`getCachedData`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`deep`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`dedupe`"
+    },
+    {
+     "id": 12,
+     "kind": "code",
+     "value": "`timeout`"
+    },
+    {
+     "id": 13,
+     "kind": "code",
+     "value": "`watch`"
+    }
+   ],
+   "targetMasked": "{0} accepte toutes les mêmes options que [{1}]({2}), notamment {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12} et {13}.",
+   "target": "`createUseAsyncData` accepte toutes les mêmes options que [`useAsyncData`](/docs/api/composables/use-async-data#parameters), notamment `server`, `lazy`, `immediate`, `default`, `transform`, `pick`, `getCachedData`, `deep`, `dedupe`, `timeout` et `watch`.",
+   "qa": []
+  },
+  {
+   "id": "4.api/3.utils/define-nuxt-plugin.md#5",
+   "kind": "paragraph",
+   "source": "**plugin**: A plugin can be defined in two ways:\n1. **Function Plugin**: A function that receives the [`NuxtApp`](/docs/guide/going-further/internals#the-nuxtapp-interface) instance and can return a promise with a potential object with a [`provide`](/docs/directory-structure/app/plugins#providing-helpers) property if you want to provide a helper on [`NuxtApp`](/docs/guide/going-further/internals#the-nuxtapp-interface) instance.\n2. **Object Plugin**: An object that can include various properties to configure the plugin's behavior, such as `name`, `enforce`, `dependsOn`, `order`, `parallel`, `setup`, `hooks`, and `env`.",
+   "sourceMasked": "**plugin**: A plugin can be defined in two ways:\n1. **Function Plugin**: A function that receives the [{0}]({1}) instance and can return a promise with a potential object with a [{2}]({3}) property if you want to provide a helper on [{0}]({1}) instance.\n2. **Object Plugin**: An object that can include various properties to configure the plugin's behavior, such as {4}, {5}, {6}, {7}, {8}, {9}, {10}, and {11}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`NuxtApp`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/guide/going-further/internals#the-nuxtapp-interface"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`provide`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/plugins#providing-helpers"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`name`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`enforce`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`dependsOn`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`order`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`parallel`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`setup`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`hooks`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`env`"
+    }
+   ],
+   "targetMasked": "**plugin** : un plugin peut être défini de deux manières :\n1. **Plugin fonction** : une fonction qui reçoit l'instance [{0}]({1}) et qui peut retourner une promesse contenant éventuellement un objet avec une propriété [{2}]({3}) si vous souhaitez fournir un utilitaire sur l'instance [{0}]({1}).\n2. **Plugin objet** : un objet qui peut inclure diverses propriétés pour configurer le comportement du plugin, telles que {4}, {5}, {6}, {7}, {8}, {9}, {10} et {11}.",
+   "target": "**plugin** : un plugin peut être défini de deux manières :\n1. **Plugin fonction** : une fonction qui reçoit l'instance [`NuxtApp`](/docs/guide/going-further/internals#the-nuxtapp-interface) et qui peut retourner une promesse contenant éventuellement un objet avec une propriété [`provide`](/docs/directory-structure/app/plugins#providing-helpers) si vous souhaitez fournir un utilitaire sur l'instance [`NuxtApp`](/docs/guide/going-further/internals#the-nuxtapp-interface).\n2. **Plugin objet** : un objet qui peut inclure diverses propriétés pour configurer le comportement du plugin, telles que `name`, `enforce`, `dependsOn`, `order`, `parallel`, `setup`, `hooks` et `env`.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#25",
+   "kind": "callout",
+   "source": "The `await` and `lazy` are independent, and on the client awaiting a `lazy` function won't have the effect you expect. If you `await` a `lazy` call (for example `await useLazyFetch(...)` or `await useFetch(..., { lazy: true })`), it still blocks server rendering as usual, but on **client-side navigation** the `await` resolves immediately without waiting for the request. `data` will still be at its default value right after the `await`, and you must handle the loading state via `status`. If you actually want the navigation to wait for the data, drop the `lazy` option rather than relying on `await`.",
+   "sourceMasked": "The {0} and {1} are independent, and on the client awaiting a {1} function won't have the effect you expect. If you {0} a {1} call (for example {2} or {3}), it still blocks server rendering as usual, but on **client-side navigation** the {0} resolves immediately without waiting for the request. {4} will still be at its default value right after the {0}, and you must handle the loading state via {5}. If you actually want the navigation to wait for the data, drop the {1} option rather than relying on {0}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`await`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`lazy`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`await useLazyFetch(...)`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`await useFetch(..., { lazy: true })`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`data`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`status`"
+    }
+   ],
+   "targetMasked": "{0} et {1} sont indépendants, et côté client, attendre une fonction {1} n'aura pas l'effet escompté. Si vous utilisez {0} sur un appel {1} (par exemple {2} ou {3}), cela bloque toujours le rendu serveur comme d'habitude, mais lors d'une **navigation côté client**, {0} se résout immédiatement sans attendre la requête. {4} aura encore sa valeur par défaut juste après {0}, et vous devez gérer l'état de chargement via {5}. Si vous voulez réellement que la navigation attende les données, supprimez l'option {1} plutôt que de vous appuyer sur {0}.",
+   "target": "`await` et `lazy` sont indépendants, et côté client, attendre une fonction `lazy` n'aura pas l'effet escompté. Si vous utilisez `await` sur un appel `lazy` (par exemple `await useLazyFetch(...)` ou `await useFetch(..., { lazy: true })`), cela bloque toujours le rendu serveur comme d'habitude, mais lors d'une **navigation côté client**, `await` se résout immédiatement sans attendre la requête. `data` aura encore sa valeur par défaut juste après `await`, et vous devez gérer l'état de chargement via `status`. Si vous voulez réellement que la navigation attende les données, supprimez l'option `lazy` plutôt que de vous appuyer sur `await`.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/index.md#12",
+   "kind": "paragraph",
+   "source": "The [`server/`](/docs/directory-structure/server) directory is the directory that contains the server-side code of the Nuxt application. It contains the following subdirectories:\n- [`api/`](/docs/directory-structure/server#server-routes): contains the API routes of the application.\n- [`routes/`](/docs/directory-structure/server#server-routes): contains the server routes of the application (e.g. dynamic `/sitemap.xml`).\n- [`middleware/`](/docs/directory-structure/server#server-middleware): run code before a server route is processed\n- [`plugins/`](/docs/directory-structure/server#server-plugins): use plugins and more at the creation of the Nuxt server\n- [`utils/`](/docs/directory-structure/server#server-utilities): add functions throughout your application that can be used in your server  code.",
+   "sourceMasked": "The [{0}]({1}) directory is the directory that contains the server-side code of the Nuxt application. It contains the following subdirectories:\n- [{2}]({3}): contains the API routes of the application.\n- [{4}]({3}): contains the server routes of the application (e.g. dynamic {5}).\n- [{6}]({7}): run code before a server route is processed\n- [{8}]({9}): use plugins and more at the creation of the Nuxt server\n- [{10}]({11}): add functions throughout your application that can be used in your server  code.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`server/`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/directory-structure/server"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`api/`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/server#server-routes"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`routes/`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`/sitemap.xml`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`middleware/`"
+    },
+    {
+     "id": 7,
+     "kind": "url",
+     "value": "/docs/directory-structure/server#server-middleware"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`plugins/`"
+    },
+    {
+     "id": 9,
+     "kind": "url",
+     "value": "/docs/directory-structure/server#server-plugins"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`utils/`"
+    },
+    {
+     "id": 11,
+     "kind": "url",
+     "value": "/docs/directory-structure/server#server-utilities"
+    }
+   ],
+   "targetMasked": "Le répertoire [{0}]({1}) est le répertoire qui contient le code côté serveur de l'application Nuxt. Il contient les sous-répertoires suivants :\n- [{2}]({3}) : contient les routes d'API de l'application.\n- [{4}]({3}) : contient les routes serveur de l'application (par ex. {5} dynamiques).\n- [{6}]({7}) : exécutez du code avant qu'une route serveur ne soit traitée\n- [{8}]({9}) : utilisez des plugins et plus encore lors de la création du serveur Nuxt\n- [{10}]({11}) : ajoutez des fonctions dans toute votre application, utilisables dans votre code serveur.",
+   "target": "Le répertoire [`server/`](/docs/directory-structure/server) est le répertoire qui contient le code côté serveur de l'application Nuxt. Il contient les sous-répertoires suivants :\n- [`api/`](/docs/directory-structure/server#server-routes) : contient les routes d'API de l'application.\n- [`routes/`](/docs/directory-structure/server#server-routes) : contient les routes serveur de l'application (par ex. `/sitemap.xml` dynamiques).\n- [`middleware/`](/docs/directory-structure/server#server-middleware) : exécutez du code avant qu'une route serveur ne soit traitée\n- [`plugins/`](/docs/directory-structure/server#server-plugins) : utilisez des plugins et plus encore lors de la création du serveur Nuxt\n- [`utils/`](/docs/directory-structure/server#server-utilities) : ajoutez des fonctions dans toute votre application, utilisables dans votre code serveur.",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/create-use-fetch.md#9",
+   "kind": "paragraph",
+   "source": "`createUseFetch` accepts all the same options as [`useFetch`](/docs/api/composables/use-fetch#parameters), including `baseURL`, `headers`, `query`, `onRequest`, `onResponse`, `server`, `lazy`, `transform`, `getCachedData`, and more.",
+   "sourceMasked": "{0} accepts all the same options as [{1}]({2}), including {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, and more.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`createUseFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/api/composables/use-fetch#parameters"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`baseURL`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`headers`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`query`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`onRequest`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`onResponse`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`server`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`lazy`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`transform`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`getCachedData`"
+    }
+   ],
+   "targetMasked": "{0} accepte toutes les mêmes options que [{1}]({2}), notamment {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, et bien d'autres.",
+   "target": "`createUseFetch` accepte toutes les mêmes options que [`useFetch`](/docs/api/composables/use-fetch#parameters), notamment `baseURL`, `headers`, `query`, `onRequest`, `onResponse`, `server`, `lazy`, `transform`, `getCachedData`, et bien d'autres.",
+   "qa": []
+  },
+  {
+   "id": "4.api/6.nuxt-config.md#420",
+   "kind": "paragraph",
+   "source": "`\"nitro\"` and `\"vite\"` are shorthands for `@nuxt/nitro-server` and `@nuxt/vite-server`. The latter is experimental and implemented with Vite alone: with `ssr: false` it produces a static SPA, and with SSR enabled it builds a server from the Nuxt SSR renderer whose entry exports a web-standard `{ fetch }` (`.output/server/index.mjs` serves the static output in front of it, and `nuxt preview` runs it). Every dependency is bundled into that output, so it deploys without `node_modules`. `nuxt generate` crawls that server at the end of the build and writes a static `.output/public`. It ships no server runtime, so server routes, route rules other than `prerender`, inlined styles and server components are unavailable, and modules that need a server will not work.",
+   "sourceMasked": "{0} and {1} are shorthands for {2} and {3}. The latter is experimental and implemented with Vite alone: with {4} it produces a static SPA, and with SSR enabled it builds a server from the Nuxt SSR renderer whose entry exports a web-standard {5} ({6} serves the static output in front of it, and {7} runs it). Every dependency is bundled into that output, so it deploys without {8}. {9} crawls that server at the end of the build and writes a static {10}. It ships no server runtime, so server routes, route rules other than {11}, inlined styles and server components are unavailable, and modules that need a server will not work.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`\"nitro\"`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`\"vite\"`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`@nuxt/nitro-server`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`@nuxt/vite-server`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`ssr: false`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`{ fetch }`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`.output/server/index.mjs`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`nuxt preview`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`node_modules`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`nuxt generate`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`.output/public`"
+    },
+    {
+     "id": 11,
+     "kind": "code",
+     "value": "`prerender`"
+    }
+   ],
+   "targetMasked": "{0} et {1} sont des raccourcis pour {2} et {3}. Ce dernier est expérimental et implémenté uniquement avec Vite : avec {4}, il produit une SPA statique, et avec SSR activé, il construit un serveur à partir du moteur de rendu SSR de Nuxt dont le point d'entrée exporte un {5} conforme aux standards du web ({6} sert la sortie statique devant celui-ci, et {7} l'exécute). Toutes les dépendances sont incluses dans cette sortie, ce qui permet de la déployer sans {8}. {9} parcourt ce serveur à la fin du build et écrit un {10} statique. Il n'embarque aucun runtime serveur : les routes serveur, les règles de route autres que {11}, les styles inlinés et les composants serveur ne sont donc pas disponibles, et les modules qui nécessitent un serveur ne fonctionneront pas.",
+   "target": "`\"nitro\"` et `\"vite\"` sont des raccourcis pour `@nuxt/nitro-server` et `@nuxt/vite-server`. Ce dernier est expérimental et implémenté uniquement avec Vite : avec `ssr: false`, il produit une SPA statique, et avec SSR activé, il construit un serveur à partir du moteur de rendu SSR de Nuxt dont le point d'entrée exporte un `{ fetch }` conforme aux standards du web (`.output/server/index.mjs` sert la sortie statique devant celui-ci, et `nuxt preview` l'exécute). Toutes les dépendances sont incluses dans cette sortie, ce qui permet de la déployer sans `node_modules`. `nuxt generate` parcourt ce serveur à la fin du build et écrit un `.output/public` statique. Il n'embarque aucun runtime serveur : les routes serveur, les règles de route autres que `prerender`, les styles inlinés et les composants serveur ne sont donc pas disponibles, et les modules qui nécessitent un serveur ne fonctionneront pas.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/18.upgrade.md#182",
+   "kind": "paragraph",
+   "source": "`useSession`, `getSession`, `updateSession` and `clearSession` are now part of [`nuxt/server`](/docs/guide/going-further/server-imports#sessions), and are what the auto-imported names resolve to. They seal the session with `iron-webcrypto` on web-standard `Request` and `Response`, so they run under any [`server.builder`](/docs/guide/going-further/builders) rather than only under Nitro.",
+   "sourceMasked": "{0}, {1}, {2} and {3} are now part of [{4}]({5}), and are what the auto-imported names resolve to. They seal the session with {6} on web-standard {7} and {8}, so they run under any [{9}]({10}) rather than only under Nitro.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useSession`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`getSession`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`updateSession`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`clearSession`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`nuxt/server`"
+    },
+    {
+     "id": 5,
+     "kind": "url",
+     "value": "/docs/guide/going-further/server-imports#sessions"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`iron-webcrypto`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`Request`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`Response`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`server.builder`"
+    },
+    {
+     "id": 10,
+     "kind": "url",
+     "value": "/docs/guide/going-further/builders"
+    }
+   ],
+   "targetMasked": "{0}, {1}, {2} et {3} font désormais partie de [{4}]({5}), et correspondent aux noms résolus par l'import automatique. Ils scellent la session avec {6} sur les {7} et {8} standards du web, de sorte qu'ils s'exécutent sous n'importe quel [{9}]({10}) et pas uniquement sous Nitro.",
+   "target": "`useSession`, `getSession`, `updateSession` et `clearSession` font désormais partie de [`nuxt/server`](/docs/guide/going-further/server-imports#sessions), et correspondent aux noms résolus par l'import automatique. Ils scellent la session avec `iron-webcrypto` sur les `Request` et `Response` standards du web, de sorte qu'ils s'exécutent sous n'importe quel [`server.builder`](/docs/guide/going-further/builders) et pas uniquement sous Nitro.",
+   "qa": []
+  },
+  {
+   "id": "3.guide/6.going-further/1.experimental-features.md#254",
+   "kind": "paragraph",
+   "source": "When `pendingWhenIdle` is `false` (the default), `pending` is `true` while a request is in flight and matches `status === 'pending'`. While `status` is `idle`, `pending` stays `false`. You can see this with `{ immediate: false }`, or with `{ server: false }` during server rendering.",
+   "sourceMasked": "When {0} is {1} (the default), {2} is {3} while a request is in flight and matches {4}. While {5} is {6}, {2} stays {1}. You can see this with {7}, or with {8} during server rendering.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`pendingWhenIdle`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`false`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`pending`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`true`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`status === 'pending'`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`status`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`idle`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`{ immediate: false }`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`{ server: false }`"
+    }
+   ],
+   "targetMasked": "Lorsque {0} est {1} (valeur par défaut), {2} est {3} pendant qu'une requête est en cours et correspond à {4}. Tant que {5} est {6}, {2} reste {1}. Vous pouvez le constater avec {7}, ou avec {8} pendant le rendu côté serveur.",
+   "target": "Lorsque `pendingWhenIdle` est `false` (valeur par défaut), `pending` est `true` pendant qu'une requête est en cours et correspond à `status === 'pending'`. Tant que `status` est `idle`, `pending` reste `false`. Vous pouvez le constater avec `{ immediate: false }`, ou avec `{ server: false }` pendant le rendu côté serveur.",
+   "qa": []
+  },
+  {
+   "id": "3.guide/6.going-further/5.server-imports.md#49",
+   "kind": "list-item",
+   "source": "**Server plugins.** `definePlugin()` comes from `nitro`. Inside a plugin, `useServerHooks()` from `nuxt/server` registers the renderer hooks (including `render:html`) and those declared on `NuxtServerHooks`; Nitro's own hooks, such as `request`, `response` and `error`, come from `useNitroHooks()` in `nitro/app`.",
+   "sourceMasked": "**Server plugins.** {0} comes from {1}. Inside a plugin, {2} from {3} registers the renderer hooks (including {4}) and those declared on {5}; Nitro's own hooks, such as {6}, {7} and {8}, come from {9} in {10}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`definePlugin()`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`nitro`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`useServerHooks()`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`nuxt/server`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`render:html`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`NuxtServerHooks`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`request`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`response`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`error`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`useNitroHooks()`"
+    },
+    {
+     "id": 10,
+     "kind": "code",
+     "value": "`nitro/app`"
+    }
+   ],
+   "targetMasked": "**Plugins serveur.** {0} provient de {1}. Dans un plugin, {2} de {3} enregistre les hooks du moteur de rendu (y compris {4}) ainsi que ceux déclarés sur {5} ; les hooks propres à Nitro, tels que {6}, {7} et {8}, proviennent de {9} dans {10}.",
+   "target": "**Plugins serveur.** `definePlugin()` provient de `nitro`. Dans un plugin, `useServerHooks()` de `nuxt/server` enregistre les hooks du moteur de rendu (y compris `render:html`) ainsi que ceux déclarés sur `NuxtServerHooks` ; les hooks propres à Nitro, tels que `request`, `response` et `error`, proviennent de `useNitroHooks()` dans `nitro/app`.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#141",
+   "kind": "paragraph",
+   "source": "When using `useAsyncData` and `useLazyAsyncData` to transfer data fetched on server to the client (as well as anything else that utilizes [the Nuxt payload](/docs/api/composables/use-nuxt-app#payload)), the payload is serialized with [`devalue`](https://github.com/sveltejs/devalue). This allows us to transfer not just basic JSON but also to serialize and revive/deserialize more advanced kinds of data, such as regular expressions, Dates, Map and Set, `ref`, `reactive`, `shallowRef`, `shallowReactive` and `NuxtError` - and more.",
+   "sourceMasked": "When using {0} and {1} to transfer data fetched on server to the client (as well as anything else that utilizes [the Nuxt payload]({2})), the payload is serialized with [{3}]({4}). This allows us to transfer not just basic JSON but also to serialize and revive/deserialize more advanced kinds of data, such as regular expressions, Dates, Map and Set, {5}, {6}, {7}, {8} and {9} - and more.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useLazyAsyncData`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/api/composables/use-nuxt-app#payload"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`devalue`"
+    },
+    {
+     "id": 4,
+     "kind": "url",
+     "value": "https://github.com/sveltejs/devalue"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`ref`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`reactive`"
+    },
+    {
+     "id": 7,
+     "kind": "code",
+     "value": "`shallowRef`"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`shallowReactive`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`NuxtError`"
+    }
+   ],
+   "targetMasked": "Lorsque vous utilisez {0} et {1} pour transférer vers le client des données récupérées côté serveur (ainsi que tout ce qui utilise [le payload (charge utile) de Nuxt]({2})), le payload est sérialisé avec [{3}]({4}). Cela nous permet de transférer non seulement du JSON basique, mais aussi de sérialiser et de restaurer/désérialiser des types de données plus avancés, tels que les expressions régulières, les Dates, Map et Set, {5}, {6}, {7}, {8} et {9}, et bien d'autres.",
+   "target": "Lorsque vous utilisez `useAsyncData` et `useLazyAsyncData` pour transférer vers le client des données récupérées côté serveur (ainsi que tout ce qui utilise [le payload (charge utile) de Nuxt](/docs/api/composables/use-nuxt-app#payload)), le payload est sérialisé avec [`devalue`](https://github.com/sveltejs/devalue). Cela nous permet de transférer non seulement du JSON basique, mais aussi de sérialiser et de restaurer/désérialiser des types de données plus avancés, tels que les expressions régulières, les Dates, Map et Set, `ref`, `reactive`, `shallowRef`, `shallowReactive` et `NuxtError`, et bien d'autres.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.node_modules.md#2",
+   "kind": "paragraph",
+   "source": "The package manager ([`npm`](https://docs.npmjs.com/cli/commands/npm/) or [`yarn`](https://yarnpkg.com) or [`pnpm`](https://pnpm.io/cli/install) or [`bun`](https://bun.com/package-manager) or [`deno`](https://docs.deno.com/runtime/getting_started/installation/)) creates this directory to store the dependencies of your project.",
+   "sourceMasked": "The package manager ([{0}]({1}) or [{2}]({3}) or [{4}]({5}) or [{6}]({7}) or [{8}]({9})) creates this directory to store the dependencies of your project.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`npm`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "https://docs.npmjs.com/cli/commands/npm/"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`yarn`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "https://yarnpkg.com"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`pnpm`"
+    },
+    {
+     "id": 5,
+     "kind": "url",
+     "value": "https://pnpm.io/cli/install"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`bun`"
+    },
+    {
+     "id": 7,
+     "kind": "url",
+     "value": "https://bun.com/package-manager"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`deno`"
+    },
+    {
+     "id": 9,
+     "kind": "url",
+     "value": "https://docs.deno.com/runtime/getting_started/installation/"
+    }
+   ],
+   "targetMasked": "Le gestionnaire de paquets ([{0}]({1}) ou [{2}]({3}) ou [{4}]({5}) ou [{6}]({7}) ou [{8}]({9})) crée ce répertoire pour stocker les dépendances de votre projet.",
+   "target": "Le gestionnaire de paquets ([`npm`](https://docs.npmjs.com/cli/commands/npm/) ou [`yarn`](https://yarnpkg.com) ou [`pnpm`](https://pnpm.io/cli/install) ou [`bun`](https://bun.com/package-manager) ou [`deno`](https://docs.deno.com/runtime/getting_started/installation/)) crée ce répertoire pour stocker les dépendances de votre projet.",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#20",
+   "kind": "paragraph",
+   "source": "A `rel` attribute of `noopener noreferrer` is applied by default to links with a `target` attribute or to absolute links (e.g., links starting with `http://`, `https://`, or `//`).\n- `noopener` solves a [security bug](https://mathiasbynens.github.io/rel-noopener/) in older browsers.\n- `noreferrer` improves privacy for your users by not sending the `Referer` header to the linked site.",
+   "sourceMasked": "A {0} attribute of {1} is applied by default to links with a {2} attribute or to absolute links (e.g., links starting with {3}, {4}, or {5}).\n- {6} solves a [security bug]({7}) in older browsers.\n- {8} improves privacy for your users by not sending the {9} header to the linked site.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`rel`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`noopener noreferrer`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`target`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`http://`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`https://`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`//`"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`noopener`"
+    },
+    {
+     "id": 7,
+     "kind": "url",
+     "value": "https://mathiasbynens.github.io/rel-noopener/"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`noreferrer`"
+    },
+    {
+     "id": 9,
+     "kind": "code",
+     "value": "`Referer`"
+    }
+   ],
+   "targetMasked": "Un attribut {0} de {1} est appliqué par défaut aux liens dotés d'un attribut {2} ou aux liens absolus (par exemple, les liens commençant par {3}, {4} ou {5}).\n- {6} corrige une [faille de sécurité]({7}) dans les anciens navigateurs.\n- {8} améliore la confidentialité de vos utilisateurs en n'envoyant pas l'en-tête {9} au site vers lequel pointe le lien.",
+   "target": "Un attribut `rel` de `noopener noreferrer` est appliqué par défaut aux liens dotés d'un attribut `target` ou aux liens absolus (par exemple, les liens commençant par `http://`, `https://` ou `//`).\n- `noopener` corrige une [faille de sécurité](https://mathiasbynens.github.io/rel-noopener/) dans les anciens navigateurs.\n- `noreferrer` améliore la confidentialité de vos utilisateurs en n'envoyant pas l'en-tête `Referer` au site vers lequel pointe le lien.",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-async-data.md#6",
+   "kind": "callout",
+   "source": "You do not need to `await` `useAsyncData`. On the server, Nuxt waits for the promise to resolve before rendering in either case, so the returned HTML always contains the data. The `await` affects what happens after the call: with it, execution pauses until `data` is populated, and client-side navigation is blocked until the data is ready; without it, execution continues immediately, `data` starts as its default value until the request resolves, and on client-side navigation you handle the loading and error states yourself using the returned `status` and `error` refs. This has a similar effect to the [`lazy`](#parameters) option, though `lazy` is the explicit way to opt into non-blocking navigation.",
+   "sourceMasked": "You do not need to {0} {1}. On the server, Nuxt waits for the promise to resolve before rendering in either case, so the returned HTML always contains the data. The {0} affects what happens after the call: with it, execution pauses until {2} is populated, and client-side navigation is blocked until the data is ready; without it, execution continues immediately, {2} starts as its default value until the request resolves, and on client-side navigation you handle the loading and error states yourself using the returned {3} and {4} refs. This has a similar effect to the [{5}]({6}) option, though {5} is the explicit way to opt into non-blocking navigation.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`await`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`data`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`status`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`error`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`lazy`"
+    },
+    {
+     "id": 6,
+     "kind": "url",
+     "value": "#parameters"
+    }
+   ],
+   "targetMasked": "Vous n'avez pas besoin d'utiliser {0} avec {1}. Côté serveur, Nuxt attend dans tous les cas que la promesse soit résolue avant d'effectuer le rendu, si bien que le HTML renvoyé contient toujours les données. Le {0} influe sur ce qui se passe après l'appel : avec lui, l'exécution est suspendue jusqu'à ce que {2} soit renseigné, et la navigation côté client est bloquée tant que les données ne sont pas prêtes ; sans lui, l'exécution continue immédiatement, {2} prend sa valeur par défaut jusqu'à la résolution de la requête, et lors d'une navigation côté client, vous gérez vous-même les états de chargement et d'erreur à l'aide des refs {3} et {4} renvoyées. L'effet est similaire à celui de l'option [{5}]({6}), bien que {5} soit le moyen explicite de choisir une navigation non bloquante.",
+   "target": "Vous n'avez pas besoin d'utiliser `await` avec `useAsyncData`. Côté serveur, Nuxt attend dans tous les cas que la promesse soit résolue avant d'effectuer le rendu, si bien que le HTML renvoyé contient toujours les données. Le `await` influe sur ce qui se passe après l'appel : avec lui, l'exécution est suspendue jusqu'à ce que `data` soit renseigné, et la navigation côté client est bloquée tant que les données ne sont pas prêtes ; sans lui, l'exécution continue immédiatement, `data` prend sa valeur par défaut jusqu'à la résolution de la requête, et lors d'une navigation côté client, vous gérez vous-même les états de chargement et d'erreur à l'aide des refs `status` et `error` renvoyées. L'effet est similaire à celui de l'option [`lazy`](#parameters), bien que `lazy` soit le moyen explicite de choisir une navigation non bloquante.",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#6",
+   "kind": "callout",
+   "source": "You do not need to `await` `useFetch`. On the server, Nuxt waits for the promise to resolve before rendering in either case, so the returned HTML always contains the data. The `await` affects what happens after the call: with it, execution pauses until `data` is populated, and client-side navigation is blocked until the data is ready; without it, execution continues immediately, `data` starts as its default value until the request resolves, and on client-side navigation you handle the loading and error states yourself using the returned `status` and `error` refs. This has a similar effect to the [`lazy`](#parameters) option, though `lazy` is the explicit way to opt into non-blocking navigation.",
+   "sourceMasked": "You do not need to {0} {1}. On the server, Nuxt waits for the promise to resolve before rendering in either case, so the returned HTML always contains the data. The {0} affects what happens after the call: with it, execution pauses until {2} is populated, and client-side navigation is blocked until the data is ready; without it, execution continues immediately, {2} starts as its default value until the request resolves, and on client-side navigation you handle the loading and error states yourself using the returned {3} and {4} refs. This has a similar effect to the [{5}]({6}) option, though {5} is the explicit way to opt into non-blocking navigation.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`await`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`data`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`status`"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`error`"
+    },
+    {
+     "id": 5,
+     "kind": "code",
+     "value": "`lazy`"
+    },
+    {
+     "id": 6,
+     "kind": "url",
+     "value": "#parameters"
+    }
+   ],
+   "targetMasked": "Vous n'avez pas besoin de {0} {1}. Côté serveur, Nuxt attend dans tous les cas que la promesse soit résolue avant d'effectuer le rendu, de sorte que le HTML renvoyé contient toujours les données. Le {0} influe sur ce qui se passe après l'appel : avec lui, l'exécution est mise en pause jusqu'à ce que {2} soit renseigné, et la navigation côté client est bloquée tant que les données ne sont pas prêtes ; sans lui, l'exécution se poursuit immédiatement, {2} prend d'abord sa valeur par défaut jusqu'à la résolution de la requête, et lors de la navigation côté client, vous gérez vous-même les états de chargement et d'erreur à l'aide des refs {3} et {4} renvoyées. Cela produit un effet similaire à l'option [{5}]({6}), bien que {5} soit le moyen explicite de choisir une navigation non bloquante.",
+   "target": "Vous n'avez pas besoin de `await` `useFetch`. Côté serveur, Nuxt attend dans tous les cas que la promesse soit résolue avant d'effectuer le rendu, de sorte que le HTML renvoyé contient toujours les données. Le `await` influe sur ce qui se passe après l'appel : avec lui, l'exécution est mise en pause jusqu'à ce que `data` soit renseigné, et la navigation côté client est bloquée tant que les données ne sont pas prêtes ; sans lui, l'exécution se poursuit immédiatement, `data` prend d'abord sa valeur par défaut jusqu'à la résolution de la requête, et lors de la navigation côté client, vous gérez vous-même les états de chargement et d'erreur à l'aide des refs `status` et `error` renvoyées. Cela produit un effet similaire à l'option [`lazy`](#parameters), bien que `lazy` soit le moyen explicite de choisir une navigation non bloquante.",
+   "qa": []
+  },
+  {
+   "id": "4.api/3.utils/refresh-nuxt-data.md#2",
+   "kind": "paragraph",
+   "source": "`refreshNuxtData` is used to refetch all or specific `asyncData` instances, including those from [`useAsyncData`](/docs/api/composables/use-async-data), [`useLazyAsyncData`](/docs/api/composables/use-lazy-async-data), [`useFetch`](/docs/api/composables/use-fetch), and [`useLazyFetch`](/docs/api/composables/use-lazy-fetch).",
+   "sourceMasked": "{0} is used to refetch all or specific {1} instances, including those from [{2}]({3}), [{4}]({5}), [{6}]({7}), and [{8}]({9}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`refreshNuxtData`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`asyncData`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 4,
+     "kind": "code",
+     "value": "`useLazyAsyncData`"
+    },
+    {
+     "id": 5,
+     "kind": "url",
+     "value": "/docs/api/composables/use-lazy-async-data"
+    },
+    {
+     "id": 6,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 7,
+     "kind": "url",
+     "value": "/docs/api/composables/use-fetch"
+    },
+    {
+     "id": 8,
+     "kind": "code",
+     "value": "`useLazyFetch`"
+    },
+    {
+     "id": 9,
+     "kind": "url",
+     "value": "/docs/api/composables/use-lazy-fetch"
+    }
+   ],
+   "targetMasked": "{0} permet de récupérer à nouveau toutes les instances de {1}, ou seulement certaines d'entre elles, y compris celles de [{2}]({3}), [{4}]({5}), [{6}]({7}) et [{8}]({9}).",
+   "target": "`refreshNuxtData` permet de récupérer à nouveau toutes les instances de `asyncData`, ou seulement certaines d'entre elles, y compris celles de [`useAsyncData`](/docs/api/composables/use-async-data), [`useLazyAsyncData`](/docs/api/composables/use-lazy-async-data), [`useFetch`](/docs/api/composables/use-fetch) et [`useLazyFetch`](/docs/api/composables/use-lazy-fetch).",
+   "qa": []
+  }
+ ],
+ "requests": [
+  {
+   "ids": [
+    "4.api/6.nuxt-config.md#510"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2577,
+   "inputTokens": 1504,
+   "outputTokens": 312,
+   "costUsd": 0.006128
+  },
+  {
+   "ids": [
+    "3.guide/6.going-further/5.server-imports.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1526,
+   "inputTokens": 1374,
+   "outputTokens": 115,
+   "costUsd": 0.0038980000000000004
+  },
+  {
+   "ids": [
+    "2.directory-structure/3.tsconfig.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2888,
+   "inputTokens": 1454,
+   "outputTokens": 281,
+   "costUsd": 0.005718000000000001
+  },
+  {
+   "ids": [
+    "2.directory-structure/index.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2830,
+   "inputTokens": 1538,
+   "outputTokens": 362,
+   "costUsd": 0.0066960000000000006
+  },
+  {
+   "ids": [
+    "1.getting-started/08.seo-meta.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2428,
+   "inputTokens": 1419,
+   "outputTokens": 227,
+   "costUsd": 0.005108
+  },
+  {
+   "ids": [
+    "4.api/2.composables/create-use-async-data.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1447,
+   "inputTokens": 1351,
+   "outputTokens": 94,
+   "costUsd": 0.0036420000000000003
+  },
+  {
+   "ids": [
+    "4.api/3.utils/define-nuxt-plugin.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1963,
+   "inputTokens": 1447,
+   "outputTokens": 229,
+   "costUsd": 0.005184
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#25"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 5901,
+   "inputTokens": 1444,
+   "outputTokens": 884,
+   "costUsd": 0.011728
+  },
+  {
+   "ids": [
+    "2.directory-structure/index.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2519,
+   "inputTokens": 1466,
+   "outputTokens": 265,
+   "costUsd": 0.005582
+  },
+  {
+   "ids": [
+    "4.api/2.composables/create-use-fetch.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1280,
+   "inputTokens": 1345,
+   "outputTokens": 94,
+   "costUsd": 0.0036299999999999995
+  },
+  {
+   "ids": [
+    "4.api/6.nuxt-config.md#420"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2943,
+   "inputTokens": 1493,
+   "outputTokens": 337,
+   "costUsd": 0.0063560000000000005
+  },
+  {
+   "ids": [
+    "1.getting-started/18.upgrade.md#182"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1739,
+   "inputTokens": 1374,
+   "outputTokens": 147,
+   "costUsd": 0.004218
+  },
+  {
+   "ids": [
+    "3.guide/6.going-further/1.experimental-features.md#254"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1848,
+   "inputTokens": 1356,
+   "outputTokens": 129,
+   "costUsd": 0.004002
+  },
+  {
+   "ids": [
+    "3.guide/6.going-further/5.server-imports.md#49"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1576,
+   "inputTokens": 1375,
+   "outputTokens": 141,
+   "costUsd": 0.00416
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#141"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1760,
+   "inputTokens": 1430,
+   "outputTokens": 221,
+   "costUsd": 0.00507
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.node_modules.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1639,
+   "inputTokens": 1355,
+   "outputTokens": 112,
+   "costUsd": 0.00383
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#20"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1612,
+   "inputTokens": 1392,
+   "outputTokens": 185,
+   "costUsd": 0.004634
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-async-data.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2717,
+   "inputTokens": 1486,
+   "outputTokens": 355,
+   "costUsd": 0.006522
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2817,
+   "inputTokens": 1486,
+   "outputTokens": 356,
+   "costUsd": 0.006532
+  },
+  {
+   "ids": [
+    "4.api/3.utils/refresh-nuxt-data.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1339,
+   "inputTokens": 1344,
+   "outputTokens": 106,
+   "costUsd": 0.003748
+  }
+ ]
+}

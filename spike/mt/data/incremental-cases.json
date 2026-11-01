@@ -1,0 +1,152 @@
+[
+  {
+    "id": "case1",
+    "commit": "9a348c8be4",
+    "file": "docs/3.guide/6.going-further/5.server-imports.md",
+    "before": "`defineEventHandler` preserves your handler's return type, which is what types [`$fetch` and `useFetch`](/docs/getting-started/data-fetching) calls to the route. Annotate the value you return rather than the handler.",
+    "after": "`defineEventHandler` preserves your handler's return type, which is what types [`$fetch` and `useFetch`](/docs/getting-started/data-fetching) calls to the route, and `response.json()` for a `serverFetch` call to it. Annotate the value you return rather than the handler.",
+    "sentencesBefore": 2,
+    "sentencesAfter": 2,
+    "unchanged": 1
+  },
+  {
+    "id": "case2",
+    "commit": "9f91560d80",
+    "file": "docs/1.getting-started/18.upgrade.md",
+    "before": "**You can still write your config in TypeScript.** Nuxt 5 requires Node `22.19`, `24.11` or later, where type stripping is on by default, so `nuxt.config.ts` and TypeScript modules load natively. Two things the runtime does not do, which `jiti` used to paper over, are guess file extensions and compile TypeScript syntax that emits code.",
+    "after": "**You can still write your config in TypeScript.** Nuxt 5 requires Node `22.21`, `24.11` or later, where type stripping is on by default, so `nuxt.config.ts` and TypeScript modules load natively. Two things the runtime does not do, which `jiti` used to paper over, are guess file extensions and compile TypeScript syntax that emits code.",
+    "sentencesBefore": 3,
+    "sentencesAfter": 3,
+    "unchanged": 2
+  },
+  {
+    "id": "case3",
+    "commit": "7802b2c216",
+    "file": "docs/1.getting-started/18.upgrade.md",
+    "before": "Your own server code is not covered by default, because the errors you get are what show you where the work is. If you want to ship the upgrade before doing that work, turn on `nitroLegacy`:",
+    "after": "Your own server code is not covered by default, because the errors you get are what show you where the work is. When `nitroLegacy` is off, `NUXT_B9005` lists the files in your `server/` directory that import from `nitropack`, use h3 v1 helpers, or read `event.node`. If you want to ship the upgrade before doing that work, turn on `nitroLegacy`:",
+    "sentencesBefore": 2,
+    "sentencesAfter": 3,
+    "unchanged": 2
+  },
+  {
+    "id": "case4",
+    "commit": "9ceeba8c6d",
+    "file": "docs/3.guide/6.going-further/8.builders.md",
+    "before": "Whatever event you pass to a handler must match `RequestEvent`. Register your event's type in the `ServerTypes` registry in `@nuxt/schema`, which is what `NuxtRequestEvent` and `useRequestEvent()` resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of it (`toNuxtRequestEvent()` returns one) and put your own event on the `~app` property, so `useRequestEvent()` and the render hooks give app code your event instead.",
+    "after": "Whatever event you pass to a handler must match `RequestEvent`. Register your event's type in the `ServerTypes` registry in `@nuxt/schema`, which is what `NuxtRequestEvent` and `useRequestEvent()` resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of it. To give app code your own event instead, set it as `~app` on the event you pass the [renderer](#standing-up-the-ssr-renderer).",
+    "sentencesBefore": 3,
+    "sentencesAfter": 4,
+    "unchanged": 2
+  },
+  {
+    "id": "case5",
+    "commit": "3e5d8b3c50",
+    "file": "docs/2.directory-structure/1.app/1.pages.md",
+    "before": "Pages are only automatically registered for prerendering if you have not disabled `nitro.prerender.crawlLinks` and you have at least one page in your `nitro.prerender.routes` list. See the [prerendering guide](/docs/getting-started/prerendering).",
+    "after": "Pages are only automatically registered for prerendering if you have not disabled `prerender.crawlLinks` and you have at least one page in your `prerender.routes` list. See the [prerendering guide](/docs/getting-started/prerendering).",
+    "sentencesBefore": 2,
+    "sentencesAfter": 2,
+    "unchanged": 1
+  },
+  {
+    "id": "case6",
+    "commit": "68b8a4e12b",
+    "file": "docs/4.api/2.composables/use-server-seo-meta.md",
+    "before": "`useServerSeoMeta` is deprecated. Wrap [`useSeoMeta`](/docs/api/composables/use-seo-meta) in an `if (import.meta.server)` block instead. The auto-import is removed under `future.compatibilityVersion: 5`.",
+    "after": "`useServerSeoMeta` is deprecated. Wrap [`useSeoMeta`](/docs/api/composables/use-seo-meta) in an `if (import.meta.server)` block instead. It is no longer auto-imported.",
+    "sentencesBefore": 3,
+    "sentencesAfter": 3,
+    "unchanged": 2
+  },
+  {
+    "id": "case7",
+    "commit": "6f2fc18e3a",
+    "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+    "before": "Nuxt provides a private `runtimeConfig.appSecret` as the application's root secret. Modules and server features can use it to derive their own secrets. The value defaults to an empty string, is only available on the server, and you can set it with `NUXT_APP_SECRET` without declaring the key in `nuxt.config`.",
+    "after": "Nuxt provides a private `runtimeConfig.appSecret` as the application's root secret. Modules and server features derive their own secrets from it with [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets), and the [session helpers](/docs/guide/going-further/server-imports#sessions) seal with one by default. The value defaults to an empty string, is only available on the server, and you can set it with `NUXT_APP_SECRET` without declaring the key in `nuxt.config`.",
+    "sentencesBefore": 3,
+    "sentencesAfter": 3,
+    "unchanged": 2
+  },
+  {
+    "id": "case8",
+    "commit": "e0259454fa",
+    "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+    "before": "Your desired variables must be defined in your `nuxt.config`. This ensures that arbitrary environment variables are not exposed to your application code.",
+    "after": "Custom runtime config variables must be defined in your `nuxt.config`. This ensures that arbitrary environment variables are not exposed to your application code.",
+    "sentencesBefore": 2,
+    "sentencesAfter": 2,
+    "unchanged": 1
+  },
+  {
+    "id": "case9",
+    "commit": "d62847af00",
+    "file": "docs/1.getting-started/06.styling.md",
+    "before": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau](https://github.com/Tahul/pinceau).",
+    "after": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have a fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau](https://github.com/Tahul/pinceau).",
+    "sentencesBefore": 3,
+    "sentencesAfter": 3,
+    "unchanged": 2
+  },
+  {
+    "id": "case10",
+    "commit": "d62847af00",
+    "file": "docs/1.getting-started/10.data-fetching.md",
+    "before": "The `useFetch` composable will start fetching data the moment is invoked. You may prevent this by setting `immediate: false`, for example, to wait for user interaction.",
+    "after": "The `useFetch` composable will start fetching data the moment it is invoked. You may prevent this by setting `immediate: false`, for example, to wait for user interaction.",
+    "sentencesBefore": 2,
+    "sentencesAfter": 2,
+    "unchanged": 1
+  },
+  {
+    "id": "case11",
+    "commit": "b437b50f50",
+    "file": "docs/1.getting-started/10.data-fetching.md",
+    "before": "If you have not fetched data on the server (for example, with `server: false`), then the data _will not_ be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain undefined within `<script setup>`.",
+    "after": "If you have not fetched data on the server (for example, with `server: false`), then the data *will not* be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain undefined within `<script setup>`.",
+    "sentencesBefore": 2,
+    "sentencesAfter": 2,
+    "unchanged": 1
+  },
+  {
+    "id": "case12",
+    "commit": "84c1145a64",
+    "file": "docs/4.api/3.utils/create-error.md",
+    "before": "In API routes, using `createError` by passing an object with a short `statusText` is recommended because it can be accessed on the client side. Otherwise, a `message` passed to `createError` on an API route will not propagate to the client. Alternatively, you can use the `data` property to pass data back to the client. In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+    "after": "In API routes, using `createError` by passing an object with a short `statusText` is recommended because it can be accessed on the client side. Otherwise, a `message` passed to `createError` on an API route will not propagate to the client. Alternatively, you can use the `data` property to pass data back to the client. When handling the error with `useFetch`, the custom data is available at `error.value.data.data`. In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+    "sentencesBefore": 4,
+    "sentencesAfter": 5,
+    "unchanged": 4
+  },
+  {
+    "id": "case13",
+    "commit": "4694ae0465",
+    "file": "docs/3.guide/6.going-further/1.experimental-features.md",
+    "before": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get. You can customize the bot detection regex:",
+    "after": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get.",
+    "sentencesBefore": 3,
+    "sentencesAfter": 2,
+    "unchanged": 2
+  },
+  {
+    "id": "case14",
+    "commit": "844cbf9081",
+    "file": "docs/4.api/5.kit/12.nitro.md",
+    "before": "Nitro is an open source TypeScript framework to build ultra-fast web servers. Nuxt uses Nitro as its server engine. You can use `useNitro` to access the Nitro instance (or `tryUseNitro` if your module should also work without Nitro), `addServerHandler` to add a server handler, `addDevServerHandler` to add a server handler to be used only in development mode, `addServerPlugin` to add a plugin to extend Nitro's runtime behavior, and `addPrerenderRoutes` to add routes to be prerendered by Nitro.",
+    "after": "Nitro is an open source TypeScript framework to build ultra-fast web servers. Nuxt uses Nitro as its server engine. You can use `useNitro` to access the Nitro instance (or `tryUseNitro` if your module should also work without Nitro), `addServerHandler` to add a server handler, `addDevServerHandler` to add a server handler to be used only in development mode, `addNitroPlugin` to add a plugin to extend Nitro's runtime behavior, and `addPrerenderRoutes` to add routes to be prerendered by Nitro.",
+    "sentencesBefore": 3,
+    "sentencesAfter": 3,
+    "unchanged": 2
+  },
+  {
+    "id": "case15",
+    "commit": "092fe3f14e",
+    "file": "docs/1.getting-started/16.deployment.md",
+    "before": "Static site generation (SSG) with `ssr: true` pre-renders routes of your application at build time. (This is the default behavior when running `nuxt generate`.) It will also generate `/200.html` and `/404.html` single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host).",
+    "after": "Static site generation (SSG) with `ssr: true` pre-renders routes of your application at build time. (This is the default behavior when running `nuxt generate`.) It will also generate `/200.html` and `/404.html` single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host). See [What are 200.html and 404.html?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html).",
+    "sentencesBefore": 3,
+    "sentencesAfter": 5,
+    "unchanged": 3
+  }
+]

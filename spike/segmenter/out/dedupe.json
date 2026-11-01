@@ -1,0 +1,453 @@
+{
+  "note": "Placeholder-only units excluded. `hash` = placeholder form (protected spans ignored), `sourceHash` = full canonical markdown.",
+  "branches": {
+    "hash": {
+      "units": 25222,
+      "uniqueHashes": 7944,
+      "totalWords": 303195,
+      "uniqueWords": 120349,
+      "wordsSaved": 182846,
+      "wordsSavedPct": 60.3,
+      "hashesBySourceCount": {
+        "1": {
+          "hashes": 1169,
+          "words": 21865
+        },
+        "2": {
+          "hashes": 1898,
+          "words": 30936
+        },
+        "3": {
+          "hashes": 4877,
+          "words": 67548
+        }
+      },
+      "perSource": {
+        "3.x": {
+          "units": 7207,
+          "unique": 5558,
+          "words": 82276
+        },
+        "4.x": {
+          "units": 8935,
+          "unique": 6948,
+          "words": 108056
+        },
+        "main": {
+          "units": 9080,
+          "unique": 7090,
+          "words": 112863
+        }
+      }
+    },
+    "sourceHash": {
+      "units": 25222,
+      "uniqueHashes": 8844,
+      "totalWords": 303195,
+      "uniqueWords": 134426,
+      "wordsSaved": 168769,
+      "wordsSavedPct": 55.7,
+      "hashesBySourceCount": {
+        "1": {
+          "hashes": 1881,
+          "words": 35861
+        },
+        "2": {
+          "hashes": 2576,
+          "words": 42583
+        },
+        "3": {
+          "hashes": 4387,
+          "words": 55982
+        }
+      },
+      "perSource": {
+        "3.x": {
+          "units": 7207,
+          "unique": 5708,
+          "words": 82276
+        },
+        "4.x": {
+          "units": 8935,
+          "unique": 7172,
+          "words": 108056
+        },
+        "main": {
+          "units": 9080,
+          "unique": 7314,
+          "words": 112863
+        }
+      }
+    }
+  },
+  "withModules": {
+    "hash": {
+      "units": 27089,
+      "uniqueHashes": 9221,
+      "totalWords": 325703,
+      "uniqueWords": 140792,
+      "wordsSaved": 184911,
+      "wordsSavedPct": 56.8,
+      "hashesBySourceCount": {
+        "1": {
+          "hashes": 2337,
+          "words": 41505
+        },
+        "2": {
+          "hashes": 2000,
+          "words": 31696
+        },
+        "3": {
+          "hashes": 4836,
+          "words": 67529
+        },
+        "4": {
+          "hashes": 30,
+          "words": 43
+        },
+        "5": {
+          "hashes": 8,
+          "words": 9
+        },
+        "6": {
+          "hashes": 8,
+          "words": 8
+        },
+        "7": {
+          "hashes": 1,
+          "words": 1
+        },
+        "8": {
+          "hashes": 1,
+          "words": 1
+        }
+      },
+      "perSource": {
+        "3.x": {
+          "units": 7207,
+          "unique": 5558,
+          "words": 82276
+        },
+        "4.x": {
+          "units": 8935,
+          "unique": 6948,
+          "words": 108056
+        },
+        "main": {
+          "units": 9080,
+          "unique": 7090,
+          "words": 112863
+        },
+        "fonts": {
+          "units": 337,
+          "unique": 311,
+          "words": 6076
+        },
+        "icon": {
+          "units": 163,
+          "unique": 160,
+          "words": 2253
+        },
+        "devtools": {
+          "units": 428,
+          "unique": 412,
+          "words": 5569
+        },
+        "eslint": {
+          "units": 159,
+          "unique": 148,
+          "words": 2162
+        },
+        "hints": {
+          "units": 105,
+          "unique": 91,
+          "words": 1102
+        },
+        "cli": {
+          "units": 675,
+          "unique": 350,
+          "words": 5346
+        }
+      }
+    },
+    "sourceHash": {
+      "units": 27089,
+      "uniqueHashes": 10164,
+      "totalWords": 325703,
+      "uniqueWords": 155142,
+      "wordsSaved": 170561,
+      "wordsSavedPct": 52.4,
+      "hashesBySourceCount": {
+        "1": {
+          "hashes": 3097,
+          "words": 55906
+        },
+        "2": {
+          "hashes": 2674,
+          "words": 43246
+        },
+        "3": {
+          "hashes": 4347,
+          "words": 55934
+        },
+        "4": {
+          "hashes": 30,
+          "words": 39
+        },
+        "5": {
+          "hashes": 6,
+          "words": 7
+        },
+        "6": {
+          "hashes": 8,
+          "words": 8
+        },
+        "7": {
+          "hashes": 1,
+          "words": 1
+        },
+        "8": {
+          "hashes": 1,
+          "words": 1
+        }
+      },
+      "perSource": {
+        "3.x": {
+          "units": 7207,
+          "unique": 5708,
+          "words": 82276
+        },
+        "4.x": {
+          "units": 8935,
+          "unique": 7172,
+          "words": 108056
+        },
+        "main": {
+          "units": 9080,
+          "unique": 7314,
+          "words": 112863
+        },
+        "fonts": {
+          "units": 337,
+          "unique": 319,
+          "words": 6076
+        },
+        "icon": {
+          "units": 163,
+          "unique": 162,
+          "words": 2253
+        },
+        "devtools": {
+          "units": 428,
+          "unique": 415,
+          "words": 5569
+        },
+        "eslint": {
+          "units": 159,
+          "unique": 150,
+          "words": 2162
+        },
+        "hints": {
+          "units": 105,
+          "unique": 95,
+          "words": 1102
+        },
+        "cli": {
+          "units": 675,
+          "unique": 364,
+          "words": 5346
+        }
+      }
+    }
+  },
+  "incrementalFromMain": {
+    "hash": [
+      {
+        "source": "main",
+        "words": 112863,
+        "newWords": 112863,
+        "newPct": 100
+      },
+      {
+        "source": "4.x",
+        "words": 108056,
+        "newWords": 7664,
+        "newPct": 7.1
+      },
+      {
+        "source": "3.x",
+        "words": 82276,
+        "newWords": 6215,
+        "newPct": 7.6
+      },
+      {
+        "source": "fonts",
+        "words": 6076,
+        "newWords": 6056,
+        "newPct": 99.7
+      },
+      {
+        "source": "icon",
+        "words": 2253,
+        "newWords": 2242,
+        "newPct": 99.5
+      },
+      {
+        "source": "devtools",
+        "words": 5569,
+        "newWords": 5495,
+        "newPct": 98.7
+      },
+      {
+        "source": "eslint",
+        "words": 2162,
+        "newWords": 2146,
+        "newPct": 99.3
+      },
+      {
+        "source": "hints",
+        "words": 1102,
+        "newWords": 982,
+        "newPct": 89.1
+      },
+      {
+        "source": "cli",
+        "words": 5346,
+        "newWords": 4183,
+        "newPct": 78.2
+      }
+    ],
+    "sourceHash": [
+      {
+        "source": "main",
+        "words": 112863,
+        "newWords": 112863,
+        "newPct": 100
+      },
+      {
+        "source": "4.x",
+        "words": 108056,
+        "newWords": 8332,
+        "newPct": 7.7
+      },
+      {
+        "source": "3.x",
+        "words": 82276,
+        "newWords": 18763,
+        "newPct": 22.8
+      },
+      {
+        "source": "fonts",
+        "words": 6076,
+        "newWords": 6060,
+        "newPct": 99.7
+      },
+      {
+        "source": "icon",
+        "words": 2253,
+        "newWords": 2242,
+        "newPct": 99.5
+      },
+      {
+        "source": "devtools",
+        "words": 5569,
+        "newWords": 5533,
+        "newPct": 99.4
+      },
+      {
+        "source": "eslint",
+        "words": 2162,
+        "newWords": 2149,
+        "newPct": 99.4
+      },
+      {
+        "source": "hints",
+        "words": 1102,
+        "newWords": 1032,
+        "newPct": 93.6
+      },
+      {
+        "source": "cli",
+        "words": 5346,
+        "newWords": 4294,
+        "newPct": 80.3
+      }
+    ]
+  },
+  "overlapWithMain": {
+    "4.x": {
+      "hash": {
+        "units": 94.8,
+        "words": 92.9
+      },
+      "sourceHash": {
+        "units": 94.5,
+        "words": 92.3
+      }
+    },
+    "3.x": {
+      "hash": {
+        "units": 89.2,
+        "words": 87.7
+      },
+      "sourceHash": {
+        "units": 80.4,
+        "words": 72.7
+      }
+    }
+  },
+  "withinMainDuplicates": {
+    "units": 9080,
+    "unique": 7090,
+    "top": [
+      {
+        "n": 192,
+        "skeleton": "**Type**: {0}"
+      },
+      {
+        "n": 151,
+        "skeleton": "Type"
+      },
+      {
+        "n": 99,
+        "skeleton": "Source"
+      },
+      {
+        "n": 93,
+        "skeleton": "**Default:** {0}"
+      },
+      {
+        "n": 91,
+        "skeleton": "Usage"
+      },
+      {
+        "n": 79,
+        "skeleton": "Parameters"
+      },
+      {
+        "n": 73,
+        "skeleton": "Example"
+      },
+      {
+        "n": 72,
+        "skeleton": "Description"
+      },
+      {
+        "n": 53,
+        "skeleton": "Property"
+      },
+      {
+        "n": 43,
+        "skeleton": "**Default**"
+      },
+      {
+        "n": 39,
+        "skeleton": "Required"
+      },
+      {
+        "n": 32,
+        "skeleton": "What Changed"
+      }
+    ]
+  }
+}

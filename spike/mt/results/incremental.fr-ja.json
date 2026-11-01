@@ -1,0 +1,1636 @@
+[
+ {
+  "id": "case1",
+  "locale": "fr",
+  "commit": "9a348c8be4",
+  "file": "docs/3.guide/6.going-further/5.server-imports.md",
+  "method": "model",
+  "wordDiff": "{0} preserves your handler's return type, which is what types [{1} and {2}]({3}) calls to the [-route.-] {+route, and {4} for a {5} call to it.+} Annotate the value you return rather than the handler.",
+  "before": "`defineEventHandler` preserves your handler's return type, which is what types [`$fetch` and `useFetch`](/docs/getting-started/data-fetching) calls to the route. Annotate the value you return rather than the handler.",
+  "after": "`defineEventHandler` preserves your handler's return type, which is what types [`$fetch` and `useFetch`](/docs/getting-started/data-fetching) calls to the route, and `response.json()` for a `serverFetch` call to it. Annotate the value you return rather than the handler.",
+  "human": "`defineEventHandler` conserve le type de retour de ton handler, et c'est justement ce qui permet de typer les appels de [`$fetch` et `useFetch`](/docs/getting-started/data-fetching) vers la route. Annote la valeur que tu retournes plutôt que le handler.",
+  "update": "`defineEventHandler` conserve le type de retour de ton handler, et c'est justement ce qui permet de typer les appels de [`$fetch` et `useFetch`](/docs/getting-started/data-fetching) vers la route, et `response.json()` pour un appel `serverFetch` vers celle-ci. Annote la valeur que tu retournes plutôt que le handler.",
+  "update2": "`defineEventHandler` conserve le type de retour de ton handler, et c'est justement ce qui permet de typer les appels de [`$fetch` et `useFetch`](/docs/getting-started/data-fetching) vers la route, et `response.json()` pour un appel `serverFetch` vers celle-ci. Annote la valeur que tu retournes plutôt que le handler.",
+  "fresh": "`defineEventHandler` préserve le type de retour de votre handler, c'est ce qui permet de typer les appels [`$fetch` et `useFetch`](/docs/getting-started/data-fetching) vers la route, ainsi que `response.json()` pour un appel `serverFetch` vers celle-ci. Annotez la valeur que vous retournez plutôt que le handler.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "Annote la valeur que tu retournes plutôt que le handler."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.00872,
+  "latencyMs": 1833
+ },
+ {
+  "id": "case2",
+  "locale": "fr",
+  "commit": "9f91560d80",
+  "file": "docs/1.getting-started/18.upgrade.md",
+  "method": "carry",
+  "before": "**You can still write your config in TypeScript.** Nuxt 5 requires Node `22.19`, `24.11` or later, where type stripping is on by default, so `nuxt.config.ts` and TypeScript modules load natively. Two things the runtime does not do, which `jiti` used to paper over, are guess file extensions and compile TypeScript syntax that emits code.",
+  "after": "**You can still write your config in TypeScript.** Nuxt 5 requires Node `22.21`, `24.11` or later, where type stripping is on by default, so `nuxt.config.ts` and TypeScript modules load natively. Two things the runtime does not do, which `jiti` used to paper over, are guess file extensions and compile TypeScript syntax that emits code.",
+  "human": "**Tu peux toujours écrire ta config en TypeScript.** Nuxt 5 requiert Node `22.19`, `24.11` ou une version plus récente, où le type stripping est activé par défaut : `nuxt.config.ts` et les modules TypeScript se chargent donc nativement. Il y a deux choses que le runtime ne fait pas, et que `jiti` masquait jusqu'ici : deviner les extensions de fichier et compiler la syntaxe TypeScript qui génère du code.",
+  "update": "**Tu peux toujours écrire ta config en TypeScript.** Nuxt 5 requiert Node `22.21`, `24.11` ou une version plus récente, où le type stripping est activé par défaut : `nuxt.config.ts` et les modules TypeScript se chargent donc nativement. Il y a deux choses que le runtime ne fait pas, et que `jiti` masquait jusqu'ici : deviner les extensions de fichier et compiler la syntaxe TypeScript qui génère du code.",
+  "update2": "**Tu peux toujours écrire ta config en TypeScript.** Nuxt 5 requiert Node `22.21`, `24.11` ou une version plus récente, où le type stripping est activé par défaut : `nuxt.config.ts` et les modules TypeScript se chargent donc nativement. Il y a deux choses que le runtime ne fait pas, et que `jiti` masquait jusqu'ici : deviner les extensions de fichier et compiler la syntaxe TypeScript qui génère du code.",
+  "fresh": "**Vous pouvez toujours écrire votre configuration en TypeScript.** Nuxt 5 nécessite Node `22.21`, `24.11` ou version ultérieure, où le type stripping est activé par défaut, de sorte que `nuxt.config.ts` et les modules TypeScript se chargent nativement. Deux choses que le runtime ne fait pas, et que `jiti` compensait auparavant, sont de deviner les extensions de fichiers et de compiler la syntaxe TypeScript qui génère du code.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "**Tu peux toujours écrire ta config en TypeScript.",
+    "Il y a deux choses que le runtime ne fait pas, et que {3} masquait jusqu'ici : deviner les extensions de fichier et compiler la syntaxe TypeScript qui génère du code."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.004568,
+  "latencyMs": 0
+ },
+ {
+  "id": "case3",
+  "locale": "fr",
+  "commit": "7802b2c216",
+  "file": "docs/1.getting-started/18.upgrade.md",
+  "method": "model",
+  "wordDiff": "Your own server code is not covered by default, because the errors you get are what show you where the work is. {+When {0} is off, {1} lists the files in your {2} directory that import from {3}, use h3 v1 helpers, or read {4}.+} If you want to ship the upgrade before doing that work, turn on [-{0}:-] {+{5}:+}",
+  "before": "Your own server code is not covered by default, because the errors you get are what show you where the work is. If you want to ship the upgrade before doing that work, turn on `nitroLegacy`:",
+  "after": "Your own server code is not covered by default, because the errors you get are what show you where the work is. When `nitroLegacy` is off, `NUXT_B9005` lists the files in your `server/` directory that import from `nitropack`, use h3 v1 helpers, or read `event.node`. If you want to ship the upgrade before doing that work, turn on `nitroLegacy`:",
+  "human": "Ton propre code serveur n'est pas couvert par défaut, car les erreurs que tu obtiens te montrent justement où se trouve le travail à faire. Si tu veux livrer la mise à niveau avant de t'y atteler, active `nitroLegacy` :",
+  "update": "Ton propre code serveur n'est pas couvert par défaut, car les erreurs que tu obtiens te montrent justement où se trouve le travail à faire. Quand `nitroLegacy` est désactivé, `NUXT_B9005` liste les fichiers de ton répertoire `server/` qui importent depuis `nitropack`, utilisent les helpers h3 v1 ou lisent `event.node`. Si tu veux livrer la mise à niveau avant de t'y atteler, active `nitroLegacy` :",
+  "update2": "Ton propre code serveur n'est pas couvert par défaut, car les erreurs que tu obtiens te montrent justement où se trouve le travail à faire. Quand `nitroLegacy` est désactivé, `NUXT_B9005` liste les fichiers de ton répertoire `server/` qui importent depuis `nitropack`, utilisent les helpers h3 v1 ou lisent `event.node`. Si tu veux livrer la mise à niveau avant de t'y atteler, active `nitroLegacy` :",
+  "fresh": "Votre propre code serveur n'est pas couvert par défaut, car les erreurs que vous obtenez vous montrent où se trouve le travail à faire. Lorsque `nitroLegacy` est désactivé, `NUXT_B9005` liste les fichiers de votre répertoire `server/` qui importent depuis `nitropack`, utilisent les helpers h3 v1 ou lisent `event.node`. Si vous souhaitez livrer la mise à niveau avant d'effectuer ce travail, activez `nitroLegacy` :",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "Ton propre code serveur n'est pas couvert par défaut, car les erreurs que tu obtiens te montrent justement où se trouve le travail à faire."
+   ]
+  },
+  "updatePlaceholderErrors": [
+   "missing {5}"
+  ],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.010818000000000001,
+  "latencyMs": 1521
+ },
+ {
+  "id": "case4",
+  "locale": "fr",
+  "commit": "9ceeba8c6d",
+  "file": "docs/3.guide/6.going-further/8.builders.md",
+  "method": "model",
+  "wordDiff": "Whatever event you pass to a handler must match {0}. Register your event's type in the {1} registry in {2}, which is what {3} and {4} resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of [-it ({7} returns one) and put-] {+it. To give app code+} your own event {+instead, set it as {5}+} on the [-{5} property, so {4} and-] {+event you pass+} the [-render hooks give app code your event instead.-] {+[renderer]({6}).+}",
+  "before": "Whatever event you pass to a handler must match `RequestEvent`. Register your event's type in the `ServerTypes` registry in `@nuxt/schema`, which is what `NuxtRequestEvent` and `useRequestEvent()` resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of it (`toNuxtRequestEvent()` returns one) and put your own event on the `~app` property, so `useRequestEvent()` and the render hooks give app code your event instead.",
+  "after": "Whatever event you pass to a handler must match `RequestEvent`. Register your event's type in the `ServerTypes` registry in `@nuxt/schema`, which is what `NuxtRequestEvent` and `useRequestEvent()` resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of it. To give app code your own event instead, set it as `~app` on the event you pass the [renderer](#standing-up-the-ssr-renderer).",
+  "human": "Quel que soit l'événement que tu passes à un handler, il doit correspondre à `RequestEvent`. Déclare le type de ton événement dans le registre `ServerTypes` dans `@nuxt/schema`, c'est ce vers quoi `NuxtRequestEvent` et `useRequestEvent()` se résolvent. Si ton propre objet événement n'a pas une forme compatible avec le web, passe aux handlers une vue de cet objet qui, elle, l'est (`toNuxtRequestEvent()` en renvoie une) et place ton événement dans la propriété `~app` : ainsi, `useRequestEvent()` et les hooks de rendu donneront à ton code d'application ton événement à toi.",
+  "update": "Quel que soit l'événement que tu passes à un handler, il doit correspondre à `RequestEvent`. Déclare le type de ton événement dans le registre `ServerTypes` dans `@nuxt/schema`, c'est ce vers quoi `NuxtRequestEvent` et `useRequestEvent()` se résolvent. Si ton propre objet événement n'a pas une forme compatible avec le web, passe aux handlers une vue de cet objet qui, elle, l'est. Pour donner à ton code d'application ton événement à toi, définis-le comme `~app` sur l'événement que tu passes au [renderer](#standing-up-the-ssr-renderer).",
+  "update2": "Quel que soit l'événement que tu passes à un handler, il doit correspondre à `RequestEvent`. Déclare le type de ton événement dans le registre `ServerTypes` dans `@nuxt/schema`, c'est ce vers quoi `NuxtRequestEvent` et `useRequestEvent()` se résolvent. Si ton propre objet événement n'a pas une forme compatible avec le web, passe aux handlers une vue de cet objet qui, elle, l'est. Pour donner à ton code d'application ton propre événement à la place, définis-le comme `~app` sur l'événement que tu passes au [renderer](#standing-up-the-ssr-renderer).",
+  "fresh": "Tout événement que vous transmettez à un handler doit correspondre à `RequestEvent`. Enregistrez le type de votre événement dans le registre `ServerTypes` dans `@nuxt/schema`, auquel `NuxtRequestEvent` et `useRequestEvent()` se résolvent. Si votre propre objet événement n'a pas la forme d'un événement web, transmettez aux handlers une vue de celui-ci qui en a la forme. Pour fournir à votre code d'application votre propre événement à la place, définissez-le comme `~app` sur l'événement que vous transmettez au [renderer](#standing-up-the-ssr-renderer).",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "Quel que soit l'événement que tu passes à un handler, il doit correspondre à {0}.",
+    "Déclare le type de ton événement dans le registre {1} dans {2}, c'est ce vers quoi {3} et {4} se résolvent."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.012388,
+  "latencyMs": 2424
+ },
+ {
+  "id": "case5",
+  "locale": "fr",
+  "commit": "3e5d8b3c50",
+  "file": "docs/2.directory-structure/1.app/1.pages.md",
+  "method": "carry",
+  "before": "Pages are only automatically registered for prerendering if you have not disabled `nitro.prerender.crawlLinks` and you have at least one page in your `nitro.prerender.routes` list. See the [prerendering guide](/docs/getting-started/prerendering).",
+  "after": "Pages are only automatically registered for prerendering if you have not disabled `prerender.crawlLinks` and you have at least one page in your `prerender.routes` list. See the [prerendering guide](/docs/getting-started/prerendering).",
+  "human": "Les pages ne sont enregistrées automatiquement pour le prérendu que si tu n'as pas désactivé `nitro.prerender.crawlLinks` et que ta liste `nitro.prerender.routes` contient au moins une page. Consulte le [guide du prérendu](/docs/getting-started/prerendering).",
+  "update": "Les pages ne sont enregistrées automatiquement pour le prérendu que si tu n'as pas désactivé `prerender.crawlLinks` et que ta liste `prerender.routes` contient au moins une page. Consulte le [guide du prérendu](/docs/getting-started/prerendering).",
+  "update2": "Les pages ne sont enregistrées automatiquement pour le prérendu que si tu n'as pas désactivé `prerender.crawlLinks` et que ta liste `prerender.routes` contient au moins une page. Consulte le [guide du prérendu](/docs/getting-started/prerendering).",
+  "fresh": "Les pages ne sont automatiquement enregistrées pour le prérendu que si vous n'avez pas désactivé `prerender.crawlLinks` et que vous avez au moins une page dans votre liste `prerender.routes`. Consultez le [guide du prérendu](/docs/getting-started/prerendering).",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "Consulte le [guide du prérendu]({2})."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.00363,
+  "latencyMs": 0
+ },
+ {
+  "id": "case6",
+  "locale": "fr",
+  "commit": "68b8a4e12b",
+  "file": "docs/4.api/2.composables/use-server-seo-meta.md",
+  "method": "model",
+  "wordDiff": "{0} is deprecated. Wrap [{1}]({2}) in an {3} block instead. [-The auto-import-] {+It+} is [-removed under {4}.-] {+no longer auto-imported.+}",
+  "before": "`useServerSeoMeta` is deprecated. Wrap [`useSeoMeta`](/docs/api/composables/use-seo-meta) in an `if (import.meta.server)` block instead. The auto-import is removed under `future.compatibilityVersion: 5`.",
+  "after": "`useServerSeoMeta` is deprecated. Wrap [`useSeoMeta`](/docs/api/composables/use-seo-meta) in an `if (import.meta.server)` block instead. It is no longer auto-imported.",
+  "human": "`useServerSeoMeta` est déprécié. Enveloppe plutôt [`useSeoMeta`](/docs/api/composables/use-seo-meta) dans un bloc `if (import.meta.server)`. L'import automatique est supprimé avec `future.compatibilityVersion: 5`.",
+  "update": "`useServerSeoMeta` est déprécié. Enveloppe plutôt [`useSeoMeta`](/docs/api/composables/use-seo-meta) dans un bloc `if (import.meta.server)`. Il n'est plus importé automatiquement.",
+  "update2": "`useServerSeoMeta` est déprécié. Enveloppe plutôt [`useSeoMeta`](/docs/api/composables/use-seo-meta) dans un bloc `if (import.meta.server)`. Il n'est plus importé automatiquement.",
+  "fresh": "`useServerSeoMeta` est obsolète. Enveloppez plutôt [`useSeoMeta`](/docs/api/composables/use-seo-meta) dans un bloc `if (import.meta.server)`. Il n'est plus importé automatiquement.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "{0} est déprécié.",
+    "Enveloppe plutôt [{1}]({2}) dans un bloc {3}."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": false
+  },
+  "costUsd": 0.007188,
+  "latencyMs": 1751
+ },
+ {
+  "id": "case7",
+  "locale": "fr",
+  "commit": "6f2fc18e3a",
+  "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+  "method": "model",
+  "wordDiff": "Nuxt provides a private {0} as the application's root secret. Modules and server features [-can use it to-] derive their own [-secrets.-] {+secrets from it with [{1}]({2}), and the [session helpers]({3}) seal with one by default.+} The value defaults to an empty string, is only available on the server, and you can set it with {4} without declaring the key in {5}.",
+  "before": "Nuxt provides a private `runtimeConfig.appSecret` as the application's root secret. Modules and server features can use it to derive their own secrets. The value defaults to an empty string, is only available on the server, and you can set it with `NUXT_APP_SECRET` without declaring the key in `nuxt.config`.",
+  "after": "Nuxt provides a private `runtimeConfig.appSecret` as the application's root secret. Modules and server features derive their own secrets from it with [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets), and the [session helpers](/docs/guide/going-further/server-imports#sessions) seal with one by default. The value defaults to an empty string, is only available on the server, and you can set it with `NUXT_APP_SECRET` without declaring the key in `nuxt.config`.",
+  "human": "Nuxt fournit un `runtimeConfig.appSecret` privé qui sert de secret racine à l'application. Les modules et les fonctionnalités côté serveur peuvent s'en servir pour dériver leurs propres secrets. Par défaut, la valeur est une chaîne vide, elle n'est accessible que côté serveur, et tu peux la définir avec `NUXT_APP_SECRET` sans avoir à déclarer la clé dans `nuxt.config`.",
+  "update": "Nuxt fournit un `runtimeConfig.appSecret` privé qui sert de secret racine à l'application. Les modules et les fonctionnalités côté serveur dérivent leurs propres secrets à partir de celui-ci avec [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets), et les [helpers de session](/docs/guide/going-further/server-imports#sessions) scellent par défaut avec l'un d'eux. Par défaut, la valeur est une chaîne vide, elle n'est accessible que côté serveur, et tu peux la définir avec `NUXT_APP_SECRET` sans avoir à déclarer la clé dans `nuxt.config`.",
+  "update2": "Nuxt fournit un `runtimeConfig.appSecret` privé qui sert de secret racine à l'application. Les modules et les fonctionnalités côté serveur en dérivent leurs propres secrets avec [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets), et les [helpers de session](/docs/guide/going-further/server-imports#sessions) scellent par défaut avec l'un d'eux. Par défaut, la valeur est une chaîne vide, elle n'est accessible que côté serveur, et tu peux la définir avec `NUXT_APP_SECRET` sans avoir à déclarer la clé dans `nuxt.config`.",
+  "fresh": "Nuxt fournit un `runtimeConfig.appSecret` privé qui sert de secret racine de l'application. Les modules et les fonctionnalités serveur en dérivent leurs propres secrets avec [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets), et les [helpers de session](/docs/guide/going-further/server-imports#sessions) scellent par défaut avec l'un d'eux. La valeur par défaut est une chaîne vide, elle n'est disponible que côté serveur, et vous pouvez la définir avec `NUXT_APP_SECRET` sans déclarer la clé dans `nuxt.config`.",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "Nuxt fournit un {0} privé qui sert de secret racine à l'application.",
+    "Par défaut, la valeur est une chaîne vide, elle n'est accessible que côté serveur, et tu peux la définir avec {4} sans avoir à déclarer la clé dans {5}."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.011486,
+  "latencyMs": 2294
+ },
+ {
+  "id": "case8",
+  "locale": "fr",
+  "commit": "e0259454fa",
+  "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+  "method": "model",
+  "wordDiff": "[-Your desired-] {+Custom runtime config+} variables must be defined in your {0}. This ensures that arbitrary environment variables are not exposed to your application code.",
+  "before": "Your desired variables must be defined in your `nuxt.config`. This ensures that arbitrary environment variables are not exposed to your application code.",
+  "after": "Custom runtime config variables must be defined in your `nuxt.config`. This ensures that arbitrary environment variables are not exposed to your application code.",
+  "human": "Les variables dont tu as besoin doivent être définies dans ton `nuxt.config`. Ainsi, aucune variable d'environnement arbitraire n'est exposée dans le code de ton application.",
+  "update": "Les variables de configuration runtime personnalisées doivent être définies dans ton `nuxt.config`. Ainsi, aucune variable d'environnement arbitraire n'est exposée dans le code de ton application.",
+  "update2": "Les variables de configuration runtime personnalisées doivent être définies dans ton `nuxt.config`. Ainsi, aucune variable d'environnement arbitraire n'est exposée dans le code de ton application.",
+  "fresh": "Les variables personnalisées du runtime config doivent être définies dans votre `nuxt.config`. Cela garantit que des variables d'environnement arbitraires ne sont pas exposées au code de votre application.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "Ainsi, aucune variable d'environnement arbitraire n'est exposée dans le code de ton application."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": false
+  },
+  "costUsd": 0.0075320000000000005,
+  "latencyMs": 1571
+ },
+ {
+  "id": "case9",
+  "locale": "fr",
+  "commit": "d62847af00",
+  "file": "docs/1.getting-started/06.styling.md",
+  "method": "model",
+  "wordDiff": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have {+a+} fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau]({0}).",
+  "before": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau](https://github.com/Tahul/pinceau).",
+  "after": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have a fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau](https://github.com/Tahul/pinceau).",
+  "human": "L'un des grands atouts de Vue et des SFC, c'est la façon naturelle dont ils gèrent le style. Tu peux écrire directement du CSS ou du code de préprocesseur dans le bloc style du fichier de ton composant, ce qui t'offre une expérience de développement formidable, sans avoir besoin de recourir à du CSS-in-JS. Cela dit, si tu veux quand même utiliser du CSS-in-JS, tu trouveras des bibliothèques et des modules tiers qui le prennent en charge, comme [pinceau](https://github.com/Tahul/pinceau).",
+  "update": "L'un des grands atouts de Vue et des SFC, c'est la façon naturelle dont ils gèrent le style. Tu peux écrire directement du CSS ou du code de préprocesseur dans le bloc style du fichier de ton composant, ce qui t'offre une expérience de développement formidable, sans avoir besoin de recourir à du CSS-in-JS. Cela dit, si tu veux quand même utiliser du CSS-in-JS, tu trouveras des bibliothèques et des modules tiers qui le prennent en charge, comme [pinceau](https://github.com/Tahul/pinceau).",
+  "update2": "L'un des grands atouts de Vue et des SFC, c'est la façon naturelle dont ils gèrent le style. Tu peux écrire directement du CSS ou du code de préprocesseur dans le bloc style du fichier de ton composant, ce qui t'offre une expérience de développement formidable, sans avoir besoin de recourir à du CSS-in-JS. Cela dit, si tu veux quand même utiliser du CSS-in-JS, tu trouveras des bibliothèques et des modules tiers qui le prennent en charge, comme [pinceau](https://github.com/Tahul/pinceau).",
+  "fresh": "L'un des grands atouts de Vue et des SFC est la façon naturelle dont ils gèrent le style. Vous pouvez écrire directement du CSS ou du code de préprocesseur dans le bloc style du fichier de vos composants, ce qui vous offre une excellente expérience de développement sans avoir à recourir à une solution de type CSS-in-JS. Cependant, si vous souhaitez utiliser CSS-in-JS, vous trouverez des bibliothèques et des modules tiers qui le prennent en charge, comme [pinceau](https://github.com/Tahul/pinceau).",
+  "identicalToHuman": true,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "L'un des grands atouts de Vue et des SFC, c'est la façon naturelle dont ils gèrent le style.",
+    "Cela dit, si tu veux quand même utiliser du CSS-in-JS, tu trouveras des bibliothèques et des modules tiers qui le prennent en charge, comme [pinceau]({0})."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.012718,
+  "latencyMs": 1851
+ },
+ {
+  "id": "case10",
+  "locale": "fr",
+  "commit": "d62847af00",
+  "file": "docs/1.getting-started/10.data-fetching.md",
+  "method": "model",
+  "wordDiff": "The {0} composable will start fetching data the moment {+it+} is invoked. You may prevent this by setting {1}, for example, to wait for user interaction.",
+  "before": "The `useFetch` composable will start fetching data the moment is invoked. You may prevent this by setting `immediate: false`, for example, to wait for user interaction.",
+  "after": "The `useFetch` composable will start fetching data the moment it is invoked. You may prevent this by setting `immediate: false`, for example, to wait for user interaction.",
+  "human": "Le composable `useFetch` commence à récupérer les données dès qu'il est appelé. Tu peux éviter ce comportement en définissant `immediate: false`, par exemple pour attendre une interaction de l'utilisateur.",
+  "update": "Le composable `useFetch` commence à récupérer les données dès qu'il est appelé. Tu peux éviter ce comportement en définissant `immediate: false`, par exemple pour attendre une interaction de l'utilisateur.",
+  "update2": "Le composable `useFetch` commence à récupérer les données dès qu'il est appelé. Tu peux éviter ce comportement en définissant `immediate: false`, par exemple pour attendre une interaction de l'utilisateur.",
+  "fresh": "Le composable `useFetch` commence à récupérer les données dès qu'il est appelé. Vous pouvez l'en empêcher en définissant `immediate: false`, par exemple pour attendre une interaction de l'utilisateur.",
+  "identicalToHuman": true,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "Tu peux éviter ce comportement en définissant {1}, par exemple pour attendre une interaction de l'utilisateur."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.007712,
+  "latencyMs": 1250
+ },
+ {
+  "id": "case11",
+  "locale": "fr",
+  "commit": "b437b50f50",
+  "file": "docs/1.getting-started/10.data-fetching.md",
+  "method": "model",
+  "wordDiff": "If you have not fetched data on the server (for example, with {0}), then the data [-_will not_-] {+*will not*+} be fetched until hydration completes. This means even if you await {1} on client-side, {2} will remain undefined within {3}.",
+  "before": "If you have not fetched data on the server (for example, with `server: false`), then the data _will not_ be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain undefined within `<script setup>`.",
+  "after": "If you have not fetched data on the server (for example, with `server: false`), then the data *will not* be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain undefined within `<script setup>`.",
+  "human": "Si tu n'as pas récupéré les données côté serveur (par exemple avec `server: false`), elles _ne seront pas_ disponibles avant la fin de l'hydratation. Autrement dit, même si tu fais un await de `useFetch` côté client, `data` restera undefined dans `<script setup>`.",
+  "update": "Si tu n'as pas récupéré les données côté serveur (par exemple avec `server: false`), elles *ne seront pas* disponibles avant la fin de l'hydratation. Autrement dit, même si tu fais un await de `useFetch` côté client, `data` restera undefined dans `<script setup>`.",
+  "update2": "Si tu n'as pas récupéré les données côté serveur (par exemple avec `server: false`), elles *ne seront pas* disponibles avant la fin de l'hydratation. Autrement dit, même si tu fais un await de `useFetch` côté client, `data` restera undefined dans `<script setup>`.",
+  "fresh": "Si vous n'avez pas récupéré les données sur le serveur (par exemple, avec `server: false`), elles *ne seront pas* récupérées avant la fin de l'hydratation. Cela signifie que même si vous utilisez await avec `useFetch` côté client, `data` restera undefined dans `<script setup>`.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "Autrement dit, même si tu fais un await de {1} côté client, {2} restera undefined dans {3}."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.008838,
+  "latencyMs": 1870
+ },
+ {
+  "id": "case12",
+  "locale": "fr",
+  "commit": "84c1145a64",
+  "file": "docs/4.api/3.utils/create-error.md",
+  "method": "model",
+  "wordDiff": "In API routes, using {0} by passing an object with a short {1} is recommended because it can be accessed on the client side. Otherwise, a {2} passed to [-{0}-] {+{3}+} on an API route will not propagate to the client. Alternatively, you can use the {4} property to pass data back to the client. {+When handling the error with {5}, the custom data is available at {6}.+} In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+  "before": "In API routes, using `createError` by passing an object with a short `statusText` is recommended because it can be accessed on the client side. Otherwise, a `message` passed to `createError` on an API route will not propagate to the client. Alternatively, you can use the `data` property to pass data back to the client. In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+  "after": "In API routes, using `createError` by passing an object with a short `statusText` is recommended because it can be accessed on the client side. Otherwise, a `message` passed to `createError` on an API route will not propagate to the client. Alternatively, you can use the `data` property to pass data back to the client. When handling the error with `useFetch`, the custom data is available at `error.value.data.data`. In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+  "human": "Dans les routes d'API, il est recommandé d'utiliser `createError` en lui passant un objet avec un `statusText` court, car celui-ci est accessible côté client. Sinon, un `message` passé à `createError` dans une route d'API ne sera pas transmis au client. Tu peux aussi utiliser la propriété `data` pour renvoyer des données au client. Dans tous les cas, évite autant que possible d'insérer une saisie utilisateur dynamique dans le message, afin de prévenir d'éventuels problèmes de sécurité.",
+  "update": "Dans les routes d'API, il est recommandé d'utiliser `createError` en lui passant un objet avec un `statusText` court, car celui-ci est accessible côté client. Sinon, un `message` passé à `createError` dans une route d'API ne sera pas transmis au client. Tu peux aussi utiliser la propriété `data` pour renvoyer des données au client. Lors de la gestion de l'erreur avec `useFetch`, les données personnalisées sont disponibles dans `error.value.data.data`. Dans tous les cas, évite autant que possible d'insérer une saisie utilisateur dynamique dans le message, afin de prévenir d'éventuels problèmes de sécurité.",
+  "update2": "Dans les routes d'API, il est recommandé d'utiliser `createError` en lui passant un objet avec un `statusText` court, car celui-ci est accessible côté client. Sinon, un `message` passé à `createError` dans une route d'API ne sera pas transmis au client. Tu peux aussi utiliser la propriété `data` pour renvoyer des données au client. Lors de la gestion de l'erreur avec `useFetch`, les données personnalisées sont disponibles dans `error.value.data.data`. Dans tous les cas, évite autant que possible d'insérer une saisie utilisateur dynamique dans le message, afin de prévenir d'éventuels problèmes de sécurité.",
+  "fresh": "Dans les routes d'API, il est recommandé d'utiliser `createError` en passant un objet avec un `statusText` court, car il est accessible côté client. Sinon, un `message` passé à `createError` dans une route d'API ne sera pas propagé au client. Vous pouvez aussi utiliser la propriété `data` pour renvoyer des données au client. Lorsque vous gérez l'erreur avec `useFetch`, les données personnalisées sont disponibles dans `error.value.data.data`. Dans tous les cas, évitez toujours d'insérer des saisies dynamiques de l'utilisateur dans le message afin de prévenir d'éventuels problèmes de sécurité.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 4,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 4,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 4,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 4,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 4,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 4,
+   "expected": 3,
+   "kept": 0,
+   "lost": [
+    "Dans les routes d'API, il est recommandé d'utiliser {0} en lui passant un objet avec un {1} court, car celui-ci est accessible côté client.",
+    "Tu peux aussi utiliser la propriété {4} pour renvoyer des données au client.",
+    "Dans tous les cas, évite autant que possible d'insérer une saisie utilisateur dynamique dans le message, afin de prévenir d'éventuels problèmes de sécurité."
+   ]
+  },
+  "updatePlaceholderErrors": [
+   "missing {3}"
+  ],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.013663999999999999,
+  "latencyMs": 2265
+ },
+ {
+  "id": "case13",
+  "locale": "fr",
+  "commit": "4694ae0465",
+  "file": "docs/3.guide/6.going-further/1.experimental-features.md",
+  "method": "model",
+  "wordDiff": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get. [-You can customize the bot detection regex:-]",
+  "before": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get. You can customize the bot detection regex:",
+  "after": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get.",
+  "human": "Le streaming est automatiquement désactivé pour les user agents de bots et de crawlers (Googlebot, Bingbot, etc.), afin que les moteurs de recherche reçoivent un HTML entièrement rendu et que ton SEO ne risque rien. Le motif par défaut ne cible que les crawlers d'indexation ; Lighthouse et les autres outils d'audit en sont volontairement exclus, pour que les mesures synthétiques reflètent la même réponse streamée que celle que reçoivent les vrais utilisateurs. Tu peux personnaliser la regex de détection des bots :",
+  "update": "Le streaming est automatiquement désactivé pour les user agents de bots et de crawlers (Googlebot, Bingbot, etc.), afin que les moteurs de recherche reçoivent un HTML entièrement rendu et que ton SEO ne risque rien. Le motif par défaut ne cible que les crawlers d'indexation ; Lighthouse et les autres outils d'audit en sont volontairement exclus, pour que les mesures synthétiques reflètent la même réponse streamée que celle que reçoivent les vrais utilisateurs.",
+  "update2": "Le streaming est automatiquement désactivé pour les user agents de bots et de crawlers (Googlebot, Bingbot, etc.), afin que les moteurs de recherche reçoivent un HTML entièrement rendu et que ton SEO ne risque rien. Le motif par défaut ne cible que les crawlers d'indexation ; Lighthouse et les autres outils d'audit en sont volontairement exclus, pour que les mesures synthétiques reflètent la même réponse streamée que celle que reçoivent les vrais utilisateurs.",
+  "fresh": "Le streaming est automatiquement désactivé pour les user agents de bots et de crawlers (tels que Googlebot, Bingbot, etc.) afin de garantir que les moteurs de recherche reçoivent un HTML entièrement rendu, par sécurité pour le SEO. Le motif par défaut ne correspond qu'aux crawlers d'indexation ; Lighthouse et les autres outils d'audit en sont volontairement exclus, afin que les mesures synthétiques reflètent la même réponse streamée que celle reçue par les utilisateurs réels.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "Le streaming est automatiquement désactivé pour les user agents de bots et de crawlers (Googlebot, Bingbot, etc.), afin que les moteurs de recherche reçoivent un HTML entièrement rendu et que ton SEO ne risque rien.",
+    "Le motif par défaut ne cible que les crawlers d'indexation ; Lighthouse et les autres outils d'audit en sont volontairement exclus, pour que les mesures synthétiques reflètent la même réponse streamée que celle que reçoivent les vrais utilisateurs."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": false
+  },
+  "costUsd": 0.012580000000000001,
+  "latencyMs": 2007
+ },
+ {
+  "id": "case14",
+  "locale": "fr",
+  "commit": "844cbf9081",
+  "file": "docs/4.api/5.kit/12.nitro.md",
+  "method": "carry",
+  "before": "Nitro is an open source TypeScript framework to build ultra-fast web servers. Nuxt uses Nitro as its server engine. You can use `useNitro` to access the Nitro instance (or `tryUseNitro` if your module should also work without Nitro), `addServerHandler` to add a server handler, `addDevServerHandler` to add a server handler to be used only in development mode, `addServerPlugin` to add a plugin to extend Nitro's runtime behavior, and `addPrerenderRoutes` to add routes to be prerendered by Nitro.",
+  "after": "Nitro is an open source TypeScript framework to build ultra-fast web servers. Nuxt uses Nitro as its server engine. You can use `useNitro` to access the Nitro instance (or `tryUseNitro` if your module should also work without Nitro), `addServerHandler` to add a server handler, `addDevServerHandler` to add a server handler to be used only in development mode, `addNitroPlugin` to add a plugin to extend Nitro's runtime behavior, and `addPrerenderRoutes` to add routes to be prerendered by Nitro.",
+  "human": "Nitro est un framework TypeScript open source pour construire des serveurs web ultra-rapides. Nuxt s'appuie sur Nitro comme moteur serveur. Tu peux utiliser `useNitro` pour accéder à l'instance de Nitro (ou `tryUseNitro` si ton module doit aussi fonctionner sans Nitro), `addServerHandler` pour ajouter un handler serveur, `addDevServerHandler` pour ajouter un handler serveur utilisé uniquement en mode développement, `addServerPlugin` pour ajouter un plugin qui étend le comportement de Nitro à l'exécution, et `addPrerenderRoutes` pour ajouter des routes que Nitro devra prérendre.",
+  "update": "Nitro est un framework TypeScript open source pour construire des serveurs web ultra-rapides. Nuxt s'appuie sur Nitro comme moteur serveur. Tu peux utiliser `useNitro` pour accéder à l'instance de Nitro (ou `tryUseNitro` si ton module doit aussi fonctionner sans Nitro), `addServerHandler` pour ajouter un handler serveur, `addDevServerHandler` pour ajouter un handler serveur utilisé uniquement en mode développement, `addNitroPlugin` pour ajouter un plugin qui étend le comportement de Nitro à l'exécution, et `addPrerenderRoutes` pour ajouter des routes que Nitro devra prérendre.",
+  "update2": "Nitro est un framework TypeScript open source pour construire des serveurs web ultra-rapides. Nuxt s'appuie sur Nitro comme moteur serveur. Tu peux utiliser `useNitro` pour accéder à l'instance de Nitro (ou `tryUseNitro` si ton module doit aussi fonctionner sans Nitro), `addServerHandler` pour ajouter un handler serveur, `addDevServerHandler` pour ajouter un handler serveur utilisé uniquement en mode développement, `addNitroPlugin` pour ajouter un plugin qui étend le comportement de Nitro à l'exécution, et `addPrerenderRoutes` pour ajouter des routes que Nitro devra prérendre.",
+  "fresh": "Nitro est un framework TypeScript open source permettant de créer des serveurs web ultra-rapides. Nuxt utilise Nitro comme moteur serveur. Vous pouvez utiliser `useNitro` pour accéder à l'instance de Nitro (ou `tryUseNitro` si votre module doit aussi fonctionner sans Nitro), `addServerHandler` pour ajouter un gestionnaire serveur, `addDevServerHandler` pour ajouter un gestionnaire serveur utilisé uniquement en mode développement, `addNitroPlugin` pour ajouter un plugin qui étend le comportement d'exécution de Nitro, et `addPrerenderRoutes` pour ajouter des routes à prérendre avec Nitro.",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 2,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "Nitro est un framework TypeScript open source pour construire des serveurs web ultra-rapides.",
+    "Nuxt s'appuie sur Nitro comme moteur serveur."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.00523,
+  "latencyMs": 0
+ },
+ {
+  "id": "case15",
+  "locale": "fr",
+  "commit": "092fe3f14e",
+  "file": "docs/1.getting-started/16.deployment.md",
+  "method": "model",
+  "wordDiff": "Static site generation (SSG) with {0} pre-renders routes of your application at build time. (This is the default behavior when running {1}.) It will also generate {2} and {3} single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host). {+See [What are 200.html and 404.html?]({4}).+}",
+  "before": "Static site generation (SSG) with `ssr: true` pre-renders routes of your application at build time. (This is the default behavior when running `nuxt generate`.) It will also generate `/200.html` and `/404.html` single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host).",
+  "after": "Static site generation (SSG) with `ssr: true` pre-renders routes of your application at build time. (This is the default behavior when running `nuxt generate`.) It will also generate `/200.html` and `/404.html` single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host). See [What are 200.html and 404.html?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html).",
+  "human": "La génération de sites statiques (SSG) avec `ssr: true` pré-rend les routes de ton application au moment du build. (C'est le comportement par défaut quand tu lances `nuxt generate`.) Elle génère aussi les pages de secours `/200.html` et `/404.html` de ton application monopage, qui peuvent afficher des routes dynamiques ou des erreurs 404 côté client (même si tu devras peut-être configurer cela sur ton hébergeur statique).",
+  "update": "La génération de sites statiques (SSG) avec `ssr: true` pré-rend les routes de ton application au moment du build. (C'est le comportement par défaut quand tu lances `nuxt generate`.) Elle génère aussi les pages de secours `/200.html` et `/404.html` de ton application monopage, qui peuvent afficher des routes dynamiques ou des erreurs 404 côté client (même si tu devras peut-être configurer cela sur ton hébergeur statique). Voir [Que sont 200.html et 404.html ?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html).",
+  "update2": "La génération de sites statiques (SSG) avec `ssr: true` pré-rend les routes de ton application au moment du build. (C'est le comportement par défaut quand tu lances `nuxt generate`.) Elle génère aussi les pages de secours `/200.html` et `/404.html` de ton application monopage, qui peuvent afficher des routes dynamiques ou des erreurs 404 côté client (même si tu devras peut-être configurer cela sur ton hébergeur statique). Consulte [Que sont 200.html et 404.html ?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html).",
+  "fresh": "La génération de site statique (SSG) avec `ssr: true` pré-rend les routes de votre application au moment du build. (C'est le comportement par défaut lors de l'exécution de `nuxt generate`.) Elle génère également les pages de repli `/200.html` et `/404.html` de type application monopage, qui peuvent afficher des routes dynamiques ou des erreurs 404 côté client (même s'il peut être nécessaire de configurer cela sur votre hébergeur statique). Consultez [Que sont 200.html et 404.html ?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html).",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 0,
+   "lost": [
+    "La génération de sites statiques (SSG) avec {0} pré-rend les routes de ton application au moment du build.",
+    "(C'est le comportement par défaut quand tu lances {1}.)",
+    "Elle génère aussi les pages de secours {2} et {3} de ton application monopage, qui peuvent afficher des routes dynamiques ou des erreurs 404 côté client (même si tu devras peut-être configurer cela sur ton hébergeur statique)."
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": false
+  },
+  "costUsd": 0.01177,
+  "latencyMs": 1933
+ },
+ {
+  "id": "case1",
+  "locale": "ja",
+  "commit": "9a348c8be4",
+  "file": "docs/3.guide/6.going-further/5.server-imports.md",
+  "method": "model",
+  "wordDiff": "{0} preserves your handler's return type, which is what types [{1} and {2}]({3}) calls to the [-route.-] {+route, and {4} for a {5} call to it.+} Annotate the value you return rather than the handler.",
+  "before": "`defineEventHandler` preserves your handler's return type, which is what types [`$fetch` and `useFetch`](/docs/getting-started/data-fetching) calls to the route. Annotate the value you return rather than the handler.",
+  "after": "`defineEventHandler` preserves your handler's return type, which is what types [`$fetch` and `useFetch`](/docs/getting-started/data-fetching) calls to the route, and `response.json()` for a `serverFetch` call to it. Annotate the value you return rather than the handler.",
+  "human": "`defineEventHandler`はハンドラーの戻り値の型をそのまま保持する。この型が、ルートに対する[`$fetch`と`useFetch`](/docs/getting-started/data-fetching)の呼び出しの型になる。型注釈はハンドラー自体ではなく、返す値に付けること。",
+  "update": "`defineEventHandler`はハンドラーの戻り値の型をそのまま保持する。この型が、ルートに対する[`$fetch`と`useFetch`](/docs/getting-started/data-fetching)の呼び出しの型、および`serverFetch`によるその呼び出しに対する`response.json()`の型になる。型注釈はハンドラー自体ではなく、返す値に付けること。",
+  "update2": "`defineEventHandler`はハンドラーの戻り値の型をそのまま保持する。この型が、ルートに対する[`$fetch`と`useFetch`](/docs/getting-started/data-fetching)の呼び出しの型になり、それに対する`serverFetch`の呼び出しの型は`response.json()`になる。型注釈はハンドラー自体ではなく、返す値に付けること。",
+  "fresh": "`defineEventHandler` はハンドラーの戻り値の型を保持します。この型が、ルートへの [`$fetch` と `useFetch`](/docs/getting-started/data-fetching) の呼び出しの型となり、それに対する `serverFetch` 呼び出しの `response.json()` にもなります。ハンドラー自体ではなく、返す値に型を付けてください。",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 2,
+   "lost": [
+    "この型が、ルートに対する[{1}と{2}]({3})の呼び出しの型になる。"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 2,
+   "lost": [
+    "この型が、ルートに対する[{1}と{2}]({3})の呼び出しの型になる。"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 0,
+   "lost": [
+    "{0}はハンドラーの戻り値の型をそのまま保持する。",
+    "この型が、ルートに対する[{1}と{2}]({3})の呼び出しの型になる。",
+    "型注釈はハンドラー自体ではなく、返す値に付けること。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.023894000000000002,
+  "latencyMs": 3809
+ },
+ {
+  "id": "case2",
+  "locale": "ja",
+  "commit": "9f91560d80",
+  "file": "docs/1.getting-started/18.upgrade.md",
+  "method": "carry",
+  "before": "**You can still write your config in TypeScript.** Nuxt 5 requires Node `22.19`, `24.11` or later, where type stripping is on by default, so `nuxt.config.ts` and TypeScript modules load natively. Two things the runtime does not do, which `jiti` used to paper over, are guess file extensions and compile TypeScript syntax that emits code.",
+  "after": "**You can still write your config in TypeScript.** Nuxt 5 requires Node `22.21`, `24.11` or later, where type stripping is on by default, so `nuxt.config.ts` and TypeScript modules load natively. Two things the runtime does not do, which `jiti` used to paper over, are guess file extensions and compile TypeScript syntax that emits code.",
+  "human": "**設定ファイルは、これまでどおり TypeScript で書ける。** Nuxt 5 は Node `22.19`、`24.11` 以降を必要とする。これらのバージョンでは型ストリッピングがデフォルトで有効なため、`nuxt.config.ts` や TypeScript モジュールをネイティブに読み込める。ただし、`jiti` がこれまで肩代わりしてくれていた次の2つは、ランタイムでは行われない。ファイル拡張子の推測と、コードを出力する TypeScript 構文のコンパイルである。",
+  "update": "**設定ファイルは、これまでどおり TypeScript で書ける。** Nuxt 5 は Node `22.21`、`24.11` 以降を必要とする。これらのバージョンでは型ストリッピングがデフォルトで有効なため、`nuxt.config.ts` や TypeScript モジュールをネイティブに読み込める。ただし、`jiti` がこれまで肩代わりしてくれていた次の2つは、ランタイムでは行われない。ファイル拡張子の推測と、コードを出力する TypeScript 構文のコンパイルである。",
+  "update2": "**設定ファイルは、これまでどおり TypeScript で書ける。** Nuxt 5 は Node `22.21`、`24.11` 以降を必要とする。これらのバージョンでは型ストリッピングがデフォルトで有効なため、`nuxt.config.ts` や TypeScript モジュールをネイティブに読み込める。ただし、`jiti` がこれまで肩代わりしてくれていた次の2つは、ランタイムでは行われない。ファイル拡張子の推測と、コードを出力する TypeScript 構文のコンパイルである。",
+  "fresh": "**設定ファイルは引き続き TypeScript で記述できます。** Nuxt 5 には Node `22.21`、`24.11` 以降が必要です。これらのバージョンでは型ストリッピングがデフォルトで有効になっているため、`nuxt.config.ts` や TypeScript モジュールをネイティブに読み込めます。ランタイムが行わないこととして、これまで `jiti` が補っていた処理が 2 つあります。ファイル拡張子の推測と、コードを出力する TypeScript 構文のコンパイルです。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 4,
+   "lost": [
+    "** Nuxt 5 は Node {4}、{1} 以降を必要とする。"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 4,
+   "lost": [
+    "** Nuxt 5 は Node {4}、{1} 以降を必要とする。"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 0,
+   "lost": [
+    "**設定ファイルは、これまでどおり TypeScript で書ける。",
+    "** Nuxt 5 は Node {4}、{1} 以降を必要とする。",
+    "これらのバージョンでは型ストリッピングがデフォルトで有効なため、{2} や TypeScript モジュールをネイティブに読み込める。",
+    "ただし、{3} がこれまで肩代わりしてくれていた次の2つは、ランタイムでは行われない。",
+    "ファイル拡張子の推測と、コードを出力する TypeScript 構文のコンパイルである。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.0046619999999999995,
+  "latencyMs": 0
+ },
+ {
+  "id": "case3",
+  "locale": "ja",
+  "commit": "7802b2c216",
+  "file": "docs/1.getting-started/18.upgrade.md",
+  "method": "model",
+  "wordDiff": "Your own server code is not covered by default, because the errors you get are what show you where the work is. {+When {0} is off, {1} lists the files in your {2} directory that import from {3}, use h3 v1 helpers, or read {4}.+} If you want to ship the upgrade before doing that work, turn on [-{0}:-] {+{5}:+}",
+  "before": "Your own server code is not covered by default, because the errors you get are what show you where the work is. If you want to ship the upgrade before doing that work, turn on `nitroLegacy`:",
+  "after": "Your own server code is not covered by default, because the errors you get are what show you where the work is. When `nitroLegacy` is off, `NUXT_B9005` lists the files in your `server/` directory that import from `nitropack`, use h3 v1 helpers, or read `event.node`. If you want to ship the upgrade before doing that work, turn on `nitroLegacy`:",
+  "human": "自前のサーバーコードはデフォルトでは対象外である。エラーが出ることで、どこに手を入れるべきかが分かるからだ。その作業を終える前にアップグレードだけ先にリリースしたい場合は、`nitroLegacy`を有効にする。",
+  "update": "自前のサーバーコードはデフォルトでは対象外である。エラーが出ることで、どこに手を入れるべきかが分かるからだ。`nitroLegacy`が無効の場合、`NUXT_B9005`は`server/`ディレクトリ内のファイルのうち、`nitropack`からインポートしているもの、h3 v1のヘルパーを使っているもの、または`event.node`を読み取っているものを一覧表示する。その作業を終える前にアップグレードだけ先にリリースしたい場合は、`nitroLegacy`を有効にする。",
+  "update2": "自前のサーバーコードはデフォルトでは対象外である。エラーが出ることで、どこに手を入れるべきかが分かるからだ。`nitroLegacy`がオフの場合、`NUXT_B9005`は`server/`ディレクトリ内で`nitropack`からインポートしているファイル、h3 v1のヘルパーを使っているファイル、または`event.node`を読み取っているファイルを一覧表示する。その作業を終える前にアップグレードだけ先にリリースしたい場合は、`nitroLegacy`を有効にする。",
+  "fresh": "独自のサーバーコードはデフォルトでは対象外です。発生するエラーが、どこに作業が必要かを示してくれるためです。`nitroLegacy` がオフの場合、`NUXT_B9005` は `server/` ディレクトリ内のファイルのうち、`nitropack` からインポートしているもの、h3 v1 のヘルパーを使用しているもの、または `event.node` を読み取っているものを一覧表示します。その作業を行う前にアップグレードをリリースしたい場合は、`nitroLegacy` を有効にしてください。",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 0,
+   "lost": [
+    "自前のサーバーコードはデフォルトでは対象外である。",
+    "エラーが出ることで、どこに手を入れるべきかが分かるからだ。",
+    "その作業を終える前にアップグレードだけ先にリリースしたい場合は、{0}を有効にする。"
+   ]
+  },
+  "updatePlaceholderErrors": [
+   "missing {5}"
+  ],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.011266,
+  "latencyMs": 1963
+ },
+ {
+  "id": "case4",
+  "locale": "ja",
+  "commit": "9ceeba8c6d",
+  "file": "docs/3.guide/6.going-further/8.builders.md",
+  "method": "model",
+  "wordDiff": "Whatever event you pass to a handler must match {0}. Register your event's type in the {1} registry in {2}, which is what {3} and {4} resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of [-it ({7} returns one) and put-] {+it. To give app code+} your own event {+instead, set it as {5}+} on the [-{5} property, so {4} and-] {+event you pass+} the [-render hooks give app code your event instead.-] {+[renderer]({6}).+}",
+  "before": "Whatever event you pass to a handler must match `RequestEvent`. Register your event's type in the `ServerTypes` registry in `@nuxt/schema`, which is what `NuxtRequestEvent` and `useRequestEvent()` resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of it (`toNuxtRequestEvent()` returns one) and put your own event on the `~app` property, so `useRequestEvent()` and the render hooks give app code your event instead.",
+  "after": "Whatever event you pass to a handler must match `RequestEvent`. Register your event's type in the `ServerTypes` registry in `@nuxt/schema`, which is what `NuxtRequestEvent` and `useRequestEvent()` resolve to. If your own event object isn't web-shaped, pass handlers a web-shaped view of it. To give app code your own event instead, set it as `~app` on the event you pass the [renderer](#standing-up-the-ssr-renderer).",
+  "human": "ハンドラーに渡すイベントは、`RequestEvent`に一致していなければならない。独自のイベントの型は、`@nuxt/schema`内の`ServerTypes`レジストリに登録する。`NuxtRequestEvent`と`useRequestEvent()`が解決する先がこのレジストリだ。独自のイベントオブジェクトがWeb準拠の形をしていない場合は、そのWeb準拠のビュー(`toNuxtRequestEvent()`が返す)をハンドラーに渡し、独自のイベントは`~app`プロパティに持たせる。こうすれば、`useRequestEvent()`やレンダーフックからアプリケーションコードに独自のイベントが渡される。",
+  "update": "ハンドラーに渡すイベントは、`RequestEvent`に一致していなければならない。独自のイベントの型は、`@nuxt/schema`内の`ServerTypes`レジストリに登録する。`NuxtRequestEvent`と`useRequestEvent()`が解決する先がこのレジストリだ。独自のイベントオブジェクトがWeb準拠の形をしていない場合は、そのWeb準拠のビューをハンドラーに渡す。アプリケーションコードに独自のイベントを代わりに渡すには、[renderer](#standing-up-the-ssr-renderer)に渡すイベントの`~app`に独自のイベントを設定する。",
+  "update2": "ハンドラーに渡すイベントは、`RequestEvent`に一致していなければならない。独自のイベントの型は、`@nuxt/schema`内の`ServerTypes`レジストリに登録する。`NuxtRequestEvent`と`useRequestEvent()`が解決する先がこのレジストリだ。独自のイベントオブジェクトがWeb準拠の形をしていない場合は、そのWeb準拠のビューをハンドラーに渡す。アプリケーションコードに独自のイベントを渡すには、[renderer](#standing-up-the-ssr-renderer)に渡すイベントに`~app`として設定する。",
+  "fresh": "ハンドラーに渡すイベントは `RequestEvent` に一致している必要があります。独自のイベントの型は `@nuxt/schema` の `ServerTypes` レジストリに登録してください。`NuxtRequestEvent` と `useRequestEvent()` はこのレジストリに解決されます。独自のイベントオブジェクトがWeb形式でない場合は、そのWeb形式のビューをハンドラーに渡してください。アプリのコードに独自のイベントを渡したい場合は、[レンダラー](#standing-up-the-ssr-renderer)に渡すイベントの `~app` としてそのイベントを設定します。",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 3,
+   "lost": [
+    "独自のイベントオブジェクトがWeb準拠の形をしていない場合は、そのWeb準拠のビュー({7}が返す)をハンドラーに渡し、独自のイベントは{5}プロパティに持たせる。",
+    "こうすれば、{4}やレンダーフックからアプリケーションコードに独自のイベントが渡される。"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 3,
+   "lost": [
+    "独自のイベントオブジェクトがWeb準拠の形をしていない場合は、そのWeb準拠のビュー({7}が返す)をハンドラーに渡し、独自のイベントは{5}プロパティに持たせる。",
+    "こうすれば、{4}やレンダーフックからアプリケーションコードに独自のイベントが渡される。"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 0,
+   "lost": [
+    "ハンドラーに渡すイベントは、{0}に一致していなければならない。",
+    "独自のイベントの型は、{2}内の{1}レジストリに登録する。{",
+    "3}と{4}が解決する先がこのレジストリだ。",
+    "独自のイベントオブジェクトがWeb準拠の形をしていない場合は、そのWeb準拠のビュー({7}が返す)をハンドラーに渡し、独自のイベントは{5}プロパティに持たせる。",
+    "こうすれば、{4}やレンダーフックからアプリケーションコードに独自のイベントが渡される。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.012284,
+  "latencyMs": 2108
+ },
+ {
+  "id": "case5",
+  "locale": "ja",
+  "commit": "3e5d8b3c50",
+  "file": "docs/2.directory-structure/1.app/1.pages.md",
+  "method": "carry",
+  "before": "Pages are only automatically registered for prerendering if you have not disabled `nitro.prerender.crawlLinks` and you have at least one page in your `nitro.prerender.routes` list. See the [prerendering guide](/docs/getting-started/prerendering).",
+  "after": "Pages are only automatically registered for prerendering if you have not disabled `prerender.crawlLinks` and you have at least one page in your `prerender.routes` list. See the [prerendering guide](/docs/getting-started/prerendering).",
+  "human": "ページがプリレンダリング対象として自動登録されるのは、`nitro.prerender.crawlLinks`を無効にしておらず、かつ`nitro.prerender.routes`の一覧に少なくとも1つのページがある場合に限られる。詳しくは[プリレンダリングガイド](/docs/getting-started/prerendering)を参照のこと。",
+  "update": "ページがプリレンダリング対象として自動登録されるのは、`prerender.crawlLinks`を無効にしておらず、かつ`prerender.routes`の一覧に少なくとも1つのページがある場合に限られる。詳しくは[プリレンダリングガイド](/docs/getting-started/prerendering)を参照のこと。",
+  "update2": "ページがプリレンダリング対象として自動登録されるのは、`prerender.crawlLinks`を無効にしておらず、かつ`prerender.routes`の一覧に少なくとも1つのページがある場合に限られる。詳しくは[プリレンダリングガイド](/docs/getting-started/prerendering)を参照のこと。",
+  "fresh": "ページがプリレンダリング対象として自動的に登録されるのは、`prerender.crawlLinks`を無効にしておらず、かつ`prerender.routes`リストに少なくとも1つのページがある場合のみです。[プリレンダリングガイド](/docs/getting-started/prerendering)を参照してください。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "詳しくは[プリレンダリングガイド]({2})を参照のこと。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.003644,
+  "latencyMs": 0
+ },
+ {
+  "id": "case6",
+  "locale": "ja",
+  "commit": "68b8a4e12b",
+  "file": "docs/4.api/2.composables/use-server-seo-meta.md",
+  "method": "model",
+  "wordDiff": "{0} is deprecated. Wrap [{1}]({2}) in an {3} block instead. [-The auto-import-] {+It+} is [-removed under {4}.-] {+no longer auto-imported.+}",
+  "before": "`useServerSeoMeta` is deprecated. Wrap [`useSeoMeta`](/docs/api/composables/use-seo-meta) in an `if (import.meta.server)` block instead. The auto-import is removed under `future.compatibilityVersion: 5`.",
+  "after": "`useServerSeoMeta` is deprecated. Wrap [`useSeoMeta`](/docs/api/composables/use-seo-meta) in an `if (import.meta.server)` block instead. It is no longer auto-imported.",
+  "human": "`useServerSeoMeta` は非推奨である。代わりに [`useSeoMeta`](/docs/api/composables/use-seo-meta) を `if (import.meta.server)` ブロックで囲んで使うこと。`future.compatibilityVersion: 5` では自動インポートが廃止されている。",
+  "update": "`useServerSeoMeta` は非推奨である。代わりに [`useSeoMeta`](/docs/api/composables/use-seo-meta) を `if (import.meta.server)` ブロックで囲んで使うこと。これはもう自動インポートされない。",
+  "update2": "`useServerSeoMeta` は非推奨である。代わりに [`useSeoMeta`](/docs/api/composables/use-seo-meta) を `if (import.meta.server)` ブロックで囲んで使うこと。これはもう自動インポートされない。",
+  "fresh": "`useServerSeoMeta` は非推奨です。代わりに [`useSeoMeta`](/docs/api/composables/use-seo-meta) を `if (import.meta.server)` ブロックで囲んでください。また、自動インポートされなくなりました。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 1,
+   "lost": [
+    "代わりに [{1}]({2}) を {3} ブロックで囲んで使うこと。{"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 1,
+   "lost": [
+    "代わりに [{1}]({2}) を {3} ブロックで囲んで使うこと。{"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 3,
+   "expected": 2,
+   "kept": 0,
+   "lost": [
+    "{0} は非推奨である。",
+    "代わりに [{1}]({2}) を {3} ブロックで囲んで使うこと。{"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.007212,
+  "latencyMs": 1537
+ },
+ {
+  "id": "case7",
+  "locale": "ja",
+  "commit": "6f2fc18e3a",
+  "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+  "method": "model",
+  "wordDiff": "Nuxt provides a private {0} as the application's root secret. Modules and server features [-can use it to-] derive their own [-secrets.-] {+secrets from it with [{1}]({2}), and the [session helpers]({3}) seal with one by default.+} The value defaults to an empty string, is only available on the server, and you can set it with {4} without declaring the key in {5}.",
+  "before": "Nuxt provides a private `runtimeConfig.appSecret` as the application's root secret. Modules and server features can use it to derive their own secrets. The value defaults to an empty string, is only available on the server, and you can set it with `NUXT_APP_SECRET` without declaring the key in `nuxt.config`.",
+  "after": "Nuxt provides a private `runtimeConfig.appSecret` as the application's root secret. Modules and server features derive their own secrets from it with [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets), and the [session helpers](/docs/guide/going-further/server-imports#sessions) seal with one by default. The value defaults to an empty string, is only available on the server, and you can set it with `NUXT_APP_SECRET` without declaring the key in `nuxt.config`.",
+  "human": "Nuxt はアプリケーションのルートシークレットとして、非公開の `runtimeConfig.appSecret` を提供する。モジュールやサーバー機能は、この値から独自のシークレットを導出して利用できる。デフォルト値は空文字列で、サーバー上でのみ参照可能だ。`nuxt.config` でキーを宣言しなくても、`NUXT_APP_SECRET` で設定できる。",
+  "update": "Nuxt はアプリケーションのルートシークレットとして、非公開の `runtimeConfig.appSecret` を提供する。モジュールやサーバー機能は、この値から [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets) を使って独自のシークレットを導出でき、[セッションヘルパー](/docs/guide/going-further/server-imports#sessions) もデフォルトでこの値を使って封印する。デフォルト値は空文字列で、サーバー上でのみ参照可能だ。`nuxt.config` でキーを宣言しなくても、`NUXT_APP_SECRET` で設定できる。",
+  "update2": "Nuxt はアプリケーションのルートシークレットとして、非公開の `runtimeConfig.appSecret` を提供する。モジュールやサーバー機能は、この値から [`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets) を使って独自のシークレットを導出でき、[セッションヘルパー](/docs/guide/going-further/server-imports#sessions)もデフォルトでこの値を使って封印する。デフォルト値は空文字列で、サーバー上でのみ参照可能だ。`nuxt.config` でキーを宣言しなくても、`NUXT_APP_SECRET` で設定できる。",
+  "fresh": "Nuxt は、アプリケーションのルートシークレットとして非公開の `runtimeConfig.appSecret` を提供します。モジュールやサーバー機能は、[`deriveSecret`](/docs/guide/going-further/server-imports#deriving-secrets) を使用してこの値から独自のシークレットを派生させ、[セッションヘルパー](/docs/guide/going-further/server-imports#sessions)もデフォルトでそのうちの 1 つを使って封印します。この値のデフォルトは空文字列で、サーバー上でのみ利用でき、`nuxt.config` でキーを宣言しなくても `NUXT_APP_SECRET` で設定できます。",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 3,
+   "lost": [
+    "モジュールやサーバー機能は、この値から独自のシークレットを導出して利用できる。"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 3,
+   "lost": [
+    "モジュールやサーバー機能は、この値から独自のシークレットを導出して利用できる。"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 0,
+   "lost": [
+    "Nuxt はアプリケーションのルートシークレットとして、非公開の {0} を提供する。",
+    "モジュールやサーバー機能は、この値から独自のシークレットを導出して利用できる。",
+    "デフォルト値は空文字列で、サーバー上でのみ参照可能だ。{",
+    "5} でキーを宣言しなくても、{4} で設定できる。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.011268,
+  "latencyMs": 2147
+ },
+ {
+  "id": "case8",
+  "locale": "ja",
+  "commit": "e0259454fa",
+  "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+  "method": "model",
+  "wordDiff": "[-Your desired-] {+Custom runtime config+} variables must be defined in your {0}. This ensures that arbitrary environment variables are not exposed to your application code.",
+  "before": "Your desired variables must be defined in your `nuxt.config`. This ensures that arbitrary environment variables are not exposed to your application code.",
+  "after": "Custom runtime config variables must be defined in your `nuxt.config`. This ensures that arbitrary environment variables are not exposed to your application code.",
+  "human": "使いたい変数は、あらかじめ `nuxt.config` に定義しておく必要がある。こうしておけば、任意の環境変数がアプリケーションのコードに公開されてしまうことはない。",
+  "update": "カスタムランタイム設定の変数は、あらかじめ `nuxt.config` に定義しておく必要がある。こうしておけば、任意の環境変数がアプリケーションのコードに公開されてしまうことはない。",
+  "update2": "カスタムのランタイム設定変数は、あらかじめ `nuxt.config` に定義しておく必要がある。こうしておけば、任意の環境変数がアプリケーションのコードに公開されてしまうことはない。",
+  "fresh": "カスタムのランタイム設定の変数は、`nuxt.config` で定義する必要があります。これにより、任意の環境変数がアプリケーションコードに公開されることを防ぎます。",
+  "identicalToHuman": false,
+  "runsAgree": false,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "こうしておけば、任意の環境変数がアプリケーションのコードに公開されてしまうことはない。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.007625999999999999,
+  "latencyMs": 1338
+ },
+ {
+  "id": "case9",
+  "locale": "ja",
+  "commit": "d62847af00",
+  "file": "docs/1.getting-started/06.styling.md",
+  "method": "model",
+  "wordDiff": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have {+a+} fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau]({0}).",
+  "before": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau](https://github.com/Tahul/pinceau).",
+  "after": "One of the best things about Vue and SFC is how great it is at naturally dealing with styling. You can directly write CSS or preprocessor code in the style block of your components file, therefore you will have a fantastic developer experience without having to use something like CSS-in-JS. However if you wish to use CSS-in-JS, you can find 3rd party libraries and modules that support it, such as [pinceau](https://github.com/Tahul/pinceau).",
+  "human": "Vue と SFC の大きな魅力のひとつは、スタイリングを自然に扱えることだ。コンポーネントファイルの style ブロックに CSS やプリプロセッサのコードを直接書けるため、CSS-in-JS のようなものに頼らなくても、優れた開発者体験が得られる。とはいえ CSS-in-JS を使いたい場合は、それに対応したサードパーティのライブラリやモジュールもある。たとえば [pinceau](https://github.com/Tahul/pinceau) がその一例だ。",
+  "update": "Vue と SFC の大きな魅力のひとつは、スタイリングを自然に扱えることだ。コンポーネントファイルの style ブロックに CSS やプリプロセッサのコードを直接書けるため、CSS-in-JS のようなものに頼らなくても、優れた開発者体験が得られる。とはいえ CSS-in-JS を使いたい場合は、それに対応したサードパーティのライブラリやモジュールもある。たとえば [pinceau](https://github.com/Tahul/pinceau) がその一例だ。",
+  "update2": "Vue と SFC の大きな魅力のひとつは、スタイリングを自然に扱えることだ。コンポーネントファイルの style ブロックに CSS やプリプロセッサのコードを直接書けるため、CSS-in-JS のようなものに頼らなくても、優れた開発者体験が得られる。とはいえ CSS-in-JS を使いたい場合は、それに対応したサードパーティのライブラリやモジュールもある。たとえば [pinceau](https://github.com/Tahul/pinceau) がその一例だ。",
+  "fresh": "Vue と SFC の最大の利点の一つは、スタイリングを自然に扱えることです。コンポーネントファイルの style ブロックに CSS やプリプロセッサのコードを直接記述できるため、CSS-in-JS のようなものを使わなくても、優れた開発者体験が得られます。ただし、CSS-in-JS を使いたい場合は、[pinceau](https://github.com/Tahul/pinceau) のように、それをサポートするサードパーティのライブラリやモジュールを利用できます。",
+  "identicalToHuman": true,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 4,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 4,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 0,
+   "lost": [
+    "Vue と SFC の大きな魅力のひとつは、スタイリングを自然に扱えることだ。",
+    "コンポーネントファイルの style ブロックに CSS やプリプロセッサのコードを直接書けるため、CSS-in-JS のようなものに頼らなくても、優れた開発者体験が得られる。",
+    "とはいえ CSS-in-JS を使いたい場合は、それに対応したサードパーティのライブラリやモジュールもある。",
+    "たとえば [pinceau]({0}) がその一例だ。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.011980000000000001,
+  "latencyMs": 2166
+ },
+ {
+  "id": "case10",
+  "locale": "ja",
+  "commit": "d62847af00",
+  "file": "docs/1.getting-started/10.data-fetching.md",
+  "method": "model",
+  "wordDiff": "The {0} composable will start fetching data the moment {+it+} is invoked. You may prevent this by setting {1}, for example, to wait for user interaction.",
+  "before": "The `useFetch` composable will start fetching data the moment is invoked. You may prevent this by setting `immediate: false`, for example, to wait for user interaction.",
+  "after": "The `useFetch` composable will start fetching data the moment it is invoked. You may prevent this by setting `immediate: false`, for example, to wait for user interaction.",
+  "human": "`useFetch`コンポーザブルは、呼び出された瞬間にデータの取得を開始する。たとえばユーザーの操作を待ちたい場合は、`immediate: false`を設定すればこの動作を防げる。",
+  "update": "`useFetch`コンポーザブルは、呼び出された瞬間にデータの取得を開始する。たとえばユーザーの操作を待ちたい場合は、`immediate: false`を設定すればこの動作を防げる。",
+  "update2": "`useFetch`コンポーザブルは、呼び出された瞬間にデータの取得を開始する。たとえばユーザーの操作を待ちたい場合は、`immediate: false`を設定すればこの動作を防げる。",
+  "fresh": "`useFetch`コンポーザブルは、呼び出された瞬間にデータの取得を開始します。たとえば、ユーザーの操作を待つ場合などは、`immediate: false`を設定することでこれを防ぐことができます。",
+  "identicalToHuman": true,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "たとえばユーザーの操作を待ちたい場合は、{1}を設定すればこの動作を防げる。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.008958,
+  "latencyMs": 1852
+ },
+ {
+  "id": "case11",
+  "locale": "ja",
+  "commit": "b437b50f50",
+  "file": "docs/1.getting-started/10.data-fetching.md",
+  "method": "model",
+  "wordDiff": "If you have not fetched data on the server (for example, with {0}), then the data [-_will not_-] {+*will not*+} be fetched until hydration completes. This means even if you await {1} on client-side, {2} will remain undefined within {3}.",
+  "before": "If you have not fetched data on the server (for example, with `server: false`), then the data _will not_ be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain undefined within `<script setup>`.",
+  "after": "If you have not fetched data on the server (for example, with `server: false`), then the data *will not* be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain undefined within `<script setup>`.",
+  "human": "サーバー側でデータを取得していない場合(たとえば `server: false` を使っていない場合など)、ハイドレーションが完了するまでデータは取得されない。つまり、クライアント側で `useFetch` を await したとしても、`<script setup>` の中では `data` は undefined のままとなる。",
+  "update": "サーバー側でデータを取得していない場合(たとえば `server: false` を使っていない場合など)、ハイドレーションが完了するまでデータは取得されない。つまり、クライアント側で `useFetch` を await したとしても、`<script setup>` の中では `data` は undefined のままとなる。",
+  "update2": "サーバー側でデータを取得していない場合(たとえば `server: false` を使っていない場合など)、ハイドレーションが完了するまでデータは取得されない。つまり、クライアント側で `useFetch` を await したとしても、`<script setup>` の中では `data` は undefined のままとなる。",
+  "fresh": "サーバー上でデータを取得していない場合(たとえば `server: false` を使用していない場合)、ハイドレーションが完了するまでデータは取得*されません*。つまり、クライアントサイドで `useFetch` を await しても、`<script setup>` 内では `data` は undefined のままになります。",
+  "identicalToHuman": true,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 1,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 2,
+   "unchangedSourceSentences": 1,
+   "humanSentences": 2,
+   "expected": 1,
+   "kept": 0,
+   "lost": [
+    "つまり、クライアント側で {1} を await したとしても、{3} の中では {2} は undefined のままとなる。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.011542,
+  "latencyMs": 2769
+ },
+ {
+  "id": "case12",
+  "locale": "ja",
+  "commit": "84c1145a64",
+  "file": "docs/4.api/3.utils/create-error.md",
+  "method": "model",
+  "wordDiff": "In API routes, using {0} by passing an object with a short {1} is recommended because it can be accessed on the client side. Otherwise, a {2} passed to [-{0}-] {+{3}+} on an API route will not propagate to the client. Alternatively, you can use the {4} property to pass data back to the client. {+When handling the error with {5}, the custom data is available at {6}.+} In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+  "before": "In API routes, using `createError` by passing an object with a short `statusText` is recommended because it can be accessed on the client side. Otherwise, a `message` passed to `createError` on an API route will not propagate to the client. Alternatively, you can use the `data` property to pass data back to the client. In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+  "after": "In API routes, using `createError` by passing an object with a short `statusText` is recommended because it can be accessed on the client side. Otherwise, a `message` passed to `createError` on an API route will not propagate to the client. Alternatively, you can use the `data` property to pass data back to the client. When handling the error with `useFetch`, the custom data is available at `error.value.data.data`. In any case, always consider avoiding to put dynamic user input to the message to avoid potential security issues.",
+  "human": "APIルートでは、短い`statusText`を持つオブジェクトを渡して`createError`を使うことを推奨する。クライアント側からアクセスできるためだ。そうしないと、APIルート上で`createError`に渡した`message`はクライアントに伝わらない。データをクライアントに返したい場合は、`data`プロパティを使う手もある。いずれの場合も、セキュリティ上の問題を避けるため、動的なユーザー入力をメッセージに含めないよう常に注意すること。",
+  "update": "APIルートでは、短い`statusText`を持つオブジェクトを渡して`createError`を使うことを推奨する。クライアント側からアクセスできるためだ。そうしないと、APIルート上で`createError`に渡した`message`はクライアントに伝わらない。データをクライアントに返したい場合は、`data`プロパティを使う手もある。`useFetch`でエラーを処理する場合、カスタムデータは`error.value.data.data`で取得できる。いずれの場合も、セキュリティ上の問題を避けるため、動的なユーザー入力をメッセージに含めないよう常に注意すること。",
+  "update2": "APIルートでは、短い`statusText`を持つオブジェクトを渡して`createError`を使うことを推奨する。クライアント側からアクセスできるためだ。そうしないと、APIルート上で`createError`に渡した`message`はクライアントに伝わらない。データをクライアントに返したい場合は、`data`プロパティを使う手もある。`useFetch`でエラーを処理する場合、カスタムデータは`error.value.data.data`で取得できる。いずれの場合も、セキュリティ上の問題を避けるため、動的なユーザー入力をメッセージに含めないよう常に注意すること。",
+  "fresh": "API ルートでは、短い `statusText` を持つオブジェクトを渡して `createError` を使用することを推奨します。これはクライアント側でアクセスできるためです。そうしないと、API ルート上で `createError` に渡した `message` はクライアントに伝播されません。あるいは、`data` プロパティを使用してデータをクライアントに返すこともできます。`useFetch` でエラーを処理する場合、カスタムデータは `error.value.data.data` から取得できます。いずれの場合も、セキュリティ上の問題が生じる可能性を避けるため、動的なユーザー入力をメッセージに含めないようにしてください。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 4,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 5,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 4,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 5,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 4,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 5,
+   "expected": 5,
+   "kept": 0,
+   "lost": [
+    "APIルートでは、短い{1}を持つオブジェクトを渡して{0}を使うことを推奨する。",
+    "クライアント側からアクセスできるためだ。",
+    "そうしないと、APIルート上で{0}に渡した{2}はクライアントに伝わらない。",
+    "データをクライアントに返したい場合は、{4}プロパティを使う手もある。",
+    "いずれの場合も、セキュリティ上の問題を避けるため、動的なユーザー入力をメッセージに含めないよう常に注意すること。"
+   ]
+  },
+  "updatePlaceholderErrors": [
+   "missing {3}"
+  ],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.013000000000000001,
+  "latencyMs": 2170
+ },
+ {
+  "id": "case13",
+  "locale": "ja",
+  "commit": "4694ae0465",
+  "file": "docs/3.guide/6.going-further/1.experimental-features.md",
+  "method": "model",
+  "wordDiff": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get. [-You can customize the bot detection regex:-]",
+  "before": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get. You can customize the bot detection regex:",
+  "after": "Streaming is automatically disabled for bot and crawler user agents (such as Googlebot, Bingbot, etc.) to ensure search engines receive fully-rendered HTML for SEO safety. The default pattern matches indexing crawlers only; Lighthouse and other audit tools deliberately fall outside it so synthetic measurements reflect the same streamed response real users get.",
+  "human": "ボットやクローラーのユーザーエージェント（Googlebot、Bingbot など）に対しては、検索エンジンが完全にレンダリングされた HTML を受け取れるようにし、SEO 上の安全性を確保するため、ストリーミングが自動的に無効化される。デフォルトのパターンが対象とするのはインデックス用のクローラーのみである。Lighthouse などの監査ツールは意図的に対象外としており、合成測定でも実際のユーザーと同じストリーミングレスポンスが反映される。ボット検出用の正規表現は次のようにカスタマイズできる。",
+  "update": "ボットやクローラーのユーザーエージェント（Googlebot、Bingbot など）に対しては、検索エンジンが完全にレンダリングされた HTML を受け取れるようにし、SEO 上の安全性を確保するため、ストリーミングが自動的に無効化される。デフォルトのパターンが対象とするのはインデックス用のクローラーのみである。Lighthouse などの監査ツールは意図的に対象外としており、合成測定でも実際のユーザーと同じストリーミングレスポンスが反映される。",
+  "update2": "ボットやクローラーのユーザーエージェント（Googlebot、Bingbot など）に対しては、検索エンジンが完全にレンダリングされた HTML を受け取れるようにし、SEO 上の安全性を確保するため、ストリーミングが自動的に無効化される。デフォルトのパターンが対象とするのはインデックス用のクローラーのみである。Lighthouse などの監査ツールは意図的に対象外としており、合成測定でも実際のユーザーと同じストリーミングレスポンスが反映される。",
+  "fresh": "ボットやクローラーのユーザーエージェント(Googlebot、Bingbot など)に対しては、検索エンジンが SEO 上の安全性のために完全にレンダリングされた HTML を受け取れるよう、ストリーミングが自動的に無効になります。デフォルトのパターンが対象とするのはインデックス用のクローラーのみです。Lighthouse などの監査ツールは意図的に対象外としており、合成測定でも実際のユーザーが受け取るのと同じストリーミングレスポンスが反映されます。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 3,
+   "lost": [
+    "ボット検出用の正規表現は次のようにカスタマイズできる。"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 3,
+   "lost": [
+    "ボット検出用の正規表現は次のようにカスタマイズできる。"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 0,
+   "lost": [
+    "ボットやクローラーのユーザーエージェント（Googlebot、Bingbot など）に対しては、検索エンジンが完全にレンダリングされた HTML を受け取れるようにし、SEO 上の安全性を確保するため、ストリーミングが自動的に無効化される。",
+    "デフォルトのパターンが対象とするのはインデックス用のクローラーのみである。",
+    "Lighthouse などの監査ツールは意図的に対象外としており、合成測定でも実際のユーザーと同じストリーミングレスポンスが反映される。",
+    "ボット検出用の正規表現は次のようにカスタマイズできる。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.012473999999999999,
+  "latencyMs": 2168
+ },
+ {
+  "id": "case14",
+  "locale": "ja",
+  "commit": "844cbf9081",
+  "file": "docs/4.api/5.kit/12.nitro.md",
+  "method": "carry",
+  "before": "Nitro is an open source TypeScript framework to build ultra-fast web servers. Nuxt uses Nitro as its server engine. You can use `useNitro` to access the Nitro instance (or `tryUseNitro` if your module should also work without Nitro), `addServerHandler` to add a server handler, `addDevServerHandler` to add a server handler to be used only in development mode, `addServerPlugin` to add a plugin to extend Nitro's runtime behavior, and `addPrerenderRoutes` to add routes to be prerendered by Nitro.",
+  "after": "Nitro is an open source TypeScript framework to build ultra-fast web servers. Nuxt uses Nitro as its server engine. You can use `useNitro` to access the Nitro instance (or `tryUseNitro` if your module should also work without Nitro), `addServerHandler` to add a server handler, `addDevServerHandler` to add a server handler to be used only in development mode, `addNitroPlugin` to add a plugin to extend Nitro's runtime behavior, and `addPrerenderRoutes` to add routes to be prerendered by Nitro.",
+  "human": "Nitro は、超高速な Web サーバーを構築するためのオープンソースの TypeScript フレームワークである。Nuxt はサーバーエンジンとして Nitro を採用している。Nitro インスタンスにアクセスするには `useNitro` を使う(モジュールが Nitro なしでも動作する必要がある場合は `tryUseNitro`)。サーバーハンドラーを追加するには `addServerHandler`、開発モードでのみ使用するサーバーハンドラーを追加するには `addDevServerHandler`、Nitro のランタイムの挙動を拡張するプラグインを追加するには `addServerPlugin`、Nitro にプリレンダリングさせるルートを追加するには `addPrerenderRoutes` を使う。",
+  "update": "Nitro は、超高速な Web サーバーを構築するためのオープンソースの TypeScript フレームワークである。Nuxt はサーバーエンジンとして Nitro を採用している。Nitro インスタンスにアクセスするには `useNitro` を使う(モジュールが Nitro なしでも動作する必要がある場合は `tryUseNitro`)。サーバーハンドラーを追加するには `addServerHandler`、開発モードでのみ使用するサーバーハンドラーを追加するには `addDevServerHandler`、Nitro のランタイムの挙動を拡張するプラグインを追加するには `addNitroPlugin`、Nitro にプリレンダリングさせるルートを追加するには `addPrerenderRoutes` を使う。",
+  "update2": "Nitro は、超高速な Web サーバーを構築するためのオープンソースの TypeScript フレームワークである。Nuxt はサーバーエンジンとして Nitro を採用している。Nitro インスタンスにアクセスするには `useNitro` を使う(モジュールが Nitro なしでも動作する必要がある場合は `tryUseNitro`)。サーバーハンドラーを追加するには `addServerHandler`、開発モードでのみ使用するサーバーハンドラーを追加するには `addDevServerHandler`、Nitro のランタイムの挙動を拡張するプラグインを追加するには `addNitroPlugin`、Nitro にプリレンダリングさせるルートを追加するには `addPrerenderRoutes` を使う。",
+  "fresh": "Nitro は、超高速な Web サーバーを構築するためのオープンソースの TypeScript フレームワークです。Nuxt はサーバーエンジンとして Nitro を使用しています。`useNitro` を使用すると Nitro インスタンスにアクセスでき（モジュールを Nitro なしでも動作させる場合は `tryUseNitro`）、`addServerHandler` でサーバーハンドラーを追加し、`addDevServerHandler` で開発モードでのみ使用されるサーバーハンドラーを追加し、`addNitroPlugin` で Nitro のランタイムの動作を拡張するプラグインを追加し、`addPrerenderRoutes` で Nitro によってプリレンダリングされるルートを追加できます。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 3,
+   "lost": [
+    "サーバーハンドラーを追加するには {2}、開発モードでのみ使用するサーバーハンドラーを追加するには {3}、Nitro のランタイムの挙動を拡張するプラグインを追加するには {6}、Nitro にプリレンダリングさせるルートを追加するには {5} を使う。"
+   ]
+  },
+  "update2Preservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 3,
+   "lost": [
+    "サーバーハンドラーを追加するには {2}、開発モードでのみ使用するサーバーハンドラーを追加するには {3}、Nitro のランタイムの挙動を拡張するプラグインを追加するには {6}、Nitro にプリレンダリングさせるルートを追加するには {5} を使う。"
+   ]
+  },
+  "freshPreservation": {
+   "aligned": false,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 2,
+   "humanSentences": 4,
+   "expected": 4,
+   "kept": 0,
+   "lost": [
+    "Nitro は、超高速な Web サーバーを構築するためのオープンソースの TypeScript フレームワークである。",
+    "Nuxt はサーバーエンジンとして Nitro を採用している。",
+    "Nitro インスタンスにアクセスするには {0} を使う(モジュールが Nitro なしでも動作する必要がある場合は {1})。",
+    "サーバーハンドラーを追加するには {2}、開発モードでのみ使用するサーバーハンドラーを追加するには {3}、Nitro のランタイムの挙動を拡張するプラグインを追加するには {6}、Nitro にプリレンダリングさせるルートを追加するには {5} を使う。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.005214,
+  "latencyMs": 0
+ },
+ {
+  "id": "case15",
+  "locale": "ja",
+  "commit": "092fe3f14e",
+  "file": "docs/1.getting-started/16.deployment.md",
+  "method": "model",
+  "wordDiff": "Static site generation (SSG) with {0} pre-renders routes of your application at build time. (This is the default behavior when running {1}.) It will also generate {2} and {3} single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host). {+See [What are 200.html and 404.html?]({4}).+}",
+  "before": "Static site generation (SSG) with `ssr: true` pre-renders routes of your application at build time. (This is the default behavior when running `nuxt generate`.) It will also generate `/200.html` and `/404.html` single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host).",
+  "after": "Static site generation (SSG) with `ssr: true` pre-renders routes of your application at build time. (This is the default behavior when running `nuxt generate`.) It will also generate `/200.html` and `/404.html` single-page app fallback pages, which can render dynamic routes or 404 errors on the client (though you may need to configure this on your static host). See [What are 200.html and 404.html?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html).",
+  "human": "`ssr: true` による静的サイト生成(SSG)では、アプリケーションのルートをビルド時にあらかじめレンダリングする。(`nuxt generate` を実行した場合は、これがデフォルトの動作となる。)あわせて `/200.html` と `/404.html` というシングルページアプリ用のフォールバックページも生成され、動的ルートや 404 エラーをクライアント側で描画できる(ただし、静的ホスティング側で設定が必要になる場合がある)。",
+  "update": "`ssr: true` による静的サイト生成(SSG)では、アプリケーションのルートをビルド時にあらかじめレンダリングする。(`nuxt generate` を実行した場合は、これがデフォルトの動作となる。)あわせて `/200.html` と `/404.html` というシングルページアプリ用のフォールバックページも生成され、動的ルートや 404 エラーをクライアント側で描画できる(ただし、静的ホスティング側で設定が必要になる場合がある)。[200.html と 404.html とは?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html)を参照。",
+  "update2": "`ssr: true` による静的サイト生成(SSG)では、アプリケーションのルートをビルド時にあらかじめレンダリングする。(`nuxt generate` を実行した場合は、これがデフォルトの動作となる。)あわせて `/200.html` と `/404.html` というシングルページアプリ用のフォールバックページも生成され、動的ルートや 404 エラーをクライアント側で描画できる(ただし、静的ホスティング側で設定が必要になる場合がある)。[200.html と 404.html とは?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html)を参照。",
+  "fresh": "`ssr: true` による静的サイト生成(SSG)では、ビルド時にアプリケーションのルートをプリレンダリングします。(`nuxt generate` を実行した場合は、これがデフォルトの動作です。)また、`/200.html` と `/404.html` のシングルページアプリ用フォールバックページも生成されます。これらのページは、動的ルートや 404 エラーをクライアント側でレンダリングできます(ただし、静的ホスティング側で設定が必要になる場合があります)。[200.html と 404.html とは?](/docs/4.x/guide/concepts/rendering#what-are-200html-and-404html)を参照してください。",
+  "identicalToHuman": false,
+  "runsAgree": true,
+  "updatePreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "update2Preservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 3,
+   "lost": []
+  },
+  "freshPreservation": {
+   "aligned": true,
+   "sourceSentences": 3,
+   "unchangedSourceSentences": 3,
+   "humanSentences": 3,
+   "expected": 3,
+   "kept": 0,
+   "lost": [
+    "{0} による静的サイト生成(SSG)では、アプリケーションのルートをビルド時にあらかじめレンダリングする。({",
+    "1} を実行した場合は、これがデフォルトの動作となる。)",
+    "あわせて {2} と {3} というシングルページアプリ用のフォールバックページも生成され、動的ルートや 404 エラーをクライアント側で描画できる(ただし、静的ホスティング側で設定が必要になる場合がある)。"
+   ]
+  },
+  "updatePlaceholderErrors": [],
+  "toneLeak": {
+   "update": false,
+   "fresh": true
+  },
+  "costUsd": 0.01191,
+  "latencyMs": 1953
+ }
+]

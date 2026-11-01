@@ -1,0 +1,291 @@
+{
+  "refs": [
+    "3.x",
+    "4.x",
+    "HEAD"
+  ],
+  "totals": {
+    "files": 735,
+    "comark": 29640,
+    "remark": 29632,
+    "matched": 29601,
+    "matchedTranslatable": 25071,
+    "comarkTranslatable": 25110,
+    "sameSourceHash": 29223,
+    "matchedPct": 99.87,
+    "matchedTranslatablePct": 99.84,
+    "sameSourceHashPct": 98.59
+  },
+  "byKind": {
+    "frontmatter": {
+      "comark": 1763,
+      "matched": 1763
+    },
+    "paragraph": {
+      "comark": 8562,
+      "matched": 8560
+    },
+    "component-slot": {
+      "comark": 2306,
+      "matched": 2294
+    },
+    "heading": {
+      "comark": 5548,
+      "matched": 5548
+    },
+    "list-item": {
+      "comark": 4384,
+      "matched": 4379
+    },
+    "prop": {
+      "comark": 361,
+      "matched": 361
+    },
+    "code-label": {
+      "comark": 470,
+      "matched": 464
+    },
+    "table-cell": {
+      "comark": 6188,
+      "matched": 6188
+    },
+    "image-alt": {
+      "comark": 45,
+      "matched": 33
+    },
+    "blockquote": {
+      "comark": 11,
+      "matched": 11
+    },
+    "html-block": {
+      "comark": 2,
+      "matched": 0
+    }
+  },
+  "mismatchCount": 51,
+  "mismatches": [
+    {
+      "file": "docs/1.getting-started/06.styling.md",
+      "remark": "[code-label] SASS"
+    },
+    {
+      "file": "docs/1.getting-started/06.styling.md",
+      "remark": "[code-label] SCSS"
+    },
+    {
+      "file": "docs/1.getting-started/18.upgrade.md",
+      "comark": "[html-block] An example v4 folder structure."
+    },
+    {
+      "file": "docs/2.directory-structure/2.env.md",
+      "comark": "If you want to use environment variables set at build time but do not care about updating these down the line (or only need to update them reactively *within* y",
+      "remark": "If you want to use environment variables set at build time but do not care about updating these down the line (or only need to update them reactively *within* y"
+    },
+    {
+      "file": "docs/3.guide/1.concepts/1.rendering.md",
+      "comark": "If you do use {0}, you should also place an HTML file in {1} with some HTML you would like to use to render a loading screen that will be rendered until your ap",
+      "remark": "If you do use {0}, you should also place an HTML file in {1} with some HTML you would like to use to render a loading screen that will be rendered until your ap"
+    },
+    {
+      "file": "docs/3.guide/1.concepts/1.rendering.md",
+      "remark": "[prop] SPA Loading Template"
+    },
+    {
+      "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+      "comark": "**Module cleanup**{0}{1}If your module opens, handles, or starts a watcher, you should close it when the Nuxt lifecycle is done. The {2} hook is available for t",
+      "remark": "If your module opens, handles, or starts a watcher, you should close it when the Nuxt lifecycle is done. The {0} hook is available for this."
+    },
+    {
+      "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+      "remark": "[component-slot] **Module cleanup**"
+    },
+    {
+      "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+      "comark": "The Nuxt CLI has built-in support for reading your {0} file in development, build and generate. But when you run your built server, **your {1} file will not be ",
+      "remark": "The Nuxt CLI has built-in support for reading your {0} file in development, build and generate. But when you run your built server, **your {1} file will not be "
+    },
+    {
+      "file": "docs/4.api/3.utils/define-page-meta.md",
+      "comark": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt ",
+      "remark": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**{1}Enable/disable View Transitions for the current page. If set to true, Nu"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt latest version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 3.x version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 2.x version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 1.x version"
+    },
+    {
+      "file": "docs/7.migration/6.pages-and-layouts.md",
+      "comark": "[code-label] Nuxt 2"
+    },
+    {
+      "file": "docs/7.migration/6.pages-and-layouts.md",
+      "comark": "[code-label] Nuxt 3"
+    },
+    {
+      "file": "docs/1.getting-started/06.styling.md",
+      "remark": "[code-label] SASS"
+    },
+    {
+      "file": "docs/1.getting-started/06.styling.md",
+      "remark": "[code-label] SCSS"
+    },
+    {
+      "file": "docs/1.getting-started/18.upgrade.md",
+      "comark": "[html-block] An example v4 folder structure."
+    },
+    {
+      "file": "docs/2.directory-structure/2.env.md",
+      "comark": "If you want to use environment variables set at build time but do not care about updating these down the line (or only need to update them reactively *within* y",
+      "remark": "If you want to use environment variables set at build time but do not care about updating these down the line (or only need to update them reactively *within* y"
+    },
+    {
+      "file": "docs/3.guide/1.concepts/1.rendering.md",
+      "comark": "If you do use {0}, you should also place an HTML file in {1} with some HTML you would like to use to render a loading screen until your app is ready. {2}",
+      "remark": "If you do use {0}, you should also place an HTML file in {1} with some HTML you would like to use to render a loading screen until your app is ready."
+    },
+    {
+      "file": "docs/3.guide/1.concepts/1.rendering.md",
+      "remark": "[prop] SPA Loading Template"
+    },
+    {
+      "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+      "comark": "**Module cleanup**{0}{1}If your module opens, handles, or starts a watcher, you should close it when the Nuxt lifecycle is done. The {2} hook is available for t",
+      "remark": "If your module opens, handles, or starts a watcher, you should close it when the Nuxt lifecycle is done. The {0} hook is available for this."
+    },
+    {
+      "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+      "remark": "[component-slot] **Module cleanup**"
+    },
+    {
+      "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+      "comark": "The Nuxt CLI has built-in support for reading your {0} file in development, build and generate. But when you run your built server, **your {1} file will not be ",
+      "remark": "The Nuxt CLI has built-in support for reading your {0} file in development, build and generate. But when you run your built server, **your {1} file will not be "
+    },
+    {
+      "file": "docs/4.api/3.utils/define-page-meta.md",
+      "comark": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt ",
+      "remark": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**{1}Enable/disable View Transitions for the current page. If set to true, Nu"
+    },
+    {
+      "file": "docs/4.api/6.nuxt-config.md",
+      "comark": "You can also use a function to conditionally transpile. The function will receive an object ().",
+      "remark": "You can also use a function to conditionally transpile. The function will receive an object (\\{ isDev, isServer, isClient, isModern, isLegacy \\})."
+    },
+    {
+      "file": "docs/5.community/4.contribution.md",
+      "comark": "When linking to other documentation pages, use relative paths without the domain or a version segment: {0} rather than {1} or {2}. {3}nuxt.com{/3} inserts the v",
+      "remark": "When linking to other documentation pages, use relative paths without the domain or a version segment: {0} rather than {1} or {2}. nuxt.com inserts the version "
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt latest version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 3.x version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 2.x version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 1.x version"
+    },
+    {
+      "file": "docs/7.migration/6.pages-and-layouts.md",
+      "comark": "[code-label] Nuxt 2"
+    },
+    {
+      "file": "docs/7.migration/6.pages-and-layouts.md",
+      "comark": "[code-label] Nuxt 3"
+    },
+    {
+      "file": "docs/1.getting-started/06.styling.md",
+      "remark": "[code-label] SASS"
+    },
+    {
+      "file": "docs/1.getting-started/06.styling.md",
+      "remark": "[code-label] SCSS"
+    },
+    {
+      "file": "docs/2.directory-structure/2.env.md",
+      "comark": "If you want to use environment variables set at build time but do not care about updating these down the line (or only need to update them reactively *within* y",
+      "remark": "If you want to use environment variables set at build time but do not care about updating these down the line (or only need to update them reactively *within* y"
+    },
+    {
+      "file": "docs/3.guide/1.concepts/1.rendering.md",
+      "comark": "If you do use {0}, you should also place an HTML file in {1} with some HTML you would like to use to render a loading screen until your app is ready. {2}",
+      "remark": "If you do use {0}, you should also place an HTML file in {1} with some HTML you would like to use to render a loading screen until your app is ready."
+    },
+    {
+      "file": "docs/3.guide/1.concepts/1.rendering.md",
+      "remark": "[prop] SPA Loading Template"
+    },
+    {
+      "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+      "comark": "**Module cleanup**{0}{1}If your module opens, handles, or starts a watcher, you should close it when the Nuxt lifecycle is done. The {2} hook is available for t",
+      "remark": "If your module opens, handles, or starts a watcher, you should close it when the Nuxt lifecycle is done. The {0} hook is available for this."
+    },
+    {
+      "file": "docs/3.guide/4.modules/5.recipes-advanced.md",
+      "remark": "[component-slot] **Module cleanup**"
+    },
+    {
+      "file": "docs/3.guide/6.going-further/10.runtime-config.md",
+      "comark": "The Nuxt CLI has built-in support for reading your {0} file in development, build and generate. But when you run your built server, **your {1} file will not be ",
+      "remark": "The Nuxt CLI has built-in support for reading your {0} file in development, build and generate. But when you run your built server, **your {1} file will not be "
+    },
+    {
+      "file": "docs/4.api/3.utils/define-page-meta.md",
+      "comark": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt ",
+      "remark": "**Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**{1}Enable/disable View Transitions for the current page. If set to true, Nu"
+    },
+    {
+      "file": "docs/4.api/6.nuxt-config.md",
+      "comark": "You can also use a function to conditionally transpile. The function will receive an object ().",
+      "remark": "You can also use a function to conditionally transpile. The function will receive an object (\\{ isDev, isServer, isClient, isModern, isLegacy \\})."
+    },
+    {
+      "file": "docs/5.community/4.contribution.md",
+      "comark": "When linking to other documentation pages, use relative paths without the domain or a version segment: {0} rather than {1} or {2}. {3}nuxt.com{/3} inserts the v",
+      "remark": "When linking to other documentation pages, use relative paths without the domain or a version segment: {0} rather than {1} or {2}. nuxt.com inserts the version "
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt latest version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 3.x version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 2.x version"
+    },
+    {
+      "file": "docs/5.community/6.roadmap.md",
+      "comark": "[image-alt] Nuxt 1.x version"
+    },
+    {
+      "file": "docs/7.migration/6.pages-and-layouts.md",
+      "comark": "[code-label] Nuxt 2"
+    },
+    {
+      "file": "docs/7.migration/6.pages-and-layouts.md",
+      "comark": "[code-label] Nuxt 3"
+    }
+  ]
+}

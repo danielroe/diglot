@@ -1,0 +1,14 @@
+{
+  "name": "spike-mt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "extract": "node src/extract.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/gateway": "^4.0.132",
+    "ai": "^7.0.159",
+    "mdast-util-from-markdown": "^2.1.0",
+    "zod": "^4.6.7"
+  }
+}

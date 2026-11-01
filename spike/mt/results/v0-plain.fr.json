@@ -1,0 +1,1902 @@
+{
+ "options": {
+  "glossary": false,
+  "context": "none",
+  "batchSize": 1,
+  "locale": "fr"
+ },
+ "model": "anthropic/claude-sonnet-5.5",
+ "segments": [
+  {
+   "id": "1.getting-started/10.data-fetching.md#0",
+   "kind": "title",
+   "source": "Data Fetching",
+   "sourceMasked": "Data Fetching",
+   "tokens": [],
+   "targetMasked": "Récupération de données",
+   "target": "Récupération de données",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#1",
+   "kind": "description",
+   "source": "Nuxt provides composables to handle data fetching within your application.",
+   "sourceMasked": "Nuxt provides composables to handle data fetching within your application.",
+   "tokens": [],
+   "targetMasked": "Nuxt fournit des composables pour gérer la récupération de données au sein de votre application.",
+   "target": "Nuxt fournit des composables pour gérer la récupération de données au sein de votre application.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#2",
+   "kind": "paragraph",
+   "source": "Nuxt comes with two composables and a built-in library to perform data-fetching in browser or server environments: `useFetch`, [`useAsyncData`](/docs/api/composables/use-async-data) and `$fetch`.",
+   "sourceMasked": "Nuxt comes with two composables and a built-in library to perform data-fetching in browser or server environments: {0}, [{1}]({2}) and {3}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`$fetch`"
+    }
+   ],
+   "targetMasked": "Nuxt est fourni avec deux composables et une bibliothèque intégrée pour récupérer des données dans les environnements navigateur ou serveur : {0}, [{1}]({2}) et {3}.",
+   "target": "Nuxt est fourni avec deux composables et une bibliothèque intégrée pour récupérer des données dans les environnements navigateur ou serveur : `useFetch`, [`useAsyncData`](/docs/api/composables/use-async-data) et `$fetch`.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#3",
+   "kind": "paragraph",
+   "source": "In a nutshell:",
+   "sourceMasked": "In a nutshell:",
+   "tokens": [],
+   "targetMasked": "En résumé :",
+   "target": "En résumé :",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#4",
+   "kind": "list-item",
+   "source": "[`$fetch`](/docs/api/utils/dollarfetch) is the simplest way to make a network request.",
+   "sourceMasked": "[{0}]({1}) is the simplest way to make a network request.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/utils/dollarfetch"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) est le moyen le plus simple d'effectuer une requête réseau.",
+   "target": "[`$fetch`](/docs/api/utils/dollarfetch) est le moyen le plus simple d'effectuer une requête réseau.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#5",
+   "kind": "list-item",
+   "source": "[`useFetch`](/docs/api/composables/use-fetch) is a wrapper around `$fetch` that fetches data only once in [universal rendering](/docs/guide/concepts/rendering#universal-rendering).",
+   "sourceMasked": "[{0}]({1}) is a wrapper around {2} that fetches data only once in [universal rendering]({3}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-fetch"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/guide/concepts/rendering#universal-rendering"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) est un wrapper autour de {2} qui récupère les données une seule fois en [rendu universel]({3}).",
+   "target": "[`useFetch`](/docs/api/composables/use-fetch) est un wrapper autour de `$fetch` qui récupère les données une seule fois en [rendu universel](/docs/guide/concepts/rendering#universal-rendering).",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#6",
+   "kind": "list-item",
+   "source": "[`useAsyncData`](/docs/api/composables/use-async-data) is similar to `useFetch` but offers more fine-grained control.",
+   "sourceMasked": "[{0}]({1}) is similar to {2} but offers more fine-grained control.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`useFetch`"
+    }
+   ],
+   "targetMasked": "[{0}]({1}) est similaire à {2}, mais offre un contrôle plus précis.",
+   "target": "[`useAsyncData`](/docs/api/composables/use-async-data) est similaire à `useFetch`, mais offre un contrôle plus précis.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#7",
+   "kind": "paragraph",
+   "source": "Both `useFetch` and `useAsyncData` share a common set of options and patterns that we will detail in the last sections.",
+   "sourceMasked": "Both {0} and {1} share a common set of options and patterns that we will detail in the last sections.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    }
+   ],
+   "targetMasked": "{0} et {1} partagent tous deux un ensemble commun d'options et de modèles que nous détaillerons dans les dernières sections.",
+   "target": "`useFetch` et `useAsyncData` partagent tous deux un ensemble commun d'options et de modèles que nous détaillerons dans les dernières sections.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#8",
+   "kind": "heading",
+   "source": "The Need for `useFetch` and `useAsyncData`",
+   "sourceMasked": "The Need for {0} and {1}",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    }
+   ],
+   "targetMasked": "Pourquoi {0} et {1} sont nécessaires",
+   "target": "Pourquoi `useFetch` et `useAsyncData` sont nécessaires",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#9",
+   "kind": "paragraph",
+   "source": "Nuxt is a framework which can run isomorphic (or universal) code in both server and client environments. If the [`$fetch` function](/docs/api/utils/dollarfetch) is used to perform data fetching in the setup function of a Vue component, this may cause data to be fetched twice, once on the server (to render the HTML) and once again on the client (when the HTML is hydrated). This can cause hydration issues, increase the time to interactivity and cause unpredictable behavior.",
+   "sourceMasked": "Nuxt is a framework which can run isomorphic (or universal) code in both server and client environments. If the [{0} function]({1}) is used to perform data fetching in the setup function of a Vue component, this may cause data to be fetched twice, once on the server (to render the HTML) and once again on the client (when the HTML is hydrated). This can cause hydration issues, increase the time to interactivity and cause unpredictable behavior.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/utils/dollarfetch"
+    }
+   ],
+   "targetMasked": "Nuxt est un framework capable d'exécuter du code isomorphe (ou universel) à la fois dans les environnements serveur et client. Si la [fonction {0}]({1}) est utilisée pour récupérer des données dans la fonction setup d'un composant Vue, les données risquent d'être récupérées deux fois : une fois sur le serveur (pour générer le HTML) et une autre fois sur le client (lors de l'hydratation du HTML). Cela peut provoquer des problèmes d'hydratation, augmenter le délai avant interactivité et entraîner un comportement imprévisible.",
+   "target": "Nuxt est un framework capable d'exécuter du code isomorphe (ou universel) à la fois dans les environnements serveur et client. Si la [fonction `$fetch`](/docs/api/utils/dollarfetch) est utilisée pour récupérer des données dans la fonction setup d'un composant Vue, les données risquent d'être récupérées deux fois : une fois sur le serveur (pour générer le HTML) et une autre fois sur le client (lors de l'hydratation du HTML). Cela peut provoquer des problèmes d'hydratation, augmenter le délai avant interactivité et entraîner un comportement imprévisible.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#10",
+   "kind": "paragraph",
+   "source": "The [`useFetch`](/docs/api/composables/use-fetch) and [`useAsyncData`](/docs/api/composables/use-async-data) composables solve this problem by ensuring that if an API call is made on the server, the data is forwarded to the client in the payload.",
+   "sourceMasked": "The [{0}]({1}) and [{2}]({3}) composables solve this problem by ensuring that if an API call is made on the server, the data is forwarded to the client in the payload.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-fetch"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    }
+   ],
+   "targetMasked": "Les composables [{0}]({1}) et [{2}]({3}) résolvent ce problème : si un appel d'API est effectué côté serveur, les données sont transmises au client dans le payload.",
+   "target": "Les composables [`useFetch`](/docs/api/composables/use-fetch) et [`useAsyncData`](/docs/api/composables/use-async-data) résolvent ce problème : si un appel d'API est effectué côté serveur, les données sont transmises au client dans le payload.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#11",
+   "kind": "paragraph",
+   "source": "The payload is a JavaScript object accessible through [`useNuxtApp().payload`](/docs/api/composables/use-nuxt-app#payload). It is used on the client to avoid refetching the same data when the code is executed in the browser [during hydration](/docs/guide/concepts/rendering#universal-rendering).",
+   "sourceMasked": "The payload is a JavaScript object accessible through [{0}]({1}). It is used on the client to avoid refetching the same data when the code is executed in the browser [during hydration]({2}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useNuxtApp().payload`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-nuxt-app#payload"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/guide/concepts/rendering#universal-rendering"
+    }
+   ],
+   "targetMasked": "Le payload est un objet JavaScript accessible via [{0}]({1}). Il est utilisé côté client pour éviter de récupérer à nouveau les mêmes données lorsque le code est exécuté dans le navigateur [pendant l'hydratation]({2}).",
+   "target": "Le payload est un objet JavaScript accessible via [`useNuxtApp().payload`](/docs/api/composables/use-nuxt-app#payload). Il est utilisé côté client pour éviter de récupérer à nouveau les mêmes données lorsque le code est exécuté dans le navigateur [pendant l'hydratation](/docs/guide/concepts/rendering#universal-rendering).",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#12",
+   "kind": "callout",
+   "source": "Use the [Nuxt DevTools](/modules/devtools) to inspect this data in the **Payload tab**.",
+   "sourceMasked": "Use the [Nuxt DevTools]({0}) to inspect this data in the **Payload tab**.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "url",
+     "value": "/modules/devtools"
+    }
+   ],
+   "targetMasked": "Utilisez les [Nuxt DevTools]({0}) pour inspecter ces données dans l'**onglet Payload**.",
+   "target": "Utilisez les [Nuxt DevTools](/modules/devtools) pour inspecter ces données dans l'**onglet Payload**.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#13",
+   "kind": "paragraph",
+   "source": "In the example above, `useFetch` would make sure that the request would occur on the server and is properly forwarded to the browser. `$fetch` has no such mechanism and is a better option to use when the request is solely made from the browser.",
+   "sourceMasked": "In the example above, {0} would make sure that the request would occur on the server and is properly forwarded to the browser. {1} has no such mechanism and is a better option to use when the request is solely made from the browser.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`$fetch`"
+    }
+   ],
+   "targetMasked": "Dans l'exemple ci-dessus, {0} garantirait que la requête soit effectuée sur le serveur et correctement transmise au navigateur. {1} ne dispose d'aucun mécanisme de ce type et constitue une meilleure option lorsque la requête est effectuée uniquement depuis le navigateur.",
+   "target": "Dans l'exemple ci-dessus, `useFetch` garantirait que la requête soit effectuée sur le serveur et correctement transmise au navigateur. `$fetch` ne dispose d'aucun mécanisme de ce type et constitue une meilleure option lorsque la requête est effectuée uniquement depuis le navigateur.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#14",
+   "kind": "heading",
+   "source": "Suspense",
+   "sourceMasked": "Suspense",
+   "tokens": [],
+   "targetMasked": "Suspense",
+   "target": "Suspense",
+   "qa": [
+    {
+     "check": "untranslated",
+     "severity": "error",
+     "message": "target identical to source"
+    }
+   ]
+  },
+  {
+   "id": "1.getting-started/10.data-fetching.md#15",
+   "kind": "paragraph",
+   "source": "Nuxt uses Vue's [`<Suspense>`](https://vuejs.org/guide/built-ins/suspense) component under the hood to prevent navigation before every async data is available to the view. The data fetching composables can help you leverage this feature and use what suits best on a per-call basis.",
+   "sourceMasked": "Nuxt uses Vue's [{0}]({1}) component under the hood to prevent navigation before every async data is available to the view. The data fetching composables can help you leverage this feature and use what suits best on a per-call basis.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`<Suspense>`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "https://vuejs.org/guide/built-ins/suspense"
+    }
+   ],
+   "targetMasked": "Nuxt utilise en interne le composant [{0}]({1}) de Vue pour empêcher la navigation tant que toutes les données asynchrones ne sont pas disponibles pour la vue. Les composables de récupération de données peuvent vous aider à tirer parti de cette fonctionnalité et à utiliser ce qui convient le mieux au cas par cas.",
+   "target": "Nuxt utilise en interne le composant [`<Suspense>`](https://vuejs.org/guide/built-ins/suspense) de Vue pour empêcher la navigation tant que toutes les données asynchrones ne sont pas disponibles pour la vue. Les composables de récupération de données peuvent vous aider à tirer parti de cette fonctionnalité et à utiliser ce qui convient le mieux au cas par cas.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#0",
+   "kind": "title",
+   "source": "Layers",
+   "sourceMasked": "Layers",
+   "tokens": [],
+   "targetMasked": "Layers",
+   "target": "Layers",
+   "qa": [
+    {
+     "check": "untranslated",
+     "severity": "error",
+     "message": "target identical to source"
+    }
+   ]
+  },
+  {
+   "id": "1.getting-started/14.layers.md#1",
+   "kind": "description",
+   "source": "Nuxt provides a powerful system that allows you to extend the default files, configs, and much more.",
+   "sourceMasked": "Nuxt provides a powerful system that allows you to extend the default files, configs, and much more.",
+   "tokens": [],
+   "targetMasked": "Nuxt fournit un système puissant qui vous permet d'étendre les fichiers par défaut, les configurations et bien plus encore.",
+   "target": "Nuxt fournit un système puissant qui vous permet d'étendre les fichiers par défaut, les configurations et bien plus encore.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#2",
+   "kind": "paragraph",
+   "source": "One of the core features of Nuxt is the layers and extending support. You can extend a default Nuxt application to reuse components, utils, and configuration. The layers structure is almost identical to a standard Nuxt application which makes them easy to author and maintain.",
+   "sourceMasked": "One of the core features of Nuxt is the layers and extending support. You can extend a default Nuxt application to reuse components, utils, and configuration. The layers structure is almost identical to a standard Nuxt application which makes them easy to author and maintain.",
+   "tokens": [],
+   "targetMasked": "L'une des fonctionnalités essentielles de Nuxt est la prise en charge des layers et de l'extension. Vous pouvez étendre une application Nuxt par défaut pour réutiliser des composants, des utilitaires et de la configuration. La structure des layers est presque identique à celle d'une application Nuxt standard, ce qui les rend faciles à créer et à maintenir.",
+   "target": "L'une des fonctionnalités essentielles de Nuxt est la prise en charge des layers et de l'extension. Vous pouvez étendre une application Nuxt par défaut pour réutiliser des composants, des utilitaires et de la configuration. La structure des layers est presque identique à celle d'une application Nuxt standard, ce qui les rend faciles à créer et à maintenir.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#3",
+   "kind": "heading",
+   "source": "Use Cases",
+   "sourceMasked": "Use Cases",
+   "tokens": [],
+   "targetMasked": "Cas d'utilisation",
+   "target": "Cas d'utilisation",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#4",
+   "kind": "list-item",
+   "source": "Share reusable configuration presets across projects using `nuxt.config` and `app.config`",
+   "sourceMasked": "Share reusable configuration presets across projects using {0} and {1}",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`nuxt.config`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`app.config`"
+    }
+   ],
+   "targetMasked": "Partagez des préréglages de configuration réutilisables entre vos projets à l'aide de {0} et {1}",
+   "target": "Partagez des préréglages de configuration réutilisables entre vos projets à l'aide de `nuxt.config` et `app.config`",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#5",
+   "kind": "list-item",
+   "source": "Create a component library using [`app/components/`](/docs/directory-structure/app/components) directory",
+   "sourceMasked": "Create a component library using [{0}]({1}) directory",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`app/components/`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/components"
+    }
+   ],
+   "targetMasked": "Créez une bibliothèque de composants en utilisant le répertoire [{0}]({1})",
+   "target": "Créez une bibliothèque de composants en utilisant le répertoire [`app/components/`](/docs/directory-structure/app/components)",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#6",
+   "kind": "list-item",
+   "source": "Create utility and composable library using [`app/composables/`](/docs/directory-structure/app/composables) and [`app/utils/`](/docs/directory-structure/app/utils) directories",
+   "sourceMasked": "Create utility and composable library using [{0}]({1}) and [{2}]({3}) directories",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`app/composables/`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/composables"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`app/utils/`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/app/utils"
+    }
+   ],
+   "targetMasked": "Créez une bibliothèque d'utilitaires et de composables à l'aide des répertoires [{0}]({1}) et [{2}]({3})",
+   "target": "Créez une bibliothèque d'utilitaires et de composables à l'aide des répertoires [`app/composables/`](/docs/directory-structure/app/composables) et [`app/utils/`](/docs/directory-structure/app/utils)",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#7",
+   "kind": "list-item",
+   "source": "Create Nuxt module presets",
+   "sourceMasked": "Create Nuxt module presets",
+   "tokens": [],
+   "targetMasked": "Créer des presets de modules Nuxt",
+   "target": "Créer des presets de modules Nuxt",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#8",
+   "kind": "list-item",
+   "source": "Share standard setup across projects",
+   "sourceMasked": "Share standard setup across projects",
+   "tokens": [],
+   "targetMasked": "Partager une configuration standard entre plusieurs projets",
+   "target": "Partager une configuration standard entre plusieurs projets",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#9",
+   "kind": "list-item",
+   "source": "Create Nuxt themes",
+   "sourceMasked": "Create Nuxt themes",
+   "tokens": [],
+   "targetMasked": "Créer des thèmes Nuxt",
+   "target": "Créer des thèmes Nuxt",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#10",
+   "kind": "list-item",
+   "source": "Enhance code organization by implementing a modular architecture and support Domain-Driven Design (DDD) pattern in large scale projects.",
+   "sourceMasked": "Enhance code organization by implementing a modular architecture and support Domain-Driven Design (DDD) pattern in large scale projects.",
+   "tokens": [],
+   "targetMasked": "Améliorez l'organisation du code en adoptant une architecture modulaire et prenez en charge le modèle Domain-Driven Design (DDD) dans les projets à grande échelle.",
+   "target": "Améliorez l'organisation du code en adoptant une architecture modulaire et prenez en charge le modèle Domain-Driven Design (DDD) dans les projets à grande échelle.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#11",
+   "kind": "heading",
+   "source": "Usage",
+   "sourceMasked": "Usage",
+   "tokens": [],
+   "targetMasked": "Utilisation",
+   "target": "Utilisation",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#12",
+   "kind": "paragraph",
+   "source": "By default, any layers within your project in the `~~/layers` directory will be automatically registered as layers in your project.",
+   "sourceMasked": "By default, any layers within your project in the {0} directory will be automatically registered as layers in your project.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`~~/layers`"
+    }
+   ],
+   "targetMasked": "Par défaut, tous les layers présents dans le répertoire {0} de votre projet seront automatiquement enregistrés comme layers dans votre projet.",
+   "target": "Par défaut, tous les layers présents dans le répertoire `~~/layers` de votre projet seront automatiquement enregistrés comme layers dans votre projet.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#13",
+   "kind": "callout",
+   "source": "Layer auto-registration was introduced in Nuxt v3.12.0.",
+   "sourceMasked": "Layer auto-registration was introduced in Nuxt v3.12.0.",
+   "tokens": [],
+   "targetMasked": "L'enregistrement automatique des layers a été introduit dans Nuxt v3.12.0.",
+   "target": "L'enregistrement automatique des layers a été introduit dans Nuxt v3.12.0.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#14",
+   "kind": "paragraph",
+   "source": "In addition, named layer aliases to the `srcDir` of each of these layers will automatically be created. For example, you will be able to access the `~~/layers/test` layer via `#layers/test`.",
+   "sourceMasked": "In addition, named layer aliases to the {0} of each of these layers will automatically be created. For example, you will be able to access the {1} layer via {2}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`srcDir`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`~~/layers/test`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`#layers/test`"
+    }
+   ],
+   "targetMasked": "De plus, des alias de couche nommés pointant vers le {0} de chacune de ces couches seront automatiquement créés. Par exemple, vous pourrez accéder à la couche {1} via {2}.",
+   "target": "De plus, des alias de couche nommés pointant vers le `srcDir` de chacune de ces couches seront automatiquement créés. Par exemple, vous pourrez accéder à la couche `~~/layers/test` via `#layers/test`.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#15",
+   "kind": "callout",
+   "source": "Named layer aliases were introduced in Nuxt v3.16.0.",
+   "sourceMasked": "Named layer aliases were introduced in Nuxt v3.16.0.",
+   "tokens": [],
+   "targetMasked": "Les alias de couches nommés ont été introduits dans Nuxt v3.16.0.",
+   "target": "Les alias de couches nommés ont été introduits dans Nuxt v3.16.0.",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#16",
+   "kind": "paragraph",
+   "source": "In addition, you can extend from a layer by adding the [extends](/docs/api/nuxt-config#extends) property to your [`nuxt.config`](/docs/directory-structure/nuxt-config) file.",
+   "sourceMasked": "In addition, you can extend from a layer by adding the [extends]({0}) property to your [{1}]({2}) file.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "url",
+     "value": "/docs/api/nuxt-config#extends"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`nuxt.config`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/directory-structure/nuxt-config"
+    }
+   ],
+   "targetMasked": "Vous pouvez également étendre une layer en ajoutant la propriété [extends]({0}) à votre fichier [{1}]({2}).",
+   "target": "Vous pouvez également étendre une layer en ajoutant la propriété [extends](/docs/api/nuxt-config#extends) à votre fichier [`nuxt.config`](/docs/directory-structure/nuxt-config).",
+   "qa": []
+  },
+  {
+   "id": "1.getting-started/14.layers.md#17",
+   "kind": "paragraph",
+   "source": "You can also pass an authentication token if you are extending from a private GitHub repository:",
+   "sourceMasked": "You can also pass an authentication token if you are extending from a private GitHub repository:",
+   "tokens": [],
+   "targetMasked": "Vous pouvez également transmettre un jeton d'authentification si vous étendez un dépôt GitHub privé :",
+   "target": "Vous pouvez également transmettre un jeton d'authentification si vous étendez un dépôt GitHub privé :",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#0",
+   "kind": "title",
+   "source": "components",
+   "sourceMasked": "components",
+   "tokens": [],
+   "targetMasked": "components",
+   "target": "components",
+   "qa": [
+    {
+     "check": "untranslated",
+     "severity": "error",
+     "message": "target identical to source"
+    }
+   ]
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#1",
+   "kind": "description",
+   "source": "The components/ directory is where you put all your Vue components.",
+   "sourceMasked": "The components/ directory is where you put all your Vue components.",
+   "tokens": [],
+   "targetMasked": "Le répertoire components/ est l'endroit où vous placez tous vos composants Vue.",
+   "target": "Le répertoire components/ est l'endroit où vous placez tous vos composants Vue.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#2",
+   "kind": "paragraph",
+   "source": "Nuxt automatically imports any components in this directory (along with components that are registered by any modules you may be using).",
+   "sourceMasked": "Nuxt automatically imports any components in this directory (along with components that are registered by any modules you may be using).",
+   "tokens": [],
+   "targetMasked": "Nuxt importe automatiquement tous les composants présents dans ce répertoire (ainsi que les composants enregistrés par les modules que vous utilisez éventuellement).",
+   "target": "Nuxt importe automatiquement tous les composants présents dans ce répertoire (ainsi que les composants enregistrés par les modules que vous utilisez éventuellement).",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#3",
+   "kind": "heading",
+   "source": "Component Names",
+   "sourceMasked": "Component Names",
+   "tokens": [],
+   "targetMasked": "Noms des composants",
+   "target": "Noms des composants",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#4",
+   "kind": "paragraph",
+   "source": "If you have a component in nested directories such as:",
+   "sourceMasked": "If you have a component in nested directories such as:",
+   "tokens": [],
+   "targetMasked": "Si vous avez un composant dans des répertoires imbriqués, par exemple :",
+   "target": "Si vous avez un composant dans des répertoires imbriqués, par exemple :",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#5",
+   "kind": "paragraph",
+   "source": "... then the component's name will be based on its own path directory and filename, with duplicate segments being removed. Therefore, the component's name will be:",
+   "sourceMasked": "... then the component's name will be based on its own path directory and filename, with duplicate segments being removed. Therefore, the component's name will be:",
+   "tokens": [],
+   "targetMasked": "... alors le nom du composant sera basé sur le chemin de son répertoire et sur son nom de fichier, les segments en double étant supprimés. Par conséquent, le nom du composant sera :",
+   "target": "... alors le nom du composant sera basé sur le chemin de son répertoire et sur son nom de fichier, les segments en double étant supprimés. Par conséquent, le nom du composant sera :",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#6",
+   "kind": "callout",
+   "source": "For clarity, we recommend that the component's filename matches its name. So, in the example above, you could rename `Button.vue` to be `BaseFooButton.vue`.",
+   "sourceMasked": "For clarity, we recommend that the component's filename matches its name. So, in the example above, you could rename {0} to be {1}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`Button.vue`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`BaseFooButton.vue`"
+    }
+   ],
+   "targetMasked": "Par souci de clarté, nous vous recommandons de faire correspondre le nom de fichier du composant à son nom. Ainsi, dans l'exemple ci-dessus, vous pourriez renommer {0} en {1}.",
+   "target": "Par souci de clarté, nous vous recommandons de faire correspondre le nom de fichier du composant à son nom. Ainsi, dans l'exemple ci-dessus, vous pourriez renommer `Button.vue` en `BaseFooButton.vue`.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#7",
+   "kind": "paragraph",
+   "source": "If you want to group components in a directory without affecting their name, you can use the parenthesis `(` `)` to name the grouping directory.",
+   "sourceMasked": "If you want to group components in a directory without affecting their name, you can use the parenthesis {0} {1} to name the grouping directory.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`(`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`)`"
+    }
+   ],
+   "targetMasked": "Si vous souhaitez regrouper des composants dans un répertoire sans que cela affecte leur nom, vous pouvez utiliser les parenthèses {0} {1} pour nommer le répertoire de regroupement.",
+   "target": "Si vous souhaitez regrouper des composants dans un répertoire sans que cela affecte leur nom, vous pouvez utiliser les parenthèses `(` `)` pour nommer le répertoire de regroupement.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#8",
+   "kind": "paragraph",
+   "source": "... then the component's name will skip the grouping directory, resulting in:",
+   "sourceMasked": "... then the component's name will skip the grouping directory, resulting in:",
+   "tokens": [],
+   "targetMasked": "... alors le nom du composant ignorera le répertoire de regroupement, ce qui donnera :",
+   "target": "... alors le nom du composant ignorera le répertoire de regroupement, ce qui donnera :",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#9",
+   "kind": "paragraph",
+   "source": "If you want to auto-import components based only on its name, not path, then you need to set `pathPrefix` option to `false` using extended form of the configuration object:",
+   "sourceMasked": "If you want to auto-import components based only on its name, not path, then you need to set {0} option to {1} using extended form of the configuration object:",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`pathPrefix`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`false`"
+    }
+   ],
+   "targetMasked": "Si vous souhaitez importer automatiquement des composants uniquement en fonction de leur nom, et non de leur chemin, vous devez définir l'option {0} sur {1} en utilisant la forme étendue de l'objet de configuration :",
+   "target": "Si vous souhaitez importer automatiquement des composants uniquement en fonction de leur nom, et non de leur chemin, vous devez définir l'option `pathPrefix` sur `false` en utilisant la forme étendue de l'objet de configuration :",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#10",
+   "kind": "paragraph",
+   "source": "This registers the components using the same strategy as used in Nuxt 2. For example, `~/components/Some/MyComponent.vue` will be usable as `<MyComponent>` and not `<SomeMyComponent>`.",
+   "sourceMasked": "This registers the components using the same strategy as used in Nuxt 2. For example, {0} will be usable as {1} and not {2}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`~/components/Some/MyComponent.vue`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`<MyComponent>`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`<SomeMyComponent>`"
+    }
+   ],
+   "targetMasked": "Cela enregistre les composants en utilisant la même stratégie que dans Nuxt 2. Par exemple, {0} sera utilisable sous la forme {1} et non {2}.",
+   "target": "Cela enregistre les composants en utilisant la même stratégie que dans Nuxt 2. Par exemple, `~/components/Some/MyComponent.vue` sera utilisable sous la forme `<MyComponent>` et non `<SomeMyComponent>`.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#11",
+   "kind": "heading",
+   "source": "Dynamic Components",
+   "sourceMasked": "Dynamic Components",
+   "tokens": [],
+   "targetMasked": "Composants dynamiques",
+   "target": "Composants dynamiques",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#12",
+   "kind": "paragraph",
+   "source": "If you want to use the Vue `<component :is=\"someComputedComponent\">`{lang=vue} syntax, you need to use the `resolveComponent` helper provided by Vue or import the component directly from `#components` and pass it into `is` prop.",
+   "sourceMasked": "If you want to use the Vue {0} syntax, you need to use the {1} helper provided by Vue or import the component directly from {2} and pass it into {3} prop.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`<component :is=\"someComputedComponent\">`{lang=vue}"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`resolveComponent`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`#components`"
+    },
+    {
+     "id": 3,
+     "kind": "code",
+     "value": "`is`"
+    }
+   ],
+   "targetMasked": "Si vous souhaitez utiliser la syntaxe {0} de Vue, vous devez utiliser l'utilitaire {1} fourni par Vue ou importer directement le composant depuis {2} et le passer à la prop {3}.",
+   "target": "Si vous souhaitez utiliser la syntaxe `<component :is=\"someComputedComponent\">`{lang=vue} de Vue, vous devez utiliser l'utilitaire `resolveComponent` fourni par Vue ou importer directement le composant depuis `#components` et le passer à la prop `is`.",
+   "qa": []
+  },
+  {
+   "id": "2.directory-structure/1.app/1.components.md#13",
+   "kind": "paragraph",
+   "source": "For example:",
+   "sourceMasked": "For example:",
+   "tokens": [],
+   "targetMasked": "Par exemple :",
+   "target": "Par exemple :",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#0",
+   "kind": "title",
+   "source": "useFetch",
+   "sourceMasked": "useFetch",
+   "tokens": [],
+   "targetMasked": "useFetch",
+   "target": "useFetch",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#1",
+   "kind": "description",
+   "source": "Fetch data from an API endpoint with an SSR-friendly composable.",
+   "sourceMasked": "Fetch data from an API endpoint with an SSR-friendly composable.",
+   "tokens": [],
+   "targetMasked": "Récupérez des données depuis un point de terminaison d'API avec un composable compatible avec le SSR.",
+   "target": "Récupérez des données depuis un point de terminaison d'API avec un composable compatible avec le SSR.",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#2",
+   "kind": "paragraph",
+   "source": "This composable provides a convenient wrapper around [`useAsyncData`](/docs/api/composables/use-async-data) and [`$fetch`](/docs/api/utils/dollarfetch).\nIt automatically generates a key for the request, provides type hints for request url based on server routes, and infers API response type.",
+   "sourceMasked": "This composable provides a convenient wrapper around [{0}]({1}) and [{2}]({3}).\nIt automatically generates a key for the request, provides type hints for request url based on server routes, and infers API response type.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useAsyncData`"
+    },
+    {
+     "id": 1,
+     "kind": "url",
+     "value": "/docs/api/composables/use-async-data"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`$fetch`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/api/utils/dollarfetch"
+    }
+   ],
+   "targetMasked": "Ce composable fournit une enveloppe pratique autour de [{0}]({1}) et [{2}]({3}).\nIl génère automatiquement une clé pour la requête, fournit des indications de type pour l'URL de la requête à partir des routes du serveur, et déduit le type de la réponse de l'API.",
+   "target": "Ce composable fournit une enveloppe pratique autour de [`useAsyncData`](/docs/api/composables/use-async-data) et [`$fetch`](/docs/api/utils/dollarfetch).\nIl génère automatiquement une clé pour la requête, fournit des indications de type pour l'URL de la requête à partir des routes du serveur, et déduit le type de la réponse de l'API.",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#3",
+   "kind": "callout",
+   "source": "`useFetch` is a composable meant to be called directly in a setup function, plugin, or route middleware. It returns reactive composables and handles adding responses to the Nuxt payload so they can be passed from server to client without re-fetching the data on client side when the page hydrates.",
+   "sourceMasked": "{0} is a composable meant to be called directly in a setup function, plugin, or route middleware. It returns reactive composables and handles adding responses to the Nuxt payload so they can be passed from server to client without re-fetching the data on client side when the page hydrates.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    }
+   ],
+   "targetMasked": "{0} est un composable conçu pour être appelé directement dans une fonction setup, un plugin ou un middleware de route. Il retourne des composables réactifs et se charge d'ajouter les réponses au payload de Nuxt afin qu'elles puissent être transmises du serveur au client, sans que les données soient récupérées à nouveau côté client lors de l'hydratation de la page.",
+   "target": "`useFetch` est un composable conçu pour être appelé directement dans une fonction setup, un plugin ou un middleware de route. Il retourne des composables réactifs et se charge d'ajouter les réponses au payload de Nuxt afin qu'elles puissent être transmises du serveur au client, sans que les données soient récupérées à nouveau côté client lors de l'hydratation de la page.",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#4",
+   "kind": "heading",
+   "source": "Usage",
+   "sourceMasked": "Usage",
+   "tokens": [],
+   "targetMasked": "Utilisation",
+   "target": "Utilisation",
+   "qa": []
+  },
+  {
+   "id": "4.api/2.composables/use-fetch.md#5",
+   "kind": "callout",
+   "source": "Need a custom `useFetch` with pre-defined defaults (like `baseURL` or auth headers)? Use `createUseFetch` to create a fully typed custom composable.",
+   "sourceMasked": "Need a custom {0} with pre-defined defaults (like {1} or auth headers)? Use {2} to create a fully typed custom composable.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`useFetch`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`baseURL`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`createUseFetch`"
+    }
+   ],
+   "targetMasked": "Besoin d'un {0} personnalisé avec des valeurs par défaut prédéfinies (comme {1} ou des en-têtes d'authentification) ? Utilisez {2} pour créer un composable personnalisé entièrement typé.",
+   "target": "Besoin d'un `useFetch` personnalisé avec des valeurs par défaut prédéfinies (comme `baseURL` ou des en-têtes d'authentification) ? Utilisez `createUseFetch` pour créer un composable personnalisé entièrement typé.",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#0",
+   "kind": "title",
+   "source": "<NuxtLink>",
+   "sourceMasked": "{0}",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "html",
+     "value": "<NuxtLink>"
+    }
+   ],
+   "targetMasked": "{0}",
+   "target": "<NuxtLink>",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#1",
+   "kind": "description",
+   "source": "Nuxt provides <NuxtLink> component to handle any kind of links within your application.",
+   "sourceMasked": "Nuxt provides {0} component to handle any kind of links within your application.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "html",
+     "value": "<NuxtLink>"
+    }
+   ],
+   "targetMasked": "Nuxt fournit le composant {0} pour gérer tout type de liens au sein de votre application.",
+   "target": "Nuxt fournit le composant <NuxtLink> pour gérer tout type de liens au sein de votre application.",
+   "qa": []
+  },
+  {
+   "id": "4.api/1.components/4.nuxt-link.md#2",
+   "kind": "callout",
+   "source": "`<NuxtLink>` is a drop-in replacement for both Vue Router's `<RouterLink>` component and HTML's `<a>` tag. It intelligently determines whether the link is _internal_ or _external_ and renders it accordingly with available optimizations (prefetching, default attributes, etc.)",
+   "sourceMasked": "{0} is a drop-in replacement for both Vue Router's {1} component and HTML's {2} tag. It intelligently determines whether the link is _internal_ or _external_ and renders it accordingly with available optimizations (prefetching, default attributes, etc.)",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`<NuxtLink>`"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`<RouterLink>`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`<a>`"
+    }
+   ],
+   "targetMasked": "{0} remplace directement le composant {1} de Vue Router et la balise {2} du HTML. Il détermine intelligemment si le lien est _interne_ ou _externe_ et l'affiche en conséquence, avec les optimisations disponibles (préchargement, attributs par défaut, etc.)",
+   "target": "`<NuxtLink>` remplace directement le composant `<RouterLink>` de Vue Router et la balise `<a>` du HTML. Il détermine intelligemment si le lien est _interne_ ou _externe_ et l'affiche en conséquence, avec les optimisations disponibles (préchargement, attributs par défaut, etc.)",
+   "qa": []
+  },
+  {
+   "id": "synthetic#0",
+   "kind": "paragraph",
+   "source": "The :badge{label=\"Nuxt 4\" color=\"success\"} release renames the source directory to `app/`; see the [upgrade guide](/docs/getting-started/upgrade#new-directory-structure) for details.",
+   "sourceMasked": "The {0} release renames the source directory to {1}; see the [upgrade guide]({2}) for details.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "mdc",
+     "value": ":badge{label=\"Nuxt 4\" color=\"success\"}"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`app/`"
+    },
+    {
+     "id": 2,
+     "kind": "url",
+     "value": "/docs/getting-started/upgrade#new-directory-structure"
+    }
+   ],
+   "targetMasked": "La version {0} renomme le répertoire source en {1} ; consultez le [guide de mise à niveau]({2}) pour plus de détails.",
+   "target": "La version :badge{label=\"Nuxt 4\" color=\"success\"} renomme le répertoire source en `app/` ; consultez le [guide de mise à niveau](/docs/getting-started/upgrade#new-directory-structure) pour plus de détails.",
+   "qa": []
+  },
+  {
+   "id": "synthetic#1",
+   "kind": "paragraph",
+   "source": "Press :kbd{value=\"Ctrl\"} + :kbd{value=\"K\"} to open the search, then type <code>useState</code> and hit <kbd>Enter</kbd>.",
+   "sourceMasked": "Press {0} + {1} to open the search, then type {2}useState{3} and hit {4}Enter{5}.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "mdc",
+     "value": ":kbd{value=\"Ctrl\"}"
+    },
+    {
+     "id": 1,
+     "kind": "mdc",
+     "value": ":kbd{value=\"K\"}"
+    },
+    {
+     "id": 2,
+     "kind": "html",
+     "value": "<code>"
+    },
+    {
+     "id": 3,
+     "kind": "html",
+     "value": "</code>"
+    },
+    {
+     "id": 4,
+     "kind": "html",
+     "value": "<kbd>"
+    },
+    {
+     "id": 5,
+     "kind": "html",
+     "value": "</kbd>"
+    }
+   ],
+   "targetMasked": "Appuyez sur {0} + {1} pour ouvrir la recherche, puis saisissez {2}useState{3} et appuyez sur {4}Entrée{5}.",
+   "target": "Appuyez sur :kbd{value=\"Ctrl\"} + :kbd{value=\"K\"} pour ouvrir la recherche, puis saisissez <code>useState</code> et appuyez sur <kbd>Entrée</kbd>.",
+   "qa": []
+  },
+  {
+   "id": "synthetic#2",
+   "kind": "paragraph",
+   "source": "Inside the template you can interpolate values with `{{ count }}`, but writing {{ $t('welcome') }} directly in markdown renders the raw expression.",
+   "sourceMasked": "Inside the template you can interpolate values with {0}, but writing {1} directly in markdown renders the raw expression.",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "code",
+     "value": "`{{ count }}`"
+    },
+    {
+     "id": 1,
+     "kind": "mustache",
+     "value": "{{ $t('welcome') }}"
+    }
+   ],
+   "targetMasked": "Dans le template, vous pouvez interpoler des valeurs avec {0}, mais écrire {1} directement dans le markdown affiche l'expression brute.",
+   "target": "Dans le template, vous pouvez interpoler des valeurs avec `{{ count }}`, mais écrire {{ $t('welcome') }} directement dans le markdown affiche l'expression brute.",
+   "qa": []
+  },
+  {
+   "id": "synthetic#3",
+   "kind": "list-item",
+   "source": ":u-icon{name=\"i-lucide-check\"} **Server routes** in `server/api/` are auto-imported by Nitro and exposed under [`/api`](/docs/directory-structure/server#api-routes).",
+   "sourceMasked": "{0} **Server routes** in {1} are auto-imported by Nitro and exposed under [{2}]({3}).",
+   "tokens": [
+    {
+     "id": 0,
+     "kind": "mdc",
+     "value": ":u-icon{name=\"i-lucide-check\"}"
+    },
+    {
+     "id": 1,
+     "kind": "code",
+     "value": "`server/api/`"
+    },
+    {
+     "id": 2,
+     "kind": "code",
+     "value": "`/api`"
+    },
+    {
+     "id": 3,
+     "kind": "url",
+     "value": "/docs/directory-structure/server#api-routes"
+    }
+   ],
+   "targetMasked": "{0} Les **routes serveur** dans {1} sont importées automatiquement par Nitro et exposées sous [{2}]({3}).",
+   "target": ":u-icon{name=\"i-lucide-check\"} Les **routes serveur** dans `server/api/` sont importées automatiquement par Nitro et exposées sous [`/api`](/docs/directory-structure/server#api-routes).",
+   "qa": []
+  }
+ ],
+ "requests": [
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4483,
+   "inputTokens": 781,
+   "outputTokens": 29,
+   "costUsd": 0.001852
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1632,
+   "inputTokens": 794,
+   "outputTokens": 52,
+   "costUsd": 0.002108
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4956,
+   "inputTokens": 828,
+   "outputTokens": 91,
+   "costUsd": 0.002566
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1401,
+   "inputTokens": 785,
+   "outputTokens": 28,
+   "costUsd": 0.00185
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4593,
+   "inputTokens": 797,
+   "outputTokens": 54,
+   "costUsd": 0.002134
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2354,
+   "inputTokens": 814,
+   "outputTokens": 67,
+   "costUsd": 0.0022979999999999997
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4537,
+   "inputTokens": 803,
+   "outputTokens": 54,
+   "costUsd": 0.002146
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2717,
+   "inputTokens": 807,
+   "outputTokens": 68,
+   "costUsd": 0.002294
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1110,
+   "inputTokens": 787,
+   "outputTokens": 43,
+   "costUsd": 0.0020039999999999997
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2572,
+   "inputTokens": 915,
+   "outputTokens": 223,
+   "costUsd": 0.00406
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#10"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2824,
+   "inputTokens": 835,
+   "outputTokens": 86,
+   "costUsd": 0.00253
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#11"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 3005,
+   "inputTokens": 837,
+   "outputTokens": 112,
+   "costUsd": 0.002794
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4401,
+   "inputTokens": 809,
+   "outputTokens": 65,
+   "costUsd": 0.002268
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#13"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1584,
+   "inputTokens": 840,
+   "outputTokens": 130,
+   "costUsd": 0.00298
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#14"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 3346,
+   "inputTokens": 780,
+   "outputTokens": 27,
+   "costUsd": 0.00183
+  },
+  {
+   "ids": [
+    "1.getting-started/10.data-fetching.md#15"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4349,
+   "inputTokens": 849,
+   "outputTokens": 145,
+   "costUsd": 0.0031479999999999998
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1618,
+   "inputTokens": 778,
+   "outputTokens": 26,
+   "costUsd": 0.001816
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1298,
+   "inputTokens": 804,
+   "outputTokens": 68,
+   "costUsd": 0.002288
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2020,
+   "inputTokens": 856,
+   "outputTokens": 151,
+   "costUsd": 0.003222
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2313,
+   "inputTokens": 781,
+   "outputTokens": 32,
+   "costUsd": 0.001882
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1534,
+   "inputTokens": 798,
+   "outputTokens": 60,
+   "costUsd": 0.002196
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 937,
+   "inputTokens": 794,
+   "outputTokens": 54,
+   "costUsd": 0.002128
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1417,
+   "inputTokens": 807,
+   "outputTokens": 72,
+   "costUsd": 0.002334
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1325,
+   "inputTokens": 787,
+   "outputTokens": 37,
+   "costUsd": 0.001944
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1149,
+   "inputTokens": 786,
+   "outputTokens": 41,
+   "costUsd": 0.001982
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1842,
+   "inputTokens": 786,
+   "outputTokens": 36,
+   "costUsd": 0.001932
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#10"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2424,
+   "inputTokens": 819,
+   "outputTokens": 84,
+   "costUsd": 0.002478
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#11"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2498,
+   "inputTokens": 779,
+   "outputTokens": 28,
+   "costUsd": 0.001838
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2147,
+   "inputTokens": 807,
+   "outputTokens": 73,
+   "costUsd": 0.002344
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#13"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 991,
+   "inputTokens": 800,
+   "outputTokens": 54,
+   "costUsd": 0.00214
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#14"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1769,
+   "inputTokens": 825,
+   "outputTokens": 90,
+   "costUsd": 0.00255
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#15"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1270,
+   "inputTokens": 799,
+   "outputTokens": 52,
+   "costUsd": 0.002118
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#16"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2370,
+   "inputTokens": 815,
+   "outputTokens": 69,
+   "costUsd": 0.00232
+  },
+  {
+   "ids": [
+    "1.getting-started/14.layers.md#17"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1374,
+   "inputTokens": 803,
+   "outputTokens": 62,
+   "costUsd": 0.002226
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1135,
+   "inputTokens": 776,
+   "outputTokens": 24,
+   "costUsd": 0.001792
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2224,
+   "inputTokens": 791,
+   "outputTokens": 52,
+   "costUsd": 0.0021019999999999997
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1299,
+   "inputTokens": 811,
+   "outputTokens": 81,
+   "costUsd": 0.002432
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1617,
+   "inputTokens": 780,
+   "outputTokens": 29,
+   "costUsd": 0.00185
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1016,
+   "inputTokens": 791,
+   "outputTokens": 50,
+   "costUsd": 0.0020819999999999996
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 3343,
+   "inputTokens": 820,
+   "outputTokens": 87,
+   "costUsd": 0.00251
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#6"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1346,
+   "inputTokens": 815,
+   "outputTokens": 98,
+   "costUsd": 0.0026100000000000003
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#7"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1551,
+   "inputTokens": 818,
+   "outputTokens": 96,
+   "costUsd": 0.0025960000000000002
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#8"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1360,
+   "inputTokens": 799,
+   "outputTokens": 55,
+   "costUsd": 0.002148
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#9"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1464,
+   "inputTokens": 820,
+   "outputTokens": 103,
+   "costUsd": 0.00267
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#10"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1649,
+   "inputTokens": 819,
+   "outputTokens": 83,
+   "costUsd": 0.002468
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#11"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 3656,
+   "inputTokens": 783,
+   "outputTokens": 31,
+   "costUsd": 0.0018759999999999998
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#12"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1474,
+   "inputTokens": 830,
+   "outputTokens": 101,
+   "costUsd": 0.00267
+  },
+  {
+   "ids": [
+    "2.directory-structure/1.app/1.components.md#13"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 872,
+   "inputTokens": 781,
+   "outputTokens": 29,
+   "costUsd": 0.001852
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1104,
+   "inputTokens": 779,
+   "outputTokens": 27,
+   "costUsd": 0.001828
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1229,
+   "inputTokens": 798,
+   "outputTokens": 57,
+   "costUsd": 0.002166
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4913,
+   "inputTokens": 846,
+   "outputTokens": 126,
+   "costUsd": 0.0029519999999999998
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 5334,
+   "inputTokens": 858,
+   "outputTokens": 150,
+   "costUsd": 0.003216
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#4"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4453,
+   "inputTokens": 779,
+   "outputTokens": 28,
+   "costUsd": 0.001838
+  },
+  {
+   "ids": [
+    "4.api/2.composables/use-fetch.md#5"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1594,
+   "inputTokens": 821,
+   "outputTokens": 103,
+   "costUsd": 0.002672
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1144,
+   "inputTokens": 778,
+   "outputTokens": 26,
+   "costUsd": 0.001816
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 3230,
+   "inputTokens": 797,
+   "outputTokens": 55,
+   "costUsd": 0.002144
+  },
+  {
+   "ids": [
+    "4.api/1.components/4.nuxt-link.md#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1914,
+   "inputTokens": 862,
+   "outputTokens": 123,
+   "costUsd": 0.002954
+  },
+  {
+   "ids": [
+    "synthetic#0"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 4591,
+   "inputTokens": 810,
+   "outputTokens": 69,
+   "costUsd": 0.00231
+  },
+  {
+   "ids": [
+    "synthetic#1"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 2048,
+   "inputTokens": 814,
+   "outputTokens": 80,
+   "costUsd": 0.002428
+  },
+  {
+   "ids": [
+    "synthetic#2"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1467,
+   "inputTokens": 814,
+   "outputTokens": 75,
+   "costUsd": 0.002378
+  },
+  {
+   "ids": [
+    "synthetic#3"
+   ],
+   "returnedIds": [
+    "s1"
+   ],
+   "idsRoundTrip": true,
+   "latencyMs": 1160,
+   "inputTokens": 814,
+   "outputTokens": 68,
+   "costUsd": 0.002308
+  }
+ ]
+}

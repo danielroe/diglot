@@ -1,0 +1,73 @@
+{
+  files: 735,
+  docOk: 682,
+  placeholderOnly: 4530,
+  units: 22471,
+  unitTextOk: 22468,
+  unitHashOk: 22468,
+  identityValid: 22471
+}
+
+## doc:text->text (35)
+  3.x:docs/1.getting-started/10.data-fetching.md
+    ". "
+    => "."
+  3.x:docs/1.getting-started/18.upgrade.md
+    ":"
+    => ":\n"
+  3.x:docs/2.directory-structure/1.pages.md
+    ". "
+    => "."
+  3.x:docs/2.directory-structure/1.plugins.md
+    "If you are using the object-syntax, the properties are statically analyzed to produce a more optimized build. So you should not define them at runtime. "
+    => "If you are using the object-syntax, the properties are statically analyzed to produce a more optimized build. So you should not define them at runtime."
+
+## doc:text->undefined (9)
+  3.x:docs/3.guide/1.concepts/3.auto-imports.md
+    " "
+    => undefined
+  3.x:docs/3.guide/4.modules/5.recipes-advanced.md
+    "\n"
+    => undefined
+  3.x:docs/5.community/6.roadmap.md
+    " "
+    => undefined
+  4.x:docs/3.guide/1.concepts/3.auto-imports.md
+    " "
+    => undefined
+
+## doc:undefined->callout (6)
+  3.x:docs/1.getting-started/02.installation.md
+    undefined
+    => ["callout",{},["collapsible",{"name":"additional notes for an optimal setup"},["ul",{},["li",{},["p",{},["strong",{},"Node.js"],": Make sure to use an even numbered version (22, 24, etc.)"]],["li",{},["p",{},["strong",{},"Neovim"],": When configuring the Vue TypeScript plugin, make sure ",["code",{}
+  3.x:docs/3.guide/1.concepts/2.nuxt-lifecycle.md
+    undefined
+    => ["callout",{"icon":"i-lucide-lightbulb"},["p",{},"Nitro plugins are executed only once when the server starts. In a serverless environment, the server boots on each incoming request, and so do the Nitro plugins. However, they are not awaited."]]
+  4.x:docs/1.getting-started/02.installation.md
+    undefined
+    => ["callout",{},["collapsible",{"name":"additional notes for an optimal setup"},["ul",{},["li",{},["p",{},["strong",{},"Node.js"],": Make sure to use an even numbered version (22, 24, etc.)"]],["li",{},["p",{},["strong",{},"Neovim"],": When configuring the Vue TypeScript plugin, make sure ",["code",{}
+  4.x:docs/3.guide/1.concepts/2.nuxt-lifecycle.md
+    undefined
+    => ["callout",{"icon":"i-lucide-lightbulb"},["p",{},"Nitro plugins are executed only once when the server starts. In a serverless environment, the server boots on each incoming request, and so do the Nitro plugins. However, they are not awaited."]]
+
+## doc:strong->text (3)
+  3.x:docs/4.api/3.utils/define-page-meta.md
+    ["strong",{},"Experimental feature, only available when ",["a",{"href":"/docs/3.x/getting-started/transitions#view-transitions-api-experimental"},"enabled in your nuxt.config file"]]
+    => "**Experimental feature, only available when "
+  4.x:docs/4.api/3.utils/define-page-meta.md
+    ["strong",{},"Experimental feature, only available when ",["a",{"href":"/docs/getting-started/transitions#view-transitions-api-experimental"},"enabled in your nuxt.config file"]]
+    => "**Experimental feature, only available when "
+  HEAD:docs/4.api/3.utils/define-page-meta.md
+    ["strong",{},"Experimental feature, only available when ",["a",{"href":"/docs/getting-started/transitions#view-transitions-api-experimental"},"enabled in your nuxt.config file"]]
+    => "**Experimental feature, only available when "
+
+## unit:skeleton-changed (3)
+  3.x:docs/4.api/3.utils/define-page-meta.md
+    **Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.
+    => \*\*Experimental feature, only available when {0}enabled in your nuxt.config file{/0}\*\*Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.
+  4.x:docs/4.api/3.utils/define-page-meta.md
+    **Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.
+    => \*\*Experimental feature, only available when {0}enabled in your nuxt.config file{/0}\*\*Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.
+  HEAD:docs/4.api/3.utils/define-page-meta.md
+    **Experimental feature, only available when {0}enabled in your nuxt.config file{/0}**Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.
+    => \*\*Experimental feature, only available when {0}enabled in your nuxt.config file{/0}\*\*Enable/disable View Transitions for the current page. If set to true, Nuxt will not apply the transition if the users browser matches {1} (recommended). If set to {2}, Nuxt will always apply the transition.
