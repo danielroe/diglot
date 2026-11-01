@@ -1,0 +1,51 @@
+import type { Policy } from './policy.ts'
+import type { InlineNode, Segment, SegmentDraft } from './types.ts'
+import { createHash } from 'node:crypto'
+import { countWords, fromSkeleton, normalise, toSkeleton } from './skeleton.ts'
+
+/** Truncated sha256 used for segment identity. */
+export function hashSkeleton(skeleton: string, salt?: string): string {
+  const input = salt ? `${salt}\0${skeleton}` : skeleton
+  return createHash('sha256').update(input).digest('hex').slice(0, 16)
+}
+
+export interface BuildOptions {
+  file: string
+  index: number
+  policy?: Pick<Policy, 'salt'>
+}
+
+/** Turns an adapter draft into a segment. Returns `undefined` for units without content. */
+export function buildSegment(draft: SegmentDraft, options: BuildOptions): Segment | undefined {
+  const format = draft.format ?? (typeof draft.content === 'string' ? 'plain' : 'markdown')
+  const content: InlineNode[] = typeof draft.content === 'string' ? [{ type: 'text', value: draft.content }] : draft.content
+  const { skeleton, placeholders } = toSkeleton(normalise(content), format)
+  if (!skeleton)
+    return
+  const salt = options.policy?.salt?.({ kind: draft.kind, skeleton, file: options.file, ...draft.context })
+  const text = fromSkeleton(skeleton, placeholders)
+  return {
+    hash: hashSkeleton(skeleton, salt),
+    sourceHash: hashSkeleton(text, salt),
+    kind: draft.kind,
+    format,
+    skeleton,
+    text,
+    placeholders,
+    words: countWords(skeleton),
+    context: { file: options.file, index: options.index, ...draft.context },
+    position: draft.position,
+    ...(salt ? { salt } : {}),
+  }
+}
+
+/** Builds the segments of one file, numbering them in order. */
+export function buildSegments(file: string, drafts: SegmentDraft[], policy?: Pick<Policy, 'salt'>): Segment[] {
+  const segments: Segment[] = []
+  for (const draft of drafts) {
+    const segment = buildSegment(draft, { file, index: segments.length, policy })
+    if (segment)
+      segments.push(segment)
+  }
+  return segments
+}
