@@ -88,6 +88,15 @@ describe('buildSegment', () => {
     expect(salted.hash).toBe(hashSkeleton('Type', 'table'))
   })
 
+  it('should hash plain and markdown segments with the same skeleton apart', () => {
+    const heading = buildSegment({ kind: 'heading', content: [text('Layers')], context, position }, { file: 'a.md', index: 0 })!
+    const title = buildSegment({ kind: 'frontmatter', content: 'Layers', context, position }, { file: 'a.md', index: 0 })!
+    expect(heading.skeleton).toBe(title.skeleton)
+    expect(heading.hash).toBe(hashSkeleton('Layers'))
+    expect(title.hash).toBe(hashSkeleton('Layers', undefined, 'plain'))
+    expect(title.hash).not.toBe(heading.hash)
+  })
+
   it('should treat string content as plain and skip empty units', () => {
     const segment = buildSegment({ kind: 'prop', content: '  Read   more ', context, position }, { file: 'a.md', index: 0 })!
     expect(segment.format).toBe('plain')

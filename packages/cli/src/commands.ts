@@ -120,9 +120,10 @@ const validateCommand = defineCommand({
       })
       for (const record of records) {
         checked++
-        if (hashSkeleton(record.source, record.salt) !== record.hash)
-          errors.push({ locale, hash: record.hash, message: 'hash does not match the source skeleton' })
         const entries = targets.get(record.hash)
+        const formats = entries ? new Set(entries.map(e => e.format)) : new Set(['markdown', 'plain'] as const)
+        if (![...formats].some(format => hashSkeleton(record.source, record.salt, format) === record.hash))
+          errors.push({ locale, hash: record.hash, message: 'hash does not match the source skeleton' })
         if (!entries) {
           warnings.push({ locale, hash: record.hash, message: 'not used by any source' })
           continue

@@ -1,11 +1,12 @@
 import type { Policy } from './policy.ts'
-import type { InlineNode, Segment, SegmentDraft } from './types.ts'
+import type { InlineNode, Segment, SegmentDraft, SegmentFormat } from './types.ts'
 import { createHash } from 'node:crypto'
 import { countWords, fromSkeleton, normalise, toSkeleton } from './skeleton.ts'
 
-/** Truncated sha256 used for segment identity. */
-export function hashSkeleton(skeleton: string, salt?: string): string {
-  const input = salt ? `${salt}\0${skeleton}` : skeleton
+/** Truncated sha256 used for segment identity. Plain and markdown segments with the same skeleton hash apart. */
+export function hashSkeleton(skeleton: string, salt?: string, format: SegmentFormat = 'markdown'): string {
+  const salted = salt ? `${salt}\0${skeleton}` : skeleton
+  const input = format === 'plain' ? `plain\0${salted}` : salted
   return createHash('sha256').update(input).digest('hex').slice(0, 16)
 }
 
@@ -25,8 +26,8 @@ export function buildSegment(draft: SegmentDraft, options: BuildOptions): Segmen
   const salt = options.policy?.salt?.({ kind: draft.kind, skeleton, file: options.file, ...draft.context })
   const text = fromSkeleton(skeleton, placeholders)
   return {
-    hash: hashSkeleton(skeleton, salt),
-    sourceHash: hashSkeleton(text, salt),
+    hash: hashSkeleton(skeleton, salt, format),
+    sourceHash: hashSkeleton(text, salt, format),
     kind: draft.kind,
     format,
     skeleton,
