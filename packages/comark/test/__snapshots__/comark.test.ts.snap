@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`extract > should extract every kind of unit from a document 1`] = `
+[
+  "frontmatter: Edge cases",
+  "frontmatter: Excerpts of Nuxt docs that exercise parser edges.",
+  "frontmatter: Source",
+  "heading: Heading with {0} and a {1}link{/1}",
+  "paragraph: Beware that using only {0} will not provide {1}network calls de-duplication{/1}.{2}Named parent routes take priority.{3}Use {4} instead.",
+  "paragraph: You can also use a function to conditionally transpile. The function will receive an object ().",
+  "list-item: **Type**: {0}",
+  "list-item: **Default:** {0}",
+  "component-slot: Do not import from {0} in server code. Use {1} or Ctrl{2} instead.",
+  "prop: Nuxt Vercel ISR",
+  "component-slot: Example of a Nuxt application with hybrid rendering deployed on Vercel.",
+  "code-comment: Install the module first",
+  "code-label: Directory Structure",
+  "code-comment: Render the current page here",
+  "code-comment: Fetch the data on the server",
+  "code-comment: runs once",
+  "table-cell: Option",
+  "table-cell: Description",
+  "table-cell: {0}",
+  "table-cell: Whether to render on the server, see {0}rendering{/0}.",
+  "image-alt: Nuxt latest version",
+  "table-cell: {0}",
+  "table-cell: Version badge",
+  "image-alt: The Nuxt logo",
+  "paragraph: {0}",
+]
+`;
