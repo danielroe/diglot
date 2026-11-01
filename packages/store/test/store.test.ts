@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, parseBundle, parseSources, readManifest, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writeRecord } from '../src/index.ts'
+import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mtEnabled, parseBundle, parseGlossary, parseSources, readManifest, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -110,6 +110,63 @@ describe('config', () => {
     writeFileSync(join(root, 'fr/glossary.yml'), 'terms:\n  - term: layer\n    decision: keep-gloss\n    gloss: couche\nstyle:\n  - Use tu\n')
     expect(await loadGlossary(root, 'fr')).toEqual({ terms: [{ term: 'layer', decision: 'keep-gloss', gloss: 'couche' }], style: ['Use tu'] })
     expect(await loadGlossary(root, 'ja')).toBeUndefined()
+  })
+
+  it('should read x18n glossaries and merge them below the locale glossary', async () => {
+    const root = temp()
+    mkdirSync(join(root, 'fr'))
+    writeFileSync(join(root, 'glossary.yml'), [
+      '- term: Nuxt',
+      '  doNotTranslate: true',
+      '- term: composable',
+      '  translations: { fr: composable, ja: コンポーザブル }',
+      '- term: hydration',
+      '  translations: { fr: hydratation, pt_BR: hidratação }',
+      '- term: key',
+      '  note: A message identifier',
+      '- term: layer',
+      '  translations: { fr: layer }',
+    ].join('\n'))
+    writeFileSync(join(root, 'fr/glossary.yml'), 'terms:\n  - term: Layer\n    decision: keep-gloss\n    gloss: couche\n')
+    expect(await loadGlossary(root, 'fr', { shared: 'glossary.yml' })).toEqual({ terms: [
+      { term: 'Nuxt', decision: 'keep' },
+      { term: 'composable', decision: 'keep' },
+      { term: 'hydration', decision: 'translate', target: 'hydratation' },
+      { term: 'key', decision: 'translate', note: 'A message identifier' },
+      { term: 'Layer', decision: 'keep-gloss', gloss: 'couche' },
+    ] })
+    expect((await loadGlossary(root, 'pt-BR', { shared: 'glossary.yml' }))!.terms[2]).toEqual({ term: 'hydration', decision: 'translate', target: 'hidratação' })
+    expect(parseGlossary({ glossary: [{ term: 'x18n', doNotTranslate: true }], locales: ['en'] }, 'fr')).toEqual({ terms: [{ term: 'x18n', decision: 'keep' }] })
+    expect(() => parseGlossary({ terms: [{ term: 'a', decision: 'keep-gloss' }] }, 'fr')).toThrow('decision')
+    const config = await loadConfig(root)
+    expect(config.glossary).toBe(join(root, 'glossary.yml'))
+  })
+
+  it('should load style rules', async () => {
+    const root = temp()
+    mkdirSync(join(root, 'fr'))
+    writeFileSync(join(root, 'fr/style.yml'), 'rules:\n  - Use vous\ntypography:\n  spaceBefore: ";:!?"\nlengthRatio: [0.8, 1.8]\n')
+    expect(await loadStyle(root, 'fr')).toEqual({ rules: ['Use vous'], typography: { spaceBefore: ';:!?' }, lengthRatio: [0.8, 1.8] })
+    expect(await loadStyle(root, 'ja')).toBeUndefined()
+    writeFileSync(join(root, 'fr/style.yml'), 'lengthRatio: 2\n')
+    await expect(loadStyle(root, 'fr')).rejects.toThrow('lengthRatio')
+    writeFileSync(join(root, 'diglot.config.ts'), 'import { defineConfig } from \'@diglot/core\'\n\nexport default defineConfig({ locales: [\'fr\'], mt: { model: \'m\' } })\n')
+    const config = await loadConfig(root)
+    expect(config.mt).toEqual({ model: 'm' })
+    expect(config.glossary).toBeUndefined()
+  })
+
+  it('should load per-locale state', async () => {
+    const root = temp()
+    mkdirSync(join(root, 'fr'))
+    mkdirSync(join(root, 'ja'))
+    writeFileSync(join(root, 'fr/locale.yml'), 'mt:\n  enabled: true\ngovernance:\n  activeReviewers: [danielroe]\n  approvalRate: 0.62\n  reviewLatencyDays: 9\n')
+    writeFileSync(join(root, 'ja/locale.yml'), 'mt:\n  enabled: false\n')
+    const fr = await loadLocaleState(root, 'fr')
+    expect(fr).toEqual({ mt: { enabled: true }, governance: { activeReviewers: ['danielroe'], approvalRate: 0.62, reviewLatencyDays: 9 } })
+    expect([mtEnabled(fr), mtEnabled(await loadLocaleState(root, 'ja')), mtEnabled(await loadLocaleState(root, 'de'))]).toEqual([true, false, false])
+    writeFileSync(join(root, 'ja/locale.yml'), 'mt:\n  enabled: yes please\n')
+    await expect(loadLocaleState(root, 'ja')).rejects.toThrow('mt.enabled')
   })
 })
 

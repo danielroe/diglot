@@ -1,8 +1,9 @@
-import type { DiffOptions, DiglotConfig, Glossary, Policy, SourceConfig } from '@diglot/core'
+import type { DiffOptions, DiglotConfig, MtConfig, Policy, SourceConfig } from '@diglot/core'
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
 import { loadConfig as loadC12 } from 'c12'
 import { join, resolve } from 'pathe'
-import { parse as parseYaml } from 'yaml'
 import { parseSources } from './sources.ts'
 
 /** A loaded `diglot.config.ts` with defaults applied and paths resolved. */
@@ -18,12 +19,25 @@ export interface ResolvedConfig {
   outDir: string
   /** Absolute state directory. */
   stateDir: string
+  /** Absolute path of the shared glossary, when there is one. */
+  glossary?: string
+  mt: MtConfig
 }
 
 /** Loads `diglot.config.*` from `cwd` (via c12) and the sources it points at. */
 export async function loadConfig(cwd = '.', overrides: Partial<DiglotConfig> = {}): Promise<ResolvedConfig> {
-  const { config } = await loadC12<DiglotConfig>({ name: 'diglot', cwd, overrides: overrides as DiglotConfig, rcFile: false, dotenv: false, packageJson: false, globalRc: false })
+  const { config } = await loadC12<DiglotConfig>({ name: 'diglot', cwd, overrides: overrides as DiglotConfig, rcFile: false, dotenv: false, packageJson: false, globalRc: false, jitiOptions: { alias: coreAlias() } })
   return resolveConfig(config, resolve(cwd))
+}
+
+/** Lets a config import `@diglot/core` without installing it next to the config. */
+function coreAlias(): Record<string, string> {
+  try {
+    return { '@diglot/core': fileURLToPath(import.meta.resolve('@diglot/core')) }
+  }
+  catch {
+    return {}
+  }
 }
 
 /** Applies defaults to a config object and loads its sources. */
@@ -49,24 +63,7 @@ export async function resolveConfig(config: Partial<DiglotConfig>, root: string)
     diff: config.diff ?? {},
     outDir: resolve(root, config.outDir ?? 'dist'),
     stateDir: resolve(root, config.stateDir ?? '.diglot'),
+    ...(config.glossary ? { glossary: resolve(root, config.glossary) } : existsSync(join(root, 'glossary.yml')) ? { glossary: join(root, 'glossary.yml') } : {}),
+    mt: config.mt ?? {},
   }
-}
-
-/** Reads `<locale>/glossary.yml`, or `undefined` when there is none. */
-export async function loadGlossary(root: string, locale: string): Promise<Glossary | undefined> {
-  const content = await readFile(join(root, locale, 'glossary.yml'), 'utf8').catch(() => undefined)
-  if (content === undefined)
-    return
-  const data = (parseYaml(content) ?? {}) as Partial<Glossary>
-  if (!Array.isArray(data.terms))
-    throw new Error(`${locale}/glossary.yml: \`terms\` must be a list`)
-  for (const [i, entry] of data.terms.entries()) {
-    const ok = entry && typeof entry.term === 'string' && (
-      entry.decision === 'keep'
-      || (entry.decision === 'translate' && typeof entry.target === 'string')
-      || (entry.decision === 'keep-gloss' && typeof entry.gloss === 'string'))
-    if (!ok)
-      throw new Error(`${locale}/glossary.yml: term ${i} needs \`term\` and a valid \`decision\``)
-  }
-  return { terms: data.terms, ...(data.style ? { style: data.style } : {}) }
 }
