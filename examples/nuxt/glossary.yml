@@ -1,0 +1,73 @@
+# Terminology shared by every locale, in x18n's `glossary` shape, so the same file can feed
+# x18n (UI strings) and diglot (docs). Locale-specific decisions that x18n cannot express
+# (keep with a gloss, accepted variants) live in `<locale>/glossary.yml`.
+- term: Nuxt
+  doNotTranslate: true
+- term: Nuxt DevTools
+  doNotTranslate: true
+- term: Nuxt Content
+  doNotTranslate: true
+- term: Nuxt UI
+  doNotTranslate: true
+- term: Nuxt Fonts
+  doNotTranslate: true
+- term: Nitro
+  doNotTranslate: true
+- term: Vue
+  doNotTranslate: true
+- term: Vite
+  doNotTranslate: true
+- term: TypeScript
+  doNotTranslate: true
+- term: DevTools
+  doNotTranslate: true
+- term: SSR
+  note: server-side rendering
+  doNotTranslate: true
+- term: useFetch
+  doNotTranslate: true
+- term: useAsyncData
+  doNotTranslate: true
+- term: composable
+  note: a Vue Composition API function
+  translations:
+    fr: composable
+- term: plugin
+  translations:
+    fr: plugin
+- term: middleware
+  translations:
+    fr: middleware
+- term: runtime config
+  note: the runtimeConfig option and useRuntimeConfig
+  translations:
+    fr: runtime config
+- term: app config
+  note: the app.config file and useAppConfig
+  translations:
+    fr: app config
+- term: hook
+  translations:
+    fr: hook
+- term: layout
+  note: a file in the layouts directory
+  translations:
+    fr: layout
+- term: component
+  translations:
+    fr: composant
+- term: server component
+  translations:
+    fr: composant serveur
+- term: data fetching
+  translations:
+    fr: récupération de données
+- term: server-side rendering
+  translations:
+    fr: rendu côté serveur
+- term: prerendering
+  translations:
+    fr: prérendu
+- term: route middleware
+  translations:
+    fr: middleware de route

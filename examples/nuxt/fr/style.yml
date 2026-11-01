@@ -1,0 +1,11 @@
+rules:
+  - Address the reader as "vous" and use the imperative for instructions ("Ajoutez", "Créez").
+  - Use sentence case in headings, titles and labels, capitalising only the first word and proper nouns.
+  - Keep code identifiers, file and directory names, package names and configuration keys in English.
+  - Use French quotation marks (« ») for quoted prose.
+  - Keep list items of one list in the same grammatical form.
+# A narrow no-break space (U+202F) before ; : ! ? » and after «, applied to machine output
+# after translation rather than asked of the model.
+typography:
+  spaceBefore: ';:!?»'
+  spaceAfter: «

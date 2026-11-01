@@ -4,8 +4,9 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { recordStatus } from '@diglot/core'
-import { writeRecord } from '@diglot/store'
+import { loadConfig, loadGlossary, loadLocaleState, loadStyle, mtEnabled, writeRecord } from '@diglot/store'
 import { MockLanguageModelV4 } from 'ai/test'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { commitMessage, outputs, run, summary } from '../src/index.ts'
@@ -196,6 +197,20 @@ describe('run', () => {
     const result = await run({ cwd: root })
     expect(result.locales).toEqual([expect.objectContaining({ locale: 'fr', enabled: false, translated: 0 }), expect.objectContaining({ locale: 'ja', enabled: false })])
     expect(result.message).toMatch(/^chore: sync docs@/)
+  })
+})
+
+describe('nuxt example', () => {
+  it('should load the config, sources, glossary and style', async () => {
+    const root = fileURLToPath(new URL('../../../examples/nuxt', import.meta.url))
+    const config = await loadConfig(root)
+    expect(config.sources.map(s => `${s.repo}@${s.ref}`)).toEqual(['nuxt/nuxt@main', 'nuxt/nuxt@4.x', 'nuxt/nuxt@3.x', 'nuxt/cli@main', 'nuxt/fonts@main'])
+    expect(mtEnabled(await loadLocaleState(root, 'fr'))).toBe(true)
+    const glossary = (await loadGlossary(root, 'fr', { shared: config.glossary }))!
+    expect(glossary.terms.find(t => t.term === 'layer')).toMatchObject({ decision: 'keep-gloss', gloss: 'couche' })
+    expect(glossary.terms.find(t => t.term === 'composable')).toMatchObject({ decision: 'keep' })
+    expect(glossary.terms.find(t => t.term === 'component')).toMatchObject({ decision: 'translate', target: 'composant' })
+    expect(await loadStyle(root, 'fr')).toMatchObject({ typography: { spaceBefore: ';:!?»', spaceAfter: '«' } })
   })
 })
 

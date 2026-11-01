@@ -1,0 +1,26 @@
+sources:
+  - name: nuxt-main
+    repo: nuxt/nuxt
+    ref: main
+    path: .diglot/checkouts/nuxt/nuxt
+    dir: docs
+  - name: nuxt-4.x
+    repo: nuxt/nuxt
+    ref: 4.x
+    path: .diglot/checkouts/nuxt/nuxt
+    dir: docs
+  - name: nuxt-3.x
+    repo: nuxt/nuxt
+    ref: 3.x
+    path: .diglot/checkouts/nuxt/nuxt
+    dir: docs
+  - name: nuxt-cli
+    repo: nuxt/cli
+    ref: main
+    path: .diglot/checkouts/nuxt/cli
+    dir: docs
+  - name: nuxt-fonts
+    repo: nuxt/fonts
+    ref: main
+    path: .diglot/checkouts/nuxt/fonts
+    dir: docs

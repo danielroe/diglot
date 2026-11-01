@@ -1,0 +1,39 @@
+# French decisions that need diglot-only fields. Entries here replace shared entries with
+# the same term in ../glossary.yml.
+terms:
+  - term: layer
+    match: \blayers?\b
+    note: the Nuxt layers feature (extends)
+    decision: keep-gloss
+    gloss: couche
+  - term: payload
+    note: serialised server state sent to the client
+    decision: keep-gloss
+    gloss: charge utile
+  - term: auto-import
+    match: \bauto-?import(?:s|ed|ing)?\b|\bautomatically imports?\b
+    decision: translate
+    target: import automatique
+    accept:
+      - import\p{L}* automatique
+      - automatiquement import
+      - import\p{L}* automatiquement
+  - term: hydration
+    match: \bhydrat(?:ion|es?|ed|ing)\b
+    decision: translate
+    target: hydratation
+    accept:
+      - hydrat
+  - term: server route
+    match: \bserver routes?\b
+    decision: translate
+    target: route serveur
+    accept:
+      - routes? (?:de |du )?serveur
+  - term: directory
+    match: \bdirector(?:y|ies)\b
+    decision: translate
+    target: répertoire
+    accept:
+      - répertoire
+      - dossier

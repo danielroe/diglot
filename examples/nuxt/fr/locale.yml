@@ -1,0 +1,3 @@
+# Written by the governance job, or by hand to switch machine translation off.
+mt:
+  enabled: true

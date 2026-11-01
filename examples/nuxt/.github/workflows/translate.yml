@@ -1,0 +1,49 @@
+name: translate
+
+on:
+  # Sent by the source repositories on a docs push:
+  # gh api repos/nuxt/translations/dispatches -f event_type=source-push -f 'client_payload[sources]=nuxt-main'
+  repository_dispatch:
+    types: [source-push]
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: Only these sources (comma separated)
+        default: ''
+      limit:
+        description: Most segments per locale sent to the model
+        default: ''
+  schedule:
+    - cron: '23 4 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: .diglot/checkouts
+          key: diglot-checkouts-${{ github.run_id }}
+          restore-keys: diglot-checkouts-
+
+      - id: diglot
+        uses: danielroe/diglot/packages/action@main
+        with:
+          sources: ${{ github.event.client_payload.sources || inputs.sources }}
+          limit: ${{ inputs.limit }}
+          git-user-name: nuxt-translations[bot]
+          git-user-email: nuxt-translations[bot]@users.noreply.github.com
+        env:
+          AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
+
+      - if: steps.diglot.outputs.committed == 'true'
+        run: git push
