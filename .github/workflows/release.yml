@@ -48,6 +48,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: ${{ inputs.prerelease }}
+          packages: |
+            packages/*
 
   # The release PR was merged: tag the squash commit, cut a GitHub release
   # from the PR body, and dispatch the publish workflow. The `release/v`
@@ -71,6 +73,8 @@ jobs:
       - uses: danielroe/uppt/release@09882a5a0a1a20a0e802613a77ad59fcb1c1611c # v0.6.9
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          packages: |
+            packages/*
 
   # The chained dispatch from `release` lands here as a `workflow_dispatch`
   # event on a `vX.Y.Z` tag ref. The `pack` job installs deps, runs
@@ -88,6 +92,9 @@ jobs:
     steps:
       - id: pack
         uses: danielroe/uppt/pack@09882a5a0a1a20a0e802613a77ad59fcb1c1611c # v0.6.9
+        with:
+          packages: |
+            packages/*
 
   # `publish` downloads the prebuilt tarball from the pack job's
   # artifact and stages it for publish.
