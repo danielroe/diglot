@@ -7,7 +7,7 @@ import { validate } from './validate.ts'
 export type Origin = 'mt' | 'tm' | 'human'
 /** What a human has done to the current text. */
 export type Review = 'none' | 'edited' | 'verified'
-/** How the record relates to `prev`: `fresh` has none, `carry` copied its text, `update` was derived from it. */
+/** How the record relates to `prev`: `fresh` has none, `carry` copied its text (same skeleton, different hash), `update` was derived from it. */
 export type Derived = 'fresh' | 'carry' | 'update'
 
 export interface MachineTranslation {
@@ -159,9 +159,9 @@ export function recordStatus(record: TranslationRecord | undefined, segment?: Va
     return 'verified'
   if (record.review === 'edited')
     return 'edited'
-  if (record.origin === 'human')
-    return 'edited'
-  return record.derived === 'fresh' ? 'machine' : 'pending-review'
+  if (record.derived !== 'fresh')
+    return 'pending-review'
+  return record.origin === 'human' ? 'edited' : 'machine'
 }
 
 /** Share of the machine candidate that reviewers changed, 0 to 1. `undefined` without a candidate. */

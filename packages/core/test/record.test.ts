@@ -41,6 +41,7 @@ describe('records', () => {
     expect(recordStatus({ ...base, derived: 'update', prev: 'x' })).toBe('pending-review')
     expect(recordStatus({ ...base, derived: 'carry', prev: 'x' })).toBe('pending-review')
     expect(recordStatus({ ...base, origin: 'human' })).toBe('edited')
+    expect(recordStatus({ ...base, origin: 'human', derived: 'carry', prev: 'x' })).toBe('pending-review')
     expect(recordStatus({ ...base, review: 'edited', derived: 'update', prev: 'x' })).toBe('edited')
     expect(recordStatus({ ...base, review: 'verified', verifiedBy: { by: 'danielroe', at: base.updatedAt } })).toBe('verified')
     expect(recordStatus({ ...base, text: 'Nuxt [x](https://evil)' }, segment)).toBe('rejected')

@@ -61,7 +61,7 @@ for (const { before, after, similarity, ambiguous } of modified)
 
 - `parseRecord(value)` checks the shape and throws `RecordError`
 - `createRecord({ segment, text, origin })` fills identity fields
-- `recordStatus(record, segment)` returns what a reader sees: `untranslated`, `machine`, `pending-review`, `edited`, `verified` or `rejected`
+- `recordStatus(record, segment)` returns what a reader sees: `untranslated`, `machine`, `pending-review`, `edited`, `verified` or `rejected`. A record carried or updated from a predecessor is `pending-review` until someone edits or verifies it, whatever its `origin`
 - `editRatio(record)` measures how much of the machine candidate a reviewer changed
 
 ## Configuration
