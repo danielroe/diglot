@@ -1,0 +1,55 @@
+{
+  "name": "@diglot/x18n",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "x18n plugin for diglot translation stores",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielroe/diglot.git",
+    "directory": "packages/x18n"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "peerDependencies": {
+    "@x18n/core": "^0.1.5"
+  },
+  "dependencies": {
+    "@diglot/comark": "workspace:*",
+    "@diglot/core": "workspace:*",
+    "@diglot/mdast": "workspace:*",
+    "@diglot/store": "workspace:*",
+    "pathe": "^2.0.3"
+  },
+  "devDependencies": {
+    "@x18n/core": "0.1.5",
+    "@x18n/node": "0.1.5"
+  }
+}
