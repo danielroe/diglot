@@ -24,7 +24,7 @@ A starting point for `nuxt/translations`: the Nuxt docs (`nuxt/nuxt` on `main`, 
 - Sentence case in headings, titles and labels.
 - Code identifiers, file names, package names and configuration keys stay in English.
 - Guillemets (`« »`) for quoted prose.
-- A narrow no-break space (U+202F) before `;`, `:`, `!`, `?` and `»`, and after `«`. Machine output gets it from `typography` in `fr/style.yml` after translation, so the model does not have to produce the character.
+- A narrow no-break space (U+202F) before `;`, `:`, `!`, `?` and `»`, and after `«`. Machine output gets it from `typography` in `fr/style.yml` after translation.
 
 ## Switching machine translation off
 

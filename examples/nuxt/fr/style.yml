@@ -5,7 +5,7 @@ rules:
   - Use French quotation marks (« ») for quoted prose.
   - Keep list items of one list in the same grammatical form.
 # A narrow no-break space (U+202F) before ; : ! ? » and after «, applied to machine output
-# after translation rather than asked of the model.
+# after translation.
 typography:
   spaceBefore: ';:!?»'
   spaceAfter: «
