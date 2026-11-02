@@ -40,7 +40,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@x18n/core": "^0.1.5"
+    "@x18n/core": "^0.1.8"
   },
   "dependencies": {
     "@diglot/comark": "workspace:*",
@@ -50,7 +50,7 @@
     "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@x18n/core": "0.1.5",
-    "@x18n/node": "0.1.5"
+    "@x18n/core": "0.1.8",
+    "@x18n/node": "0.1.8"
   }
 }

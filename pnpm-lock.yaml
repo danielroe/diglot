@@ -380,11 +380,11 @@ importers:
         version: 2.0.3
     devDependencies:
       '@x18n/core':
-        specifier: 0.1.5
-        version: 0.1.5(typescript@6.0.3)
+        specifier: 0.1.8
+        version: 0.1.8(typescript@6.0.3)
       '@x18n/node':
-        specifier: 0.1.5
-        version: 0.1.5(@typescript-eslint/types@8.71.0)(typescript@6.0.3)
+        specifier: 0.1.8
+        version: 0.1.8(@typescript-eslint/types@8.71.0)(typescript@6.0.3)
 
 packages:
 
@@ -1263,14 +1263,14 @@ packages:
   '@workflow/serde@4.1.0':
     resolution: {integrity: sha512-pav4F2BoirECWR7Nf1TKt+2eETcBj7jj4cBefQ8VXQCA6NPkaKeLfj/zMgi+3zYV5ZIBT4GuUiphsj0/b9hPQQ==}
 
-  '@x18n/builtins@0.1.5':
-    resolution: {integrity: sha512-OtZFcWi3ZQ3RtwX4fEpewogLiDRpC7FsrgBHKXI7o9s+7Xrwv/I9AZi+dS8Gw/ZxyoeP1fIhpwMoxEB+fUQ6fQ==}
+  '@x18n/builtins@0.1.8':
+    resolution: {integrity: sha512-M5mgnGvIq00xGtPMt7EL2PEUXy2vP3vyys6XL6t9mGRdeP5cydrk46FnPdX9cHvBLqekPr8gLhTJVKsohrsR2w==}
 
-  '@x18n/core@0.1.5':
-    resolution: {integrity: sha512-GgQXggFErADxvqesRVm9wCkOIp4QIFVePH4wcfmRKeOWeTvnLLw6Zl9Grk6Q2Sp9AoesT5NU6rc6pqwM8BPVow==}
+  '@x18n/core@0.1.8':
+    resolution: {integrity: sha512-quJuQRX0fVgcdV8nNqZ29aWLcU3NrF53UAjh0DDlBi5qCf5YdaaVV+QzFSAGWW+MBIxbjHFTPGj5o90tyI3A2g==}
 
-  '@x18n/node@0.1.5':
-    resolution: {integrity: sha512-/YP1sVwnsyZAPfgN/MZxavZayeOq4xgk4gq3OPQzwvdb1wm30E9EOURYfQTfQKCfSbwBqgWyasqelNu0kZnq8Q==}
+  '@x18n/node@0.1.8':
+    resolution: {integrity: sha512-t6QTgjZF4kgfYtlmwpJnI+bVBp+naJh5HwKBS2Y1GioGsO9UlntyqoOArSQC0qc4P1UI3M5x4J3O7nSHmhSpnA==}
     engines: {node: '>=22'}
 
   '@yuku-core/binding-android-arm64@0.19.0':
@@ -4092,10 +4092,10 @@ snapshots:
 
   '@workflow/serde@4.1.0': {}
 
-  '@x18n/builtins@0.1.5(@typescript-eslint/types@8.71.0)(typescript@6.0.3)':
+  '@x18n/builtins@0.1.8(@typescript-eslint/types@8.71.0)(typescript@6.0.3)':
     dependencies:
       '@vue/compiler-sfc': 3.5.44
-      '@x18n/core': 0.1.5(typescript@6.0.3)
+      '@x18n/core': 0.1.8(typescript@6.0.3)
       json5: 2.2.3
       jsonc-parser: 3.3.1
       oxc-parser: 0.155.0
@@ -4105,17 +4105,17 @@ snapshots:
       - '@typescript-eslint/types'
       - typescript
 
-  '@x18n/core@0.1.5(typescript@6.0.3)':
+  '@x18n/core@0.1.8(typescript@6.0.3)':
     dependencies:
       nostics: 1.3.0
       valibot: 1.5.0(typescript@6.0.3)
     transitivePeerDependencies:
       - typescript
 
-  '@x18n/node@0.1.5(@typescript-eslint/types@8.71.0)(typescript@6.0.3)':
+  '@x18n/node@0.1.8(@typescript-eslint/types@8.71.0)(typescript@6.0.3)':
     dependencies:
-      '@x18n/builtins': 0.1.5(@typescript-eslint/types@8.71.0)(typescript@6.0.3)
-      '@x18n/core': 0.1.5(typescript@6.0.3)
+      '@x18n/builtins': 0.1.8(@typescript-eslint/types@8.71.0)(typescript@6.0.3)
+      '@x18n/core': 0.1.8(typescript@6.0.3)
       chokidar: 6.0.0
       ignore: 7.0.14
       jiti: 2.7.0

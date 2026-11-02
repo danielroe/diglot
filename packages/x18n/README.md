@@ -1,7 +1,7 @@
 # @diglot/x18n
 
 > [!WARNING]
-> Experimental. Built against x18n 0.1.5.
+> Experimental. Built against x18n 0.1.8.
 
 An [x18n](https://github.com/x18n-dev/x18n) plugin for [diglot](../../README.md) translations repositories. It shows a diglot store in x18n's CLI, editor and browser UI: each segment hash is a key, the source manifests hold the source-locale messages, each record file holds one translation, and every place a segment occurs in a source document is a usage of its hash.
 
