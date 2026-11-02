@@ -246,7 +246,7 @@ importers:
         version: 2.0.3
     devDependencies:
       ai:
-        specifier: ^7.0.159
+        specifier: 7.0.159
         version: 7.0.159(zod@4.6.7)
 
   packages/cli:
@@ -325,7 +325,7 @@ importers:
         version: 2.9.1
     devDependencies:
       rehype-stringify:
-        specifier: ^10.0.1
+        specifier: 10.0.1
         version: 10.0.1
       remark-rehype:
         specifier: 11.1.2
