@@ -1,7 +1,8 @@
+import type { SegmentStatus } from '@diglot/core'
 import type { ManifestEntry } from '@diglot/store'
-import type { Format, MessageTree, NodeRange, TextEdit } from '@x18n/core'
+import type { Format, MessageState, MessageTree, NodeRange, TextEdit } from '@x18n/core'
 import type { DiglotState } from './state.ts'
-import { createRecord, isPlaceholderOnly, normaliseRecord, parseRecord, RECORD_KEYS } from '@diglot/core'
+import { createRecord, isPlaceholderOnly, normaliseRecord, parseRecord, RECORD_KEYS, recordStatus } from '@diglot/core'
 import { topLevelRanges } from './json.ts'
 
 /** Id of the format that reads one diglot record file as one message. */
@@ -9,15 +10,34 @@ export const RECORD_FORMAT = 'diglot-record'
 /** Id of the format that reads a source manifest as the source-locale messages. */
 export const MANIFEST_FORMAT = 'diglot-manifest'
 
-export function manifestEntries(text: string): Map<string, Array<ManifestEntry & { offset: number }>> {
-  const out = new Map<string, Array<ManifestEntry & { offset: number }>>()
+const FILE_LINE = /^\s*("(?:[^"\\]|\\.)*"): \[/
+
+interface LocatedEntry extends ManifestEntry {
+  offset: number
+  label: string
+}
+
+export function manifestEntries(text: string): Map<string, LocatedEntry[]> {
+  const out = new Map<string, LocatedEntry[]>()
   let offset = 0
+  let file = ''
+  let heading: string | undefined
   for (const line of text.split('\n')) {
     const trimmed = line.trim().replace(/,$/, '')
     if (trimmed.startsWith('{"hash":')) {
       const entry = JSON.parse(trimmed) as ManifestEntry
-      if (!isPlaceholderOnly(entry.skeleton))
-        out.set(entry.hash, [...out.get(entry.hash) ?? [], { ...entry, offset: offset + line.indexOf('{') }])
+      const placeholderOnly = isPlaceholderOnly(entry.skeleton)
+      if (entry.kind === 'heading')
+        heading = placeholderOnly ? undefined : entry.skeleton
+      if (!placeholderOnly)
+        out.set(entry.hash, [...out.get(entry.hash) ?? [], { ...entry, offset: offset + line.indexOf('{'), label: heading ? `${file} > ${heading}` : file }])
+    }
+    else {
+      const match = FILE_LINE.exec(line)
+      if (match) {
+        file = JSON.parse(match[1]!) as string
+        heading = undefined
+      }
     }
     offset += line.length + 1
   }
@@ -31,8 +51,10 @@ export function manifestFormat(): Format {
     parse(text) {
       const tree: Record<string, string> = {}
       const ranges = new Map<string, NodeRange>()
+      const labels = new Map<string, string>()
       for (const [hash, [entry]] of manifestEntries(text)) {
         tree[hash] = entry!.skeleton
+        labels.set(hash, entry!.label)
         const end = text.indexOf('\n', entry!.offset)
         const props = topLevelRanges(text, entry!.offset, end < 0 ? text.length : end)
         const key = props.get('hash')
@@ -40,20 +62,43 @@ export function manifestFormat(): Format {
         if (key && value)
           ranges.set(hash, { key: key.value, value: value.value })
       }
-      return { tree, ranges }
+      return { tree, ranges, labels }
     },
   }
 }
 
 type RawRecord = Record<string, unknown>
 
-export function serialiseRaw(raw: RawRecord): string {
+const STATES: Record<SegmentStatus, MessageState | undefined> = {
+  'untranslated': undefined,
+  'machine': 'needs-review',
+  'pending-review': 'needs-review',
+  'rejected': 'needs-review',
+  'edited': 'translated',
+  'verified': 'reviewed',
+}
+
+function splitRaw(raw: RawRecord): { known: RawRecord, extra: RawRecord } {
   const known: RawRecord = {}
   const extra: RawRecord = {}
   for (const [key, value] of Object.entries(raw))
     ((RECORD_KEYS as readonly string[]).includes(key) ? known : extra)[key] = value
+  return { known, extra }
+}
+
+export function serialiseRaw(raw: RawRecord): string {
+  const { known, extra } = splitRaw(raw)
   const record = parseRecord(normaliseRecord(known as never))
   return `${JSON.stringify({ ...record, ...extra }, null, 2)}\n`
+}
+
+function messageState(raw: RawRecord): MessageState | undefined {
+  try {
+    return STATES[recordStatus(parseRecord(splitRaw(raw).known))]
+  }
+  catch {
+    return undefined
+  }
 }
 
 function readRaw(text: string): RawRecord {
@@ -80,9 +125,11 @@ export function recordFormat(state: DiglotState): Format {
       const props = topLevelRanges(text)
       const key = props.get('hash')
       const value = props.get('text')
+      const translation = messageState(raw)
       return {
         tree: { [hash]: typeof raw.text === 'string' ? raw.text : '' },
         ranges: key && value ? new Map([[hash, { key: key.value, value: value.value }]]) : undefined,
+        states: translation ? new Map([[hash, translation]]) : undefined,
       }
     },
     edit(text, ops) {

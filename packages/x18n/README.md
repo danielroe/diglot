@@ -23,6 +23,8 @@ Usages come from the files under the local `path` of each source: the plugin set
 ## What it adds
 
 - Formats `diglot-manifest` (read-only, `.diglot/manifest/<source>.json`) and `diglot-record` (`<locale>/segments/<hh>/<hash>.json`). Editing a translation through x18n rewrites its record: the text changes, `review` becomes `edited`, a verification is dropped and `updatedAt` is set. Fields the record schema does not know are kept. Translating a hash that has no record in a locale creates its record file, as a human edit.
+- A translation state per record, from diglot's `recordStatus`: unreviewed machine translations and machine updates `needs-review`, human edits `translated`, verified records `reviewed`. `x18n status` and the UI count them.
+- A label per hash: the file of the segment and the last heading above it, such as `guide.md > Introduction`. The keys grid shows and sorts by it, and `x18n get` and `x18n keys` print it.
 - A `diglot-markdown` scanner over the markdown and `.navigation.yml` files of each source, so find references and the UI's usage list point at the paragraph of each segment.
 - A `diglot` placeholder syntax for skeletons (`{n}`, `{n}...{/n}`), used by `placeholder-mismatch`, `invalid-syntax` and the UI.
 - Checks `diglot-validate` (diglot's `validate` against every kind of unit a hash is used as), `diglot-review` (unreviewed machine translations; machine updates of earlier translations are warnings) and `diglot-unused` (records whose hash no manifest uses).
@@ -35,4 +37,3 @@ Usages come from the files under the local `path` of each source: the plugin set
 ## Limitations
 
 - Record edits made through x18n have no author, so `by` is not set.
-- Keys are hashes, so the keys grid sorts by hash rather than by document.

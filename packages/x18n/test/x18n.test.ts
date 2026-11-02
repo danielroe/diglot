@@ -6,11 +6,11 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { extract, parse } from '@diglot/comark'
 import { createRecord, hashSkeleton } from '@diglot/core'
-import { createManifest, recordPath, serialiseRecord, writeManifest, writeRecord } from '@diglot/store'
+import { createManifest, recordPath, serialiseManifest, serialiseRecord, writeManifest, writeRecord } from '@diglot/store'
 import { createMemoryHost } from '@x18n/core'
 import { loadWorkspace } from '@x18n/node'
 import { describe, expect, it } from 'vitest'
-import { editRecord, recordFormat, serialiseRaw } from '../src/format.ts'
+import { editRecord, manifestFormat, recordFormat, serialiseRaw } from '../src/format.ts'
 import { glossaryEntries } from '../src/glossary.ts'
 import { recordHistory } from '../src/history.ts'
 import { findPlaceholders, structureErrors } from '../src/placeholders.ts'
@@ -101,10 +101,36 @@ describe('record format', () => {
     expect(() => recordFormat(state).serialize!({ '0000000000000000': 'x' }, ctx)).toThrow('one live hash')
   })
 
+  it('should report the review state of a record', () => {
+    const state = (fields: Partial<TranslationRecord>) => format.parse(serialiseRecord(record(fields)), ctx).states?.get(record().hash)
+    expect(state({})).toBe('needs-review')
+    expect(state({ derived: 'carry', prev: '0000000000000000' })).toBe('needs-review')
+    expect(state({ origin: 'human' })).toBe('translated')
+    expect(state({ review: 'edited' })).toBe('translated')
+    expect(state({ review: 'verified', verifiedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })).toBe('reviewed')
+    expect(format.parse(JSON.stringify({ ...record(), review: 'verified' }), ctx).states).toBeUndefined()
+  })
+
   it('should leave an unchanged record alone', () => {
     const raw = { ...record() } as Record<string, unknown>
     expect(editRecord(raw, raw.text as string)).toBe(raw)
     expect(serialiseRaw(raw)).toBe(serialiseRecord(record()))
+  })
+})
+
+describe('manifest format', () => {
+  it('should label each hash with its file and the heading above it', async () => {
+    const doc = async (text: string, file: string) => (await extract(await parse(text), { file })).segments
+    const manifest = createManifest('docs', {
+      'guide.md': await doc(guide, 'guide.md'),
+      'api/use-fetch.md': await doc('# `useFetch`\n\nFetch data.\n\n## Options\n\nThe options.\n', 'api/use-fetch.md'),
+    })
+    const { labels } = manifestFormat().parse(serialiseManifest(manifest), { path: '.diglot/manifest/docs.json', locale: 'en', namespace: undefined, indent: 2 })
+    const label = (skeleton: string) => labels!.get(hashSkeleton(skeleton))
+    expect(label('Introduction')).toBe('guide.md > Introduction')
+    expect(label('Nuxt is powered by {0}Nitro{/0}.')).toBe('guide.md > Introduction')
+    expect(label('Fetch data.')).toBe('api/use-fetch.md')
+    expect(label('The options.')).toBe('api/use-fetch.md > Options')
   })
 })
 
@@ -178,6 +204,13 @@ describe('x18n project', () => {
     expect(project.sourceLocale).toBe('en')
     expect(project.message(paragraph.hash, 'en')?.value).toBe(paragraph.skeleton)
     expect(project.message(paragraph.hash, 'fr')?.value).toBe('Nuxt est propulsé par {0}Nitro{/0}.')
+    expect(project.message(paragraph.hash, 'fr')?.state).toBe('needs-review')
+    expect(project.message(segments.get('Introduction')!.hash, 'fr')?.state).toBe('reviewed')
+    expect(project.get(paragraph.hash)?.label).toBe('guide.md > Introduction')
+    expect(project.analyze().coverage.find(c => c.locale === 'fr')).toMatchObject({
+      needsReview: [segments.get('First letter')!.hash, paragraph.hash].sort(),
+      reviewed: [segments.get('Introduction')!.hash],
+    })
 
     const [usage] = project.usages({ key: paragraph.hash })
     expect(usage!.usage.path).toBe('sources/docs/guide.md')
@@ -202,6 +235,7 @@ describe('x18n project', () => {
     const edited = JSON.parse(readFileSync(join(root, recordPath('fr', segments.get('Introduction')!.hash)), 'utf8'))
     expect(edited).toMatchObject({ text: 'Présentation', review: 'edited', origin: 'human' })
     expect(edited.verifiedBy).toBeUndefined()
+    expect(project.message(segments.get('Introduction')!.hash, 'fr')?.state).toBe('translated')
     project.dispose()
   })
 
