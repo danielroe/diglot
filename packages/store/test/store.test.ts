@@ -42,6 +42,7 @@ describe('records', () => {
   it('should refuse to write invalid records and detect misplaced files', async () => {
     const root = temp()
     await expect(writeRecord(root, 'fr', { ...record('1d4e5186ed79d236'), origin: 'robot' as 'mt' })).rejects.toThrow('"origin"')
+    await expect(writeRecord(root, 'fr', { ...record('1d4e5186ed79d236'), review: 'rejected' })).rejects.toThrow('"rejectedBy"')
     mkdirSync(join(root, 'fr/segments/aa'), { recursive: true })
     writeFileSync(join(root, 'fr/segments/aa/aaaaaaaaaaaaaaaa.json'), serialiseRecord(record('bbbbbbbbbbbbbbbb')))
     await expect(readRecords(root, 'fr')).rejects.toThrow('does not match its path')
@@ -51,11 +52,14 @@ describe('records', () => {
     const root = temp()
     for (const hash of ['bbbbbbbbbbbbbbbb', 'aaaaaaaaaaaaaaaa', 'cccccccccccccccc'])
       await writeRecord(root, 'fr', record(hash))
+    const rejected: TranslationRecord = { ...record('bbbbbbbbbbbbbbbb'), review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-02T00:00:00.000Z' } }
+    await writeRecord(root, 'fr', rejected)
     const [result] = await build(root, { locales: ['fr'], only: new Set(['aaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbb']) })
     expect(result).toEqual({ locale: 'fr', path: 'dist/fr.json', records: 2, skipped: 1 })
     const content = readFileSync(join(root, 'dist/fr.json'), 'utf8')
     expect(Object.keys(JSON.parse(content).records)).toEqual(['aaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbb'])
     expect(parseBundle(content).get('aaaaaaaaaaaaaaaa')).toEqual(record('aaaaaaaaaaaaaaaa'))
+    expect(parseBundle(content).get('bbbbbbbbbbbbbbbb')).toEqual(rejected)
     expect(() => parseBundle({ version: 1, locale: 'fr', records: { cccccccccccccccc: record('aaaaaaaaaaaaaaaa') } })).toThrow('does not match')
   })
 })
