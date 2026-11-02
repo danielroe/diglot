@@ -76,7 +76,7 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
     else if (target.type === 'code')
       code.set(target.element, [...(code.get(target.element) ?? []), { comment: target.comment, text: resolution.text }])
     else
-      ranges.push({ target, build: () => buildNodes(parseSkeleton(resolution.skeleton, segment.placeholders), refs) })
+      ranges.push({ target, build: () => keepEdges(target.parent.slice(target.start, target.end), buildNodes(parseSkeleton(resolution.skeleton, segment.placeholders), refs)) })
   }
   for (const [element, edits] of code)
     replaceText(element, edits)
@@ -103,6 +103,23 @@ async function prepare(unit: Unit, file: string, index: number, policy: Policy, 
 }
 
 const TAGS = { strong: 'strong', emphasis: 'em', delete: 'del' } as const
+
+function keepEdges(range: Node[], nodes: Node[]): Node[] {
+  const first = range[0]
+  const last = range.at(-1)
+  const lead = typeof first === 'string' ? /^\s*/.exec(first)![0] : ''
+  const trail = typeof last === 'string' ? /\s*$/.exec(last)![0] : ''
+  const out = [...nodes]
+  if (lead && typeof out[0] === 'string')
+    out[0] = lead + out[0]
+  else if (lead)
+    out.unshift(lead)
+  if (trail && typeof out.at(-1) === 'string')
+    out[out.length - 1] += trail
+  else if (trail)
+    out.push(trail)
+  return out
+}
 
 function buildNodes(nodes: SkeletonNode[], refs: Array<LinkNode | AtomicNode>): Node[] {
   const out: Node[] = []

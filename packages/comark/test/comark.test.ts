@@ -94,6 +94,13 @@ describe('apply', () => {
     expect(doc.nodes).toEqual([['p', {}, 'Lisez ', ['a', { href: '/docs/guide' }, 'le guide'], ' sur ', ['strong', {}, ['code', {}, 'useAsyncData']], '.']])
   })
 
+  it('should keep the line breaks around block components', async () => {
+    const doc = await parse('::note\nSome text.\n:read-more{to="/x"}\nMore text.\n::\n')
+    const { segments } = await extract(doc)
+    const { doc: out } = await apply(doc, new Map(segments.map(s => [s.hash, s.skeleton.toUpperCase()])))
+    expect(await render(out)).toBe('::note\nSOME TEXT.\n:read-more{to="/x"}\nMORE TEXT.\n::')
+  })
+
   it('should keep the source for missing and invalid translations', async () => {
     const doc = await parse('Hello [world](/w).\n\nSecond paragraph.')
     const [first] = (await extract(doc)).segments
