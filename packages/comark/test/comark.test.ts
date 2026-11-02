@@ -47,6 +47,20 @@ describe('extract', () => {
     expect((await extract({ nodes, frontmatter })).segments.map(s => s.hash)).toEqual(segments.map(s => s.hash))
   })
 
+  it('should keep inline components inside their sentence', async () => {
+    for (const source of ['::tip\nPress :icon{name="x"} to continue.\n::\n', '> Press :icon{name="x"} to continue.\n', '- Press :icon{name="x"} to continue.\n\n- Two\n']) {
+      const [segment] = (await extract(await parse(source))).segments
+      expect(segment!.skeleton, source).toBe('Press {0} to continue.')
+    }
+  })
+
+  it('should split sentences around components on their own line', async () => {
+    const { segments } = await extract(await parse('::note\nSome text.\n:read-more{title="Guide" to="/x"}\nMore text.\n::\n'))
+    expect(segments.map(s => `${s.kind}: ${s.skeleton}`)).toEqual(['component-slot: Some text.', 'prop: Guide', 'component-slot: More text.'])
+    const paragraph = await extract(await parse('Some text.\n:read-more{title="Guide" to="/x"}\n'))
+    expect(paragraph.segments.map(s => `${s.kind}: ${s.skeleton}`)).toEqual(['paragraph: Some text.', 'prop: Guide'])
+  })
+
   it('should record line positions of top-level blocks and code comments', async () => {
     const { segments } = await extract(await parse('# Title\n\nFirst paragraph.\n\n```ts\nconst a = 1\n// Explain the next line\n```\n'))
     expect(segments.map(s => [s.kind, s.position.startLine, s.position.endLine, s.position.precision])).toEqual([
