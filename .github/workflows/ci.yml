@@ -59,3 +59,15 @@ jobs:
 
       - name: 🟩 Coverage
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
+
+  action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: 🚀 Run the composite action
+        uses: ./packages/action
+        with:
+          working-directory: fixtures/action
+          commit: 'false'
+          limit: '0'

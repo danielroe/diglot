@@ -60,13 +60,13 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
-        node-version: 24
+        node-version-file: ${{ github.action_path }}/../../package.json
     - name: Install diglot
       shell: bash
-      working-directory: ${{ github.action_path }}/../..
-      run: npx --yes pnpm@12 install --frozen-lockfile --prod --filter "@diglot/action..."
+      working-directory: ${{ runner.temp }}
+      run: npx --yes pnpm@12 --dir "${{ github.action_path }}/../.." install --frozen-lockfile --prod --filter "@diglot/action..."
     - id: run
       name: Translate
       shell: bash

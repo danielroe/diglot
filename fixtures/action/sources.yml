@@ -1,0 +1,4 @@
+sources:
+  - name: docs
+    path: .
+    dir: docs
