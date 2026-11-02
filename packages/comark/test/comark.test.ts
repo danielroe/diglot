@@ -150,6 +150,18 @@ describe('apply', () => {
     expect(report.rejected[0]!.errors.map(e => e.code)).toEqual(expect.arrayContaining(['missing-placeholder', 'link-syntax']))
   })
 
+  it('should extract and apply dotted frontmatter keys in literal and nested form', async () => {
+    const literal = await parse('---\nnavigation.title: MCP Server\n---\n\nBody.')
+    const nested = { ...literal, frontmatter: { navigation: { title: 'MCP Server' } } }
+    const [a] = (await extract(literal)).segments
+    const [b] = (await extract(nested)).segments
+    expect([a!.kind, a!.skeleton, a!.context.detail]).toEqual(['frontmatter', 'MCP Server', 'navigation.title'])
+    expect(b!.hash).toBe(a!.hash)
+    const translations = new Map([[a!.hash, 'Serveur MCP']])
+    expect((await apply(literal, translations)).doc.frontmatter).toEqual({ 'navigation.title': 'Serveur MCP' })
+    expect((await apply(nested, translations)).doc.frontmatter).toEqual({ navigation: { title: 'Serveur MCP' } })
+  })
+
   it('should apply props, alts, frontmatter and code comments', async () => {
     const source = '---\ntitle: Data fetching\n---\n\n![The logo](/l.png)\n\n:read-more{to="/x" title="Read more"}\n\n```ts\n// Fetch it here\n```'
     const doc = await parse(source)

@@ -182,6 +182,18 @@ describe('apply', () => {
     expect((await apply(source, translations)).markdown).toBe('See [![Le logo](/l.png)](/home) here.'.replace('See', 'Voir').replace('here', 'ici'))
   })
 
+  it('should extract and apply dotted frontmatter keys in literal and nested form', async () => {
+    const literal = '---\nnavigation.title: MCP Server\n---\n\nBody.'
+    const nested = '---\nnavigation:\n  title: MCP Server\n---\n\nBody.'
+    const [a] = await extract(literal)
+    const [b] = await extract(nested)
+    expect([a!.kind, a!.skeleton, a!.context.detail]).toEqual(['frontmatter', 'MCP Server', 'navigation.title'])
+    expect(b!.hash).toBe(a!.hash)
+    const translations = new Map([[a!.hash, 'Serveur MCP']])
+    expect((await apply(literal, translations)).markdown).toBe(literal.replace('MCP Server', 'Serveur MCP'))
+    expect((await apply(nested, translations)).markdown).toBe(nested.replace('MCP Server', 'Serveur MCP'))
+  })
+
   it('should apply props, frontmatter, labels and code comments', async () => {
     const source = [
       '---',

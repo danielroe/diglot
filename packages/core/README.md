@@ -78,4 +78,4 @@ for (const { before, after, similarity, ambiguous } of modified)
 
 ## Configuration
 
-`defineConfig` types a `diglot.config.ts`; `defaultPolicy` lists the prose props, layout containers and frontmatter paths extracted by default; `Glossary` describes a per-locale `glossary.yml` and `LocaleStyle` a per-locale `style.yml`; `MtConfig` holds the machine translation settings; `LocaleState` describes a per-locale `locale.yml` with the machine translation switch and the review metrics behind it.
+`defineConfig` types a `diglot.config.ts`; `defaultPolicy` lists the prose props, layout containers and frontmatter paths extracted by default (a dotted path such as `navigation.title` matches a literal `navigation.title` key or a nested `navigation: { title }`, and translations are written back to the key that was read); `Glossary` describes a per-locale `glossary.yml` and `LocaleStyle` a per-locale `style.yml`; `MtConfig` holds the machine translation settings; `LocaleState` describes a per-locale `locale.yml` with the machine translation switch and the review metrics behind it.
