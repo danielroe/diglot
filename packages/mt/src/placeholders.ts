@@ -12,7 +12,7 @@ export interface DedupedSkeleton {
 
 /**
  * Gives identical atomic placeholders (same type and markdown) one id, so a model sees
- * `{0} ... {0}` for two mentions of the same code span instead of two unrelated tokens.
+ * `{0} ... {0}` for two mentions of the same code span.
  */
 export function dedupePlaceholders(skeleton: string, placeholders: Placeholder[]): DedupedSkeleton {
   const first = new Map<string, number>()

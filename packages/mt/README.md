@@ -142,7 +142,7 @@ lengthRatio: [0.85, 1.7]
 | `leaked-instructions` | error | Words such as "translation", "placeholder", "voici la", code fences or JSON keys that the source does not have |
 | `structure` | error, warning | Heading markers in a heading; changed line count |
 | `numbers` | error, warning | Version strings and multi-digit numbers kept (error); single digits (warning) |
-| `emphasis` | error | Emphasis markers that cannot open or close under CommonMark flanking rules, such as `_` inside a word or `**` between punctuation and CJK text |
+| `emphasis` | error, warning | Emphasis markers that cannot open or close under CommonMark flanking rules, such as `_` inside a word or `**` between punctuation and CJK text; a warning when the source has such markers too |
 | `glossary` | warning | See [Glossary](#glossary) |
 
 ## Usage and cost

@@ -1,6 +1,6 @@
-export { addUsage, emptyUsage, gatewayModel, MODEL_ENV } from './model.ts'
+export { addUsage, emptyUsage, gatewayModel } from './model.ts'
 export { PROMPT_VERSION } from './prompts.ts'
-export { hasErrors, runQa } from './qa.ts'
+export { runQa } from './qa.ts'
 export type { QaOptions } from './qa.ts'
 export { translateSegments } from './translate.ts'
 export type * from './types.ts'

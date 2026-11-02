@@ -6,8 +6,7 @@ import process from 'node:process'
 import { createGateway } from '@ai-sdk/gateway'
 import { generateText, NoObjectGeneratedError, Output } from 'ai'
 
-/** Environment variable holding the default model id. */
-export const MODEL_ENV = 'DIGLOT_MT_MODEL'
+const MODEL_ENV = 'DIGLOT_MT_MODEL'
 
 /**
  * A model served by the Vercel AI Gateway. The API key defaults to the `AI_GATEWAY_API_KEY`
