@@ -3,6 +3,7 @@
  *
  *   git clone --depth 1 --branch main https://github.com/nuxt/nuxt $DIGLOT_CORPUS/nuxt-main
  *   (and 4.x, 3.x into nuxt-4.x, nuxt-3.x)
+ *   git clone --depth 1 https://github.com/nuxt/fonts $DIGLOT_CORPUS/nuxt-fonts
  *
  * Usage: node scripts/corpus.ts [--out file.json]
  */
@@ -271,7 +272,7 @@ const report = {
   mdast: await mdastAgreement(),
   dedupe: await dedupe(),
   codeComments: await codeComments(),
-  fonts: await moduleRepo('fonts'),
+  fonts: await moduleRepo('nuxt-fonts'),
   seconds: 0,
 }
 report.seconds = Math.round((Date.now() - started) / 1000)
