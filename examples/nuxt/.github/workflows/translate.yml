@@ -46,4 +46,7 @@ jobs:
           AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
 
       - if: steps.diglot.outputs.committed == 'true'
-        run: git push
+        run: git pull --rebase origin ${{ github.ref_name }} && git push
+        env:
+          GIT_COMMITTER_NAME: nuxt-translations[bot]
+          GIT_COMMITTER_EMAIL: nuxt-translations[bot]@users.noreply.github.com

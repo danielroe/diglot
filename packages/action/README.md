@@ -12,7 +12,10 @@ A GitHub Action for [diglot](../../README.md) translations repositories. On each
   env:
     AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
 - if: steps.diglot.outputs.committed == 'true'
-  run: git push
+  run: git pull --rebase origin ${{ github.ref_name }} && git push
+  env:
+    GIT_COMMITTER_NAME: translations-bot
+    GIT_COMMITTER_EMAIL: translations-bot@users.noreply.github.com
 ```
 
 The Action commits to the checked-out branch and never pushes; pushing is the workflow's step, so the job needs `contents: write` and no other token. See [`examples/nuxt`](../../examples/nuxt) for a complete translations repository and workflow.
