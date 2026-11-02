@@ -1,4 +1,9 @@
 minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - '@x18n/builtins@0.1.8'
+  - '@x18n/core@0.1.8'
+  - '@x18n/node@0.1.8'
+
 trustPolicy: no-downgrade
 shellEmulator: true
 
