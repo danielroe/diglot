@@ -3,6 +3,7 @@ import type { ManifestEntry } from '@diglot/store'
 import type { Format, MessageState, MessageTree, NodeRange, TextEdit } from '@x18n/core'
 import type { DiglotState } from './state.ts'
 import { createRecord, isPlaceholderOnly, normaliseRecord, parseRecord, RECORD_KEYS, recordStatus } from '@diglot/core'
+import { validationTarget } from '@diglot/store'
 import { topLevelRanges } from './json.ts'
 
 /** Id of the format that reads one diglot record file as one message. */
@@ -92,9 +93,9 @@ export function serialiseRaw(raw: RawRecord): string {
   return `${JSON.stringify({ ...record, ...extra }, null, 2)}\n`
 }
 
-function messageState(raw: RawRecord): MessageState | undefined {
+function messageState(raw: RawRecord, segment: ManifestEntry | undefined): MessageState | undefined {
   try {
-    return STATES[recordStatus(parseRecord(splitRaw(raw).known))]
+    return STATES[recordStatus(parseRecord(splitRaw(raw).known), segment && validationTarget(segment))]
   }
   catch {
     return undefined
@@ -125,7 +126,7 @@ export function recordFormat(state: DiglotState): Format {
       const props = topLevelRanges(text)
       const key = props.get('hash')
       const value = props.get('text')
-      const translation = messageState(raw)
+      const translation = messageState(raw, state.segments.get(hash))
       return {
         tree: { [hash]: typeof raw.text === 'string' ? raw.text : '' },
         ranges: key && value ? new Map([[hash, { key: key.value, value: value.value }]]) : undefined,

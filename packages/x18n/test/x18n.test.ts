@@ -111,6 +111,15 @@ describe('record format', () => {
     expect(format.parse(JSON.stringify({ ...record(), review: 'verified' }), ctx).states).toBeUndefined()
   })
 
+  it('should report a translation that fails validation as needing review', () => {
+    const state = createState()
+    state.segments.set(record().hash, { hash: record().hash, kind: 'paragraph', format: 'markdown', words: 2, skeleton: record().source, placeholders: ['link'] })
+    const verified = { review: 'verified', verifiedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } } as const
+    const parse = (text: string) => recordFormat(state).parse(serialiseRecord(record({ ...verified, text })), ctx).states?.get(record().hash)
+    expect(parse('Bonjour {0}le monde{/0}')).toBe('reviewed')
+    expect(parse('Bonjour le monde')).toBe('needs-review')
+  })
+
   it('should leave an unchanged record alone', () => {
     const raw = { ...record() } as Record<string, unknown>
     expect(editRecord(raw, raw.text as string)).toBe(raw)
