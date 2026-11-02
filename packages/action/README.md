@@ -59,7 +59,7 @@ Records a reviewer rejected (`review: rejected`) are kept as they are and shippe
 | `committed` | `true` when a commit was made |
 | `sha` | The new commit |
 
-The job summary has a table per locale and source, and the rejected segments with their QA issues.
+The job summary has a table per locale and source, and the segments rejected by QA with their issues. Its `Skipped` column counts the live segments of each locale whose record a reviewer rejected.
 
 ## As a library
 

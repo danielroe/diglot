@@ -46,6 +46,8 @@ export interface LocaleReport {
   updated: number
   carried: number
   rejected: number
+  /** Live segments left alone because a reviewer rejected their record. */
+  skipped: number
   /** Untranslated segments left for a later run by `limit`. */
   deferred: number
   usage: Usage
@@ -133,14 +135,14 @@ export async function run(options: RunOptions = {}): Promise<RunResult> {
 
   const locales: LocaleReport[] = []
   for (const locale of options.locales?.length ? config.locales.filter(l => options.locales!.includes(l)) : config.locales) {
-    const report: LocaleReport = { locale, enabled: mtEnabled(await loadLocaleState(config.root, locale)), translated: 0, updated: 0, carried: 0, rejected: 0, deferred: 0, usage: emptyUsage(), rejections: [] }
+    const report: LocaleReport = { locale, enabled: mtEnabled(await loadLocaleState(config.root, locale)), translated: 0, updated: 0, carried: 0, rejected: 0, skipped: 0, deferred: 0, usage: emptyUsage(), rejections: [] }
     locales.push(report)
     if (!report.enabled) {
       log(`${locale}: machine translation disabled`)
       continue
     }
     await translateLocale(config, locale, { live, titles, lineage, previousEntries, allLive, now, report, options })
-    log(`${locale}: translated ${report.translated}, updated ${report.updated}, carried ${report.carried}, rejected ${report.rejected}${report.deferred ? `, deferred ${report.deferred}` : ''}`)
+    log(`${locale}: translated ${report.translated}, updated ${report.updated}, carried ${report.carried}, rejected ${report.rejected}${report.skipped ? `, skipped ${report.skipped}` : ''}${report.deferred ? `, deferred ${report.deferred}` : ''}`)
   }
 
   await build(config.root, { locales: config.locales, outDir: relative(config.root, config.outDir), only: allLive })
@@ -193,6 +195,8 @@ async function translateLocale(config: ResolvedConfig, locale: string, context: 
   const updates: Array<{ item: Live, previous: TranslationRecord }> = []
   const fresh: Live[] = []
   for (const [hash, item] of live) {
+    if (records.get(hash)?.review === 'rejected')
+      report.skipped++
     if (records.has(hash) || isPlaceholderOnly(item.segment.skeleton) || (rejections[hash] && !context.options.retryRejected))
       continue
     const ancestor = context.lineage[hash]?.find(h => records.has(h))

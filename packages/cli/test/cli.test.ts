@@ -114,8 +114,9 @@ describe('diglot', () => {
     expect(file.diff.removed.map((s: any) => s.skeleton)).toEqual(['This paragraph goes away.'])
     expect(await cli('diff', '--cwd', root)).toContain('~ docs/guide/intro.md (+1 -1 ~1)')
 
-    for (const entry of entries.slice(0, 3))
+    for (const entry of entries.slice(0, 2))
       await writeRecord(root, 'fr', createRecord({ segment: entry, text: pseudoTranslate(entry.skeleton, entry.format), origin: 'mt', updatedAt: '2026-11-01T00:00:00.000Z' }))
+    await writeRecord(root, 'fr', createRecord({ segment: entries[2]!, text: pseudoTranslate(entries[2]!.skeleton, entries[2]!.format), origin: 'mt', review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' }, updatedAt: '2026-11-01T00:00:00.000Z' }))
     await writeRecord(root, 'fr', { ...createRecord({ segment: entries[3]!, text: 'Nuxt [x](https://evil.example)', origin: 'human', updatedAt: '2026-11-01T00:00:00.000Z' }), review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' } })
 
     const validation = JSON.parse(await cli('validate', '--cwd', root, '--json'))
@@ -125,12 +126,13 @@ describe('diglot', () => {
 
     const status = JSON.parse(await cli('status', '--cwd', root, '--json'))
     expect(status.fr.docs.byStatus).toEqual({
-      machine: { segments: 3, words: 3 },
-      rejected: { segments: 1, words: 7 },
+      machine: { segments: 2, words: 2 },
+      rejected: { segments: 2, words: 8 },
       untranslated: { segments: 1, words: 4 },
     })
 
-    expect(await cli('build', '--cwd', root)).toBe('fr: 4 records -> dist/fr.json\n')
+    expect(await cli('status', '--cwd', root)).toContain('machine 2, rejected 2, untranslated 1')
+    expect(await cli('build', '--cwd', root)).toBe('fr: 4 records (1 rejected) -> dist/fr.json\n')
     const bundle = JSON.parse(readFileSync(join(root, 'dist/fr.json'), 'utf8'))
     expect(Object.keys(bundle.records)).toHaveLength(4)
   })

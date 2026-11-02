@@ -23,6 +23,8 @@ export interface BuildResult {
   locale: string
   path: string
   records: number
+  /** Records in the bundle that a reviewer rejected. */
+  rejected: number
   /** Records left out because their hash is not live. */
   skipped: number
 }
@@ -38,7 +40,7 @@ export async function build(root: string, options: BuildOptions): Promise<BuildR
     const bundle: LocaleBundle = { version: 1, locale, records: Object.fromEntries(kept.map(r => [r.hash, normaliseRecord(r)])) }
     const path = join(outDir, `${locale}.json`)
     await writeFile(join(root, path), `${JSON.stringify(bundle)}\n`)
-    results.push({ locale, path, records: kept.length, skipped: all.length - kept.length })
+    results.push({ locale, path, records: kept.length, rejected: kept.filter(r => r.review === 'rejected').length, skipped: all.length - kept.length })
   }
   return results
 }

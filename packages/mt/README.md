@@ -54,7 +54,7 @@ if (result.status === 'ok')
   result.derived // 'carry' | 'update'
 ```
 
-The placeholders of the previous source are aligned with the new source (words and placeholder types and markdown), and the previous translation is renumbered to match. When the two skeletons are identical (for example when only the context salt changed), the previous translation is returned as `derived: 'carry'` without a model call. Otherwise, including edits that only change case or punctuation, the model receives the word diff, the new source and the previous translation, with instructions to copy unchanged sentences character for character; the result is `derived: 'update'` with `changedSentences`, the sentences of the new text that are not in the previous one. `previousSource` can be a skeleton string or an object with `placeholders` for better alignment.
+The placeholders of the previous source are aligned with the new source (words and placeholder types and markdown), and the previous translation is renumbered to match. When the two skeletons are identical (for example when only the context salt changed), the previous translation is returned as `derived: 'carry'` without a model call. Otherwise, including edits that only change case or punctuation, the model receives the word diff, the new source and the previous translation, with instructions to copy unchanged sentences character for character; the result is `derived: 'update'` with `changedSentences`, the sentences of the new text that are not in the previous one. `previousSource` can be a skeleton string or an object with `placeholders` for better alignment. A record a reviewer rejected (`review: 'rejected'`) is not a basis for an update: translate the new segment with `translateSegments` instead.
 
 ## Glossary
 

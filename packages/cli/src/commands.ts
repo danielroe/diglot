@@ -181,7 +181,7 @@ const buildCommand = defineCommand({
       ...(args.all || !manifests.length ? {} : { only: liveHashes(manifests) }),
     })
     for (const r of results)
-      print(`${r.locale}: ${r.records} records -> ${r.path}${r.skipped ? ` (${r.skipped} unused skipped)` : ''}`)
+      print(`${r.locale}: ${r.records} records${r.rejected ? ` (${r.rejected} rejected)` : ''} -> ${r.path}${r.skipped ? ` (${r.skipped} unused skipped)` : ''}`)
   },
 })
 

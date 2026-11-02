@@ -55,7 +55,7 @@ describe('records', () => {
     const rejected: TranslationRecord = { ...record('bbbbbbbbbbbbbbbb'), review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-02T00:00:00.000Z' } }
     await writeRecord(root, 'fr', rejected)
     const [result] = await build(root, { locales: ['fr'], only: new Set(['aaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbb']) })
-    expect(result).toEqual({ locale: 'fr', path: 'dist/fr.json', records: 2, skipped: 1 })
+    expect(result).toEqual({ locale: 'fr', path: 'dist/fr.json', records: 2, rejected: 1, skipped: 1 })
     const content = readFileSync(join(root, 'dist/fr.json'), 'utf8')
     expect(Object.keys(JSON.parse(content).records)).toEqual(['aaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbb'])
     expect(parseBundle(content).get('aaaaaaaaaaaaaaaa')).toEqual(record('aaaaaaaaaaaaaaaa'))

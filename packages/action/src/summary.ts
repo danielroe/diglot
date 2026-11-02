@@ -20,9 +20,9 @@ export function summary(result: RunResult): string {
   const lines = [
     '## diglot',
     '',
-    '| Locale | MT | Translated | Updated | Carried | Rejected | Deferred | Requests | Tokens in / out | Cost (USD) |',
-    '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
-    ...result.locales.map(l => `| ${l.locale} | ${l.enabled ? 'on' : 'off'} | ${l.translated} | ${l.updated} | ${l.carried} | ${l.rejected} | ${l.deferred} | ${l.usage.requests} | ${l.usage.inputTokens} / ${l.usage.outputTokens} | ${l.usage.costUsd?.toFixed(4) ?? ''} |`),
+    '| Locale | MT | Translated | Updated | Carried | Rejected | Skipped | Deferred | Requests | Tokens in / out | Cost (USD) |',
+    '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
+    ...result.locales.map(l => `| ${l.locale} | ${l.enabled ? 'on' : 'off'} | ${l.translated} | ${l.updated} | ${l.carried} | ${l.rejected} | ${l.skipped} | ${l.deferred} | ${l.usage.requests} | ${l.usage.inputTokens} / ${l.usage.outputTokens} | ${l.usage.costUsd?.toFixed(4) ?? ''} |`),
     '',
     '| Source | Revision | Segments | Added | Removed | Modified |',
     '| --- | --- | ---: | ---: | ---: | ---: |',

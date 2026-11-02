@@ -170,7 +170,10 @@ describe('run', () => {
     git(root, 'commit', '-q', '-am', 'reject')
     const callsBefore = calls.length
 
-    expect((await run(options)).totals).toMatchObject({ translated: 0, updated: 0, carried: 0 })
+    const kept = await run(options)
+    expect(kept.totals).toMatchObject({ translated: 0, updated: 0, carried: 0 })
+    expect(kept.locales[0]!.skipped).toBe(1)
+    expect(summary(kept)).toContain('| fr | on | 0 | 0 | 0 | 0 | 1 | 0 |')
     expect(calls.length).toBe(callsBefore)
     expect(records(root)[use.hash]).toEqual(rejected)
 
@@ -178,6 +181,7 @@ describe('run', () => {
     git(upstream, 'commit', '-q', '-am', 'edit')
     const next = await run(options)
     expect(next.totals).toMatchObject({ translated: 1, updated: 0, carried: 0 })
+    expect(next.locales[0]!.skipped).toBe(0)
     const successor = Object.values(records(root)).find(r => r.source.startsWith('Use'))!
     expect(successor).toMatchObject({ text: 'Use {0} in your configuration to add one or more layers. FR', review: 'none', derived: 'fresh' })
     expect(successor.prev).toBeUndefined()
@@ -255,7 +259,7 @@ describe('nuxt example', () => {
 describe('reporting', () => {
   it('should format outputs, the job summary and multi-locale commit messages', () => {
     const usage = { requests: 2, inputTokens: 100, outputTokens: 50, costUsd: 0.01 }
-    const locale = (code: string, n: number) => ({ locale: code, enabled: true, translated: n, updated: 1, carried: 2, rejected: 0, deferred: 0, usage, rejections: [] })
+    const locale = (code: string, n: number) => ({ locale: code, enabled: true, translated: n, updated: 1, carried: 2, rejected: 0, skipped: 0, deferred: 0, usage, rejections: [] })
     const result = {
       sources: [{ name: 'docs', sha: 'a'.repeat(40), previous: 'b'.repeat(40), segments: 10, added: 1, removed: 0, modified: 1 }],
       locales: [locale('fr', 3), { ...locale('ja', 0), rejected: 1, rejections: [{ hash: 'abc', file: 'a.md', issues: [{ check: 'grammar' as const, severity: 'error' as const, message: 'link | syntax' }] }] }],
@@ -265,7 +269,7 @@ describe('reporting', () => {
       sha: 'c'.repeat(40),
     }
     expect(outputs(result)).toEqual({ translated: '3', updated: '2', carried: '4', rejected: '1', costUsd: '0.02', committed: 'true', sha: 'c'.repeat(40) })
-    expect(summary(result)).toContain('| fr | on | 3 | 1 | 2 | 0 | 0 | 2 | 100 / 50 | 0.0100 |')
+    expect(summary(result)).toContain('| fr | on | 3 | 1 | 2 | 0 | 0 | 0 | 2 | 100 / 50 | 0.0100 |')
     expect(summary(result)).toContain('| docs | bbbbbbbbbb..aaaaaaaaaa | 10 | 1 | 0 | 1 |')
     expect(summary(result)).toContain('| ja | `abc` | a.md | grammar: link \\| syntax |')
     expect(commitMessage(result.locales, result.sources)).toBe(`chore(fr, ja): translate 3 segments, update 2, carry 4\n\nfr: translate 3, update 1, carry 2\nja: translate 0, update 1, carry 2\nrejected: ja 1\nsources: docs@aaaaaaaaaa`)
