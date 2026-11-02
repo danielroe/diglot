@@ -41,9 +41,7 @@ describe('extract', () => {
             comark: ['You can also use a function to conditionally transpile. The function will receive an object ().', 'Do not import from {0} in server code. Use {1} or Ctrl{2} instead.', 'Nuxt latest version'],
             mdast: ['You can also use a function to conditionally transpile. The function will receive an object (\\{ isDev, isServer, isClient, isModern, isLegacy \\}).', 'Do not import from {0} in server code. Use {1} or {2} instead.'],
           }
-        : name === 'env.md'
-          ? { comark: [expect.stringMatching(/\{4\}$/)], mdast: [expect.not.stringMatching(/\{4\}$/)] }
-          : { comark: [], mdast: [] })
+        : { comark: [], mdast: [] })
     }
   })
 })

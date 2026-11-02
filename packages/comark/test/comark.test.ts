@@ -2,6 +2,7 @@ import type { Segment } from '@diglot/core'
 import type { Node } from 'comark'
 import { readFileSync } from 'node:fs'
 import { pseudoTranslate } from '@diglot/core'
+import { createMarkdownParser } from 'comark'
 import { describe, expect, it } from 'vitest'
 import { apply, applyNavigation, extract, extractNavigation, parse, render } from '../src/index.ts'
 
@@ -36,6 +37,14 @@ describe('extract', () => {
     const [b] = (await extract(await parse('Read [the guide](/docs/guide) about `useAsyncData`.'))).segments
     expect(a!.hash).toBe(b!.hash)
     expect(a!.sourceHash).not.toBe(b!.sourceHash)
+  })
+
+  it('should segment single-paragraph components like a default comark parse', async () => {
+    const source = '::note\nSome text that ends here.\n:read-more{title="SPA Loading Template" to="/docs"}\n::\n'
+    const { segments } = await extract(await parse(source))
+    expect(segments.map(s => `${s.kind}: ${s.skeleton}`)).toEqual(['component-slot: Some text that ends here.', 'prop: SPA Loading Template'])
+    const { nodes, frontmatter } = await createMarkdownParser({ autoClose: false })(source)
+    expect((await extract({ nodes, frontmatter })).segments.map(s => s.hash)).toEqual(segments.map(s => s.hash))
   })
 
   it('should record line positions of top-level blocks and code comments', async () => {

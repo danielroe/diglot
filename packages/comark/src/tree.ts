@@ -12,7 +12,7 @@ export interface ComarkDocument {
   lines?: Array<[number, number]>
 }
 
-const parserOptions = { autoUnwrap: false, autoClose: false } as const
+const parserOptions = { autoClose: false } as const
 
 /** Parses markdown with the options the adapter expects, recording top-level line ranges. */
 export async function parse(source: string): Promise<ComarkDocument> {
