@@ -159,6 +159,30 @@ describe('run', () => {
     expect((await run(options)).changed).toBe(false)
   })
 
+  it('should keep rejected records and translate their successors afresh', async () => {
+    const { upstream, root } = setup()
+    const { model, calls } = translator()
+    const options: RunOptions = { cwd: root, model, now: () => new Date('2026-11-01T00:00:00Z') }
+    await run(options)
+    const use = Object.values(records(root)).find(r => r.source.startsWith('Use'))!
+    const rejected: TranslationRecord = { ...use, review: 'rejected', rejectedBy: { by: 'translator', at: '2026-11-02T00:00:00.000Z' }, updatedAt: '2026-11-02T00:00:00.000Z' }
+    await writeRecord(root, 'fr', rejected)
+    git(root, 'commit', '-q', '-am', 'reject')
+    const callsBefore = calls.length
+
+    expect((await run(options)).totals).toMatchObject({ translated: 0, updated: 0, carried: 0 })
+    expect(calls.length).toBe(callsBefore)
+    expect(records(root)[use.hash]).toEqual(rejected)
+
+    write(upstream, { 'docs/1.guide/layers.md': PAGE.replace('add a layer.', 'add one or more layers.') })
+    git(upstream, 'commit', '-q', '-am', 'edit')
+    const next = await run(options)
+    expect(next.totals).toMatchObject({ translated: 1, updated: 0, carried: 0 })
+    const successor = Object.values(records(root)).find(r => r.source.startsWith('Use'))!
+    expect(successor).toMatchObject({ text: 'Use {0} in your configuration to add one or more layers. FR', review: 'none', derived: 'fresh' })
+    expect(successor.prev).toBeUndefined()
+  })
+
   it('should defer work beyond the limit to later runs', async () => {
     const { root } = setup()
     const { model } = translator()

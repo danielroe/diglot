@@ -25,6 +25,7 @@ export type IssueCode
     | 'nesting'
     | 'unclosed'
     | 'unaddressable'
+    | 'rejected'
 
 export interface ValidationIssue {
   code: IssueCode

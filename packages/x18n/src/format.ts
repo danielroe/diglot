@@ -112,7 +112,7 @@ function readRaw(text: string): RawRecord {
 export function editRecord(raw: RawRecord, text: string, now: Date = new Date()): RawRecord {
   if (raw.text === text)
     return raw
-  const { verifiedBy: _, ...rest } = raw
+  const { verifiedBy: _, rejectedBy: __, ...rest } = raw
   return { ...rest, text, review: 'edited', updatedAt: now.toISOString() }
 }
 

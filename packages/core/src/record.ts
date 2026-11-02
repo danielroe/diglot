@@ -5,8 +5,8 @@ import { validate } from './validate.ts'
 
 /** How the current text was produced. */
 export type Origin = 'mt' | 'tm' | 'human'
-/** What a human has done to the current text. */
-export type Review = 'none' | 'edited' | 'verified'
+/** What a human has done to the current text. A `rejected` text is not shown to readers. */
+export type Review = 'none' | 'edited' | 'verified' | 'rejected'
 /** How the record relates to `prev`: `fresh` has none, `carry` copied its text (same skeleton, different hash), `update` was derived from it. */
 export type Derived = 'fresh' | 'carry' | 'update'
 
@@ -17,6 +17,7 @@ export interface MachineTranslation {
   candidate: string
 }
 
+/** Who reviewed the current text, and when. */
 export interface Verification {
   /** GitHub login. */
   by: string
@@ -43,15 +44,17 @@ export interface TranslationRecord {
   /** GitHub login of the last editor. */
   by?: string
   verifiedBy?: Verification
+  /** Required when `review` is `rejected`, and only then. */
+  rejectedBy?: Verification
   /** ISO 8601 timestamp. */
   updatedAt: string
 }
 
 /** Key order used when serialising records. */
-export const RECORD_KEYS: ReadonlyArray<keyof TranslationRecord> = ['hash', 'source', 'text', 'origin', 'review', 'derived', 'prev', 'salt', 'mt', 'by', 'verifiedBy', 'updatedAt']
+export const RECORD_KEYS: ReadonlyArray<keyof TranslationRecord> = ['hash', 'source', 'text', 'origin', 'review', 'derived', 'prev', 'salt', 'mt', 'by', 'verifiedBy', 'rejectedBy', 'updatedAt']
 
 const ORIGINS: readonly Origin[] = ['mt', 'tm', 'human']
-const REVIEWS: readonly Review[] = ['none', 'edited', 'verified']
+const REVIEWS: readonly Review[] = ['none', 'edited', 'verified', 'rejected']
 const DERIVED: readonly Derived[] = ['fresh', 'carry', 'update']
 
 export class RecordError extends Error {
@@ -99,13 +102,15 @@ export function parseRecord(value: unknown): TranslationRecord {
     if (!mt || typeof mt !== 'object' || typeof mt.model !== 'string' || typeof mt.candidate !== 'string' || (mt.promptVersion !== undefined && typeof mt.promptVersion !== 'string'))
       fail('"mt" must have string "model" and "candidate"')
   }
-  if (input.verifiedBy !== undefined) {
-    const v = input.verifiedBy as Record<string, unknown>
-    if (!v || typeof v !== 'object' || typeof v.by !== 'string' || typeof v.at !== 'string')
-      fail('"verifiedBy" must have string "by" and "at"')
+  for (const key of ['verifiedBy', 'rejectedBy']) {
+    const v = input[key] as Record<string, unknown> | undefined
+    if (v !== undefined && (!v || typeof v !== 'object' || typeof v.by !== 'string' || typeof v.at !== 'string'))
+      fail(`"${key}" must have string "by" and "at"`)
   }
   if (input.review === 'verified' && input.verifiedBy === undefined)
     fail('"verifiedBy" is required when "review" is verified')
+  if ((input.review === 'rejected') !== (input.rejectedBy !== undefined))
+    fail(input.review === 'rejected' ? '"rejectedBy" is required when "review" is rejected' : '"rejectedBy" is only allowed when "review" is rejected')
   return input as unknown as TranslationRecord
 }
 
@@ -118,7 +123,7 @@ export function normaliseRecord(record: TranslationRecord): TranslationRecord {
       continue
     out[key] = key === 'mt' && typeof value === 'object'
       ? Object.fromEntries((['model', 'promptVersion', 'candidate'] as const).flatMap(k => record.mt![k] === undefined ? [] : [[k, record.mt![k]]]))
-      : key === 'verifiedBy' ? { by: record.verifiedBy!.by, at: record.verifiedBy!.at } : value
+      : (key === 'verifiedBy' || key === 'rejectedBy') && typeof value === 'object' ? { by: (value as Verification).by, at: (value as Verification).at } : value
   }
   return out as unknown as TranslationRecord
 }
@@ -147,12 +152,15 @@ export function createRecord({ segment, text, ...fields }: CreateRecordInput): T
 export type SegmentStatus = 'untranslated' | 'machine' | 'pending-review' | 'edited' | 'verified' | 'rejected'
 
 /**
- * Derives the reader-facing status of a segment from its record. With a `segment`, the
- * record's text is validated against it and a failure yields `rejected`.
+ * Derives the reader-facing status of a segment from its record. A record whose `review` is
+ * `rejected` is `rejected`. With a `segment`, the record's text is validated against it and a
+ * failure also yields `rejected`.
  */
 export function recordStatus(record: TranslationRecord | undefined, segment?: ValidationTarget): SegmentStatus {
   if (!record)
     return 'untranslated'
+  if (record.review === 'rejected')
+    return 'rejected'
   if (segment && !validate(record.text, segment).ok)
     return 'rejected'
   if (record.review === 'verified')

@@ -39,8 +39,9 @@ export interface ApplyReport {
 
 /**
  * What `apply` did with a segment. `translated` segments show their translation; `missing`
- * (no translation) and `rejected` (the translation failed validation or could not be placed)
- * keep their source text. `skipped` segments have no translation and nothing to translate.
+ * (no translation) and `rejected` (a reviewer rejected the translation, or it failed validation
+ * or could not be placed) keep their source text. `skipped` segments have no translation and
+ * nothing to translate.
  */
 export type ApplyOutcome = 'translated' | 'missing' | 'rejected' | 'skipped'
 
@@ -74,6 +75,8 @@ export function resolveTranslation(segment: Segment, translations: Translations)
   if (found === undefined)
     return { status: 'missing' }
   const record = typeof found === 'string' ? undefined : { record: found }
+  if (typeof found !== 'string' && found.review === 'rejected')
+    return { status: 'rejected', errors: [{ code: 'rejected', message: `rejected by ${found.rejectedBy?.by ?? 'a reviewer'}` }], record: found }
   const skeleton = typeof found === 'string' ? found : found.text
   const result = validate(skeleton, segment)
   if (!result.ok)

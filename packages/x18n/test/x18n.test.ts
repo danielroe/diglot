@@ -86,6 +86,14 @@ describe('record format', () => {
     expect(Object.keys(written).at(-1)).toBe('note')
   })
 
+  it('should clear a rejection when the translation is edited', () => {
+    const text = serialiseRecord(record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } }))
+    const [edit] = format.edit!(text, [{ type: 'set', path: [record().hash], value: 'Salut {0}le monde{/0}' }], ctx)
+    const written = JSON.parse(edit!.text)
+    expect(written).toMatchObject({ text: 'Salut {0}le monde{/0}', review: 'edited' })
+    expect(written.rejectedBy).toBeUndefined()
+  })
+
   it('should refuse keys of other records and deletes', () => {
     const text = serialiseRecord(record())
     expect(() => format.edit!(text, [{ type: 'set', path: ['0000000000000000'], value: 'x' }], ctx)).toThrow('only holds')
@@ -108,6 +116,7 @@ describe('record format', () => {
     expect(state({ origin: 'human' })).toBe('translated')
     expect(state({ review: 'edited' })).toBe('translated')
     expect(state({ review: 'verified', verifiedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })).toBe('reviewed')
+    expect(state({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })).toBe('needs-review')
     expect(format.parse(JSON.stringify({ ...record(), review: 'verified' }), ctx).states).toBeUndefined()
   })
 
@@ -177,6 +186,12 @@ describe('reviews', () => {
 
   it('should verify a record whose current text was approved', () => {
     expect(reviewRecord(record(), [approve(record().text)])).toMatchObject({ review: 'verified', verifiedBy: { by: 'clem', at: '2026-10-05T00:00:00.000Z' } })
+  })
+
+  it('should clear a rejection when the text is approved', () => {
+    const verified = reviewRecord(record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } }), [approve(record().text)])
+    expect(verified).toMatchObject({ review: 'verified', verifiedBy: { by: 'clem' } })
+    expect(verified.rejectedBy).toBeUndefined()
   })
 
   it('should ignore stale approvals and change requests', () => {

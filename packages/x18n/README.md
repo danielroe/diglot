@@ -22,8 +22,8 @@ Usages come from the files under `.diglot/sources/<source>`, which `diglot check
 
 ## What it adds
 
-- Formats `diglot-manifest` (read-only, `.diglot/manifest/<source>.json`) and `diglot-record` (`<locale>/segments/<hh>/<hash>.json`). Editing a translation through x18n rewrites its record: the text changes, `review` becomes `edited`, a verification is dropped and `updatedAt` is set. Fields the record schema does not know are kept. Translating a hash that has no record in a locale creates its record file, as a human edit.
-- A translation state per record, from diglot's `recordStatus`: unreviewed machine translations, machine updates and translations that fail validation `needs-review`, human edits `translated`, verified records `reviewed`. `x18n status` and the UI count them.
+- Formats `diglot-manifest` (read-only, `.diglot/manifest/<source>.json`) and `diglot-record` (`<locale>/segments/<hh>/<hash>.json`). Editing a translation through x18n rewrites its record: the text changes, `review` becomes `edited`, a verification or rejection is dropped and `updatedAt` is set. Fields the record schema does not know are kept. Translating a hash that has no record in a locale creates its record file, as a human edit.
+- A translation state per record, from diglot's `recordStatus`: unreviewed machine translations, machine updates, rejected records and translations that fail validation `needs-review`, human edits `translated`, verified records `reviewed`. `x18n status` and the UI count them.
 - A label per hash: the file of the segment and the last heading above it, such as `guide.md > Introduction`. The keys grid shows and sorts by it, and `x18n get` and `x18n keys` print it.
 - A `diglot-markdown` scanner over the markdown and `.navigation.yml` files of each source, so find references and the UI's usage list point at the paragraph of each segment.
 - A `diglot` placeholder syntax for skeletons (`{n}`, `{n}...{/n}`), used by `placeholder-mismatch`, `invalid-syntax` and the UI.
@@ -32,7 +32,7 @@ Usages come from the files under `.diglot/sources/<source>`, which `diglot check
 - The rules of the skeleton grammar, `<locale>/style.yml` rules and glossary style rules in translate prompts, and each locale's glossary (the shared `glossary` of `diglot.config.ts` merged with `<locale>/glossary.yml`) as x18n glossary entries.
 - `missing-translation` and `unused-key` are off by default: `x18n status` and the UI show coverage, and `diglot-unused` reports records no manifest lists. With more than one source, `key-conflict` is off too, as a hash shared by two sources is defined in two manifests.
 
-`applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved. Change requests and suggestions stay x18n review threads.
+`applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved, including rejected ones. Change requests and suggestions stay x18n review threads.
 
 ## Limitations
 

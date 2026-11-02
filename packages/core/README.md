@@ -48,7 +48,7 @@ A translation may contain text, emphasis markers and the placeholders of its sou
 The adapters' `apply` functions accept `onSegment`, called with an `ApplySegmentEvent` for each segment in extraction order:
 
 - `segment`: the source segment, with its `hash` and `words`
-- `outcome`: `translated`, `missing` (no translation), `rejected` (the translation failed validation; `errors` lists why) or `skipped` (no translation and nothing to translate). Segments that are not translated keep their source text
+- `outcome`: `translated`, `missing` (no translation), `rejected` (a reviewer rejected the translation or it failed validation; `errors` lists why) or `skipped` (no translation and nothing to translate). Segments that are not translated keep their source text
 - `record`: the record the lookup returned, if any
 - `status`: what a reader sees, as from `recordStatus`. Translations given as bare skeletons have no status
 - `target`: for block-level segments, a handle whose `setAttribute(name, value)` sets an attribute on the output node; `null` for frontmatter, props, image alts, code labels and code comments
@@ -69,11 +69,13 @@ for (const { before, after, similarity, ambiguous } of modified)
 
 ## Records
 
-`TranslationRecord` is one translation of one source segment into one locale: `hash`, `source`, `text`, `origin` (`mt`, `tm`, `human`), `review` (`none`, `edited`, `verified`), `derived` (`fresh`, `carry`, `update`), and optionally `prev`, `salt`, `mt` (model, prompt version and the unedited candidate), `by`, `verifiedBy` and `updatedAt`.
+`TranslationRecord` is one translation of one source segment into one locale: `hash`, `source`, `text`, `origin` (`mt`, `tm`, `human`), `review` (`none`, `edited`, `verified`, `rejected`), `derived` (`fresh`, `carry`, `update`), and optionally `prev`, `salt`, `mt` (model, prompt version and the unedited candidate), `by`, `verifiedBy`, `rejectedBy` and `updatedAt`.
 
-- `parseRecord(value)` checks the shape and throws `RecordError`
+A reviewer rejects a translation by setting `review: 'rejected'` and `rejectedBy: { by, at }` on its record. The text is kept for reviewers and metrics, but readers see the source text, and machine translation leaves the record alone. An edit (`review: 'edited'`, without `rejectedBy`) or a new source hash replaces it.
+
+- `parseRecord(value)` checks the shape and throws `RecordError`. `verifiedBy` is required when `review` is `verified`; `rejectedBy` is required when `review` is `rejected`, and allowed only then
 - `createRecord({ segment, text, origin })` fills identity fields
-- `recordStatus(record, segment)` returns what a reader sees: `untranslated`, `machine`, `pending-review`, `edited`, `verified` or `rejected`. A record carried or updated from a predecessor is `pending-review` until someone edits or verifies it, whatever its `origin`
+- `recordStatus(record, segment)` returns what a reader sees: `untranslated`, `machine`, `pending-review`, `edited`, `verified` or `rejected` (a rejected record, or a text that fails validation against `segment`). A record carried or updated from a predecessor is `pending-review` until someone edits or verifies it, whatever its `origin`
 - `editRatio(record)` measures how much of the machine candidate a reviewer changed
 
 ## Configuration

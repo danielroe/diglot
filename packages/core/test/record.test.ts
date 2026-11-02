@@ -24,10 +24,19 @@ describe('records', () => {
     expect(() => parseRecord({ ...base, mt: { model: 'x' } })).toThrow('"mt"')
   })
 
+  it('should require a rejection stamp exactly when a record is rejected', () => {
+    const rejectedBy = { by: 'danielroe', at: base.updatedAt }
+    expect(parseRecord({ ...base, review: 'rejected', rejectedBy })).toEqual({ ...base, review: 'rejected', rejectedBy })
+    expect(() => parseRecord({ ...base, review: 'rejected' })).toThrow('"rejectedBy" is required')
+    expect(() => parseRecord({ ...base, review: 'edited', rejectedBy })).toThrow('"rejectedBy" is only allowed')
+    expect(() => parseRecord({ ...base, review: 'rejected', rejectedBy: { by: 'danielroe' } })).toThrow('"rejectedBy" must have')
+  })
+
   it('should normalise key order and drop undefined fields', () => {
-    const shuffled = { updatedAt: base.updatedAt, text: base.text, hash: base.hash, by: undefined, source: base.source, derived: base.derived, review: base.review, origin: base.origin, mt: { candidate: 'c', model: 'm' } }
-    expect(Object.keys(normaliseRecord(shuffled))).toEqual(['hash', 'source', 'text', 'origin', 'review', 'derived', 'mt', 'updatedAt'])
+    const shuffled = { updatedAt: base.updatedAt, rejectedBy: { at: base.updatedAt, by: 'danielroe' }, text: base.text, hash: base.hash, by: undefined, source: base.source, derived: base.derived, review: 'rejected' as const, origin: base.origin, mt: { candidate: 'c', model: 'm' } }
+    expect(Object.keys(normaliseRecord(shuffled))).toEqual(['hash', 'source', 'text', 'origin', 'review', 'derived', 'mt', 'rejectedBy', 'updatedAt'])
     expect(Object.keys(normaliseRecord(shuffled).mt!)).toEqual(['model', 'candidate'])
+    expect(Object.keys(normaliseRecord(shuffled).rejectedBy!)).toEqual(['by', 'at'])
   })
 
   it('should create records from segments', () => {
@@ -45,6 +54,7 @@ describe('records', () => {
     expect(recordStatus({ ...base, review: 'edited', derived: 'update', prev: 'x' })).toBe('edited')
     expect(recordStatus({ ...base, review: 'verified', verifiedBy: { by: 'danielroe', at: base.updatedAt } })).toBe('verified')
     expect(recordStatus({ ...base, text: 'Nuxt [x](https://evil)' }, segment)).toBe('rejected')
+    expect(recordStatus({ ...base, review: 'rejected', rejectedBy: { by: 'danielroe', at: base.updatedAt } }, segment)).toBe('rejected')
   })
 
   it('should measure how much of the machine candidate was edited', () => {
