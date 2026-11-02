@@ -1,18 +1,16 @@
-import type { Glossary } from '@diglot/core'
-import type { GlossaryEntry, Plugin } from '@x18n/core'
+import type { Plugin } from '@x18n/core'
 import { join, relative, resolve } from 'pathe'
 import { reviewCheck, unusedCheck, validateCheck } from './checks.ts'
 import { recordFinder } from './finder.ts'
 import { MANIFEST_FORMAT, manifestFormat, RECORD_FORMAT, recordFormat } from './format.ts'
+import { glossaryEntries } from './glossary.ts'
 import { recordHistory } from './history.ts'
 import { skeletonSyntax } from './placeholders.ts'
 import { createRecordIndex } from './records.ts'
 import { markdownScanner, sourceGlobs } from './scanner.ts'
 import { createState, loadState } from './state.ts'
 
-export { MANIFEST_FORMAT, RECORD_FORMAT } from './format.ts'
-export { skeletonSyntax } from './placeholders.ts'
-export { applyReviews, reviewRecord } from './reviews.ts'
+export { applyReviews } from './reviews.ts'
 
 declare module '@x18n/core' {
   interface CheckIds {
@@ -27,28 +25,6 @@ export interface DiglotPluginOptions {
   root?: string
   /** Locale of the source documents. Defaults to `en`. */
   sourceLocale?: string
-}
-
-/** Maps the per-locale diglot glossaries onto x18n glossary entries, one per term. */
-export function glossaryEntries(glossaries: Map<string, Glossary>): GlossaryEntry[] {
-  const entries = new Map<string, { term: string, translations?: Record<string, string>, note?: string, doNotTranslate?: boolean }>()
-  for (const [locale, glossary] of glossaries) {
-    for (const term of glossary.terms) {
-      const entry = entries.get(term.term) ?? { term: term.term }
-      entries.set(term.term, entry)
-      if (term.decision === 'translate') {
-        if (term.target !== undefined)
-          entry.translations = { ...entry.translations, [locale]: term.target }
-      }
-      else {
-        entry.doNotTranslate = true
-      }
-      const note = [term.note, term.decision === 'keep-gloss' ? `${locale}: keep, gloss as "${term.gloss}"` : undefined].filter(Boolean).join('; ')
-      if (note)
-        entry.note = entry.note ? `${entry.note}; ${note}` : note
-    }
-  }
-  return [...entries.values()]
 }
 
 const GRAMMAR = [

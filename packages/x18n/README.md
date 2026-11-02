@@ -26,9 +26,9 @@ Usages come from the working tree: a source needs a local `path` inside the tran
 - A `diglot-markdown` scanner over the markdown and `.navigation.yml` files of each source, so find references and the UI's usage list point at the paragraph of each segment.
 - A `diglot` placeholder syntax for skeletons (`{n}`, `{n}...{/n}`), used by `placeholder-mismatch`, `invalid-syntax` and the UI.
 - Checks `diglot-validate` (diglot's `validate` against every kind of unit a hash is used as), `diglot-review` (unreviewed machine translations; machine updates of earlier translations are warnings) and `diglot-unused` (records whose hash no manifest uses).
-- A `diglot` history provider that reads record metadata instead of git. A record carried or updated from a predecessor and not yet reviewed is a stale translation, and its previous source and text are available to the UI and to `x18n prompt translate --stale`.
-- The rules of the skeleton grammar, `<locale>/style.yml` rules and glossary style rules in translate prompts, and each locale's glossary (the shared `glossary` of `diglot.config.ts` merged with `<locale>/glossary.yml`, read by `@diglot/store` as `@diglot/mt` reads it) as x18n glossary entries.
-- `missing-translation` is off by default, since `x18n status` and the UI show coverage. `unused-key` is off in favour of `diglot-unused`, because a hash is live when a manifest lists it, whether or not its document is checked out. With more than one source, `key-conflict` is off too: a hash shared by two sources is defined in two manifests.
+- A `diglot` history provider that reads record metadata, with x18n's git history turned off. A record carried or updated from a predecessor and not yet reviewed is a stale translation, and its previous source and text are available to the UI and to `x18n prompt translate --stale`.
+- The rules of the skeleton grammar, `<locale>/style.yml` rules and glossary style rules in translate prompts, and each locale's glossary (the shared `glossary` of `diglot.config.ts` merged with `<locale>/glossary.yml`) as x18n glossary entries.
+- `missing-translation` and `unused-key` are off by default: `x18n status` and the UI show coverage, and `diglot-unused` reports records no manifest lists. With more than one source, `key-conflict` is off too, as a hash shared by two sources is defined in two manifests.
 
 `applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved. Change requests and suggestions stay x18n review threads.
 

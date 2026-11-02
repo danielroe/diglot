@@ -11,9 +11,10 @@ import { createMemoryHost } from '@x18n/core'
 import { loadWorkspace } from '@x18n/node'
 import { describe, expect, it } from 'vitest'
 import { editRecord, recordFormat, serialiseRaw } from '../src/format.ts'
+import { glossaryEntries } from '../src/glossary.ts'
 import { recordHistory } from '../src/history.ts'
-import { glossaryEntries, reviewRecord } from '../src/index.ts'
 import { findPlaceholders, structureErrors } from '../src/placeholders.ts'
+import { reviewRecord } from '../src/reviews.ts'
 import { createState } from '../src/state.ts'
 
 const plugin = fileURLToPath(new URL('../src/index.ts', import.meta.url))
