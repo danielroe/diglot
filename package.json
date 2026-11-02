@@ -5,7 +5,7 @@
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "24.21.0",
+      "version": "26.13.0",
       "onFail": "download"
     },
     "packageManager": {
@@ -40,7 +40,7 @@
     "@diglot/core": "workspace:*",
     "@diglot/mdast": "workspace:*",
     "@diglot/store": "workspace:*",
-    "@types/node": "24.19.2",
+    "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.0.5",
     "eslint": "10.13.0",
     "installed-check": "11.0.0",
