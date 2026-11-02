@@ -1,7 +1,7 @@
 {
   "name": "@diglot/action",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "GitHub Action that keeps diglot translations in sync with their sources",
   "license": "MIT",
   "repository": {

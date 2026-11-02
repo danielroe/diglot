@@ -1,7 +1,7 @@
 {
   "name": "@diglot/cli",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Command line interface for diglot",
   "license": "MIT",
   "repository": {
@@ -43,5 +43,12 @@
     "prepack": "pnpm build",
     "test": "vitest run"
   },
-  "dependencies": { "@diglot/comark": "workspace:*", "@diglot/core": "workspace:*", "@diglot/mdast": "workspace:*", "@diglot/store": "workspace:*", "citty": "^0.2.2", "pathe": "^2.0.3" }
+  "dependencies": {
+    "@diglot/comark": "workspace:*",
+    "@diglot/core": "workspace:*",
+    "@diglot/mdast": "workspace:*",
+    "@diglot/store": "workspace:*",
+    "citty": "^0.2.2",
+    "pathe": "^2.0.3"
+  }
 }
