@@ -36,7 +36,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "test": "vitest run"
   },
   "dependencies": { "@diglot/core": "workspace:*" }
 }

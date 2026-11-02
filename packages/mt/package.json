@@ -36,7 +36,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "test": "vitest run"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^4.0.132",

@@ -40,7 +40,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "test": "vitest run"
   },
   "dependencies": { "@diglot/comark": "workspace:*", "@diglot/core": "workspace:*", "@diglot/mdast": "workspace:*", "@diglot/store": "workspace:*", "citty": "^0.2.2", "pathe": "^2.0.3" }
 }
