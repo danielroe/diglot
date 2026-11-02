@@ -13,7 +13,7 @@ export interface Span {
 }
 
 export type Target
-  = | { type: 'range', start: number, end: number }
+  = | { type: 'range', node: MdNode, start: number, end: number }
     | { type: 'text', start: number, end: number, escape: boolean }
     | { type: 'prop', node: MdNode, key: string }
     | { type: 'frontmatter', node: MdNode, path: ValuePath }
@@ -123,7 +123,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
     const content = toInline(nodes, end)
     const lastSpan = (content.at(-1) as { data?: Span } | undefined)?.data
     const contentEnd = Math.max(at(nodes.at(-1)!, 'end'), lastSpan?.end ?? 0)
-    push(kind, content, node, containers, { type: 'range', start: at(nodes[0]!, 'start'), end: contentEnd }, detail)
+    push(kind, content, node, containers, { type: 'range', node, start: at(nodes[0]!, 'start'), end: contentEnd }, detail)
   }
 
   const props = (node: MdNode, containers: string[]) => {

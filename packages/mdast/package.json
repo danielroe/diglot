@@ -39,5 +39,9 @@
     "prepack": "pnpm build",
     "test": "vitest run"
   },
-  "dependencies": { "@diglot/code": "workspace:*", "@diglot/core": "workspace:*", "remark-frontmatter": "^5.0.0", "remark-gfm": "^4.0.1", "remark-mdc": "^3.11.1", "remark-parse": "^11.0.0", "unified": "^11.0.5", "yaml": "^2.9.1" }
+  "dependencies": { "@diglot/code": "workspace:*", "@diglot/core": "workspace:*", "remark-frontmatter": "^5.0.0", "remark-gfm": "^4.0.1", "remark-mdc": "^3.11.1", "remark-parse": "^11.0.0", "unified": "^11.0.5", "yaml": "^2.9.1" },
+  "devDependencies": {
+    "rehype-stringify": "^10.0.1",
+    "remark-rehype": "^11.1.2"
+  }
 }
