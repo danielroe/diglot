@@ -1,7 +1,7 @@
 {
   "name": "@diglot/x18n",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "x18n plugin for diglot translation stores",
   "license": "MIT",
   "repository": {
