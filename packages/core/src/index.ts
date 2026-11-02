@@ -1,5 +1,5 @@
-export { createReport, resolveTranslation, tally } from './apply.ts'
-export type { ApplyReport, RejectedTranslation, Resolution, Translations } from './apply.ts'
+export { createReport, createSegmentEvent, resolveTranslation, tally, wordsByStatus } from './apply.ts'
+export type { ApplyOutcome, ApplyReport, ApplySegmentEvent, RejectedTranslation, Resolution, SegmentTarget, Translations } from './apply.ts'
 export { defineConfig } from './config.ts'
 export type { DiglotConfig, LocaleState, MtConfig, SourceConfig } from './config.ts'
 export { diffSegments, similarity } from './diff.ts'

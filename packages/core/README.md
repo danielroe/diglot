@@ -41,7 +41,19 @@ validate('Nuxt [Vite](https://example.com)', segment).errors // link syntax, mis
 
 A translation may contain text, emphasis markers and the placeholders of its source. Repeated code placeholders are a warning. Plain segments (props, frontmatter, labels, code comments) are single-line and may not add markup; code comments may not contain comment terminators.
 
-`resolveTranslation(segment, translations)` looks up a translation by hash, validates it and re-injects the protected spans of the current source. `parseSkeleton` turns a validated skeleton into a tree for adapters that apply translations to an AST. `pseudoTranslate` produces a valid pseudo-locale translation of any skeleton.
+`resolveTranslation(segment, translations)` looks up a translation by hash, validates it and re-injects the protected spans of the current source. Translations are skeletons or `TranslationRecord`s, in a map keyed by hash or returned by a lookup function. `parseSkeleton` turns a validated skeleton into a tree for adapters that apply translations to an AST. `pseudoTranslate` produces a valid pseudo-locale translation of any skeleton.
+
+## Apply events
+
+The adapters' `apply` functions accept `onSegment`, called with an `ApplySegmentEvent` for each segment in extraction order:
+
+- `segment`: the source segment, with its `hash` and `words`
+- `outcome`: `translated`, `missing` (no translation), `rejected` (the translation failed validation; `errors` lists why) or `skipped` (no translation and nothing to translate). Segments that are not translated keep their source text
+- `record`: the record the lookup returned, if any
+- `status`: what a reader sees, as from `recordStatus`. Translations given as bare skeletons have no status
+- `target`: for block-level segments, a handle whose `setAttribute(name, value)` sets an attribute on the output node; `null` for frontmatter, props, image alts, code labels and code comments
+
+`wordsByStatus(events)` sums segment words by status, for per-page coverage. `createSegmentEvent` builds an event for adapters.
 
 ## Changes
 
