@@ -55,7 +55,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
         ...state.manifests.map(path => ({ pattern: join(prefix, path), locale: sourceLocale, format: MANIFEST_FORMAT })),
         { pattern: join(prefix, '{locale}/segments/*/*.json'), format: RECORD_FORMAT },
       ]
-      draft.usage = { ...draft.usage, include: sourceGlobs(config.sources).map(glob => join(prefix, glob)) }
+      draft.usage = { ...draft.usage, include: sourceGlobs(config.sources).map(glob => join(prefix, glob)), gitignore: false }
       if (draft.history !== false)
         draft.history = { ...draft.history, git: false } as typeof draft.history
       draft.glossary = [...draft.glossary, ...glossaryEntries(state.glossaries)]

@@ -45,12 +45,12 @@ Nuxt is powered by [Nitro](https://nitro.build).
 | Alpha | First letter |
 `
 
-async function store() {
+async function store(path = 'sources/docs') {
   const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-'))
-  mkdirSync(join(root, 'sources/docs'), { recursive: true })
-  writeFileSync(join(root, 'sources/docs/guide.md'), guide)
+  mkdirSync(join(root, path), { recursive: true })
+  writeFileSync(join(root, path, 'guide.md'), guide)
   writeFileSync(join(root, 'diglot.config.mjs'), 'export default { locales: [\'fr\'] }\n')
-  writeFileSync(join(root, 'sources.yml'), 'sources:\n  - name: docs\n    path: sources/docs\n')
+  writeFileSync(join(root, 'sources.yml'), `sources:\n  - name: docs\n    path: ${path}\n`)
   writeFileSync(join(root, 'x18n.config.mjs'), `import diglot from ${JSON.stringify(plugin)}\nexport default { plugins: [diglot()] }\n`)
   const { segments } = await extract(await parse(guide), { file: 'guide.md' })
   await writeManifest(join(root, '.diglot'), createManifest('docs', { 'guide.md': segments }))
@@ -202,6 +202,17 @@ describe('x18n project', () => {
     const edited = JSON.parse(readFileSync(join(root, recordPath('fr', segments.get('Introduction')!.hash)), 'utf8'))
     expect(edited).toMatchObject({ text: 'Présentation', review: 'edited', origin: 'human' })
     expect(edited.verifiedBy).toBeUndefined()
+    project.dispose()
+  })
+
+  it('should scan a source checkout that git ignores', async () => {
+    const { root, segments } = await store('.diglot/checkouts/docs')
+    writeFileSync(join(root, '.gitignore'), '.diglot/checkouts/\n')
+    const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
+    await project.ready
+
+    const [usage] = project.usages({ key: segments.get('Introduction')!.hash })
+    expect(usage!.usage.path).toBe('.diglot/checkouts/docs/guide.md')
     project.dispose()
   })
 

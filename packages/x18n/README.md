@@ -18,7 +18,7 @@ export default {
 }
 ```
 
-Usages come from the working tree: a source needs a local `path` inside the translations repository that git does not ignore, and only the checked-out ref is scanned. With the layout of [`examples/nuxt`](../../examples/nuxt) (git-ignored checkouts under `.diglot/checkouts`, several refs of one checkout) x18n 0.1.5 finds no usages; everything else works.
+Usages come from the files under the local `path` of each source: the plugin sets `usage.include` to the documents of every source and `usage.gitignore` to `false`, so git-ignored checkouts such as `.diglot/checkouts/<repo>` in [`examples/nuxt`](../../examples/nuxt) are scanned. Only the checked-out ref of a working copy is scanned, and a bare checkout has no files to scan: clone the source repository into its `path` to see its usages.
 
 ## What it adds
 
