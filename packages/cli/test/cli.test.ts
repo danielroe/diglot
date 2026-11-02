@@ -80,6 +80,20 @@ function checkoutSetup() {
   return { bare, root, writeSources }
 }
 
+function workingTreeSetup() {
+  const work = mkdtempSync(join(tmpdir(), 'diglot-cli-work-'))
+  git(work, 'init', '-q', '-b', 'main')
+  mkdirSync(join(work, 'docs'), { recursive: true })
+  writeFileSync(join(work, 'docs/readme.md'), '# Readme\n\nWorking copy.\n')
+  git(work, 'add', '.')
+  git(work, 'commit', '-q', '-m', 'docs')
+
+  const root = mkdtempSync(join(tmpdir(), 'diglot-cli-root-'))
+  writeFileSync(join(root, 'diglot.config.ts'), 'export default { locales: [\'fr\'] }\n')
+  writeFileSync(join(root, 'sources.yml'), `sources:\n  - name: docs\n    path: ${work}\n    dir: docs\n`)
+  return { work, root }
+}
+
 afterEach(() => {
   process.exitCode = undefined
 })
@@ -150,5 +164,17 @@ describe('diglot', () => {
     expect(readFileSync(join(exports, 'guide/intro.md'), 'utf8')).toContain('Other intro.')
     expect(existsSync(join(exports, 'api.md'))).toBe(false)
     expect(readFileSync(join(exports, 'guide/other.md'), 'utf8')).toContain('Other only.')
+  })
+
+  it('should export a local source without a ref', async () => {
+    const { work, root } = workingTreeSetup()
+    expect(await cli('checkout', '--cwd', root)).toBe(`docs: ${git(work, 'rev-parse', 'HEAD')}\n`)
+    expect(readFileSync(join(root, '.diglot/sources/docs/docs/readme.md'), 'utf8')).toContain('Working copy.')
+  })
+
+  it('should refuse a source name that escapes the sources directory', async () => {
+    const { bare, root } = checkoutSetup()
+    writeFileSync(join(root, 'sources.yml'), `sources:\n  - name: ..\n    repo: example/docs\n    ref: main\n    path: ${bare}\n`)
+    await expect(cli('checkout', '--cwd', root)).rejects.toThrow('must resolve inside')
   })
 })

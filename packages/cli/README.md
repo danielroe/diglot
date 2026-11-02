@@ -10,7 +10,7 @@ Every command reads `diglot.config.ts` and `sources.yml` from `--cwd` (default `
 
 | Command | Description |
 | --- | --- |
-| `diglot checkout [sources...]` | Export each source (default all) as plain files under `.diglot/sources/<source>` at its configured ref |
+| `diglot checkout [sources...]` | Export each source (default all) as plain files under `.diglot/sources/<source>` |
 | `diglot extract [--source name]` | Extract the segments of each source and write `.diglot/manifest/<source>.json` |
 | `diglot diff [--source name] [--json]` | Compare each source with its manifest: added, removed and modified segments per file, with the predecessor of each modified segment and the number of changed sentences |
 | `diglot validate [--locale fr] [--json]` | Check every record: shape, path, hash against its source skeleton, and the translation against each use of the segment. Exits with code 1 on errors |

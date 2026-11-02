@@ -50,8 +50,8 @@ const checkout = defineCommand({
       throw new Error(`unknown source${unknown.length > 1 ? 's' : ''} ${unknown.map(n => `"${n}"`).join(', ')}; configured: ${config.sources.map(s => s.name).join(', ') || 'none'}`)
     const selected = names.length ? config.sources.filter(s => names.includes(s.name)) : config.sources
     for (const source of selected) {
-      const { sha } = await checkoutSource(config, source)
-      print(`${source.name}: ${sha}`)
+      const { path, sha } = await checkoutSource(config, source)
+      print(`${source.name}: ${sha ?? relative(config.root, path)}`)
     }
   },
 })
