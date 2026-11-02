@@ -1,7 +1,7 @@
 {
   "name": "@diglot/mt",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Machine translation of diglot segments with glossary, style rules and QA",
   "license": "MIT",
   "repository": {

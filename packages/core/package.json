@@ -1,7 +1,7 @@
 {
   "name": "@diglot/core",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Segment-level, human-first translation for markdown documentation",
   "license": "MIT",
   "repository": {
@@ -39,5 +39,7 @@
     "prepack": "pnpm build",
     "test": "vitest run"
   },
-  "dependencies": { "fastest-levenshtein": "^1.0.16" }
+  "dependencies": {
+    "fastest-levenshtein": "^1.0.16"
+  }
 }

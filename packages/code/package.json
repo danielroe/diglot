@@ -1,7 +1,7 @@
 {
   "name": "@diglot/code",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Code-block comment extraction for diglot",
   "license": "MIT",
   "repository": {
@@ -39,5 +39,7 @@
     "prepack": "pnpm build",
     "test": "vitest run"
   },
-  "dependencies": { "@diglot/core": "workspace:*" }
+  "dependencies": {
+    "@diglot/core": "workspace:*"
+  }
 }
