@@ -173,7 +173,7 @@ describe('config', () => {
 describe('readSource', () => {
   it('should read documents at a git ref or from the working tree', async () => {
     const repo = temp()
-    const git = (...args: string[]) => execFileSync('git', ['-c', 'commit.gpgsign=false', ...args], { cwd: repo, encoding: 'utf8' })
+    const git = (...args: string[]) => execFileSync('git', ['-c', 'commit.gpgsign=false', '-c', 'user.name=diglot-test', '-c', 'user.email=test@diglot.invalid', ...args], { cwd: repo, encoding: 'utf8' })
     git('init', '-q', '-b', 'main')
     mkdirSync(join(repo, 'docs/guide'), { recursive: true })
     writeFileSync(join(repo, 'docs/guide/a.md'), '# A\n')
