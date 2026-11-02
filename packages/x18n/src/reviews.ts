@@ -13,7 +13,8 @@ export function reviewRecord(record: TranslationRecord, comments: readonly Revie
   const by = decisive.author?.name ?? decisive.author?.email
   if (!by || (record.review === 'verified' && record.verifiedBy?.by === by))
     return record
-  return { ...record, review: 'verified', verifiedBy: { by, at: decisive.time }, updatedAt: decisive.time }
+  const { rejectedBy: _, ...rest } = record
+  return { ...rest, review: 'verified', verifiedBy: { by, at: decisive.time }, updatedAt: decisive.time }
 }
 
 /** Verifies the records of `root` that an x18n review file approves. Returns the paths it wrote. */
