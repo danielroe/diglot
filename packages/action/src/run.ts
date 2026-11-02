@@ -196,7 +196,7 @@ async function translateLocale(config: ResolvedConfig, locale: string, context: 
     if (records.has(hash) || isPlaceholderOnly(item.segment.skeleton) || (rejections[hash] && !context.options.retryRejected))
       continue
     const ancestor = context.lineage[hash]?.find(h => records.has(h))
-    if (ancestor)
+    if (ancestor && records.get(ancestor)!.review !== 'rejected')
       updates.push({ item, previous: records.get(ancestor)! })
     else
       fresh.push(item)

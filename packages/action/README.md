@@ -25,12 +25,12 @@ The Action commits to the checked-out branch and never pushes; pushing is the wo
 1. Loads `diglot.config.ts` and `sources.yml`. Sources with a `repo` and a `ref` whose `path` does not exist (default `.diglot/checkouts/<repo>`) are fetched shallowly into a bare repository; existing working copies are read as they are.
 2. Extracts the segments of each source at its `ref` and diffs them file by file against `.diglot/manifest/<source>.json`. Modified segments are paired with their predecessor; the pairing is kept in `.diglot/lineage.json` so a later run can still find it.
 3. For each locale whose `<locale>/locale.yml` has `mt.enabled: true`, every live segment without a record is handled once (identical text across sources and branches shares one record):
-   - with a predecessor that has a record: `updateTranslation` from `@diglot/mt`, which carries the text over without a model call when the skeleton is identical and only the hash changed (a context salt, `derived: carry`), and otherwise updates it from the word diff (`derived: update`), case and punctuation edits included;
-   - without one: `translateSegments`, one request per page, with the locale's glossary and style.
+   - with a predecessor whose record is not rejected: `updateTranslation` from `@diglot/mt`, which carries the text over without a model call when the skeleton is identical and only the hash changed (a context salt, `derived: carry`), and otherwise updates it from the word diff (`derived: update`), case and punctuation edits included;
+   - otherwise: `translateSegments`, one request per page, with the locale's glossary and style.
 4. Writes records with `review: none` and `prev` where there is a predecessor (`origin: mt`, except carries, which keep the predecessor's `origin` and `mt`; carried and updated records read as `pending-review`), updates manifests, and builds `dist/<locale>.json` from the live records of every locale.
 5. Commits the changed records, state and bundles as the given identity with a summary message, for example `chore(fr): translate 78 segments, update 12, carry 31`.
 
-Segments rejected by QA are listed in `.diglot/rejected/<locale>.json` with the reasons and skipped by later runs until their source changes (or `retry-rejected` is set). Locales with machine translation disabled get no new records, but their bundles are still rebuilt. A run with no source changes makes no model calls and no commit.
+Records a reviewer rejected (`review: rejected`) are kept as they are and shipped in the bundles, so their segments are not translated again until their source changes. Segments rejected by QA are listed in `.diglot/rejected/<locale>.json` with the reasons and skipped by later runs until their source changes (or `retry-rejected` is set). Locales with machine translation disabled get no new records, but their bundles are still rebuilt. A run with no source changes makes no model calls and no commit.
 
 ## Inputs
 
