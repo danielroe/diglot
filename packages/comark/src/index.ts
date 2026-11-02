@@ -1,11 +1,11 @@
 import type { CodeComment } from '@diglot/code'
-import type { ApplyReport, AtomicNode, LinkNode, Policy, Segment, SegmentDraft, SkeletonNode, Translations } from '@diglot/core'
+import type { ApplyReport, ApplySegmentEvent, AtomicNode, LinkNode, Policy, Segment, SegmentDraft, SegmentTarget, SkeletonNode, Translations } from '@diglot/core'
 import type { ElementNode, Node } from 'comark'
 import type { InlineStats } from './inline.ts'
 import type { ComarkDocument } from './tree.ts'
 import type { Target, Unit } from './walk.ts'
 import { commentDraft } from '@diglot/code'
-import { buildSegment, createReport, normalise, parseSkeleton, resolvePolicy, resolveTranslation, setAtPath, tally, toSkeleton } from '@diglot/core'
+import { buildSegment, createReport, createSegmentEvent, normalise, parseSkeleton, resolvePolicy, resolveTranslation, setAtPath, tally, toSkeleton } from '@diglot/core'
 import { toInline } from './inline.ts'
 import { isElement } from './tree.ts'
 import { walk } from './walk.ts'
@@ -41,6 +41,11 @@ export async function extract(doc: ComarkDocument, options: ExtractOptions = {})
   return { segments, spans }
 }
 
+export interface ApplyOptions extends ExtractOptions {
+  /** Called for each segment in extraction order. Targets set props on the text block holding the segment, or on a `span` wrapping it. */
+  onSegment?: (event: ApplySegmentEvent) => void
+}
+
 export interface Applied {
   doc: ComarkDocument
   report: ApplyReport
@@ -52,11 +57,11 @@ export interface Applied {
  * placeholders are replaced by the current source nodes. Segments without a valid
  * translation keep their source text. Heading ids are kept.
  */
-export async function apply(doc: ComarkDocument, translations: Translations, options: ExtractOptions = {}): Promise<Applied> {
+export async function apply(doc: ComarkDocument, translations: Translations, options: ApplyOptions = {}): Promise<Applied> {
   const policy = resolvePolicy(options.policy)
   const copy = structuredClone(doc)
   const report = createReport()
-  const ranges: Array<{ target: Extract<Target, { type: 'range' }>, build: () => Node[] }> = []
+  const ranges: RangeEdit[] = []
   const code = new Map<ElementNode, Array<{ comment: CodeComment, text: string }>>()
   let index = 0
   for (const unit of walk(copy, policy)) {
@@ -66,23 +71,52 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
     index++
     const resolution = resolveTranslation(segment, translations)
     tally(report, segment, resolution)
+    const { target } = unit
+    const range: RangeEdit | undefined = target.type === 'range' ? { target } : undefined
+    if (range)
+      ranges.push(range)
+    options.onSegment?.(createSegmentEvent(segment, resolution, range ? rangeTarget(range) : null))
     if (resolution.status !== 'ok')
       continue
-    const { target } = unit
     if (target.type === 'attr')
       target.attrs[target.key] = resolution.text
     else if (target.type === 'frontmatter')
       setAtPath(copy.frontmatter, target.path, resolution.text)
     else if (target.type === 'code')
       code.set(target.element, [...(code.get(target.element) ?? []), { comment: target.comment, text: resolution.text }])
-    else
-      ranges.push({ target, build: () => keepEdges(target.parent.slice(target.start, target.end), buildNodes(parseSkeleton(resolution.skeleton, segment.placeholders), refs)) })
+    else if (range)
+      range.build = () => keepEdges(target.parent.slice(target.start, target.end), buildNodes(parseSkeleton(resolution.skeleton, segment.placeholders), refs))
   }
   for (const [element, edits] of code)
     replaceText(element, edits)
-  for (const { target, build } of ranges.reverse())
-    target.parent.splice(target.start, target.end - target.start, ...build())
+  for (const { target, build, wrap } of ranges.reverse()) {
+    if (!build && !wrap)
+      continue
+    const nodes = build ? build() : target.parent.slice(target.start, target.end)
+    target.parent.splice(target.start, target.end - target.start, ...(wrap ? keepEdges(nodes, [['span', wrap, ...trimEdges(nodes)] as ElementNode]) : nodes))
+  }
   return { doc: copy, report }
+}
+
+interface RangeEdit {
+  target: Extract<Target, { type: 'range' }>
+  build?: () => Node[]
+  /** Attributes of a `span` wrapping the range. */
+  wrap?: Record<string, string>
+}
+
+const TEXT_BLOCKS = new Set(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'blockquote', 'th', 'td'])
+
+function rangeTarget(range: RangeEdit): SegmentTarget {
+  const { parent, start, end } = range.target
+  const element = parent as unknown as ElementNode
+  const own = start === 2 && end === parent.length && isElement(element) && TEXT_BLOCKS.has(element[0])
+  return {
+    setAttribute: (name, value) => {
+      const attrs = own ? element[1] : (range.wrap ??= {})
+      attrs[name] = value
+    },
+  }
 }
 
 async function prepare(unit: Unit, file: string, index: number, policy: Policy, spans?: InlineStats): Promise<{ segment?: Segment, refs: Array<LinkNode | AtomicNode> }> {
@@ -103,6 +137,15 @@ async function prepare(unit: Unit, file: string, index: number, policy: Policy, 
 }
 
 const TAGS = { strong: 'strong', emphasis: 'em', delete: 'del' } as const
+
+function trimEdges(nodes: Node[]): Node[] {
+  const out = [...nodes]
+  if (typeof out[0] === 'string')
+    out[0] = out[0].trimStart()
+  if (typeof out.at(-1) === 'string')
+    out[out.length - 1] = (out.at(-1) as string).trimEnd()
+  return out.filter(node => node !== '')
+}
 
 function keepEdges(range: Node[], nodes: Node[]): Node[] {
   const first = range[0]

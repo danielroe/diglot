@@ -1,13 +1,37 @@
-import type { Segment } from '@diglot/core'
+import type { ApplySegmentEvent, Segment, TranslationRecord } from '@diglot/core'
 import type { Node } from 'comark'
+import type { ComarkDocument } from '../src/index.ts'
 import { readFileSync } from 'node:fs'
-import { pseudoTranslate } from '@diglot/core'
+import { createRecord, pseudoTranslate } from '@diglot/core'
 import { createMarkdownParser } from 'comark'
 import { describe, expect, it } from 'vitest'
 import { apply, applyNavigation, extract, extractNavigation, parse, render } from '../src/index.ts'
 
 const fixture = (name: string) => readFileSync(new URL(`../../../fixtures/nuxt/${name}`, import.meta.url), 'utf8')
 const pseudo = (segments: Segment[]) => new Map(segments.map(s => [s.hash, pseudoTranslate(s.skeleton, s.format)]))
+const PAGE = '---\ntitle: Data fetching\n---\n\n# Hello world\n\nSecond paragraph.\n\nRead [the docs](/d).\n\n![Logo](/l.png)\n\n:read-more{to="/x" title="Read more"}\n\n- item one\n- item two\n'
+function pageTranslations(segments: Segment[]) {
+  const [title, heading, , link, , , prop, item] = segments
+  return new Map<string, string | TranslationRecord>([
+    [title!.hash, createRecord({ segment: title!, text: 'Récupération', origin: 'mt' })],
+    [heading!.hash, createRecord({ segment: heading!, text: 'Bonjour le monde', origin: 'mt', review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' } })],
+    [link!.hash, createRecord({ segment: link!, text: 'Lisez la doc.', origin: 'mt' })],
+    [prop!.hash, 'Lire plus'],
+    [item!.hash, createRecord({ segment: item!, text: 'premier', origin: 'mt', review: 'edited' })],
+  ])
+}
+function mark(events: ApplySegmentEvent[]) {
+  return (event: ApplySegmentEvent) => {
+    events.push(event)
+    if (event.outcome === 'skipped')
+      return
+    event.target?.setAttribute('data-status', event.status ?? 'unknown')
+    if (event.outcome !== 'translated')
+      event.target?.setAttribute('lang', 'en')
+  }
+}
+const summary = (events: ApplySegmentEvent[]) => events.map(e => [e.segment.kind, e.outcome, e.status, e.target ? 'block' : null, e.errors.map(i => i.code)])
+const skeletons = async (doc: ComarkDocument) => (await extract(doc)).segments.map(s => s.skeleton)
 const headingIds = (nodes: Node[]): string[] => nodes.flatMap(n => Array.isArray(n) && typeof n[0] === 'string' ? [...(/^h[1-6]$/.test(n[0]) && n[1].id ? [String(n[1].id)] : []), ...headingIds(n.slice(2) as Node[])] : [])
 
 describe('extract', () => {
@@ -126,6 +150,18 @@ describe('apply', () => {
     expect(report.rejected[0]!.errors.map(e => e.code)).toEqual(expect.arrayContaining(['missing-placeholder', 'link-syntax']))
   })
 
+  it('should extract and apply dotted frontmatter keys in literal and nested form', async () => {
+    const literal = await parse('---\nnavigation.title: MCP Server\n---\n\nBody.')
+    const nested = { ...literal, frontmatter: { navigation: { title: 'MCP Server' } } }
+    const [a] = (await extract(literal)).segments
+    const [b] = (await extract(nested)).segments
+    expect([a!.kind, a!.skeleton, a!.context.detail]).toEqual(['frontmatter', 'MCP Server', 'navigation.title'])
+    expect(b!.hash).toBe(a!.hash)
+    const translations = new Map([[a!.hash, 'Serveur MCP']])
+    expect((await apply(literal, translations)).doc.frontmatter).toEqual({ 'navigation.title': 'Serveur MCP' })
+    expect((await apply(nested, translations)).doc.frontmatter).toEqual({ navigation: { title: 'Serveur MCP' } })
+  })
+
   it('should apply props, alts, frontmatter and code comments', async () => {
     const source = '---\ntitle: Data fetching\n---\n\n![The logo](/l.png)\n\n:read-more{to="/x" title="Read more"}\n\n```ts\n// Fetch it here\n```'
     const doc = await parse(source)
@@ -146,6 +182,78 @@ describe('apply', () => {
     pre[2] = ['code', {}, ['span', { class: 'line' }, ['span', {}, 'const a = 1 '], ['span', { class: 'comment' }, '// the answer'], ['span', { class: 'comment' }, ' here']]]
     const { doc: out } = await apply(doc, new Map([[segments[0]!.hash, 'la réponse']]))
     expect((out.nodes[0] as any)[2]).toEqual(['code', {}, ['span', { class: 'line' }, ['span', {}, 'const a = 1 '], ['span', { class: 'comment' }, '// la réponse'], ['span', { class: 'comment' }, '']]])
+  })
+})
+
+describe('onSegment', () => {
+  it('should report each segment and annotate block elements', async () => {
+    const doc = await parse(PAGE)
+    const { segments } = await extract(doc)
+    const events: ApplySegmentEvent[] = []
+    const { doc: out, report } = await apply(doc, pageTranslations(segments), { onSegment: mark(events) })
+    expect(events.map(e => e.segment)).toEqual(segments)
+    expect(summary(events)).toEqual([
+      ['frontmatter', 'translated', 'machine', null, []],
+      ['heading', 'translated', 'verified', 'block', []],
+      ['paragraph', 'missing', 'untranslated', 'block', []],
+      ['paragraph', 'rejected', 'rejected', 'block', ['missing-placeholder']],
+      ['image-alt', 'missing', 'untranslated', null, []],
+      ['paragraph', 'skipped', 'untranslated', 'block', []],
+      ['prop', 'translated', undefined, null, []],
+      ['list-item', 'translated', 'edited', 'block', []],
+      ['list-item', 'missing', 'untranslated', 'block', []],
+    ])
+    expect(events[1]!.record?.text).toBe('Bonjour le monde')
+    expect(report).toEqual({ applied: 4, missing: 4, rejected: [expect.objectContaining({ hash: segments[3]!.hash })] })
+    expect(out.frontmatter.title).toBe('Récupération')
+    expect(out.nodes).toEqual([
+      ['h1', { 'id': 'hello-world', 'data-status': 'verified' }, 'Bonjour le monde'],
+      ['p', { 'data-status': 'untranslated', 'lang': 'en' }, 'Second paragraph.'],
+      ['p', { 'data-status': 'rejected', 'lang': 'en' }, 'Read ', ['a', { href: '/d' }, 'the docs'], '.'],
+      ['p', {}, ['img', { src: '/l.png', alt: 'Logo' }]],
+      ['read-more', { to: '/x', title: 'Lire plus' }],
+      ['ul', {}, ['li', { 'data-status': 'edited' }, 'premier'], ['li', { 'data-status': 'untranslated', 'lang': 'en' }, 'item two']],
+    ])
+  })
+
+  it('should annotate table cells and wrap component text in a span', async () => {
+    const source = '| a |\n|---|\n| b |\n\n::tip\nBody text.\n::\n\n::note\nSome text that ends here.\n:read-more{title="SPA Loading Template" to="/docs"}\n::\n'
+    const doc = await parse(source)
+    const { doc: out } = await apply(doc, new Map(), { onSegment: mark([]) })
+    const attrs = { 'data-status': 'untranslated', 'lang': 'en' }
+    expect(out.nodes).toEqual([
+      ['table', {}, ['thead', {}, ['tr', {}, ['th', attrs, 'a']]], ['tbody', {}, ['tr', {}, ['td', attrs, 'b']]]],
+      ['tip', {}, ['span', attrs, 'Body text.']],
+      ['note', {}, ['span', attrs, 'Some text that ends here.'], '\n', ['read-more', { title: 'SPA Loading Template', to: '/docs' }]],
+    ])
+    expect(await skeletons(await parse(await render(out)))).toEqual(await skeletons(out))
+    expect(doc.nodes).toEqual((await parse(source)).nodes)
+  })
+
+  it('should wrap translated text and leave runs without attributes unwrapped', async () => {
+    const doc = await parse('::note\nSome text that ends here.\n:read-more{title="SPA Loading Template" to="/docs"}\n::\n')
+    const { segments } = await extract(doc)
+    const translations = new Map([[segments[0]!.hash, 'Du texte qui finit ici.']])
+    const { doc: plain } = await apply(doc, translations, { onSegment: () => {} })
+    expect(plain.nodes).toEqual([['note', {}, 'Du texte qui finit ici.\n', ['read-more', { title: 'SPA Loading Template', to: '/docs' }]]])
+    const { doc: out } = await apply(doc, translations, { onSegment: e => e.target?.setAttribute('data-status', 'machine') })
+    expect(out.nodes).toEqual([['note', {}, ['span', { 'data-status': 'machine' }, 'Du texte qui finit ici.'], '\n', ['read-more', { title: 'SPA Loading Template', to: '/docs' }]]])
+    expect(await skeletons(await parse(await render(out)))).toEqual(await skeletons(out))
+    const root = await apply({ nodes: ['Loose text.'], frontmatter: {} }, new Map(), { onSegment: e => e.target?.setAttribute('lang', 'en') })
+    expect(root.doc.nodes).toEqual([['span', { lang: 'en' }, 'Loose text.']])
+  })
+
+  it('should annotate the paragraph around an inline component', async () => {
+    const doc = await parse('A sentence with :read-more{to="/x"} in the middle.')
+    const { doc: out } = await apply(doc, new Map(), { onSegment: e => e.target?.setAttribute('lang', 'en') })
+    expect(out.nodes).toEqual([['p', { lang: 'en' }, 'A sentence with ', ['read-more', { to: '/x' }], ' in the middle.']])
+  })
+
+  it('should report code comments without a target', async () => {
+    const doc = await parse('```ts\n// Fetch it here\n```')
+    const events: ApplySegmentEvent[] = []
+    await apply(doc, new Map(), { onSegment: mark(events) })
+    expect(summary(events)).toEqual([['code-comment', 'missing', 'untranslated', null, []]])
   })
 })
 

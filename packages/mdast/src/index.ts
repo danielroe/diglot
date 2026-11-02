@@ -1,7 +1,7 @@
-import type { ApplyReport, AtomicNode, LinkNode, Placeholder, Policy, Segment, Translations } from '@diglot/core'
+import type { ApplyReport, ApplySegmentEvent, AtomicNode, LinkNode, Placeholder, Policy, Resolution, Segment, SegmentTarget, Translations } from '@diglot/core'
 import type { MdNode } from './parse.ts'
 import type { Span, Target, Unit } from './walk.ts'
-import { buildSegment, createReport, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton } from '@diglot/core'
+import { buildSegment, createReport, createSegmentEvent, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton } from '@diglot/core'
 import { isScalar, parseDocument } from 'yaml'
 import { parse } from './parse.ts'
 import { walk } from './walk.ts'
@@ -27,9 +27,25 @@ export async function extract(source: string, options: ExtractOptions = {}): Pro
   return segments
 }
 
+export interface ApplyOptions extends ExtractOptions {
+  /** Called for each segment in extraction order. Attributes set on block-level targets are returned as `annotations`. */
+  onSegment?: (event: ApplySegmentEvent) => void
+}
+
+/** Attributes for the block node of a segment, located in the applied markdown. */
+export interface Annotation {
+  /** mdast node type: `heading`, `paragraph` or `tableCell`. */
+  type: string
+  /** Start offset of the node in the applied markdown. */
+  offset: number
+  attributes: Record<string, string>
+}
+
 export interface Applied {
   markdown: string
   report: ApplyReport
+  /** Attributes set from `onSegment`, for `annotate`. Present when `onSegment` is passed. */
+  annotations?: Annotation[]
 }
 
 interface Edit {
@@ -43,31 +59,72 @@ interface Edit {
  * translation is validated against the current source segment and spliced into the
  * source, so everything outside translated units is preserved byte for byte.
  */
-export async function apply(source: string, translations: Translations, options: ExtractOptions = {}): Promise<Applied> {
+export async function apply(source: string, translations: Translations, options: ApplyOptions = {}): Promise<Applied> {
   const policy = resolvePolicy(options.policy)
   const report = createReport()
   const lines = lineOffsets(source)
   const edits: Edit[] = []
+  const attributes = new Map<MdNode, Record<string, string>>()
   let index = 0
   for (const unit of walk(await parse(source), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index, policy })
     if (!segment)
       continue
     index++
-    const resolution = resolveTranslation(segment, translations)
-    if (resolution.status !== 'ok') {
-      tally(report, segment, resolution)
-      continue
-    }
-    const edit = editFor(unit, resolution.skeleton, resolution.text, segment.placeholders, source, lines)
-    if (typeof edit === 'string') {
-      tally(report, segment, { status: 'rejected', errors: [{ code: 'unaddressable', message: edit }] })
-      continue
+    let resolution: Resolution = resolveTranslation(segment, translations)
+    if (resolution.status === 'ok') {
+      const edit = editFor(unit, resolution.skeleton, resolution.text, segment.placeholders, source, lines)
+      if (typeof edit === 'string')
+        resolution = { status: 'rejected', errors: [{ code: 'unaddressable', message: edit }], ...(resolution.record ? { record: resolution.record } : {}) }
+      else
+        edits.push(edit)
     }
     tally(report, segment, resolution)
-    edits.push(edit)
+    options.onSegment?.(createSegmentEvent(segment, resolution, blockTarget(unit.target, attributes)))
   }
-  return { markdown: splice(source, edits), report }
+  const { markdown, offset } = splice(source, edits)
+  if (!options.onSegment)
+    return { markdown, report }
+  const annotations = [...attributes].map(([node, attrs]) => ({ type: node.type, offset: offset(node.position!.start.offset!), attributes: attrs }))
+  return { markdown, report, annotations }
+}
+
+/**
+ * Sets `annotations` as `data.hProperties` on the nodes of `tree`, which must be parsed from
+ * the applied markdown. Paragraphs of tight list items, which mdast-util-to-hast renders
+ * without a `<p>`, get `data.hName` `span` so the attributes are rendered.
+ */
+export function annotate(tree: MdNode, annotations: Annotation[]): void {
+  const pending = new Map(annotations.map(a => [`${a.type}:${a.offset}`, a.attributes]))
+  const visit = (node: MdNode, tight: boolean) => {
+    const attrs = pending.get(`${node.type}:${node.position?.start.offset}`)
+    if (attrs) {
+      const data = node.data ??= {}
+      data.hProperties = { ...data.hProperties, ...attrs }
+      if (tight && node.type === 'paragraph')
+        data.hName ??= 'span'
+    }
+    const inner = node.type === 'list' ? !isLoose(node) : node.type === 'listItem' && tight
+    for (const child of node.children ?? [])
+      visit(child, inner)
+  }
+  visit(tree, false)
+}
+
+function isLoose(list: MdNode): boolean {
+  return Boolean(list.spread) || (list.children ?? []).some(item => item.spread ?? (item.children ?? []).length > 1)
+}
+
+function blockTarget(target: Target, attributes: Map<MdNode, Record<string, string>>): SegmentTarget | null {
+  if (target.type !== 'range')
+    return null
+  return {
+    setAttribute: (name, value) => {
+      const attrs = attributes.get(target.node) ?? {}
+      attrs[name] = value
+      attributes.set(target.node, attrs)
+    },
+  }
 }
 
 function editFor(unit: Unit, skeleton: string, text: string, placeholders: Placeholder[], source: string, lines: number[]): Edit | string {
@@ -116,8 +173,8 @@ function inject(skeleton: string, placeholders: Placeholder[], refs: Array<LinkN
   })
 }
 
-/** Edits nested inside another edit are handed to it. */
-function splice(source: string, edits: Edit[]): string {
+/** Edits nested inside another edit are handed to it. `offset` maps a source offset outside the edits to the output. */
+function splice(source: string, edits: Edit[]): { markdown: string, offset: (at: number) => number } {
   const sorted = [...edits].sort((a, b) => a.start - b.start || b.end - a.end)
   const top: Array<{ edit: Edit, nested: Edit[] }> = []
   for (const edit of sorted) {
@@ -129,11 +186,16 @@ function splice(source: string, edits: Edit[]): string {
   }
   let out = ''
   let last = 0
+  let shift = 0
+  const shifts: Array<[end: number, shift: number]> = []
   for (const { edit, nested } of top) {
-    out += source.slice(last, edit.start) + edit.text(nested)
+    const text = edit.text(nested)
+    out += source.slice(last, edit.start) + text
     last = edit.end
+    shift += text.length - (edit.end - edit.start)
+    shifts.push([edit.end, shift])
   }
-  return out + source.slice(last)
+  return { markdown: out + source.slice(last), offset: at => at + (shifts.findLast(([end]) => end <= at)?.[1] ?? 0) }
 }
 
 function propEdit(node: MdNode, key: string, value: string, source: string): Edit | undefined {

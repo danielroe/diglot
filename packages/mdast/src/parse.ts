@@ -16,6 +16,8 @@ export interface MdNode {
   alt?: string | null
   attributes?: Record<string, unknown>
   fmAttributes?: Record<string, unknown>
+  spread?: boolean | null
+  data?: { hName?: string, hProperties?: Record<string, unknown> }
   position?: { start: Point, end: Point }
 }
 

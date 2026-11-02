@@ -1,6 +1,10 @@
 export type ValuePath = Array<string | number>
 
-/** Yields `[path, value]` for every non-empty string at the given dotted paths. `key[]` walks array items. */
+/**
+ * Yields `[path, value]` for every non-empty string at the given dotted paths. `key[]` walks
+ * array items. A literal dotted key (`{ 'navigation.title': ... }`) is read before the nested
+ * path (`{ navigation: { title: ... } }`), and `path` names the key that was read.
+ */
 export function* stringsAtPaths(data: unknown, paths: string[]): Generator<[ValuePath, string]> {
   for (const path of paths)
     yield* collect(data, path.split('.'), [])
@@ -14,8 +18,18 @@ function* collect(value: unknown, parts: string[], path: ValuePath): Generator<[
   }
   if (!value || typeof value !== 'object')
     return
-  const [head, ...rest] = parts as [string, ...string[]]
   const record = value as Record<string, unknown>
+  for (let n = parts.length; n > 1; n--) {
+    const key = parts.slice(0, n).join('.')
+    if (key.includes('[]') || !Object.hasOwn(record, key))
+      continue
+    const found = [...collect(record[key], parts.slice(n), [...path, key])]
+    if (found.length) {
+      yield* found
+      return
+    }
+  }
+  const [head, ...rest] = parts as [string, ...string[]]
   if (head.endsWith('[]')) {
     const key = head.slice(0, -2)
     const items = record[key]

@@ -1,13 +1,49 @@
-import type { Segment } from '@diglot/core'
+import type { ApplySegmentEvent, Segment, TranslationRecord } from '@diglot/core'
+import type { Annotation } from '../src/index.ts'
 import { readFileSync } from 'node:fs'
 import { extract as extractComark, parse as parseComark } from '@diglot/comark'
-import { pseudoTranslate } from '@diglot/core'
+import { createRecord, pseudoTranslate } from '@diglot/core'
+import rehypeStringify from 'rehype-stringify'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
+import remarkMdc from 'remark-mdc'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
-import { apply, extract } from '../src/index.ts'
+import { annotate, apply, extract } from '../src/index.ts'
 
 const fixture = (name: string) => readFileSync(new URL(`../../../fixtures/nuxt/${name}`, import.meta.url), 'utf8')
 const pseudo = (segments: Segment[]) => new Map(segments.map(s => [s.hash, pseudoTranslate(s.skeleton, s.format)]))
 const FIXTURES = ['edges.md', 'env.md', 'layers.md', 'client-only.md']
+const PAGE = '---\ntitle: Data fetching\n---\n\n# Hello world\n\nSecond paragraph.\n\nRead [the docs](/d).\n\n![Logo](/l.png)\n\n:read-more{to="/x" title="Read more"}\n\n- item one\n- item two\n'
+function pageTranslations(segments: Segment[]) {
+  const [title, heading, , link, , , prop, item] = segments
+  return new Map<string, string | TranslationRecord>([
+    [title!.hash, createRecord({ segment: title!, text: 'Récupération', origin: 'mt' })],
+    [heading!.hash, createRecord({ segment: heading!, text: 'Bonjour le monde', origin: 'mt', review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' } })],
+    [link!.hash, createRecord({ segment: link!, text: 'Lisez la doc.', origin: 'mt' })],
+    [prop!.hash, 'Lire plus'],
+    [item!.hash, createRecord({ segment: item!, text: 'premier', origin: 'mt', review: 'edited' })],
+  ])
+}
+function mark(events: ApplySegmentEvent[]) {
+  return (event: ApplySegmentEvent) => {
+    events.push(event)
+    if (event.outcome === 'skipped')
+      return
+    event.target?.setAttribute('data-status', event.status ?? 'unknown')
+    if (event.outcome !== 'translated')
+      event.target?.setAttribute('lang', 'en')
+  }
+}
+const summary = (events: ApplySegmentEvent[]) => events.map(e => [e.segment.kind, e.outcome, e.status, e.target ? 'block' : null, e.errors.map(i => i.code)])
+async function toHtml(markdown: string, annotations: Annotation[]) {
+  const tree = unified().use(remarkParse).use(remarkGfm).use(remarkMdc).use(remarkFrontmatter).parse(markdown)
+  annotate(tree, annotations)
+  const html = unified().use(remarkRehype).use(rehypeStringify)
+  return html.stringify(await html.run(tree))
+}
 
 describe('extract', () => {
   it('should slice protected spans and attributes from the source', async () => {
@@ -46,6 +82,79 @@ describe('extract', () => {
   })
 })
 
+describe('onSegment', () => {
+  it('should report each segment and annotate block nodes', async () => {
+    const segments = await extract(PAGE)
+    const events: ApplySegmentEvent[] = []
+    const { markdown, report, annotations } = await apply(PAGE, pageTranslations(segments), { onSegment: mark(events) })
+    expect(events.map(e => e.segment)).toEqual(segments)
+    expect(summary(events)).toEqual([
+      ['frontmatter', 'translated', 'machine', null, []],
+      ['heading', 'translated', 'verified', 'block', []],
+      ['paragraph', 'missing', 'untranslated', 'block', []],
+      ['paragraph', 'rejected', 'rejected', 'block', ['missing-placeholder']],
+      ['image-alt', 'missing', 'untranslated', null, []],
+      ['paragraph', 'skipped', 'untranslated', 'block', []],
+      ['prop', 'translated', undefined, null, []],
+      ['list-item', 'translated', 'edited', 'block', []],
+      ['list-item', 'missing', 'untranslated', 'block', []],
+    ])
+    expect(events[1]!.record?.text).toBe('Bonjour le monde')
+    expect(report).toEqual({ applied: 4, missing: 4, rejected: [expect.objectContaining({ hash: segments[3]!.hash })] })
+    expect(markdown).toBe(PAGE.replace('Data fetching', 'Récupération').replace('Hello world', 'Bonjour le monde').replace('Read more', 'Lire plus').replace('item one', 'premier'))
+    expect(await toHtml(markdown, annotations!)).toBe([
+      '<h1 data-status="verified">Bonjour le monde</h1>',
+      '<p data-status="untranslated" lang="en">Second paragraph.</p>',
+      '<p data-status="rejected" lang="en">Read <a href="/d">the docs</a>.</p>',
+      '<p><img src="/l.png" alt="Logo"></p>',
+      '<div></div>',
+      '<ul>',
+      '<li>',
+      '<span data-status="edited">premier</span>',
+      '</li>',
+      '<li>',
+      '<span data-status="untranslated" lang="en">item two</span>',
+      '</li>',
+      '</ul>',
+    ].join('\n'))
+  })
+
+  it('should annotate table cells, component slots and loose list items', async () => {
+    const { annotations, markdown } = await apply('| a |\n|---|\n| b |\n\n::tip\nBody text.\n::\n\n1. one\n\n2. two', new Map(), { onSegment: mark([]) })
+    expect(await toHtml(markdown, annotations!)).toBe([
+      '<table>',
+      '<thead>',
+      '<tr>',
+      '<th data-status="untranslated" lang="en">a</th>',
+      '</tr>',
+      '</thead>',
+      '<tbody>',
+      '<tr>',
+      '<td data-status="untranslated" lang="en">b</td>',
+      '</tr>',
+      '</tbody>',
+      '</table>',
+      '<div><p data-status="untranslated" lang="en">Body text.</p></div>',
+      '<ol>',
+      '<li>',
+      '<p data-status="untranslated" lang="en">one</p>',
+      '</li>',
+      '<li>',
+      '<p data-status="untranslated" lang="en">two</p>',
+      '</li>',
+      '</ol>',
+    ].join('\n'))
+  })
+
+  it('should report code comments without a target', async () => {
+    const events: ApplySegmentEvent[] = []
+    const result = await apply('```ts\n// Fetch it here\n```', new Map(), { onSegment: mark(events) })
+    expect(summary(events)).toEqual([['code-comment', 'missing', 'untranslated', null, []]])
+    expect(result.annotations).toEqual([])
+    expect(await apply('Hello.', new Map())).toEqual({ markdown: 'Hello.', report: { applied: 0, missing: 1, rejected: [] } })
+  })
+})
+
 describe('apply', () => {
   it('should apply every segment of a pseudo-translated document', async () => {
     for (const name of FIXTURES) {
@@ -71,6 +180,18 @@ describe('apply', () => {
     const segments = await extract(source)
     const translations = new Map([[segments[0]!.hash, 'Le logo'], [segments[1]!.hash, 'Voir {0} ici.']])
     expect((await apply(source, translations)).markdown).toBe('See [![Le logo](/l.png)](/home) here.'.replace('See', 'Voir').replace('here', 'ici'))
+  })
+
+  it('should extract and apply dotted frontmatter keys in literal and nested form', async () => {
+    const literal = '---\nnavigation.title: MCP Server\n---\n\nBody.'
+    const nested = '---\nnavigation:\n  title: MCP Server\n---\n\nBody.'
+    const [a] = await extract(literal)
+    const [b] = await extract(nested)
+    expect([a!.kind, a!.skeleton, a!.context.detail]).toEqual(['frontmatter', 'MCP Server', 'navigation.title'])
+    expect(b!.hash).toBe(a!.hash)
+    const translations = new Map([[a!.hash, 'Serveur MCP']])
+    expect((await apply(literal, translations)).markdown).toBe(literal.replace('MCP Server', 'Serveur MCP'))
+    expect((await apply(nested, translations)).markdown).toBe(nested.replace('MCP Server', 'Serveur MCP'))
   })
 
   it('should apply props, frontmatter, labels and code comments', async () => {
