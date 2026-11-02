@@ -1,35 +1,12 @@
-import type { Segment, SourceConfig } from '@diglot/core'
-import type { ResolvedConfig, SourceSnapshot } from '@diglot/store'
+import type { SourceConfig } from '@diglot/core'
+import type { ResolvedConfig } from '@diglot/store'
 import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { mkdir } from 'node:fs/promises'
 import { promisify } from 'node:util'
-import { extract as extractComark, extractNavigation, parse } from '@diglot/comark'
-import { extract as extractMdast } from '@diglot/mdast'
-import { readSource } from '@diglot/store'
 import { join, relative, resolve } from 'pathe'
 
 const exec = promisify(execFile)
-
-export interface ExtractedSource {
-  source: SourceConfig
-  snapshot: SourceSnapshot
-  files: Record<string, Segment[]>
-}
-
-export async function extractSource(config: ResolvedConfig, source: SourceConfig): Promise<ExtractedSource> {
-  const snapshot = await readSource(source, config.root)
-  const files: Record<string, Segment[]> = {}
-  for (const { path, content } of snapshot.files) {
-    if (path.endsWith('.yml') || path.endsWith('.yaml'))
-      files[path] = extractNavigation(content, { file: path, policy: config.policy })
-    else if (config.parser === 'mdast')
-      files[path] = await extractMdast(content, { file: path, policy: config.policy })
-    else
-      files[path] = (await extractComark(await parse(content), { file: path, policy: config.policy })).segments
-  }
-  return { source, snapshot, files }
-}
 
 /** Clone URL of a `owner/repo` source. */
 export type CloneUrl = (repo: string) => string
@@ -48,8 +25,7 @@ export async function ensureCheckouts(config: ResolvedConfig, sources: SourceCon
     : { ...source, path: relative(config.root, join(config.stateDir, 'checkouts', source.repo)) })
   const byPath = Map.groupBy(resolved.filter(s => s.path), s => resolve(config.root, s.path!))
   for (const [path, group] of byPath) {
-    const working = existsSync(join(path, '.git'))
-    if (working)
+    if (existsSync(join(path, '.git')))
       continue
     if (!existsSync(path)) {
       const repo = group.find(s => s.repo)?.repo

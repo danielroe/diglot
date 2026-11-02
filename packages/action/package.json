@@ -40,9 +40,8 @@
     "prepack": "pnpm build"
   },
   "dependencies": {
-    "@diglot/comark": "workspace:*",
+    "@diglot/cli": "workspace:*",
     "@diglot/core": "workspace:*",
-    "@diglot/mdast": "workspace:*",
     "@diglot/mt": "workspace:*",
     "@diglot/store": "workspace:*",
     "pathe": "^2.0.3"
