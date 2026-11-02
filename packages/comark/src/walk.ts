@@ -41,6 +41,21 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
   const blockPosition = (): SegmentPosition => ({ startLine: line[0], endLine: line[1], precision: doc.lines ? 'block' : 'file' })
   const context = (containers: string[], detail?: string) => ({ headingTrail: trail.filter(Boolean), containers, ...(detail ? { detail } : {}) })
   const isInline = (node: Node) => typeof node === 'string' || (isElement(node) && !policy.htmlText.includes(node[0]) && (INLINE_TAGS.has(node[0]) || node[1].$?.block === 0))
+  const isBoundary = (node: Node | undefined, newline: RegExp) => node === undefined || (typeof node === 'string' ? newline.test(node) : !isInline(node))
+  const isComponent = (node: Node) => isElement(node) && !isInline(node) && !node[1].$?.html && !policy.htmlText.includes(node[0])
+  const isInlineAt = (parent: Node[], i: number, start: number) => {
+    if (isInline(parent[i]!))
+      return true
+    if (!isComponent(parent[i]!))
+      return false
+    let first = i
+    let last = i
+    while (first > start && isComponent(parent[first - 1]!))
+      first--
+    while (last + 1 < parent.length && isComponent(parent[last + 1]!))
+      last++
+    return !(isBoundary(first > start ? parent[first - 1] : undefined, /\n\s*$/) && isBoundary(parent[last + 1], /^\s*\n/))
+  }
 
   for (const [path, value] of stringsAtPaths(doc.frontmatter, policy.frontmatter))
     units.push({ kind: 'frontmatter', content: value, context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' }, target: { type: 'frontmatter', path } })
@@ -95,7 +110,7 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
       runStart = -1
     }
     for (let i = start; i < parent.length; i++) {
-      if (isInline(parent[i]!)) {
+      if (isInlineAt(parent, i, start)) {
         if (runStart < 0)
           runStart = i
       }
@@ -124,7 +139,7 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
       return
     }
     if (tag === 'p')
-      return pushInline(kindForContainers(containers, policy), container, 2, node.length, containers)
+      return visitMixed(container, 2, containers, synced)
     if (tag === 'th' || tag === 'td')
       return pushInline('table-cell', container, 2, node.length, containers, tag)
     if (TABLE_PARTS.has(tag) || LISTS.has(tag)) {

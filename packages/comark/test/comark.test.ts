@@ -2,6 +2,7 @@ import type { Segment } from '@diglot/core'
 import type { Node } from 'comark'
 import { readFileSync } from 'node:fs'
 import { pseudoTranslate } from '@diglot/core'
+import { createMarkdownParser } from 'comark'
 import { describe, expect, it } from 'vitest'
 import { apply, applyNavigation, extract, extractNavigation, parse, render } from '../src/index.ts'
 
@@ -36,6 +37,30 @@ describe('extract', () => {
     const [b] = (await extract(await parse('Read [the guide](/docs/guide) about `useAsyncData`.'))).segments
     expect(a!.hash).toBe(b!.hash)
     expect(a!.sourceHash).not.toBe(b!.sourceHash)
+  })
+
+  it('should segment single-paragraph components like a default comark parse', async () => {
+    const source = '::note\nSome text that ends here.\n:read-more{title="SPA Loading Template" to="/docs"}\n::\n'
+    const { segments } = await extract(await parse(source))
+    expect(segments.map(s => `${s.kind}: ${s.skeleton}`)).toEqual(['component-slot: Some text that ends here.', 'prop: SPA Loading Template'])
+    const { nodes, frontmatter } = await createMarkdownParser({ autoClose: false })(source)
+    expect((await extract({ nodes, frontmatter })).segments.map(s => s.hash)).toEqual(segments.map(s => s.hash))
+  })
+
+  it('should keep inline components inside their sentence', async () => {
+    for (const source of ['::tip\nPress :icon{name="x"} to continue.\n::\n', '> Press :icon{name="x"} to continue.\n', '- Press :icon{name="x"} to continue.\n\n- Two\n']) {
+      const [segment] = (await extract(await parse(source))).segments
+      expect(segment!.skeleton, source).toBe('Press {0} to continue.')
+    }
+    const [run] = (await extract(await parse('::tip\n:icon{name="a"}:icon{name="b"} to continue.\n::\n'))).segments
+    expect(run!.skeleton).toBe('{0}{1} to continue.')
+  })
+
+  it('should split sentences around components on their own line', async () => {
+    const { segments } = await extract(await parse('::note\nSome text.\n:read-more{title="Guide" to="/x"}\nMore text.\n::\n'))
+    expect(segments.map(s => `${s.kind}: ${s.skeleton}`)).toEqual(['component-slot: Some text.', 'prop: Guide', 'component-slot: More text.'])
+    const paragraph = await extract(await parse('Some text.\n:read-more{title="Guide" to="/x"}\n'))
+    expect(paragraph.segments.map(s => `${s.kind}: ${s.skeleton}`)).toEqual(['paragraph: Some text.', 'prop: Guide'])
   })
 
   it('should record line positions of top-level blocks and code comments', async () => {
@@ -83,6 +108,13 @@ describe('apply', () => {
     const after = await parse('Read [the guide](/docs/guide) about `useAsyncData`.')
     const { doc } = await apply(after, new Map([[segment!.hash, 'Lisez {0}le guide{/0} sur **{1}**.']]))
     expect(doc.nodes).toEqual([['p', {}, 'Lisez ', ['a', { href: '/docs/guide' }, 'le guide'], ' sur ', ['strong', {}, ['code', {}, 'useAsyncData']], '.']])
+  })
+
+  it('should keep the line breaks around block components', async () => {
+    const doc = await parse('::note\nSome text.\n:read-more{to="/x"}\nMore text.\n::\n')
+    const { segments } = await extract(doc)
+    const { doc: out } = await apply(doc, new Map(segments.map(s => [s.hash, s.skeleton.toUpperCase()])))
+    expect(await render(out)).toBe('::note\nSOME TEXT.\n:read-more{to="/x"}\nMORE TEXT.\n::')
   })
 
   it('should keep the source for missing and invalid translations', async () => {
