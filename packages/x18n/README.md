@@ -18,7 +18,7 @@ export default {
 }
 ```
 
-Usages come from the files under the local `path` of each source: the plugin sets `usage.include` to the documents of every source and `usage.gitignore` to `false`, so git-ignored checkouts such as `.diglot/checkouts/<repo>` in [`examples/nuxt`](../../examples/nuxt) are scanned. Only the checked-out ref of a working copy is scanned, and a bare checkout has no files to scan: clone the source repository into its `path` to see its usages.
+Usages come from the files under `.diglot/sources/<source>`, which `diglot checkout` exports as plain files at each source's configured ref. The plugin sets `usage.include` to those documents and `usage.gitignore` to `false`, so the git-ignored exports in [`examples/nuxt`](../../examples/nuxt) are scanned.
 
 ## What it adds
 

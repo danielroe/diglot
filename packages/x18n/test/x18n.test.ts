@@ -45,12 +45,12 @@ Nuxt is powered by [Nitro](https://nitro.build).
 | Alpha | First letter |
 `
 
-async function store(path = 'sources/docs') {
+async function store(path = '.diglot/sources/docs') {
   const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-'))
   mkdirSync(join(root, path), { recursive: true })
   writeFileSync(join(root, path, 'guide.md'), guide)
   writeFileSync(join(root, 'diglot.config.mjs'), 'export default { locales: [\'fr\'] }\n')
-  writeFileSync(join(root, 'sources.yml'), `sources:\n  - name: docs\n    path: ${path}\n`)
+  writeFileSync(join(root, 'sources.yml'), `sources:\n  - name: docs\n`)
   writeFileSync(join(root, 'x18n.config.mjs'), `import diglot from ${JSON.stringify(plugin)}\nexport default { plugins: [diglot()] }\n`)
   const { segments } = await extract(await parse(guide), { file: 'guide.md' })
   await writeManifest(join(root, '.diglot'), createManifest('docs', { 'guide.md': segments }))
@@ -222,7 +222,7 @@ describe('x18n project', () => {
     })
 
     const [usage] = project.usages({ key: paragraph.hash })
-    expect(usage!.usage.path).toBe('sources/docs/guide.md')
+    expect(usage!.usage.path).toBe('.diglot/sources/docs/guide.md')
     expect(guide.slice(usage!.usage.range.start, usage!.usage.range.end)).toBe('Nuxt is powered by [Nitro](https://nitro.build).')
     const title = segments.get('Getting started')!
     expect(title.format).toBe('plain')
@@ -248,14 +248,14 @@ describe('x18n project', () => {
     project.dispose()
   })
 
-  it('should scan a source checkout that git ignores', async () => {
-    const { root, segments } = await store('.diglot/checkouts/docs')
-    writeFileSync(join(root, '.gitignore'), '.diglot/checkouts/\n')
+  it('should scan an exported source that git ignores', async () => {
+    const { root, segments } = await store('.diglot/sources/docs')
+    writeFileSync(join(root, '.gitignore'), '.diglot/sources/\n')
     const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
     await project.ready
 
     const [usage] = project.usages({ key: segments.get('Introduction')!.hash })
-    expect(usage!.usage.path).toBe('.diglot/checkouts/docs/guide.md')
+    expect(usage!.usage.path).toBe('.diglot/sources/docs/guide.md')
     project.dispose()
   })
 

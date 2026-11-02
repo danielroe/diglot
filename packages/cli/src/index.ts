@@ -2,6 +2,8 @@ import type { CommandDef } from 'citty'
 import { defineCommand, runMain } from 'citty'
 import { subCommands } from './commands.ts'
 
+export { checkoutSource } from './checkout.ts'
+export type { CheckedOutSource } from './checkout.ts'
 export { extractSource } from './extract.ts'
 export type { ExtractedSource } from './extract.ts'
 

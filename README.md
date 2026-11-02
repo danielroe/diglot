@@ -23,7 +23,7 @@ Keeping markdown documents in-sync is tricky, and diglot exists to help solve th
 | [`@diglot/store`](./packages/store) | Git record store, source manifests, locale bundles, `sources.yml` and `diglot.config.ts` loading. |
 | [`@diglot/mt`](./packages/mt) | Machine translation with the AI SDK: page-batched translation, minimal updates of existing translations, glossary and style rules, model-free QA. |
 | [`@diglot/action`](./packages/action) | GitHub Action that extracts sources, machine-translates what changed and commits the records. |
-| [`@diglot/cli`](./packages/cli) | The `diglot` command: `extract`, `diff`, `validate`, `build`, `status`. |
+| [`@diglot/cli`](./packages/cli) | The `diglot` command: `checkout`, `extract`, `diff`, `validate`, `build`, `status`. |
 | [`@diglot/x18n`](./packages/x18n) | Experimental [x18n](https://github.com/x18n-dev/x18n) plugin: hashes as keys, records as messages, source documents as usages. |
 
 ## Quick start

@@ -1,4 +1,5 @@
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
@@ -31,6 +32,52 @@ function setup() {
   writeFileSync(join(root, 'diglot.config.ts'), 'export default { locales: [\'fr\'] }\n')
   writeFileSync(join(root, 'sources.yml'), 'sources:\n  - name: docs\n    path: .\n    dir: docs\n')
   return root
+}
+
+function git(cwd: string, ...args: string[]): string {
+  return execFileSync('git', ['-c', 'user.name=tester', '-c', 'user.email=tester@example.com', ...args], { cwd, encoding: 'utf8' }).trim()
+}
+
+function checkoutSetup() {
+  const upstream = mkdtempSync(join(tmpdir(), 'diglot-cli-upstream-'))
+  git(upstream, 'init', '-q', '-b', 'main')
+  mkdirSync(join(upstream, 'docs/guide'), { recursive: true })
+  writeFileSync(join(upstream, 'docs/guide/intro.md'), '# Intro\n\nMain intro.\n')
+  writeFileSync(join(upstream, 'docs/api.md'), '# API\n\nMain api.\n')
+  writeFileSync(join(upstream, 'docs/.navigation.yml'), 'title: Main\n')
+  writeFileSync(join(upstream, 'docs/secret.md'), 'secret\n')
+  writeFileSync(join(upstream, 'README.md'), 'readme\n')
+  git(upstream, 'add', '.')
+  git(upstream, 'commit', '-q', '-m', 'main')
+
+  git(upstream, 'checkout', '-q', '-b', 'other')
+  rmSync(join(upstream, 'docs/api.md'))
+  writeFileSync(join(upstream, 'docs/guide/intro.md'), '# Intro\n\nOther intro.\n')
+  writeFileSync(join(upstream, 'docs/guide/other.md'), '# Other\n\nOther only.\n')
+  git(upstream, 'add', '.')
+  git(upstream, 'commit', '-q', '-m', 'other')
+
+  const bare = mkdtempSync(join(tmpdir(), 'diglot-cli-bare-'))
+  git(tmpdir(), 'clone', '-q', '--bare', upstream, bare)
+
+  const root = mkdtempSync(join(tmpdir(), 'diglot-cli-root-'))
+  writeFileSync(join(root, 'diglot.config.ts'), 'export default { locales: [\'fr\'] }\n')
+  const writeSources = (ref: string) => writeFileSync(join(root, 'sources.yml'), [
+    'sources:',
+    '  - name: docs',
+    '    repo: example/docs',
+    `    ref: ${ref}`,
+    `    path: ${bare}`,
+    '    dir: docs',
+    '    include:',
+    '      - "**/*.md"',
+    '      - "**/.navigation.yml"',
+    '    exclude:',
+    '      - "**/secret.md"',
+    '',
+  ].join('\n'))
+  writeSources('main')
+  return { bare, root, writeSources }
 }
 
 afterEach(() => {
@@ -77,5 +124,31 @@ describe('diglot', () => {
   it('should fail on an unknown source', async () => {
     const root = setup()
     await expect(cli('extract', '--cwd', root, '--source', 'nope')).rejects.toThrow('unknown source "nope"')
+  })
+
+  it('should export a source at its ref into .diglot/sources', async () => {
+    const { bare, root, writeSources } = checkoutSetup()
+    const main = git(bare, 'rev-parse', 'main')
+
+    expect(await cli('checkout', '--cwd', root)).toBe(`docs: ${main}\n`)
+
+    const exports = join(root, '.diglot/sources/docs/docs')
+    expect(readFileSync(join(exports, 'guide/intro.md'), 'utf8')).toContain('Main intro.')
+    expect(readFileSync(join(exports, 'api.md'), 'utf8')).toContain('Main api.')
+    expect(existsSync(join(exports, 'guide/other.md'))).toBe(false)
+    expect(existsSync(join(exports, 'secret.md'))).toBe(false)
+    expect(existsSync(join(root, '.diglot/sources/docs/README.md'))).toBe(false)
+
+    writeFileSync(join(exports, 'guide/stale.md'), 'stale\n')
+    expect(await cli('checkout', '--cwd', root)).toBe(`docs: ${main}\n`)
+    expect(existsSync(join(exports, 'guide/stale.md'))).toBe(false)
+    expect(readFileSync(join(exports, 'guide/intro.md'), 'utf8')).toContain('Main intro.')
+
+    writeSources('other')
+    const other = git(bare, 'rev-parse', 'other')
+    expect(await cli('checkout', '--cwd', root)).toBe(`docs: ${other}\n`)
+    expect(readFileSync(join(exports, 'guide/intro.md'), 'utf8')).toContain('Other intro.')
+    expect(existsSync(join(exports, 'api.md'))).toBe(false)
+    expect(readFileSync(join(exports, 'guide/other.md'), 'utf8')).toContain('Other only.')
   })
 })

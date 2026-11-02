@@ -6,6 +6,7 @@ import { diffSegments, hashSkeleton, isPlaceholderOnly, recordStatus, sentenceDi
 import { build, createManifest, liveHashes, loadConfig, loadLocale, readManifest, readManifests, readRecords, validationTarget, writeManifest } from '@diglot/store'
 import { defineCommand } from 'citty'
 import { relative } from 'pathe'
+import { checkoutSource } from './checkout.ts'
 import { extractSource, selectSources } from './extract.ts'
 
 const common = {
@@ -34,6 +35,23 @@ const extract = defineCommand({
       const path = await writeManifest(config.stateDir, manifest)
       const segments = Object.values(files).flat()
       print(`${source.name}: ${snapshot.files.length} files, ${segments.length} segments, ${new Set(segments.map(s => s.hash)).size} unique hashes -> ${relative(config.root, path)}`)
+    }
+  },
+})
+
+const checkout = defineCommand({
+  meta: { name: 'checkout', description: 'Export sources as plain files under .diglot/sources' },
+  args: { ...common },
+  async run({ args }) {
+    const config = await loadConfig(args.cwd)
+    const names = args._
+    const unknown = names.filter(n => !config.sources.some(s => s.name === n))
+    if (unknown.length)
+      throw new Error(`unknown source${unknown.length > 1 ? 's' : ''} ${unknown.map(n => `"${n}"`).join(', ')}; configured: ${config.sources.map(s => s.name).join(', ') || 'none'}`)
+    const selected = names.length ? config.sources.filter(s => names.includes(s.name)) : config.sources
+    for (const source of selected) {
+      const { sha } = await checkoutSource(config, source)
+      print(`${source.name}: ${sha}`)
     }
   },
 })
@@ -212,4 +230,4 @@ const status = defineCommand({
   },
 })
 
-export const subCommands: SubCommandsDef = { extract, diff, validate: validateCommand, build: buildCommand, status }
+export const subCommands: SubCommandsDef = { extract, checkout, diff, validate: validateCommand, build: buildCommand, status }
