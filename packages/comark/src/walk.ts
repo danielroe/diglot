@@ -42,13 +42,19 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
   const context = (containers: string[], detail?: string) => ({ headingTrail: trail.filter(Boolean), containers, ...(detail ? { detail } : {}) })
   const isInline = (node: Node) => typeof node === 'string' || (isElement(node) && !policy.htmlText.includes(node[0]) && (INLINE_TAGS.has(node[0]) || node[1].$?.block === 0))
   const isBoundary = (node: Node | undefined, newline: RegExp) => node === undefined || (typeof node === 'string' ? newline.test(node) : !isInline(node))
+  const isComponent = (node: Node) => isElement(node) && !isInline(node) && !node[1].$?.html && !policy.htmlText.includes(node[0])
   const isInlineAt = (parent: Node[], i: number, start: number) => {
-    const node = parent[i]!
-    if (isInline(node))
+    if (isInline(parent[i]!))
       return true
-    if (!isElement(node) || node[1].$?.html || policy.htmlText.includes(node[0]))
+    if (!isComponent(parent[i]!))
       return false
-    return !(isBoundary(i > start ? parent[i - 1] : undefined, /\n\s*$/) && isBoundary(parent[i + 1], /^\s*\n/))
+    let first = i
+    let last = i
+    while (first > start && isComponent(parent[first - 1]!))
+      first--
+    while (last + 1 < parent.length && isComponent(parent[last + 1]!))
+      last++
+    return !(isBoundary(first > start ? parent[first - 1] : undefined, /\n\s*$/) && isBoundary(parent[last + 1], /^\s*\n/))
   }
 
   for (const [path, value] of stringsAtPaths(doc.frontmatter, policy.frontmatter))

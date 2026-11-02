@@ -52,6 +52,8 @@ describe('extract', () => {
       const [segment] = (await extract(await parse(source))).segments
       expect(segment!.skeleton, source).toBe('Press {0} to continue.')
     }
+    const [run] = (await extract(await parse('::tip\n:icon{name="a"}:icon{name="b"} to continue.\n::\n'))).segments
+    expect(run!.skeleton).toBe('{0}{1} to continue.')
   })
 
   it('should split sentences around components on their own line', async () => {
