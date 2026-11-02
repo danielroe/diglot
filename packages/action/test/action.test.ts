@@ -190,6 +190,20 @@ describe('run', () => {
     expect(git(root, 'show', '--name-only', '--format=', 'HEAD').split('\n').some(p => p.includes('checkouts'))).toBe(false)
   })
 
+  it('should commit when bare checkouts are gitignored', async () => {
+    const { upstream, root } = setup()
+    write(root, { 'sources.yml': 'sources:\n  - name: docs\n    repo: example/docs\n    ref: main\n    dir: docs\n' })
+    const { model } = translator()
+    const result = await run({ cwd: root, model, cloneUrl: repo => repo === 'example/docs' ? upstream : '' })
+    expect(result.sources[0]!.sha).toBe(git(upstream, 'rev-parse', 'HEAD'))
+    expect(existsSync(join(root, '.diglot/checkouts/example/docs/HEAD'))).toBe(true)
+    const files = git(root, 'show', '--name-only', '--format=', 'HEAD').split('\n').filter(Boolean)
+    expect(files.some(p => p.includes('checkouts'))).toBe(false)
+    expect(files).toContain('dist/fr.json')
+    expect(files.some(p => p.startsWith('fr/segments/'))).toBe(true)
+    expect(files.some(p => p.startsWith('.diglot/manifest/'))).toBe(true)
+  })
+
   it('should skip locales with machine translation disabled', async () => {
     const { root } = setup()
     write(root, { 'fr/locale.yml': 'mt:\n  enabled: false\ngovernance:\n  approvalRate: 0.31\n' })
