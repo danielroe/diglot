@@ -100,10 +100,10 @@ export function recordFormat(state: DiglotState): Format {
     serialize(tree: MessageTree) {
       const entries = Object.entries(tree)
       const [hash, text] = entries[0] ?? []
-      const skeleton = hash && state.skeletons.get(hash)
-      if (entries.length !== 1 || typeof text !== 'string' || !skeleton)
+      const segment = hash && state.segments.get(hash)
+      if (entries.length !== 1 || typeof text !== 'string' || !segment)
         throw new Error('a diglot record holds exactly one live hash')
-      return serialiseRaw(createRecord({ segment: { hash: hash!, skeleton }, text, origin: 'human', review: 'edited' }) as unknown as RawRecord)
+      return serialiseRaw(createRecord({ segment, text, origin: 'human', review: 'edited' }) as unknown as RawRecord)
     },
   }
 }

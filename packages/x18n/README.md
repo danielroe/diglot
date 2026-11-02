@@ -22,7 +22,7 @@ Usages come from the working tree: a source needs a local `path` inside the tran
 
 ## What it adds
 
-- Formats `diglot-manifest` (read-only, `.diglot/manifest/<source>.json`) and `diglot-record` (`<locale>/segments/<hh>/<hash>.json`). Editing a translation through x18n rewrites its record: the text changes, `review` becomes `edited`, a verification is dropped and `updatedAt` is set. Fields the record schema does not know are kept.
+- Formats `diglot-manifest` (read-only, `.diglot/manifest/<source>.json`) and `diglot-record` (`<locale>/segments/<hh>/<hash>.json`). Editing a translation through x18n rewrites its record: the text changes, `review` becomes `edited`, a verification is dropped and `updatedAt` is set. Fields the record schema does not know are kept. Translating a hash that has no record in a locale creates its record file, as a human edit.
 - A `diglot-markdown` scanner over the markdown and `.navigation.yml` files of each source, so find references and the UI's usage list point at the paragraph of each segment.
 - A `diglot` placeholder syntax for skeletons (`{n}`, `{n}...{/n}`), used by `placeholder-mismatch`, `invalid-syntax` and the UI.
 - Checks `diglot-validate` (diglot's `validate` against every kind of unit a hash is used as), `diglot-review` (unreviewed machine translations; machine updates of earlier translations are warnings) and `diglot-unused` (records whose hash no manifest uses).
@@ -34,6 +34,5 @@ Usages come from the working tree: a source needs a local `path` inside the tran
 
 ## Limitations
 
-- New translations cannot be created through x18n 0.1.5: x18n places a new key in an existing resource of the locale, and a record file holds one hash. The plugin's locale finder implements a proposed `resolveKey` hook for this; x18n ignores it today.
 - Record edits made through x18n have no author, so `by` is not set.
 - Keys are hashes, so the keys grid sorts by hash rather than by document.

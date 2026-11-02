@@ -92,6 +92,15 @@ describe('record format', () => {
     expect(() => format.edit!(text, [{ type: 'delete', path: [record().hash] }], ctx)).toThrow('removed with diglot')
   })
 
+  it('should create a record of a live hash with the salt of its segment', () => {
+    const state = createState()
+    const hash = hashSkeleton('Name', 'table-cell')
+    state.segments.set(hash, { hash, kind: 'table-cell', format: 'markdown', words: 1, skeleton: 'Name', salt: 'table-cell' })
+    const created = JSON.parse(recordFormat(state).serialize!({ [hash]: 'Nom' }, ctx))
+    expect(created).toMatchObject({ hash, source: 'Name', text: 'Nom', salt: 'table-cell', origin: 'human', review: 'edited' })
+    expect(() => recordFormat(state).serialize!({ '0000000000000000': 'x' }, ctx)).toThrow('one live hash')
+  })
+
   it('should leave an unchanged record alone', () => {
     const raw = { ...record() } as Record<string, unknown>
     expect(editRecord(raw, raw.text as string)).toBe(raw)
@@ -193,6 +202,21 @@ describe('x18n project', () => {
     const edited = JSON.parse(readFileSync(join(root, recordPath('fr', segments.get('Introduction')!.hash)), 'utf8'))
     expect(edited).toMatchObject({ text: 'Présentation', review: 'edited', origin: 'human' })
     expect(edited.verifiedBy).toBeUndefined()
+    project.dispose()
+  })
+
+  it('should create a record file for a new translation', async () => {
+    const { root, segments } = await store()
+    const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
+    await project.ready
+
+    const alpha = segments.get('Alpha')!
+    const path = recordPath('fr', alpha.hash)
+    const plan = project.plan([{ type: 'set', key: alpha.hash, locale: 'fr', value: 'Alpha' }])
+    expect(plan.changes.map(c => `${c.type}:${c.path}`)).toEqual([`create:${path}`])
+    await project.apply(plan)
+    expect(JSON.parse(readFileSync(join(root, path), 'utf8'))).toMatchObject({ hash: alpha.hash, source: 'Alpha', text: 'Alpha', origin: 'human', review: 'edited' })
+    expect(project.message(alpha.hash, 'fr')?.resource).toBe(path)
     project.dispose()
   })
 })
