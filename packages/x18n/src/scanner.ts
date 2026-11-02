@@ -1,4 +1,5 @@
-import type { Segment, SourceConfig } from '@diglot/core'
+import type { Segment } from '@diglot/core'
+import type { ResolvedConfig } from '@diglot/store'
 import type { Scanner, TextRange, UsageCandidate } from '@x18n/core'
 import type { DiglotState } from './state.ts'
 import { matchesGlob } from 'node:path'
@@ -8,11 +9,10 @@ import { extract as extractMdast } from '@diglot/mdast'
 import { DEFAULT_INCLUDE } from '@diglot/store'
 import { join, normalize, relative } from 'pathe'
 
-function sourceFile(sources: SourceConfig[], path: string): string | undefined {
-  for (const source of sources) {
-    if (!source.path)
-      continue
-    const file = relative(normalize(source.path), path)
+function sourceFile(config: ResolvedConfig, path: string): string | undefined {
+  for (const source of config.sources) {
+    const root = relative(config.root, join(config.stateDir, 'sources', source.name))
+    const file = relative(normalize(root), path)
     const local = relative(source.dir ?? '.', file)
     if (file.startsWith('..') || local.startsWith('..'))
       continue
@@ -22,8 +22,8 @@ function sourceFile(sources: SourceConfig[], path: string): string | undefined {
   }
 }
 
-export function sourceGlobs(sources: SourceConfig[]): string[] {
-  return sources.flatMap(source => source.path ? (source.include ?? DEFAULT_INCLUDE).map(p => join(source.path!, source.dir ?? '.', p)) : [])
+export function sourceGlobs(config: ResolvedConfig): string[] {
+  return config.sources.flatMap(source => (source.include ?? DEFAULT_INCLUDE).map(p => relative(config.root, join(config.stateDir, 'sources', source.name, source.dir ?? '.', p))))
 }
 
 function lineStarts(text: string): number[] {
@@ -55,7 +55,7 @@ export function markdownScanner(state: DiglotState): Scanner {
     runtime: 'node',
     async scan(file) {
       const config = state.config
-      const path = config && sourceFile(config.sources, relative(state.prefix || '.', file.path))
+      const path = config && sourceFile(config, relative(state.prefix || '.', file.path))
       if (!config || !path)
         return { usages: [] }
       const options = { file: path, policy: config.policy }
