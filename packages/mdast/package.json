@@ -1,7 +1,7 @@
 {
   "name": "@diglot/mdast",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "remark / mdast adapter for diglot",
   "license": "MIT",
   "repository": {

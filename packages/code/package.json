@@ -1,7 +1,7 @@
 {
   "name": "@diglot/code",
   "type": "module",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Code-block comment extraction for diglot",
   "license": "MIT",
   "repository": {
