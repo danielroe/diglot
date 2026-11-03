@@ -1,5 +1,5 @@
 import type { Policy } from './policy.ts'
-import type { InlineNode, Segment, SegmentDraft, SegmentFormat } from './types.ts'
+import type { AtomicNode, InlineNode, LinkNode, Segment, SegmentDraft, SegmentFormat } from './types.ts'
 import { sha256 } from './sha256.ts'
 import { countWords, fromSkeleton, normalise, toSkeleton } from './skeleton.ts'
 
@@ -27,15 +27,20 @@ export interface BuildOptions {
 
 /** Turns an adapter draft into a segment. Returns `undefined` for units without content. */
 export function buildSegment(draft: SegmentDraft, options: BuildOptions): Segment | undefined {
+  return prepareSegment(draft, options)?.segment
+}
+
+/** `buildSegment`, also returning the inline node behind each placeholder, indexed by placeholder id. */
+export function prepareSegment(draft: SegmentDraft, options: BuildOptions): { segment: Segment, nodes: Array<LinkNode | AtomicNode> } | undefined {
   const format = draft.format ?? (typeof draft.content === 'string' ? 'plain' : 'markdown')
   const content: InlineNode[] = typeof draft.content === 'string' ? [{ type: 'text', value: draft.content }] : draft.content
-  const { skeleton, placeholders } = toSkeleton(normalise(content), format)
+  const { skeleton, placeholders, nodes } = toSkeleton(normalise(content), format)
   if (!skeleton)
     return
   const salt = options.policy?.salt?.({ kind: draft.kind, skeleton, file: options.file, ...draft.context })
   const text = fromSkeleton(skeleton, placeholders)
   const hash = hashSkeleton(skeleton, salt, format)
-  return {
+  const segment: Segment = {
     hash,
     sourceHash: text === skeleton ? hash : hashSkeleton(text, salt, format),
     kind: draft.kind,
@@ -48,6 +53,7 @@ export function buildSegment(draft: SegmentDraft, options: BuildOptions): Segmen
     position: draft.position,
     ...(salt ? { salt } : {}),
   }
+  return { segment, nodes }
 }
 
 /** Builds the segments of one file, numbering them in order. */
