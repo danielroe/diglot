@@ -77,51 +77,152 @@ export async function encodeRecords(records: ReadonlyMap<string, unknown> | Reco
 
 /** Reads records written by `encodeRecords`, keyed by hash. Throws on anything else. */
 export async function decodeRecords(data: string): Promise<Map<string, TranslationRecord>> {
+  const { hashes, record } = await readPack(data)
+  const out = new Map<string, TranslationRecord>()
+  for (let row = 0; row < hashes.length; row++)
+    out.set(hashes[row]!, record(row))
+  if (out.size !== hashes.length)
+    throw new Error('malformed records pack')
+  return out
+}
+
+/**
+ * Reads records written by `encodeRecords` into a read-only map keyed by hash, building each
+ * record on first access and returning the same object afterwards. Rejects when `data` is not a
+ * records pack; reading a malformed record throws.
+ */
+export async function decodeRecordsView(data: string): Promise<ReadonlyMap<string, TranslationRecord>> {
+  return new RecordsView(await readPack(data))
+}
+
+interface Pack {
+  hashes: string[]
+  record: (row: number) => TranslationRecord
+}
+
+async function readPack(data: string): Promise<Pack> {
   const compression = data.startsWith(GZIP_BASE64) ? 'gzip' : data.startsWith(ZSTD_BASE64) ? 'zstd' : undefined
   const json = compression ? await decompress(fromBase64(data), compression) : data
   const pack = JSON.parse(json) as { version?: unknown, strings?: unknown, columns?: unknown }
   if (!pack || pack.version !== VERSION || !Array.isArray(pack.strings) || !Array.isArray(pack.columns) || pack.columns.length !== COLUMNS || !pack.columns.every(Array.isArray))
     throw new Error('unsupported records pack')
-  const strings = pack.strings as Array<string | undefined>
-  strings.unshift(undefined)
-  const [hashes, sources, texts, flagsColumn, updated, prevs, salts, models, candidates, versions, bys, verifiers, verified, rejecters, rejected] = pack.columns as unknown[][]
-  const out = new Map<string, TranslationRecord>()
-  for (let i = 0; i < hashes!.length; i++) {
-    const hash = hashes![i]
-    const source = sources![i]
-    const text = texts![i]
-    const flags = flagsColumn![i]
-    if (typeof hash !== 'string' || typeof source !== 'string' || typeof text !== 'string' || typeof flags !== 'number')
+  const strings = pack.strings as unknown[]
+  if (!strings.every(value => typeof value === 'string'))
+    throw new Error('malformed records pack')
+  const columns = pack.columns as unknown[][]
+  const [hashes, sources, texts, flagsColumn, updated, prevs, salts, models, candidates, versions, bys, verifiers, verified, rejecters, rejected] = columns as [unknown[], ...unknown[][]]
+  for (let i = 1; i < COLUMNS; i++) {
+    if (columns[i]!.length !== hashes.length && (i < REQUIRED_COLUMNS || columns[i]!.length !== 0))
       throw new Error('malformed records pack')
+  }
+  for (let row = 0; row < hashes.length; row++) {
+    if (typeof hashes[row] !== 'string')
+      malformed(row)
+  }
+  const string = (column: unknown[], row: number): string => {
+    const id = column[row]
+    const value = typeof id === 'number' ? strings[id - 1] : undefined
+    return typeof value === 'string' ? value : malformed(row)
+  }
+  const inline = (column: unknown[], row: number): string => {
+    const value = column[row]
+    return typeof value === 'string' ? value : malformed(row)
+  }
+  const record = (row: number): TranslationRecord => {
+    const source = sources![row]
+    const text = texts![row]
+    const flags = flagsColumn![row]
+    if (typeof source !== 'string' || typeof text !== 'string' || typeof flags !== 'number' || !Number.isInteger(flags) || flags < 0 || flags >= 36)
+      malformed(row)
     const record = {
-      hash,
+      hash: hashes[row] as string,
       source,
       text,
       origin: ORIGINS[flags % 3]!,
       review: REVIEWS[Math.floor(flags / 3) % 4]!,
       derived: DERIVED[Math.floor(flags / 12)]!,
     } as TranslationRecord
-    if (prevs![i])
-      record.prev = prevs![i] as string
-    if (salts![i])
-      record.salt = salts![i] as string
-    if (models![i]) {
-      const candidate = candidates![i]
-      const version = strings[versions![i] as number || 0]
-      record.mt = version === undefined
-        ? { model: strings[models![i] as number]!, candidate: typeof candidate === 'string' ? candidate : text }
-        : { model: strings[models![i] as number]!, promptVersion: version, candidate: typeof candidate === 'string' ? candidate : text }
+    if (prevs![row])
+      record.prev = inline(prevs!, row)
+    if (salts![row])
+      record.salt = inline(salts!, row)
+    if (models![row]) {
+      const model = string(models!, row)
+      const value = candidates![row]
+      const candidate = typeof value === 'string' ? value : value ? malformed(row) : text
+      record.mt = versions![row] ? { model, promptVersion: string(versions!, row), candidate } : { model, candidate }
     }
-    if (bys![i])
-      record.by = strings[bys![i] as number]
-    if (verifiers![i])
-      record.verifiedBy = { by: strings[verifiers![i] as number]!, at: strings[verified![i] as number || 0]! }
-    if (rejecters![i])
-      record.rejectedBy = { by: strings[rejecters![i] as number]!, at: strings[rejected![i] as number || 0]! }
-    record.updatedAt = strings[updated![i] as number || 0]!
-    out.set(hash, record)
+    if (bys![row])
+      record.by = string(bys!, row)
+    if (verifiers![row])
+      record.verifiedBy = { by: string(verifiers!, row), at: string(verified!, row) }
+    if (rejecters![row])
+      record.rejectedBy = { by: string(rejecters!, row), at: string(rejected!, row) }
+    record.updatedAt = string(updated!, row)
+    return record
   }
-  return out
+  return { hashes: hashes as string[], record }
+}
+
+function malformed(row: number): never {
+  throw new Error(`malformed records pack at row ${row}`)
+}
+
+class RecordsView implements ReadonlyMap<string, TranslationRecord> {
+  readonly #record: (row: number) => TranslationRecord
+  readonly #entries = new Map<string, number | TranslationRecord>()
+
+  constructor({ hashes, record }: Pack) {
+    this.#record = record
+    for (let row = 0; row < hashes.length; row++)
+      this.#entries.set(hashes[row]!, row)
+    if (this.#entries.size !== hashes.length)
+      throw new Error('malformed records pack')
+  }
+
+  get size(): number {
+    return this.#entries.size
+  }
+
+  has(hash: string): boolean {
+    return this.#entries.has(hash)
+  }
+
+  get(hash: string): TranslationRecord | undefined {
+    const entry = this.#entries.get(hash)
+    return entry === undefined ? undefined : this.#resolve(hash, entry)
+  }
+
+  keys(): MapIterator<string> {
+    return this.#entries.keys()
+  }
+
+  * values(): MapIterator<TranslationRecord> {
+    for (const [hash, entry] of this.#entries)
+      yield this.#resolve(hash, entry)
+  }
+
+  * entries(): MapIterator<[string, TranslationRecord]> {
+    for (const [hash, entry] of this.#entries)
+      yield [hash, this.#resolve(hash, entry)]
+  }
+
+  [Symbol.iterator](): MapIterator<[string, TranslationRecord]> {
+    return this.entries()
+  }
+
+  forEach(callback: (value: TranslationRecord, key: string, map: ReadonlyMap<string, TranslationRecord>) => void, thisArg?: unknown): void {
+    for (const [hash, entry] of this.#entries)
+      callback.call(thisArg, this.#resolve(hash, entry), hash, this)
+  }
+
+  #resolve(hash: string, entry: number | TranslationRecord): TranslationRecord {
+    if (typeof entry !== 'number')
+      return entry
+    const record = this.#record(entry)
+    this.#entries.set(hash, record)
+    return record
+  }
 }
 
 type Zlib = typeof import('node:zlib')

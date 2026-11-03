@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { decodeRecords, encodeRecords } from '../src/runtime.ts'
+import { decodeRecords, decodeRecordsView, encodeRecords } from '../src/runtime.ts'
 import { withoutBuiltins } from './no-builtins.ts'
 
 describe('encodeRecords without Node built-ins', () => {
@@ -10,6 +10,7 @@ describe('encodeRecords without Node built-ins', () => {
     const data = await encodeRecords({ [record.hash]: record })
     expect(data.startsWith('H4sI')).toBe(true)
     expect((await decodeRecords(data)).get(record.hash)).toEqual(record)
+    expect((await decodeRecordsView(data)).get(record.hash)).toEqual(record)
   })
 
   it('should refuse zstd', async () => {
