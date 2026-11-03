@@ -79,6 +79,11 @@ describe('buildSegment', () => {
     expect(a.hash).toMatch(/^[0-9a-f]{16}$/)
   })
 
+  it('should hash with the first 16 hex characters of sha256', () => {
+    expect(hashSkeleton('Nuxt fetches data with {0}.')).toBe('31e679009ae869ec')
+    expect(hashSkeleton('Hello', 'salt', 'plain')).toBe('ec93f40f64b80087')
+  })
+
   it('should salt the hash when the policy asks for it', () => {
     const draft = { kind: 'table-cell' as const, content: [text('Type')], context, position }
     const plain = buildSegment(draft, { file: 'a.md', index: 0 })!

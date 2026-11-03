@@ -3,11 +3,20 @@ import type { InlineNode, Segment, SegmentDraft, SegmentFormat } from './types.t
 import { sha256 } from './sha256.ts'
 import { countWords, fromSkeleton, normalise, toSkeleton } from './skeleton.ts'
 
+let digest: ((input: string) => string) | undefined
+
+/** `node:crypto` where the runtime provides `process.getBuiltinModule` (Node, Deno, Bun), and the JS sha256 elsewhere. */
+function resolveDigest(): (input: string) => string {
+  const runtime = Reflect.get(globalThis, 'process') as { getBuiltinModule?: (id: string) => unknown } | undefined
+  const hash = (runtime?.getBuiltinModule?.('node:crypto') as typeof import('node:crypto') | undefined)?.hash
+  return hash ? input => hash('sha256', input) : sha256
+}
+
 /** Truncated sha256 used for segment identity. Plain and markdown segments with the same skeleton hash apart. */
 export function hashSkeleton(skeleton: string, salt?: string, format: SegmentFormat = 'markdown'): string {
   const salted = salt ? `${salt}\0${skeleton}` : skeleton
   const input = format === 'plain' ? `plain\0${salted}` : salted
-  return sha256(input).slice(0, 16)
+  return (digest ??= resolveDigest())(input).slice(0, 16)
 }
 
 export interface BuildOptions {
@@ -25,9 +34,10 @@ export function buildSegment(draft: SegmentDraft, options: BuildOptions): Segmen
     return
   const salt = options.policy?.salt?.({ kind: draft.kind, skeleton, file: options.file, ...draft.context })
   const text = fromSkeleton(skeleton, placeholders)
+  const hash = hashSkeleton(skeleton, salt, format)
   return {
-    hash: hashSkeleton(skeleton, salt, format),
-    sourceHash: hashSkeleton(text, salt, format),
+    hash,
+    sourceHash: text === skeleton ? hash : hashSkeleton(text, salt, format),
     kind: draft.kind,
     format,
     skeleton,

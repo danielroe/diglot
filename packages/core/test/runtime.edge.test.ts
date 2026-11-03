@@ -1,7 +1,16 @@
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { buildSegment, hashSkeleton, recordStatus, validate } from '../src/index.ts'
 
 describe('without Node built-ins', () => {
+  const runtime = Reflect.get(globalThis, 'process') as { getBuiltinModule?: unknown }
+  const { getBuiltinModule } = runtime
+  beforeAll(() => {
+    runtime.getBuiltinModule = undefined
+  })
+  afterAll(() => {
+    runtime.getBuiltinModule = getBuiltinModule
+  })
+
   it('should hash, validate and derive statuses', () => {
     expect(hashSkeleton('Nuxt fetches data with {0}.')).toBe('31e679009ae869ec')
     expect(hashSkeleton('Hello', 'salt', 'plain')).toBe('ec93f40f64b80087')
