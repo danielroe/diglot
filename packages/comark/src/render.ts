@@ -1,7 +1,6 @@
 import type { ElementNode, Node } from 'comark'
 import type { ComarkDocument } from './tree.ts'
 import { BREAK_SOURCE } from '@diglot/core'
-import { renderMarkdown } from 'comark/render'
 import { isElement } from './tree.ts'
 
 /** comark renders `br` as a trailing-space break, which cannot express two breaks in a row and merges with a following newline. */
@@ -15,12 +14,14 @@ const BINDING_PREFIX = 'data-diglot-bind-'
  * attributes (`:zoom="false"`) keep their colon.
  */
 export async function render(doc: Pick<ComarkDocument, 'frontmatter' | 'nodes'>): Promise<string> {
+  const { renderMarkdown } = await import('comark/render')
   const markdown = await renderMarkdown({ frontmatter: doc.frontmatter, nodes: protectBindings(doc.nodes), meta: {} }, renderOptions)
   return restoreBindings(markdown)
 }
 
 /** Renders one inline node as markdown. */
 export async function renderInline(node: ElementNode): Promise<string> {
+  const { renderMarkdown } = await import('comark/render')
   const markdown = await renderMarkdown({ nodes: [['p', {}, SENTINEL, ...protectBindings([node])]] }, renderOptions)
   return restoreBindings(markdown.trim().slice(SENTINEL.length))
 }
