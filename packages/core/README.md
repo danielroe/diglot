@@ -94,7 +94,7 @@ if (!result.ok)
   throw new Error(result.message) // result.code: 'stale', 'rejected', ...
 ```
 
-- `editRecord(record, { segment, text, by, style, maxLength })` writes a human edit (`origin: 'human'`, `review: 'edited'`), keeping `mt`, `prev` and `derived` and dropping review stamps. It refuses a text that fails validation or is longer than `maxLength` (`invalid`; `maxTranslationLength` of the source by default, `false` for none) and an unchanged text (`unchanged`), unless the record is rejected
+- `editRecord(record, { segment, text, by, style, maxLength })` writes a human edit (`origin: 'human'`, `review: 'edited'`), keeping `mt`, `prev` and `derived` and dropping review stamps. It refuses a text that fails validation or is longer than `maxLength` (`invalid`; `maxTranslationLength` of the source by default, `false` for none) and an unchanged text (`unchanged`), unless the record is rejected. A record whose `hash` is not the segment's is refused as `mismatch`
 - `verifyRecord(record, { segment, by })` sets `review: 'verified'` and `verifiedBy`. It refuses a missing record (`no-record`), a rejected one (`rejected`: an edit replaces a rejection), a text that fails validation against `segment` (`invalid`) and a verified record (`unchanged`)
 - `rejectRecord(record, { by })` sets `review: 'rejected'` and `rejectedBy` and drops `verifiedBy`. It refuses a missing or rejected record
 

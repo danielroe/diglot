@@ -12,8 +12,9 @@ import { maxTranslationLength, validate } from './validate.ts'
  * - `invalid`: the text fails validation against the segment
  * - `unchanged`: the transition would not change the record
  * - `rejected`: the record is rejected; only an edit replaces a rejection
+ * - `mismatch`: the record is not the segment's
  */
-export type ReviewRefusalCode = 'no-record' | 'stale' | 'invalid' | 'unchanged' | 'rejected'
+export type ReviewRefusalCode = 'no-record' | 'stale' | 'invalid' | 'unchanged' | 'rejected' | 'mismatch'
 
 export interface ReviewRefusal {
   ok: false
@@ -77,6 +78,8 @@ function stale(record: TranslationRecord | undefined, expected: string | null | 
  * refused as `invalid`, and an unchanged text as `unchanged` unless the record is rejected.
  */
 export function editRecord(record: TranslationRecord | undefined, { segment, text, by, at = new Date().toISOString(), expected, style, maxLength = maxTranslationLength(segment.skeleton) }: EditOptions): ReviewTransition {
+  if (record && record.hash !== segment.hash)
+    return refuse('mismatch', `the record of ${record.hash} is not the segment's`)
   if (stale(record, expected))
     return refuse('stale', 'the translation changed since it was loaded')
   const result = validate(text, segment, { style, ...(maxLength === false ? {} : { maxLength }) })

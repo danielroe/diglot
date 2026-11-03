@@ -41,6 +41,7 @@ describe('editRecord', () => {
     expect(editRecord(machine, { segment, text: 'Nuxt repose sur {0}Nitro{/0}.', by: 'danielroe', expected: 'something else' })).toMatchObject({ ok: false, code: 'stale' })
     expect(editRecord(machine, { segment, text: 'Nuxt repose sur {0}Nitro{/0}.', by: 'danielroe', expected: null })).toMatchObject({ ok: false, code: 'stale' })
     expect(editRecord(undefined, { segment, text: 'Nuxt repose sur {0}Nitro{/0}.', by: 'danielroe', expected: machine.text })).toMatchObject({ ok: false, code: 'stale' })
+    expect(editRecord({ ...machine, hash: 'aaaaaaaaaaaaaaaa' }, { segment, text: 'Nuxt repose sur {0}Nitro{/0}.', by: 'danielroe' })).toMatchObject({ ok: false, code: 'mismatch' })
   })
 
   it('should refuse texts much longer than the source and warn about length ratios', () => {
