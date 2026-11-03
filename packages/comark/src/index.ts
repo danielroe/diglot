@@ -56,6 +56,11 @@ export interface ApplyOptions extends ExtractOptions {
    * `spanSources` is `false`.
    */
   onSegment?: (event: ApplySegmentEvent) => void
+  /**
+   * Set to `false` to translate `doc` in place, for a document nothing else holds on to (such as
+   * one parsed for this call). Defaults to `true`.
+   */
+  copy?: boolean
 }
 
 export interface Applied {
@@ -64,21 +69,21 @@ export interface Applied {
 }
 
 /**
- * Returns a copy of `doc` with translations applied. Translations are skeletons, keyed by
- * segment hash; each is validated against the current source segment, and its
- * placeholders are replaced by the current source nodes. Segments without a valid
- * translation keep their source text. Heading ids are kept.
+ * Returns a copy of `doc` (or `doc` itself, with `copy: false`) with translations applied.
+ * Translations are skeletons, keyed by segment hash; each is validated against the current
+ * source segment, and its placeholders are replaced by the current source nodes. Segments
+ * without a valid translation keep their source text. Heading ids are kept.
  */
 export async function apply(doc: ComarkDocument, translations: Translations, options: ApplyOptions = {}): Promise<Applied> {
   const policy = resolvePolicy(options.policy)
-  const copy = clone(doc)
+  const out = options.copy === false ? doc : clone(doc)
   const spanSources = Boolean(options.onSegment) && options.spanSources !== false
   const report = createReport()
   const ranges: RangeEdit[] = []
   const attrs: Array<{ target: Extract<Target, { type: 'attr' }>, text: string }> = []
   const code = new Map<ElementNode, Array<{ comment: CodeComment, text: string }>>()
   let index = 0
-  for (const unit of walk(copy, policy)) {
+  for (const unit of walk(out, policy)) {
     let prepared = prepare(unit, options.file ?? '', index, policy, undefined, spanSources)
     if (prepared instanceof Promise)
       prepared = await prepared
@@ -98,7 +103,7 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
     if (target.type === 'attr')
       attrs.push({ target, text: resolution.text })
     else if (target.type === 'frontmatter')
-      setAtPath(copy.frontmatter, target.path, resolution.text)
+      setAtPath(out.frontmatter, target.path, resolution.text)
     else if (target.type === 'code')
       code.set(target.element, [...(code.get(target.element) ?? []), { comment: target.comment, text: resolution.text }])
     else if (range)
@@ -114,7 +119,7 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
     const nodes = build ? build() : target.parent.slice(target.start, target.end)
     target.parent.splice(target.start, target.end - target.start, ...(wrap ? keepEdges(nodes, [['span', wrap, ...trimEdges(nodes)] as ElementNode]) : nodes))
   }
-  return { doc: copy, report }
+  return { doc: out, report }
 }
 
 interface RangeEdit {

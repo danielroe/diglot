@@ -39,5 +39,6 @@ const output = await render(translated)
   const coverage = wordsByStatus(events)
   ```
 
+- `apply(doc, translations, { copy: false })` translates `doc` in place instead of a copy. Use it when nothing else holds on to `doc`, such as a document parsed for this request.
 - `render(doc)` writes comark markdown, with hard breaks as `:br` and bound HTML attributes such as `:zoom="false"` intact.
 - `extractNavigation(source)` and `applyNavigation(source, translations)` handle `.navigation.yml` files.

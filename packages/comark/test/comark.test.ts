@@ -157,6 +157,19 @@ describe('apply', () => {
     expect(events[0]!.segment.text).toBe('Read [the docs](/d).')
   })
 
+  it('should translate a copy by default and the document itself with copy: false', async () => {
+    for (const name of ['edges.md', 'env.md', 'layers.md', 'client-only.md']) {
+      const doc = await parse(fixture(name))
+      const translations = pseudo((await extract(doc)).segments)
+      const source = structuredClone(doc)
+      const copied = await apply(doc, translations)
+      expect(doc).toEqual(source)
+      const applied = await apply(source, translations, { copy: false })
+      expect(applied.doc).toBe(source)
+      expect(applied).toEqual(copied)
+    }
+  })
+
   it('should inject placeholders from the current source', async () => {
     const before = await parse('Read [the guide](/docs/3.x/guide) about `useFetch`.')
     const [segment] = (await extract(before)).segments
