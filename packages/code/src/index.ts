@@ -31,18 +31,22 @@ export function isProseComment(text: string): boolean {
 /** Finds the prose comment lines of a code block. Twoslash directives and tool pragmas are excluded. */
 export function findComments(code: string, language: string): CodeComment[] {
   const comments: CodeComment[] = []
+  let line = 0
+  let scanned = 0
   for (const raw of scanComments(code, language)) {
     let offset = raw.start
     for (const piece of code.slice(raw.start, raw.end).split('\n')) {
       const lead = raw.style === 'line' ? LINE_LEAD_RE : offset === raw.start ? FIRST_BLOCK_LEAD_RE : BLOCK_LEAD_RE
       const prefix = lead.exec(piece)![0].length
-      let body = piece.slice(prefix).replace(/[ \t\r]+$/, '')
+      let body = trimTrailingWhitespace(piece.slice(prefix))
       const notation = NOTATION_RE.exec(body)
       if (notation)
         body = body.slice(0, notation.index)
       if (body && isProseComment(body)) {
         const start = offset + prefix
-        comments.push({ line: lineOf(code, start), start, end: start + body.length, text: body })
+        line = countLinesTo(code, line, scanned, start)
+        scanned = start
+        comments.push({ line, start, end: start + body.length, text: body })
       }
       offset += piece.length + 1
     }
@@ -50,11 +54,21 @@ export function findComments(code: string, language: string): CodeComment[] {
   return comments
 }
 
-function lineOf(code: string, offset: number): number {
-  let line = 0
-  for (let i = code.indexOf('\n'); i >= 0 && i < offset; i = code.indexOf('\n', i + 1))
+function countLinesTo(code: string, line: number, from: number, to: number): number {
+  for (let i = code.indexOf('\n', from); i >= 0 && i < to; i = code.indexOf('\n', i + 1))
     line++
   return line
+}
+
+function trimTrailingWhitespace(value: string): string {
+  let end = value.length
+  while (end > 0) {
+    const char = value.charCodeAt(end - 1)
+    if (char !== 0x20 && char !== 0x09 && char !== 0x0D)
+      break
+    end--
+  }
+  return end === value.length ? value : value.slice(0, end)
 }
 
 export interface CommentContext {

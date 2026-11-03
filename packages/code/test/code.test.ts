@@ -83,6 +83,38 @@ describe('findComments', () => {
     expect(code.slice(comment!.start, comment!.end)).toBe('Explain this line')
   })
 
+  it('should report line numbers for comments spread over many lines', () => {
+    const code = [
+      '// First comment here',
+      '',
+      'const a = 1',
+      '// Second comment here',
+      '',
+      '',
+      '/**',
+      ' * Block comment here',
+      ' * And another line',
+      ' */',
+      'function f() {}',
+      '/* inline after blanks */',
+    ].join('\n')
+    expect(findComments(code, 'ts').map(({ line, text }) => [line, text])).toEqual([
+      [0, 'First comment here'],
+      [3, 'Second comment here'],
+      [7, 'Block comment here'],
+      [8, 'And another line'],
+      [11, 'inline after blanks'],
+    ])
+  })
+
+  it('should trim trailing tabs, spaces and carriage returns', () => {
+    const code = '// First comment here  \t  \r\n// Second one\t\r\n'
+    expect(findComments(code, 'ts').map(({ line, text }) => [line, text])).toEqual([
+      [0, 'First comment here'],
+      [1, 'Second one'],
+    ])
+  })
+
   it('should not find comments in unsupported languages', () => {
     expect(resolveLanguage('diff')).toBeUndefined()
     expect(findComments('// Some words here', 'diff')).toEqual([])
