@@ -30,7 +30,7 @@ segment.hash // sha256 of the skeleton, truncated to 16 hex characters
 
 `{n}` stands for an atomic span (inline code, image, component, HTML, binding, hard break) and `{n}...{/n}` wraps the text of a link. Whitespace is collapsed and markdown punctuation in text is escaped, so the skeleton is stable across re-wrapping and protected span edits. Plain segments (props, frontmatter, labels, code comments) hash apart from markdown segments with the same skeleton, so each translation validates under one set of rules. A policy can add a context salt to the hash of ambiguous short strings.
 
-`prepareSegment` takes the same arguments and returns `{ segment, nodes }`, where `nodes[id]` is the link or atomic node behind placeholder `id`. Adapters use it to rebuild a translated unit from the current source nodes.
+`prepareSegment` takes the same arguments and returns `{ segment, nodes }` (or `undefined` for units without content, like `buildSegment`), where `nodes[id]` is the link or atomic node behind placeholder `id`. Adapters use it to rebuild a translated unit from the current source nodes.
 
 ## Validation
 
