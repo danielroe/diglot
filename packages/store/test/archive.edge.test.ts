@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { archiveLocaleState, parseRecordFile, parseRecordPath, readArchive } from '../src/runtime.ts'
+import { archiveLocaleState, manifestCoverage, parseRecordFile, parseRecordPath, readArchive } from '../src/runtime.ts'
 import { withoutBuiltins } from './no-builtins.ts'
 import { chunked, gzip, tar } from './tar.ts'
 
@@ -21,6 +21,7 @@ describe('readArchive without Node built-ins', () => {
     expect(archiveLocaleState(archive, 'fr')).toEqual({ mt: {} })
     expect(parseRecordPath('fr/segments/1d/1d4e5186ed79d236.json')).toEqual({ locale: 'fr', hash: '1d4e5186ed79d236' })
     expect(parseRecordFile('{}')).toBeUndefined()
+    expect(manifestCoverage({ files: { 'a.md': [{ hash: '1d4e5186ed79d236', kind: 'paragraph', format: 'markdown', skeleton: 'Hello', words: 1 }] } }, new Map())).toEqual({ 'a.md': { words: 1, byStatus: { untranslated: 1 } } })
     await expect(readArchive(bytes.slice(0, bytes.length - 20))).rejects.toThrow()
   })
 })

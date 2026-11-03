@@ -1,11 +1,12 @@
 import type { Segment, TranslationRecord } from '@diglot/core'
+import type { ManifestEntry } from '../src/index.ts'
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { policyFingerprint, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseRecordFile, parseRecordPath, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
+import { build, createManifest, fileCoverage, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, manifestCoverage, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseRecordFile, parseRecordPath, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -103,6 +104,23 @@ describe('manifest', () => {
     ].join('\n'))
     expect(await readManifest(stateDir, 'main')).toEqual(manifest)
     expect(liveHashes([manifest])).toEqual(new Set(['aaaaaaaaaaaaaaaa']))
+  })
+
+  it('should count words by validated status', () => {
+    const entry = (hash: string, skeleton: string, words: number, placeholders?: ManifestEntry['placeholders']) => ({ hash, kind: 'paragraph' as const, format: 'markdown' as const, skeleton, words, ...(placeholders ? { placeholders } : {}) })
+    const manifest = { files: {
+      'a.md': [entry('aaaaaaaaaaaaaaaa', 'Use {0}.', 1, ['code']), entry('bbbbbbbbbbbbbbbb', 'Read the docs.', 3), entry('cccccccccccccccc', '{0}', 0, ['image']), entry('dddddddddddddddd', 'Not yet.', 2)],
+      'b.md': [entry('bbbbbbbbbbbbbbbb', 'Read the docs.', 3)],
+    } }
+    const records = new Map([
+      ['aaaaaaaaaaaaaaaa', { ...record('aaaaaaaaaaaaaaaa'), source: 'Use {0}.', text: 'Utilisez.', origin: 'human' as const, review: 'verified' as const, verifiedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' } }],
+      ['bbbbbbbbbbbbbbbb', { ...record('bbbbbbbbbbbbbbbb'), source: 'Read the docs.', text: 'Lisez la doc.' }],
+    ])
+    expect(manifestCoverage(manifest, records)).toEqual({
+      'a.md': { words: 6, byStatus: { rejected: 1, machine: 3, untranslated: 2 } },
+      'b.md': { words: 3, byStatus: { machine: 3 } },
+    })
+    expect(fileCoverage(manifest.files['b.md'], hash => records.get(hash), { visible: r => r.origin === 'human' })).toEqual({ words: 3, byStatus: { untranslated: 3 } })
   })
 
   it('should record the policy fingerprint and write the policy snapshot', async () => {

@@ -1,5 +1,5 @@
 import type { PolicySnapshot } from '@diglot/core'
-import type { Manifest } from './manifest.ts'
+import type { Manifest } from './manifest-data.ts'
 import { builtin } from './builtin.ts'
 import { parseRecordPath } from './record-file.ts'
 
