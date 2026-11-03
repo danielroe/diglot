@@ -23,6 +23,8 @@ export interface BuildOptions {
   file: string
   index: number
   policy?: Pick<Policy, 'salt'>
+  /** Set to `false` when placeholder sources have not been resolved, so `text` is `skeleton` and `sourceHash` is `hash`. */
+  resolvedSources?: boolean
 }
 
 /** Turns an adapter draft into a segment. Returns `undefined` for units without content. */
@@ -38,11 +40,12 @@ export function prepareSegment(draft: SegmentDraft, options: BuildOptions): { se
   if (!skeleton)
     return
   const salt = options.policy?.salt?.({ kind: draft.kind, skeleton, file: options.file, ...draft.context })
-  const text = fromSkeleton(skeleton, placeholders)
   const hash = hashSkeleton(skeleton, salt, format)
+  const resolvedSources = options.resolvedSources !== false
+  const text = resolvedSources ? fromSkeleton(skeleton, placeholders) : skeleton
   const segment: Segment = {
     hash,
-    sourceHash: text === skeleton ? hash : hashSkeleton(text, salt, format),
+    sourceHash: !resolvedSources || text === skeleton ? hash : hashSkeleton(text, salt, format),
     kind: draft.kind,
     format,
     skeleton,

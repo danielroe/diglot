@@ -23,9 +23,8 @@ export interface ExtractOptions {
   policy?: Partial<Policy>
   /**
    * Resolve the markdown of links and protected spans, by slicing `doc.source` or re-rendering.
-   * Defaults to `true`. With `false`, links, inline code, images, components and inline HTML get
-   * empty markdown in their placeholders, which changes `text` and `sourceHash`; `hash`,
-   * `skeleton`, placeholder types and `words` are unchanged.
+   * Defaults to `true`. With `false`, placeholders get empty markdown and segment `text` and
+   * `sourceHash` are not meaningful; `hash`, `skeleton`, placeholder types and `words` are unchanged.
    */
   spanSources?: boolean
 }
@@ -151,19 +150,24 @@ interface Prepared {
 /** A promise only when span sources have to be resolved. */
 function prepare(unit: Unit, file: string, index: number, policy: Policy, spans: InlineStats | undefined, spanSources: boolean): Prepared | Promise<Prepared> {
   if (spanSources && Array.isArray(unit.content))
-    return toInline(unit.content, unit.slicer, spans).then(content => prepareDraft({ kind: unit.kind, content, context: unit.context, position: unit.position }, file, index, policy))
+    return toInline(unit.content, unit.slicer, spans).then(content => prepareDraft({ kind: unit.kind, content, context: unit.context, position: unit.position }, file, index, policy, true))
   let draft: SegmentDraft
-  if (typeof unit.content === 'string')
+  let resolvedSources = true
+  if (typeof unit.content === 'string') {
     draft = { kind: unit.kind, content: unit.content, context: unit.context, position: unit.position }
-  else if (Array.isArray(unit.content))
+  }
+  else if (Array.isArray(unit.content)) {
     draft = { kind: unit.kind, content: inlineNodes(unit.content), context: unit.context, position: unit.position }
-  else
+    resolvedSources = false
+  }
+  else {
     draft = { ...commentDraft(unit.content, unit.language!, unit.context), position: unit.position }
-  return prepareDraft(draft, file, index, policy)
+  }
+  return prepareDraft(draft, file, index, policy, resolvedSources)
 }
 
-function prepareDraft(draft: SegmentDraft, file: string, index: number, policy: Policy): Prepared {
-  const prepared = prepareSegment(draft, { file, index, policy })
+function prepareDraft(draft: SegmentDraft, file: string, index: number, policy: Policy, resolvedSources: boolean): Prepared {
+  const prepared = prepareSegment(draft, { file, index, policy, resolvedSources })
   return { segment: prepared?.segment, refs: prepared?.nodes ?? [] }
 }
 

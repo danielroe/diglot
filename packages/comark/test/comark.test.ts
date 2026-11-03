@@ -230,6 +230,15 @@ describe('apply', () => {
 })
 
 describe('onSegment', () => {
+  it('should report skeleton as text when span sources are unresolved', async () => {
+    const doc = await parse('Read [the docs](/docs) about `useFetch`.')
+    const events: ApplySegmentEvent[] = []
+    await apply(doc, new Map(), { onSegment: e => events.push(e), spanSources: false })
+    expect(events).toHaveLength(1)
+    expect(events[0]!.segment.text).toBe(events[0]!.segment.skeleton)
+    expect(events[0]!.segment.sourceHash).toBe(events[0]!.segment.hash)
+  })
+
   it('should report each segment and annotate block elements', async () => {
     const doc = await parse(PAGE)
     const { segments } = await extract(doc)

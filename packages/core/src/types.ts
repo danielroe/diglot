@@ -104,13 +104,13 @@ export interface SegmentDraft {
 export interface Segment {
   /** Identity: truncated sha256 of `skeleton` (and `salt`, when set). */
   hash: string
-  /** Truncated sha256 of `text`. Changes when protected spans change too. */
+  /** Truncated sha256 of `text`. Changes when protected spans change too. Equals `hash` when span sources are unresolved. */
   sourceHash: string
   kind: SegmentKind
   format: SegmentFormat
   /** Placeholder form: the only thing a translator or MT model sees. */
   skeleton: string
-  /** `skeleton` with placeholders re-injected. */
+  /** `skeleton` with placeholders re-injected. Equals `skeleton` when span sources are unresolved. */
   text: string
   placeholders: Placeholder[]
   /** Words outside placeholders. `0` means there is nothing to translate. */
