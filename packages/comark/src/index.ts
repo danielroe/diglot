@@ -20,6 +20,13 @@ export interface ExtractOptions {
   /** File path recorded in segment contexts. */
   file?: string
   policy?: Partial<Policy>
+  /**
+   * Resolve the markdown of links and protected spans, by slicing `doc.source` or re-rendering.
+   * Defaults to `true`. With `false`, links, inline code, images, components and inline HTML get
+   * empty markdown in their placeholders, which changes `text` and `sourceHash`; `hash`,
+   * `skeleton`, placeholder types and `words` are unchanged.
+   */
+  spanSources?: boolean
 }
 
 export interface Extraction {
@@ -34,7 +41,7 @@ export async function extract(doc: ComarkDocument, options: ExtractOptions = {})
   const spans: InlineStats = { sliced: 0, rendered: 0 }
   const segments: Segment[] = []
   for (const unit of walk(doc, policy)) {
-    const { segment } = await prepare(unit, options.file ?? '', segments.length, policy, spans)
+    const { segment } = await prepare(unit, options.file ?? '', segments.length, policy, spans, options.spanSources ?? true)
     if (segment)
       segments.push(segment)
   }
@@ -42,7 +49,11 @@ export async function extract(doc: ComarkDocument, options: ExtractOptions = {})
 }
 
 export interface ApplyOptions extends ExtractOptions {
-  /** Called for each segment in extraction order. Targets set props on the text block holding the segment, or on a `span` wrapping it. */
+  /**
+   * Called for each segment in extraction order. Targets set props on the text block holding the
+   * segment, or on a `span` wrapping it. Span sources are resolved only for this callback, unless
+   * `spanSources` is `false`.
+   */
   onSegment?: (event: ApplySegmentEvent) => void
 }
 
@@ -60,12 +71,13 @@ export interface Applied {
 export async function apply(doc: ComarkDocument, translations: Translations, options: ApplyOptions = {}): Promise<Applied> {
   const policy = resolvePolicy(options.policy)
   const copy = structuredClone(doc)
+  const spanSources = Boolean(options.onSegment) && options.spanSources !== false
   const report = createReport()
   const ranges: RangeEdit[] = []
   const code = new Map<ElementNode, Array<{ comment: CodeComment, text: string }>>()
   let index = 0
   for (const unit of walk(copy, policy)) {
-    const { segment, refs } = await prepare(unit, options.file ?? '', index, policy)
+    const { segment, refs } = await prepare(unit, options.file ?? '', index, policy, undefined, spanSources)
     if (!segment)
       continue
     index++
@@ -119,14 +131,14 @@ function rangeTarget(range: RangeEdit): SegmentTarget {
   }
 }
 
-async function prepare(unit: Unit, file: string, index: number, policy: Policy, spans?: InlineStats): Promise<{ segment?: Segment, refs: Array<LinkNode | AtomicNode> }> {
+async function prepare(unit: Unit, file: string, index: number, policy: Policy, spans: InlineStats | undefined, spanSources: boolean): Promise<{ segment?: Segment, refs: Array<LinkNode | AtomicNode> }> {
   let draft: SegmentDraft
   let refs: Array<LinkNode | AtomicNode> = []
   if (typeof unit.content === 'string') {
     draft = { kind: unit.kind, content: unit.content, context: unit.context, position: unit.position }
   }
   else if (Array.isArray(unit.content)) {
-    const inline = await toInline(unit.content, unit.slicer, spans)
+    const inline = await toInline(unit.content, unit.slicer, spans, spanSources)
     refs = toSkeleton(normalise(inline)).nodes
     draft = { kind: unit.kind, content: inline, context: unit.context, position: unit.position }
   }

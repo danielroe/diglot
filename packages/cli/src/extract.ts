@@ -9,8 +9,13 @@ export interface ExtractedSource {
   files: Record<string, Segment[]>
 }
 
+export interface ExtractSourceOptions {
+  /** Resolve the markdown of protected spans in comark documents. Defaults to `true`; manifests do not need it. */
+  spanSources?: boolean
+}
+
 /** Reads a source and extracts the segments of every document in it. */
-export async function extractSource(config: ResolvedConfig, source: SourceConfig): Promise<ExtractedSource> {
+export async function extractSource(config: ResolvedConfig, source: SourceConfig, options: ExtractSourceOptions = {}): Promise<ExtractedSource> {
   const snapshot = await readSource(source, config.root)
   const files: Record<string, Segment[]> = {}
   for (const { path, content } of snapshot.files) {
@@ -19,7 +24,7 @@ export async function extractSource(config: ResolvedConfig, source: SourceConfig
     else if (config.parser === 'mdast')
       files[path] = await extractMdast(content, { file: path, policy: config.policy })
     else
-      files[path] = (await extractComark(await parse(content), { file: path, policy: config.policy })).segments
+      files[path] = (await extractComark(await parse(content), { file: path, policy: config.policy, ...options })).segments
   }
   return { snapshot, files }
 }

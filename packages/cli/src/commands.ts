@@ -30,7 +30,7 @@ const extract = defineCommand({
   async run({ args }) {
     const config = await loadConfig(args.cwd)
     for (const source of selectSources(config, args.source)) {
-      const { snapshot, files } = await extractSource(config, source)
+      const { snapshot, files } = await extractSource(config, source, { spanSources: false })
       const manifest = createManifest(source.name, files, { ref: source.ref, sha: snapshot.sha })
       const path = await writeManifest(config.stateDir, manifest)
       const segments = Object.values(files).flat()

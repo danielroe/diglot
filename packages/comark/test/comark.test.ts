@@ -56,6 +56,21 @@ describe('extract', () => {
     expect(spans).toEqual({ sliced: 0, rendered: 2 })
   })
 
+  it('should leave span sources empty without changing identity when they are not needed', async () => {
+    const identity = (s: Segment) => ({ hash: s.hash, kind: s.kind, skeleton: s.skeleton, words: s.words, placeholders: s.placeholders.map(p => [p.type, p.name, p.hidesText, p.close === undefined]) })
+    for (const name of ['edges.md', 'env.md', 'layers.md', 'client-only.md']) {
+      const parsed = await parse(fixture(name))
+      const full = await extract({ nodes: parsed.nodes, frontmatter: parsed.frontmatter })
+      for (const doc of [parsed, { nodes: parsed.nodes, frontmatter: parsed.frontmatter }]) {
+        const bare = await extract(doc, { spanSources: false })
+        expect(bare.segments.map(identity)).toEqual(full.segments.map(identity))
+        expect(bare.spans).toEqual({ sliced: 0, rendered: 0 })
+      }
+    }
+    const { segments } = await extract(await parse('Use `useFetch` and [docs](/docs) with :badge[x].'), { spanSources: false })
+    expect(segments[0]!.placeholders.map(p => [p.source, p.close])).toEqual([['', undefined], ['', ''], ['', undefined]])
+  })
+
   it('should keep the hash when only protected spans change', async () => {
     const [a] = (await extract(await parse('Read [the guide](/docs/3.x/guide) about `useFetch`.'))).segments
     const [b] = (await extract(await parse('Read [the guide](/docs/guide) about `useAsyncData`.'))).segments
@@ -124,6 +139,22 @@ describe('apply', () => {
       expect(headingIds(out.nodes)).toEqual(headingIds(doc.nodes))
       expect(headingIds((await parse(await render(out))).nodes)).toEqual(headingIds(doc.nodes))
     }
+  })
+
+  it('should produce the same document whether or not span sources are resolved', async () => {
+    for (const name of ['edges.md', 'env.md', 'layers.md', 'client-only.md']) {
+      const parsed = await parse(fixture(name))
+      const doc = { nodes: parsed.nodes, frontmatter: parsed.frontmatter }
+      const translations = pseudo((await extract(doc)).segments)
+      const events: ApplySegmentEvent[] = []
+      const resolved = await apply(doc, translations, { onSegment: e => events.push(e) })
+      expect(await apply(doc, translations)).toEqual(resolved)
+      expect(await apply(doc, translations, { onSegment: () => {}, spanSources: false })).toEqual(resolved)
+      expect(events.map(e => e.segment.hash)).toEqual((await extract(doc)).segments.map(s => s.hash))
+    }
+    const events: ApplySegmentEvent[] = []
+    await apply({ nodes: (await parse('Read [the docs](/d).')).nodes, frontmatter: {} }, new Map(), { onSegment: e => events.push(e) })
+    expect(events[0]!.segment.text).toBe('Read [the docs](/d).')
   })
 
   it('should inject placeholders from the current source', async () => {

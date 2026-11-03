@@ -5,7 +5,7 @@ import { subCommands } from './commands.ts'
 export { checkoutSource } from './checkout.ts'
 export type { CheckedOutSource } from './checkout.ts'
 export { extractSource } from './extract.ts'
-export type { ExtractedSource } from './extract.ts'
+export type { ExtractedSource, ExtractSourceOptions } from './extract.ts'
 
 /** The `diglot` command. */
 export const main: CommandDef = defineCommand({

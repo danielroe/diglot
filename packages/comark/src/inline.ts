@@ -14,12 +14,15 @@ export interface InlineStats {
 
 /**
  * Converts comark inline nodes to the core representation. Every link and atomic node
- * carries its comark node in `data`; text-embedded bindings carry their string.
+ * carries its comark node in `data`; text-embedded bindings carry their string. With
+ * `spanSources: false`, links, inline code, images, components and inline HTML get empty markdown.
  */
-export async function toInline(nodes: Node[], slicer?: SourceSlicer, stats?: InlineStats): Promise<InlineNode[]> {
+export async function toInline(nodes: Node[], slicer?: SourceSlicer, stats?: InlineStats, spanSources = true): Promise<InlineNode[]> {
   const out: InlineNode[] = []
-  const source = async (sliced: Promise<string | undefined> | undefined, fallback: () => Promise<string>) => {
-    const value = await sliced
+  const source = async (slice: (() => Promise<string | undefined>) | undefined, fallback: () => Promise<string>) => {
+    if (!spanSources)
+      return ''
+    const value = await slice?.()
     if (value !== undefined) {
       if (stats)
         stats.sliced++
@@ -38,16 +41,20 @@ export async function toInline(nodes: Node[], slicer?: SourceSlicer, stats?: Inl
       continue
     const [tag, attrs] = node
     if (tag in EMPHASIS && !attrs.$?.html) {
-      out.push({ type: EMPHASIS[tag as keyof typeof EMPHASIS], children: await toInline(children(node), slicer, stats) })
+      out.push({ type: EMPHASIS[tag as keyof typeof EMPHASIS], children: await toInline(children(node), slicer, stats, spanSources) })
     }
     else if (tag === 'br') {
       out.push({ type: 'atomic', kind: 'break', source: BREAK_SOURCE, data: node })
     }
     else if (tag === 'code') {
-      out.push({ type: 'atomic', kind: 'code', source: await source(slicer?.code(node), () => renderInline(node)), data: node })
+      out.push({ type: 'atomic', kind: 'code', source: await source(slicer && (() => slicer.code(node)), () => renderInline(node)), data: node })
     }
     else if (tag === 'a' && !attrs.$?.html) {
-      const inner = await toInline(children(node), slicer, stats)
+      const inner = await toInline(children(node), slicer, stats, spanSources)
+      if (!spanSources) {
+        out.push({ type: 'link', children: inner, open: '', close: '', data: node })
+        continue
+      }
       const sliced = isAutolink(node) ? undefined : await slicer?.linkClose(node)
       const [open, close] = sliced === undefined ? await renderLinkParts(node) : ['[', sliced]
       if (stats)
@@ -55,12 +62,13 @@ export async function toInline(nodes: Node[], slicer?: SourceSlicer, stats?: Inl
       out.push({ type: 'link', children: inner, open, close, data: node })
     }
     else {
-      const rendered = await renderInline(node)
+      let rendered: Promise<string> | undefined
+      const render = () => rendered ??= renderInline(node)
       out.push({
         type: 'atomic',
         kind: tag === 'img' ? 'image' : attrs.$?.html ? 'html' : 'component',
         ...(tag === 'img' ? {} : { name: tag }),
-        source: await source(slicer?.span(node, rendered), async () => rendered),
+        source: await source(slicer && (async () => slicer.span(node, await render())), render),
         ...(tag !== 'img' && /\p{L}/u.test(textOf(children(node))) ? { hidesText: true } : {}),
         data: node,
       })
