@@ -1,0 +1,42 @@
+<script setup lang="ts">
+import type { Collections } from '@nuxt/content'
+
+type DocsPage = Collections['docs']
+
+const props = defineProps<{
+  page?: DocsPage | null
+}>()
+
+const links = computed(() => props.page?.body?.toc?.links || [])
+
+const { subNavigationMode } = useSubNavigation()
+const appConfig = useAppConfig()
+const { t } = useDocusI18n()
+
+const contentTocVariants = useUIConfig('contentToc')
+</script>
+
+<template>
+  <div>
+    <UContentToc
+      aria-label="On this page"
+      v-if="links.length"
+      :highlight="contentTocVariants.highlight ?? true"
+      :highlight-color="contentTocVariants.highlightColor"
+      :highlight-variant="contentTocVariants.highlightVariant ?? 'circuit'"
+      :color="contentTocVariants.color"
+      :title="appConfig.toc?.title || t('docs.toc')"
+      :links="links"
+      :class="{ 'hidden lg:block': subNavigationMode }"
+    >
+      <template #bottom>
+        <DocsAsideRightBottom />
+      </template>
+    </UContentToc>
+
+    <LazyDocsAsideMobileBar
+      v-if="subNavigationMode"
+      :links="links"
+    />
+  </div>
+</template>
