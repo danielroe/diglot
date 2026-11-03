@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readArchive } from '../src/runtime.ts'
+import { archiveLocaleState, readArchive } from '../src/runtime.ts'
 import { withoutBuiltins } from './no-builtins.ts'
 import { chunked, gzip, tar } from './tar.ts'
 
@@ -18,6 +18,7 @@ describe('readArchive without Node built-ins', () => {
     expect(archive.records.get('fr')?.get('1d4e5186ed79d236')).toEqual({ hash: '1d4e5186ed79d236' })
     expect([...archive.manifests.keys()]).toEqual(['docs'])
     expect([...archive.files.keys()]).toEqual(['fr/locale.yml'])
+    expect(archiveLocaleState(archive, 'fr')).toEqual({ mt: {} })
     await expect(readArchive(bytes.slice(0, bytes.length - 20))).rejects.toThrow()
   })
 })

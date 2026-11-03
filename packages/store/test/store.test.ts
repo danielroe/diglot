@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { policyFingerprint, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mtEnabled, parseBundle, parseGlossary, parseSources, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
+import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -180,6 +180,20 @@ describe('config', () => {
     expect([mtEnabled(fr), mtEnabled(await loadLocaleState(root, 'ja')), mtEnabled(await loadLocaleState(root, 'de'))]).toEqual([true, false, false])
     writeFileSync(join(root, 'ja/locale.yml'), 'mt:\n  enabled: yes please\n')
     await expect(loadLocaleState(root, 'ja')).rejects.toThrow('mt.enabled')
+  })
+
+  it('should parse and merge locale files without a file system', () => {
+    expect(parseLocaleState(null)).toEqual({})
+    expect(parseLocaleState({ mt: { enabled: true } })).toEqual({ mt: { enabled: true } })
+    expect(() => parseLocaleState('enabled', 'fr/locale.yml')).toThrow('fr/locale.yml: must be a mapping')
+    expect(() => parseLocaleState({ governance: { approvalRate: 'high' } })).toThrow('governance.approvalRate')
+    expect(parseStyle({ lengthRatio: [0.8, 1.8] })).toEqual({ lengthRatio: [0.8, 1.8] })
+    expect(() => parseStyle({ rules: 'Use vous' })).toThrow('rules')
+    const shared = { terms: [{ term: 'Nuxt', decision: 'keep' as const }, { term: 'layer', decision: 'keep' as const }], style: ['shared'] }
+    const own = { terms: [{ term: 'Layer', decision: 'keep-gloss' as const, gloss: 'couche' }] }
+    expect(mergeGlossary(shared, own)).toEqual({ terms: [shared.terms[0], own.terms[0]] })
+    expect(mergeGlossary(shared, { ...own, style: ['own'] })!.style).toEqual(['own'])
+    expect(mergeGlossary(undefined, undefined)).toBeUndefined()
   })
 })
 

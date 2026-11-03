@@ -1,4 +1,6 @@
 export { readArchive } from './archive.ts'
 export type { ArchiveInput, ReadArchiveOptions, StoreArchive } from './archive.ts'
+export { archiveGlossary, archiveLocaleState, archiveStyle, mergeGlossary, mtEnabled, parseGlossary, parseLocaleState, parseStyle } from './locale-data.ts'
+export type { ArchiveGlossaryOptions, X18nGlossaryEntry } from './locale-data.ts'
 export { decodeRecords, decodeRecordsView, encodeRecords } from './pack.ts'
 export type { EncodeRecordsOptions, RecordsCompression } from './pack.ts'
