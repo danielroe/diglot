@@ -1,7 +1,7 @@
 {
   "name": "@diglot/core",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Segment-level, human-first translation for markdown documentation",
   "license": "MIT",
   "repository": {

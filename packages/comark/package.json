@@ -1,7 +1,7 @@
 {
   "name": "@diglot/comark",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "comark adapter for diglot",
   "license": "MIT",
   "repository": {
