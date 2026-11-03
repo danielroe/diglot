@@ -64,7 +64,9 @@ Extract and apply at runtime under the policy the manifests were extracted with,
 ```ts
 import { restorePolicy } from '@diglot/core'
 
-const policy = restorePolicy(archive.policy!) // throws when the policy has a custom `salt` or `codeLabel` that is not passed in
+if (!archive.policy)
+  throw new Error('the archive has no .diglot/policy.json')
+const policy = restorePolicy(archive.policy) // throws when the policy has a custom `salt` or `codeLabel` that is not passed in
 await apply(doc, translations, { policy })
 ```
 

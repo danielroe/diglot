@@ -115,13 +115,27 @@ export function snapshotPolicy(policy: Partial<Policy> = {}): PolicySnapshot {
   return { version: 1, fingerprint: fingerprint(resolved, data), ...data }
 }
 
+function isStrings(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(item => typeof item === 'string')
+}
+
+function isSnapshot(value: PolicySnapshot): boolean {
+  const props = value?.props as unknown
+  return value?.version === 1
+    && typeof value.fingerprint === 'string'
+    && !!props && typeof props === 'object' && !Array.isArray(props) && Object.values(props).every(isStrings)
+    && isStrings(value.layout) && isStrings(value.htmlText) && isStrings(value.frontmatter) && isStrings(value.navigation)
+    && typeof value.codeComments === 'boolean'
+    && (value.custom === undefined || isStrings(value.custom))
+}
+
 /**
  * The policy a snapshot was taken of, with `functions` for the ones listed in `custom`. Throws
  * when the snapshot is malformed, a custom function is not passed, or the restored policy has a
  * different fingerprint.
  */
 export function restorePolicy(snapshot: PolicySnapshot, functions: Partial<Pick<Policy, PolicyFunction>> = {}): Policy {
-  if (snapshot?.version !== 1 || typeof snapshot.fingerprint !== 'string' || typeof snapshot.props !== 'object')
+  if (!isSnapshot(snapshot))
     throw new Error('unsupported policy snapshot')
   const missing = (snapshot.custom ?? []).filter(name => !functions[name])
   if (missing.length)

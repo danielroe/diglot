@@ -31,5 +31,7 @@ describe('policy snapshots', () => {
     expect(restorePolicy(snapshot, { salt }).salt).toBe(salt)
     expect(() => restorePolicy({ ...snapshotPolicy(), layout: [] })).toThrow('does not match')
     expect(() => restorePolicy({} as never)).toThrow('unsupported')
+    expect(() => restorePolicy({ ...snapshotPolicy(), props: null } as never)).toThrow('unsupported')
+    expect(() => restorePolicy({ ...snapshotPolicy(), layout: 'steps' } as never)).toThrow('unsupported')
   })
 })
