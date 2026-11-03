@@ -1,5 +1,4 @@
 import type { ElementNode, Node } from 'comark'
-import { isDeepStrictEqual } from 'node:util'
 import { children, isElement, parseInline } from './tree.ts'
 
 const VOID_TAGS = new Set(['br', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'])
@@ -57,7 +56,7 @@ export class SourceSlicer {
         continue
       const close = this.text.slice(at, end)
       const parsed = await parseInline(`[x${close}`)
-      if (parsed?.length === 1 && isElement(parsed[0]) && parsed[0][0] === 'a' && isDeepStrictEqual(parsed[0][1], node[1]))
+      if (parsed?.length === 1 && isElement(parsed[0]) && parsed[0][0] === 'a' && isDeepEqual(parsed[0][1], node[1]))
         return this.take(at, end, close)
     }
   }
@@ -78,13 +77,35 @@ export class SourceSlicer {
 
   private async verify(markdown: string, node: Node): Promise<boolean> {
     const parsed = await parseInline(markdown)
-    return parsed?.length === 1 && isDeepStrictEqual(parsed[0], node)
+    return parsed?.length === 1 && isDeepEqual(parsed[0], node)
   }
 
   private take(start: number, end: number, value = this.text.slice(start, end)): string {
     this.cursor = end
     return value
   }
+}
+
+/** Deep equality for JSON-like comark nodes: strings, arrays and plain objects. */
+function isDeepEqual(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b))
+    return true
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length)
+      return false
+    return a.every((value, i) => isDeepEqual(value, b[i]))
+  }
+  if (Array.isArray(a) || Array.isArray(b))
+    return false
+  if (typeof a === 'object' && typeof b === 'object' && a !== null && b !== null) {
+    const record = a as Record<string, unknown>
+    const other = b as Record<string, unknown>
+    const keys = Object.keys(record)
+    if (keys.length !== Object.keys(other).length)
+      return false
+    return keys.every(key => Object.hasOwn(other, key) && isDeepEqual(record[key], other[key]))
+  }
+  return false
 }
 
 function findFence(text: string, from: number, length: number): number {
