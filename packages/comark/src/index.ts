@@ -74,6 +74,7 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
   const spanSources = Boolean(options.onSegment) && options.spanSources !== false
   const report = createReport()
   const ranges: RangeEdit[] = []
+  const attrs: Array<{ target: Extract<Target, { type: 'attr' }>, text: string }> = []
   const code = new Map<ElementNode, Array<{ comment: CodeComment, text: string }>>()
   let index = 0
   for (const unit of walk(copy, policy)) {
@@ -91,7 +92,7 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
     if (resolution.status !== 'ok')
       continue
     if (target.type === 'attr')
-      target.attrs[target.key] = resolution.text
+      attrs.push({ target, text: resolution.text })
     else if (target.type === 'frontmatter')
       setAtPath(copy.frontmatter, target.path, resolution.text)
     else if (target.type === 'code')
@@ -99,6 +100,8 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
     else if (range)
       range.build = () => keepEdges(target.parent.slice(target.start, target.end), buildNodes(parseSkeleton(resolution.skeleton, segment.placeholders), refs))
   }
+  for (const { target, text } of attrs)
+    target.attrs[target.key] = text
   for (const [element, edits] of code)
     replaceText(element, edits)
   for (const { target, build, wrap } of ranges.reverse()) {

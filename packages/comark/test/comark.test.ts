@@ -286,6 +286,21 @@ describe('onSegment', () => {
     await apply(doc, new Map(), { onSegment: mark(events) })
     expect(summary(events)).toEqual([['code-comment', 'missing', 'untranslated', null, []]])
   })
+
+  it('should report image placeholder sources before the alt is translated', async () => {
+    const doc = await parse('See ![the logo](/logo.png).')
+    const { segments } = await extract(doc)
+    const [alt, paragraph] = segments
+    const translations = new Map([
+      [paragraph!.hash, 'Voir {0}.'],
+      [alt!.hash, 'le logo'],
+    ])
+    const events: ApplySegmentEvent[] = []
+    const { doc: out } = await apply(doc, translations, { onSegment: e => events.push(e) })
+    const image = events.find(e => e.segment.kind === 'paragraph')!.segment.placeholders.find(p => p.type === 'image')!
+    expect(image.source).toBe('![the logo](/logo.png)')
+    expect(await render(out)).toContain('![le logo](/logo.png)')
+  })
 })
 
 describe('render', () => {
