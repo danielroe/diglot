@@ -12,17 +12,22 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
+    "./runtime": "./src/runtime.ts",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.mts",
   "publishConfig": {
     "exports": {
       ".": "./dist/index.mjs",
+      "./runtime": "./dist/runtime.mjs",
       "./package.json": "./package.json"
     }
   },
   "typesVersions": {
     "*": {
+      "runtime": [
+        "./dist/runtime.d.mts"
+      ],
       "*": [
         "./dist/index.d.mts"
       ]
