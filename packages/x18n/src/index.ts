@@ -10,6 +10,7 @@ import { createRecordIndex } from './records.ts'
 import { markdownScanner, sourceGlobs } from './scanner.ts'
 import { createState, loadState } from './state.ts'
 
+export { run } from './cli.ts'
 export { applyReviews } from './reviews.ts'
 
 declare module '@x18n/core' {

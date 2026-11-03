@@ -1,5 +1,5 @@
 import type { TranslationRecord } from '@diglot/core'
-import type { HistoryContext, Resource, ReviewComment } from '@x18n/core'
+import type { HistoryContext, Resource, ReviewComment, ReviewData } from '@x18n/core'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -10,11 +10,12 @@ import { createManifest, recordPath, serialiseManifest, serialiseRecord, writeMa
 import { createMemoryHost } from '@x18n/core'
 import { loadWorkspace } from '@x18n/node'
 import { describe, expect, it } from 'vitest'
+import { resolveReviewer } from '../src/cli.ts'
 import { editRecord, manifestFormat, recordFormat, serialiseRaw } from '../src/format.ts'
 import { glossaryEntries } from '../src/glossary.ts'
 import { recordHistory } from '../src/history.ts'
 import { findPlaceholders, structureErrors } from '../src/placeholders.ts'
-import { reviewRecord } from '../src/reviews.ts'
+import { applyReviews, reviewRecord } from '../src/reviews.ts'
 import { createState } from '../src/state.ts'
 
 const plugin = fileURLToPath(new URL('../src/index.ts', import.meta.url))
@@ -197,6 +198,52 @@ describe('reviews', () => {
   it('should ignore stale approvals and change requests', () => {
     expect(reviewRecord(record(), [approve('something else')])).toEqual(record())
     expect(reviewRecord(record(), [approve(record().text), { id: 'b', type: 'request-change', time: '2026-10-06T00:00:00.000Z' }])).toEqual(record())
+  })
+
+  it('should prefer an explicit reviewer login', () => {
+    expect(reviewRecord(record(), [approve(record().text)], 'danielroe')).toMatchObject({ review: 'verified', verifiedBy: { by: 'danielroe' } })
+  })
+
+  it('should apply approvals with an explicit reviewer login', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-apply-'))
+    const rejected = record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })
+    await writeRecord(root, 'fr', rejected)
+    const data: ReviewData = { threads: { [rejected.hash]: { fr: [approve(rejected.text)] } }, sources: {} }
+    const written = await applyReviews(root, data, 'danielroe')
+    expect(written).toEqual([recordPath('fr', rejected.hash)])
+    expect(JSON.parse(readFileSync(join(root, written[0]!), 'utf8'))).toMatchObject({ review: 'verified', verifiedBy: { by: 'danielroe' } })
+    expect(JSON.parse(readFileSync(join(root, written[0]!), 'utf8')).rejectedBy).toBeUndefined()
+  })
+})
+
+describe('reviewer identity', () => {
+  const identity = { gh: async () => 'ghlogin', git: async () => 'gitname' }
+
+  it('should prefer the explicit reviewer', async () => {
+    expect(await resolveReviewer('danielroe', {}, identity)).toBe('danielroe')
+  })
+
+  it('should use GITHUB_ACTOR before gh and git', async () => {
+    let ghCalled = false
+    const gh = async () => {
+      ghCalled = true
+      return 'ghlogin'
+    }
+    const result = await resolveReviewer(undefined, { GITHUB_ACTOR: 'actorlogin' }, { ...identity, gh })
+    expect(result).toBe('actorlogin')
+    expect(ghCalled).toBe(false)
+  })
+
+  it('should use gh before git', async () => {
+    expect(await resolveReviewer(undefined, {}, identity)).toBe('ghlogin')
+  })
+
+  it('should fall back to git user.name', async () => {
+    expect(await resolveReviewer(undefined, {}, { gh: async () => undefined, git: async () => 'gitname' })).toBe('gitname')
+  })
+
+  it('should return undefined without any identity', async () => {
+    expect(await resolveReviewer(undefined, {}, { gh: async () => undefined, git: async () => undefined })).toBeUndefined()
   })
 })
 

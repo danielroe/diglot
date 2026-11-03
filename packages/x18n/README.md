@@ -34,6 +34,16 @@ Usages come from the files under `.diglot/sources/<source>`, which `diglot check
 
 `applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved, including rejected ones. Change requests and suggestions stay x18n review threads.
 
+## Applying reviews
+
+`x18n review approve` only writes the approval into `.x18n/reviews.yml`. Run the bundled binary to move the approval onto the record:
+
+```bash
+pnpm exec diglot-x18n apply-reviews
+```
+
+A record whose current text the last open approval approved becomes `review: 'verified'`. `verifiedBy.by` is the reviewer: `--reviewer <login>` when given, then the `GITHUB_ACTOR` environment variable, then `gh api user --jq .login`, then git `user.name`. The command prints the record files it changed; commit them together with `.x18n/reviews.yml`.
+
 ## Limitations
 
 - Record edits made through x18n have no author, so `by` is not set.

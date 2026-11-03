@@ -4,28 +4,32 @@ import { readRecord, writeRecord } from '@diglot/store'
 
 /**
  * Applies an x18n review thread to a record. The last open approval of the record's
- * current text verifies it; a change request or a suggestion leaves the record as it is.
+ * current text verifies it, by `reviewer` when given; a change request or a suggestion
+ * leaves the record as it is.
  */
-export function reviewRecord(record: TranslationRecord, comments: readonly ReviewComment[]): TranslationRecord {
+export function reviewRecord(record: TranslationRecord, comments: readonly ReviewComment[], reviewer?: string): TranslationRecord {
   const decisive = comments.findLast(c => !c.resolved && (c.type === 'approve' || c.type === 'request-change'))
   if (decisive?.type !== 'approve' || (decisive.value !== undefined && decisive.value !== record.text))
     return record
-  const by = decisive.author?.name ?? decisive.author?.email
+  const by = reviewer ?? decisive.author?.name ?? decisive.author?.email
   if (!by || (record.review === 'verified' && record.verifiedBy?.by === by))
     return record
   const { rejectedBy: _, ...rest } = record
   return { ...rest, review: 'verified', verifiedBy: { by, at: decisive.time }, updatedAt: decisive.time }
 }
 
-/** Verifies the records of `root` that an x18n review file approves. Returns the paths it wrote. */
-export async function applyReviews(root: string, data: ReviewData): Promise<string[]> {
+/**
+ * Verifies the records of `root` that an x18n review file approves. `reviewer` overrides
+ * the identity recorded in `verifiedBy.by`. Returns the paths it wrote.
+ */
+export async function applyReviews(root: string, data: ReviewData, reviewer?: string): Promise<string[]> {
   const written: string[] = []
   for (const [hash, byLocale] of Object.entries(data.threads)) {
     for (const [locale, comments] of Object.entries(byLocale)) {
       const record = await readRecord(root, locale, hash)
       if (!record)
         continue
-      const next = reviewRecord(record, comments)
+      const next = reviewRecord(record, comments, reviewer)
       if (next !== record)
         written.push(await writeRecord(root, locale, next))
     }

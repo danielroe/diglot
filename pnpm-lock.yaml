@@ -375,9 +375,15 @@ importers:
       '@diglot/store':
         specifier: workspace:*
         version: link:../store
+      citty:
+        specifier: ^0.2.2
+        version: 0.2.2
       pathe:
         specifier: ^2.0.3
         version: 2.0.3
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
     devDependencies:
       '@x18n/core':
         specifier: 0.1.8
