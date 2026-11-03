@@ -1,6 +1,6 @@
 # @diglot/core
 
-The parser-neutral core of [diglot](../../README.md): the segment model, placeholder form and hashing, translation validation, apply helpers, segment and sentence diffs, translation records, and policy and glossary types. It has no markdown parser dependency; adapters such as [`@diglot/comark`](../comark) and [`@diglot/mdast`](../mdast) produce segments for it.
+The parser-neutral core of [diglot](../../README.md): the segment model, placeholder form and hashing, translation validation, apply helpers, segment and sentence diffs, translation records, and policy and glossary types. It has no markdown parser dependency; adapters such as [`@diglot/comark`](../comark) and [`@diglot/mdast`](../mdast) produce segments for it. It imports no Node built-ins, so it runs in browsers and edge runtimes as well as Node.
 
 ```bash
 pnpm add @diglot/core

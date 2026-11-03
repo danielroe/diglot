@@ -187,6 +187,9 @@ importers:
       '@diglot/store':
         specifier: workspace:*
         version: link:packages/store
+      '@edge-runtime/vm':
+        specifier: 5.0.0
+        version: 5.0.0
       '@types/node':
         specifier: 26.6.6
         version: 26.6.6
@@ -225,7 +228,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: 5.0.5
-        version: 5.0.5(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
+        version: 5.0.5(@edge-runtime/vm@5.0.0)(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
 
   packages/action:
     dependencies:
@@ -536,6 +539,14 @@ packages:
         optional: true
       oxlint:
         optional: true
+
+  '@edge-runtime/primitives@6.0.0':
+    resolution: {integrity: sha512-FqoxaBT+prPBHBwE1WXS1ocnu/VLTQyZ6NMUBAdbP7N2hsFTTxMC/jMu2D/8GAlMQfxeuppcPuCUk/HO3fpIvA==}
+    engines: {node: '>=18'}
+
+  '@edge-runtime/vm@5.0.0':
+    resolution: {integrity: sha512-NKBGBSIKUG584qrS1tyxVpX/AKJKQw5HgjYEnPLC0QsTw79JrGn+qUr8CXFb955Iy7GUdiiUv1rJ6JBGvaKb6w==}
+    engines: {node: '>=18'}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -3463,6 +3474,12 @@ snapshots:
     optionalDependencies:
       eslint: 10.14.0(jiti@2.7.0)
 
+  '@edge-runtime/primitives@6.0.0': {}
+
+  '@edge-runtime/vm@5.0.0':
+    dependencies:
+      '@edge-runtime/primitives': 6.0.0
+
   '@emnapi/core@1.11.2':
     dependencies:
       '@emnapi/wasi-threads': 1.2.2
@@ -4021,7 +4038,7 @@ snapshots:
       obug: 3.0.0
       std-env: 4.3.0
       tinyrainbow: 3.2.0
-      vitest: 5.0.5(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.0.5(@edge-runtime/vm@5.0.0)(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
 
   '@vitest/eslint-plugin@1.6.27(@typescript-eslint/eslint-plugin@8.71.0(@typescript-eslint/parser@8.71.0(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3)(vitest@5.0.5)':
     dependencies:
@@ -4031,7 +4048,7 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 8.71.0(@typescript-eslint/parser@8.71.0(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3)
       typescript: 6.0.3
-      vitest: 5.0.5(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.0.5(@edge-runtime/vm@5.0.0)(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -6091,7 +6108,7 @@ snapshots:
       jiti: 2.7.0
       yaml: 2.9.1
 
-  vitest@5.0.5(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)):
+  vitest@5.0.5(@edge-runtime/vm@5.0.0)(@types/node@26.6.6)(@vitest/coverage-v8@5.0.5)(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/mocker': 5.0.5(vite@8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1))
@@ -6108,6 +6125,7 @@ snapshots:
       vite: 8.3.2(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)
       why-is-node-running: 3.2.1
     optionalDependencies:
+      '@edge-runtime/vm': 5.0.0
       '@types/node': 26.6.6
       '@vitest/coverage-v8': 5.0.5(vitest@5.0.5)
     transitivePeerDependencies:
