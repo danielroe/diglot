@@ -4,3 +4,4 @@ export { archiveGlossary, archiveLocaleState, archiveStyle, mergeGlossary, mtEna
 export type { ArchiveGlossaryOptions, X18nGlossaryEntry } from './locale-data.ts'
 export { decodeRecords, decodeRecordsView, encodeRecords } from './pack.ts'
 export type { EncodeRecordsOptions, RecordsCompression } from './pack.ts'
+export { parseRecordFile, parseRecordPath, recordPath, serialiseRecord } from './record-file.ts'

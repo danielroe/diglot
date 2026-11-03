@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { policyFingerprint, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
+import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseRecordFile, parseRecordPath, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -38,6 +38,21 @@ describe('records', () => {
       }
       "
     `)
+  })
+
+  it('should parse record paths and files', () => {
+    const hash = '1d4e5186ed79d236'
+    expect(parseRecordPath(recordPath('pt-BR', hash))).toEqual({ locale: 'pt-BR', hash })
+    expect(parseRecordPath(`fr/segments/ff/${hash}.json`)).toBeUndefined()
+    expect(parseRecordPath(`a/fr/segments/1d/${hash}.json`)).toBeUndefined()
+    expect(parseRecordPath('fr/locale.yml')).toBeUndefined()
+    const text = serialiseRecord(record(hash))
+    expect(parseRecordFile(text)).toEqual(record(hash))
+    expect(parseRecordFile(text, hash)).toEqual(record(hash))
+    expect(parseRecordFile(text, 'ffffffffffffffff')).toBeUndefined()
+    expect(parseRecordFile(undefined, hash)).toBeUndefined()
+    expect(parseRecordFile('{', hash)).toBeUndefined()
+    expect(parseRecordFile(JSON.stringify({ ...record(hash), origin: 'robot' }), hash)).toBeUndefined()
   })
 
   it('should refuse to write invalid records and detect misplaced files', async () => {

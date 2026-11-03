@@ -1,6 +1,7 @@
 import type { PolicySnapshot } from '@diglot/core'
 import type { Manifest } from './manifest.ts'
 import { builtin } from './builtin.ts'
+import { parseRecordPath } from './record-file.ts'
 
 /** The files of a store read from an archive of its repository. */
 export interface StoreArchive {
@@ -28,7 +29,6 @@ export interface ReadArchiveOptions {
 /** An archive as bytes or a stream of bytes, such as a `fetch` response body. */
 export type ArchiveInput = ReadableStream<Uint8Array> | Uint8Array | ArrayBuffer
 
-const RECORD_RE = /^([^/]+)\/segments\/([0-9a-f]{2})\/([0-9a-f]{16})\.json$/
 const MANIFEST_RE = /^\.diglot\/manifest\/([^/]+)\.json$/
 const POLICY_PATH = '.diglot/policy.json'
 const TEXT_RE = /^(?:[^/]+\/)?[^/]+\.ya?ml$/
@@ -50,9 +50,9 @@ export async function readArchive(input: ArchiveInput, options: ReadArchiveOptio
   const manifests = options.manifests && new Set(options.manifests)
 
   const classify = (path: string): Kind | undefined => {
-    const record = RECORD_RE.exec(path)
+    const record = parseRecordPath(path)
     if (record)
-      return record[3]!.startsWith(record[2]!) && (!locales || locales.has(record[1]!)) ? { type: 'record', locale: record[1]!, hash: record[3]! } : undefined
+      return !locales || locales.has(record.locale) ? { type: 'record', ...record } : undefined
     const manifest = MANIFEST_RE.exec(path)
     if (manifest)
       return !manifests || manifests.has(manifest[1]!) ? { type: 'manifest', source: manifest[1]! } : undefined
