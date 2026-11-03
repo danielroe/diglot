@@ -98,6 +98,10 @@ describe('decodeRecordsView', () => {
     await expect(decodeRecordsView(`{"version":1,"strings":[],"columns":[${'[],'.repeat(13)}[]]}`)).rejects.toThrow('unsupported records pack')
     await expect(decodeRecordsView(`{"version":1,"strings":[],"columns":[[1]${',[]'.repeat(14)}]}`)).rejects.toThrow('malformed records pack')
     await expect(decodeRecordsView(`{"version":1,"strings":["${at}"],"columns":[["${records[0]!.hash}"],["Hello"],["Bonjour"],[0],[1],[0,0]${',[]'.repeat(9)}]}`)).rejects.toThrow('malformed records pack')
+    await expect(decodeRecordsView(`{"version":1,"strings":[null],"columns":[[]${',[]'.repeat(14)}]}`)).rejects.toThrow('malformed records pack')
+    const duplicate = `{"version":1,"strings":["${at}"],"columns":[["${records[0]!.hash}","${records[0]!.hash}"],["Hello","Hi"],["Bonjour","Salut"],[0,0],[1,1]${',[]'.repeat(10)}]}`
+    await expect(decodeRecordsView(duplicate)).rejects.toThrow('malformed records pack')
+    await expect(decodeRecords(duplicate)).rejects.toThrow('malformed records pack')
   })
 
   it('should throw when reading a malformed record', async () => {

@@ -81,6 +81,8 @@ export async function decodeRecords(data: string): Promise<Map<string, Translati
   const out = new Map<string, TranslationRecord>()
   for (let row = 0; row < hashes.length; row++)
     out.set(hashes[row]!, record(row))
+  if (out.size !== hashes.length)
+    throw new Error('malformed records pack')
   return out
 }
 
@@ -105,6 +107,8 @@ async function readPack(data: string): Promise<Pack> {
   if (!pack || pack.version !== VERSION || !Array.isArray(pack.strings) || !Array.isArray(pack.columns) || pack.columns.length !== COLUMNS || !pack.columns.every(Array.isArray))
     throw new Error('unsupported records pack')
   const strings = pack.strings as unknown[]
+  if (!strings.every(value => typeof value === 'string'))
+    throw new Error('malformed records pack')
   const columns = pack.columns as unknown[][]
   const [hashes, sources, texts, flagsColumn, updated, prevs, salts, models, candidates, versions, bys, verifiers, verified, rejecters, rejected] = columns as [unknown[], ...unknown[][]]
   for (let i = 1; i < COLUMNS; i++) {
@@ -172,6 +176,8 @@ class RecordsView implements ReadonlyMap<string, TranslationRecord> {
     this.#record = record
     for (let row = 0; row < hashes.length; row++)
       this.#entries.set(hashes[row]!, row)
+    if (this.#entries.size !== hashes.length)
+      throw new Error('malformed records pack')
   }
 
   get size(): number {
