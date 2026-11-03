@@ -5,8 +5,9 @@ import type { InlineStats } from './inline.ts'
 import type { ComarkDocument } from './tree.ts'
 import type { Target, Unit } from './walk.ts'
 import { commentDraft } from '@diglot/code'
-import { buildSegment, createReport, createSegmentEvent, normalise, parseSkeleton, resolvePolicy, resolveTranslation, setAtPath, tally, toSkeleton } from '@diglot/core'
-import { toInline } from './inline.ts'
+import { createReport, createSegmentEvent, parseSkeleton, prepareSegment, resolvePolicy, resolveTranslation, setAtPath, tally } from '@diglot/core'
+import { clone } from './clone.ts'
+import { inlineNodes, toInline } from './inline.ts'
 import { isElement } from './tree.ts'
 import { walk } from './walk.ts'
 
@@ -70,7 +71,7 @@ export interface Applied {
  */
 export async function apply(doc: ComarkDocument, translations: Translations, options: ApplyOptions = {}): Promise<Applied> {
   const policy = resolvePolicy(options.policy)
-  const copy = structuredClone(doc)
+  const copy = clone(doc)
   const spanSources = Boolean(options.onSegment) && options.spanSources !== false
   const report = createReport()
   const ranges: RangeEdit[] = []
@@ -78,7 +79,10 @@ export async function apply(doc: ComarkDocument, translations: Translations, opt
   const code = new Map<ElementNode, Array<{ comment: CodeComment, text: string }>>()
   let index = 0
   for (const unit of walk(copy, policy)) {
-    const { segment, refs } = await prepare(unit, options.file ?? '', index, policy, undefined, spanSources)
+    let prepared = prepare(unit, options.file ?? '', index, policy, undefined, spanSources)
+    if (prepared instanceof Promise)
+      prepared = await prepared
+    const { segment, refs } = prepared
     if (!segment)
       continue
     index++
@@ -134,21 +138,28 @@ function rangeTarget(range: RangeEdit): SegmentTarget {
   }
 }
 
-async function prepare(unit: Unit, file: string, index: number, policy: Policy, spans: InlineStats | undefined, spanSources: boolean): Promise<{ segment?: Segment, refs: Array<LinkNode | AtomicNode> }> {
+interface Prepared {
+  segment?: Segment
+  refs: Array<LinkNode | AtomicNode>
+}
+
+/** A promise only when span sources have to be resolved. */
+function prepare(unit: Unit, file: string, index: number, policy: Policy, spans: InlineStats | undefined, spanSources: boolean): Prepared | Promise<Prepared> {
+  if (spanSources && Array.isArray(unit.content))
+    return toInline(unit.content, unit.slicer, spans).then(content => prepareDraft({ kind: unit.kind, content, context: unit.context, position: unit.position }, file, index, policy))
   let draft: SegmentDraft
-  let refs: Array<LinkNode | AtomicNode> = []
-  if (typeof unit.content === 'string') {
+  if (typeof unit.content === 'string')
     draft = { kind: unit.kind, content: unit.content, context: unit.context, position: unit.position }
-  }
-  else if (Array.isArray(unit.content)) {
-    const inline = await toInline(unit.content, unit.slicer, spans, spanSources)
-    refs = toSkeleton(normalise(inline)).nodes
-    draft = { kind: unit.kind, content: inline, context: unit.context, position: unit.position }
-  }
-  else {
+  else if (Array.isArray(unit.content))
+    draft = { kind: unit.kind, content: inlineNodes(unit.content), context: unit.context, position: unit.position }
+  else
     draft = { ...commentDraft(unit.content, unit.language!, unit.context), position: unit.position }
-  }
-  return { segment: buildSegment(draft, { file, index, policy }), refs }
+  return prepareDraft(draft, file, index, policy)
+}
+
+function prepareDraft(draft: SegmentDraft, file: string, index: number, policy: Policy): Prepared {
+  const prepared = prepareSegment(draft, { file, index, policy })
+  return { segment: prepared?.segment, refs: prepared?.nodes ?? [] }
 }
 
 const TAGS = { strong: 'strong', emphasis: 'em', delete: 'del' } as const
@@ -165,8 +176,8 @@ function trimEdges(nodes: Node[]): Node[] {
 function keepEdges(range: Node[], nodes: Node[]): Node[] {
   const first = range[0]
   const last = range.at(-1)
-  const lead = typeof first === 'string' ? /^\s*/.exec(first)![0] : ''
-  const trail = typeof last === 'string' ? /\s*$/.exec(last)![0] : ''
+  const lead = typeof first === 'string' ? first.slice(0, first.length - first.trimStart().length) : ''
+  const trail = typeof last === 'string' ? last.slice(last.trimEnd().length) : ''
   const out = [...nodes]
   if (lead && typeof out[0] === 'string')
     out[0] = lead + out[0]
@@ -200,9 +211,9 @@ function buildNodes(nodes: SkeletonNode[], refs: Array<LinkNode | AtomicNode>): 
     if (typeof data === 'string')
       push(data)
     else if (node.children && isElement(data))
-      push([data[0], structuredClone(data[1]), ...buildNodes(node.children, refs)])
+      push([data[0], clone(data[1]), ...buildNodes(node.children, refs)])
     else
-      push(structuredClone(data))
+      push(clone(data))
   }
   return out
 }

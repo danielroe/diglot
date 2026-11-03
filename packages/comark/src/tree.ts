@@ -53,8 +53,17 @@ export function children(node: ElementNode): Node[] {
   return node.slice(2) as Node[]
 }
 
-export function textOf(nodes: Node[]): string {
-  return nodes.map(n => typeof n === 'string' ? n : isElement(n) ? textOf(children(n)) : '').join('')
+/** Concatenated text of the children of `node`. */
+export function elementText(node: ElementNode): string {
+  let text = ''
+  for (let i = 2; i < node.length; i++) {
+    const child = node[i] as Node
+    if (typeof child === 'string')
+      text += child
+    else if (isElement(child))
+      text += elementText(child)
+  }
+  return text
 }
 
 function stripPositions(nodes: Node[]): Node[] {
