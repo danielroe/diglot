@@ -46,6 +46,9 @@ export type ValidationTarget = Pick<Segment, 'kind' | 'format' | 'placeholders'>
 
 const SINGLE_LINE: ReadonlySet<SegmentKind> = new Set(['heading', 'table-cell', 'prop', 'frontmatter', 'navigation', 'code-label', 'code-comment', 'image-alt'])
 const REPEATABLE = new Set(['code', 'binding'])
+const LINE_BREAK_RE = /[\n\r\u2028\u2029]/
+const BLOCK_START_RE = /^[ \t]*(?:#{1,6}|[>+=-]|\d+[.)])(?:[ \t]|$)/
+const BLOCK_LINE_RE = new RegExp(BLOCK_START_RE.source, 'm')
 const PLAIN_MARKUP: Array<[RegExp, string]> = [
   [/`/g, 'backtick'],
   [/\*\*|__|~~/g, 'emphasis marker'],
@@ -84,9 +87,10 @@ export function validate(translation: string, segment: ValidationTarget): Valida
     checkPlainMarkup(translation, segment.skeleton ?? '', error)
   }
   else {
-    if (/\n[ \t]*\n/.test(translation))
+    const breaks = LINE_BREAK_RE.test(translation)
+    if (breaks && /\n[ \t]*\n/.test(translation))
       error('blank-line', 'blank line would split the unit')
-    if (/^[ \t]*(?:#{1,6}|[>+=-]|\d+[.)])(?:[ \t]|$)/m.test(translation))
+    if ((breaks ? BLOCK_LINE_RE : BLOCK_START_RE).test(translation))
       error('block-syntax', 'line starts with block syntax')
     checkCharacters(translation, tokens, segment.kind, error)
   }
@@ -100,39 +104,67 @@ type Report = (code: IssueCode, message: string, at?: number) => void
 
 function checkPlainMarkup(translation: string, source: string, error: Report) {
   for (const [re, name] of PLAIN_MARKUP) {
-    const found = translation.match(re)?.length ?? 0
-    const allowed = source.match(re)?.length ?? 0
-    if (found > allowed)
+    const found = count(re, translation)
+    if (found && found > count(re, source))
       error('markup', `${name} not present in the source`)
   }
 }
 
+function count(re: RegExp, text: string): number {
+  let n = 0
+  re.lastIndex = 0
+  while (re.test(text))
+    n++
+  return n
+}
+
+const ENTITY_RE = /&#?\w+;/y
+const SIGNIFICANT_RE = /[`[\]<{}:|&]|https?:\/\/|www\./gi
+
+/** Tokens cover the input without gaps, so each token ends where the next begins. */
 function checkCharacters(input: string, tokens: GrammarToken[], kind: SegmentKind, error: Report) {
-  for (const token of tokens) {
-    if (token.type !== 'char' || token.escaped)
+  let index = 0
+  SIGNIFICANT_RE.lastIndex = 0
+  for (let match = SIGNIFICANT_RE.exec(input); match; match = SIGNIFICANT_RE.exec(input)) {
+    const i = match.index
+    while (index + 1 < tokens.length && tokens[index + 1]!.at <= i)
+      index++
+    if (tokens[index]?.type !== 'text')
       continue
-    const i = token.at
-    const ch = token.value
-    const next = input[i + 1] ?? ''
-    const prev = input[i - 1] ?? ' '
-    if (ch === '`')
-      error('inline-code', 'inline code', i)
-    else if (ch === '[' || ch === ']')
-      error('link-syntax', 'link syntax', i)
-    else if (ch === '<' && /[a-z/!?]/i.test(next))
-      error('html', 'raw HTML', i)
-    else if (ch === '{')
-      error(next === '{' ? 'binding' : 'brace', next === '{' ? 'binding' : 'unknown placeholder or attribute syntax', i)
-    else if (ch === '}')
-      error('brace', 'unbalanced brace', i)
-    else if (ch === ':' && /\s/.test(prev) && /[a-z]/i.test(next))
-      error('component', 'inline component', i)
-    else if (ch === '|' && kind === 'table-cell')
-      error('table-pipe', 'table pipe', i)
-    else if (ch === '&' && /^&#?\w+;/.test(input.slice(i)))
-      error('entity', 'HTML entity', i)
-    else if (/^(?:https?:\/\/|www\.)/i.test(input.slice(i, i + 8)))
-      error('bare-url', 'bare URL would autolink', i)
+    switch (match[0]) {
+      case '`':
+        error('inline-code', 'inline code', i)
+        break
+      case '[':
+      case ']':
+        error('link-syntax', 'link syntax', i)
+        break
+      case '<':
+        if (/[a-z/!?]/i.test(input[i + 1] ?? ''))
+          error('html', 'raw HTML', i)
+        break
+      case '{':
+        error(input[i + 1] === '{' ? 'binding' : 'brace', input[i + 1] === '{' ? 'binding' : 'unknown placeholder or attribute syntax', i)
+        break
+      case '}':
+        error('brace', 'unbalanced brace', i)
+        break
+      case ':':
+        if (/\s/.test(input[i - 1] ?? ' ') && /[a-z]/i.test(input[i + 1] ?? ''))
+          error('component', 'inline component', i)
+        break
+      case '|':
+        if (kind === 'table-cell')
+          error('table-pipe', 'table pipe', i)
+        break
+      case '&':
+        ENTITY_RE.lastIndex = i
+        if (ENTITY_RE.test(input))
+          error('entity', 'HTML entity', i)
+        break
+      default:
+        error('bare-url', 'bare URL would autolink', i)
+    }
   }
 }
 
@@ -166,7 +198,11 @@ function checkPlaceholders(tokens: GrammarToken[], placeholders: Placeholder[], 
 }
 
 function checkNesting(tokens: GrammarToken[], placeholders: Placeholder[], error: Report) {
-  const paired = new Set(placeholders.filter(p => p.close !== undefined).map(p => p.id))
+  const paired = new Set<number>()
+  for (const placeholder of placeholders) {
+    if (placeholder.close !== undefined)
+      paired.add(placeholder.id)
+  }
   const stack: string[] = []
   for (const token of tokens) {
     if (token.type === 'marker') {

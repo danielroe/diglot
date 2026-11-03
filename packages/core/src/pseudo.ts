@@ -23,8 +23,8 @@ export function pseudoTranslate(skeleton: string, format: SegmentFormat = 'markd
     run = ''
   }
   for (const token of tokenize(skeleton, { markers: format === 'markdown' })) {
-    if (token.type === 'char') {
-      run += token.escaped ? `\\${token.value}` : token.value
+    if (token.type === 'text' || token.type === 'char') {
+      run += token.type === 'text' ? token.value : `\\${token.value}`
       continue
     }
     flush()

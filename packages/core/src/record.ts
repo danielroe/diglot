@@ -61,56 +61,61 @@ export class RecordError extends Error {
   override name: string = 'RecordError'
 }
 
+const RECORD_KEY_SET: ReadonlySet<string> = new Set(RECORD_KEYS)
+const HASH_RE = /^[0-9a-f]{16}$/
+
+function fail(input: Record<string, unknown>, message: string): never {
+  throw new RecordError(`${typeof input.hash === 'string' ? `${input.hash}: ` : ''}${message}`)
+}
+
+function checkString(input: Record<string, unknown>, key: string, optional = false): void {
+  const v = input[key]
+  if (v === undefined && optional)
+    return
+  if (typeof v !== 'string' || !v)
+    fail(input, `"${key}" must be a non-empty string`)
+}
+
 /** Checks the shape of an unknown value and returns it as a record. Throws `RecordError`. */
 export function parseRecord(value: unknown): TranslationRecord {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new RecordError('record must be an object')
   const input = value as Record<string, unknown>
-  const fail = (message: string): never => {
-    throw new RecordError(`${typeof input.hash === 'string' ? `${input.hash}: ` : ''}${message}`)
+  for (const key in input) {
+    if (Object.hasOwn(input, key) && !RECORD_KEY_SET.has(key))
+      fail(input, `unknown key "${key}"`)
   }
-  for (const key of Object.keys(input)) {
-    if (!(RECORD_KEYS as readonly string[]).includes(key))
-      fail(`unknown key "${key}"`)
-  }
-  const string = (key: string, optional = false) => {
-    const v = input[key]
-    if (v === undefined && optional)
-      return
-    if (typeof v !== 'string' || !v)
-      fail(`"${key}" must be a non-empty string`)
-  }
-  string('hash')
-  if (!/^[0-9a-f]{16}$/.test(input.hash as string))
-    fail('"hash" must be 16 hex characters')
-  string('source')
-  string('text')
-  string('updatedAt')
-  string('prev', true)
-  string('salt', true)
-  string('by', true)
+  checkString(input, 'hash')
+  if (!HASH_RE.test(input.hash as string))
+    fail(input, '"hash" must be 16 hex characters')
+  checkString(input, 'source')
+  checkString(input, 'text')
+  checkString(input, 'updatedAt')
+  checkString(input, 'prev', true)
+  checkString(input, 'salt', true)
+  checkString(input, 'by', true)
   if (!ORIGINS.includes(input.origin as Origin))
-    fail(`"origin" must be one of ${ORIGINS.join(', ')}`)
+    fail(input, `"origin" must be one of ${ORIGINS.join(', ')}`)
   if (!REVIEWS.includes(input.review as Review))
-    fail(`"review" must be one of ${REVIEWS.join(', ')}`)
+    fail(input, `"review" must be one of ${REVIEWS.join(', ')}`)
   if (!DERIVED.includes(input.derived as Derived))
-    fail(`"derived" must be one of ${DERIVED.join(', ')}`)
+    fail(input, `"derived" must be one of ${DERIVED.join(', ')}`)
   if (input.derived !== 'fresh' && input.prev === undefined)
-    fail(`"prev" is required when "derived" is ${input.derived}`)
+    fail(input, `"prev" is required when "derived" is ${input.derived}`)
   if (input.mt !== undefined) {
     const mt = input.mt as Record<string, unknown>
     if (!mt || typeof mt !== 'object' || typeof mt.model !== 'string' || typeof mt.candidate !== 'string' || (mt.promptVersion !== undefined && typeof mt.promptVersion !== 'string'))
-      fail('"mt" must have string "model" and "candidate"')
+      fail(input, '"mt" must have string "model" and "candidate"')
   }
   for (const key of ['verifiedBy', 'rejectedBy']) {
     const v = input[key] as Record<string, unknown> | undefined
     if (v !== undefined && (!v || typeof v !== 'object' || typeof v.by !== 'string' || typeof v.at !== 'string'))
-      fail(`"${key}" must have string "by" and "at"`)
+      fail(input, `"${key}" must have string "by" and "at"`)
   }
   if (input.review === 'verified' && input.verifiedBy === undefined)
-    fail('"verifiedBy" is required when "review" is verified')
+    fail(input, '"verifiedBy" is required when "review" is verified')
   if ((input.review === 'rejected') !== (input.rejectedBy !== undefined))
-    fail(input.review === 'rejected' ? '"rejectedBy" is required when "review" is rejected' : '"rejectedBy" is only allowed when "review" is rejected')
+    fail(input, input.review === 'rejected' ? '"rejectedBy" is required when "review" is rejected' : '"rejectedBy" is only allowed when "review" is rejected')
   return input as unknown as TranslationRecord
 }
 

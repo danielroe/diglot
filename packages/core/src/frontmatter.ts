@@ -6,14 +6,16 @@ export type ValuePath = Array<string | number>
  * path (`{ navigation: { title: ... } }`), and `path` names the key that was read.
  */
 export function* stringsAtPaths(data: unknown, paths: string[]): Generator<[ValuePath, string]> {
+  const found: Array<[ValuePath, string]> = []
   for (const path of paths)
-    yield* collect(data, path.split('.'), [])
+    collect(data, path.split('.'), [], found)
+  yield* found
 }
 
-function* collect(value: unknown, parts: string[], path: ValuePath): Generator<[ValuePath, string]> {
+function collect(value: unknown, parts: string[], path: ValuePath, found: Array<[ValuePath, string]>): void {
   if (!parts.length) {
     if (typeof value === 'string' && value.trim())
-      yield [path, value]
+      found.push([path, value])
     return
   }
   if (!value || typeof value !== 'object')
@@ -23,23 +25,23 @@ function* collect(value: unknown, parts: string[], path: ValuePath): Generator<[
     const key = parts.slice(0, n).join('.')
     if (key.includes('[]') || !Object.hasOwn(record, key))
       continue
-    const found = [...collect(record[key], parts.slice(n), [...path, key])]
-    if (found.length) {
-      yield* found
+    const before = found.length
+    collect(record[key], parts.slice(n), [...path, key], found)
+    if (found.length > before)
       return
-    }
   }
-  const [head, ...rest] = parts as [string, ...string[]]
+  const head = parts[0]!
+  const rest = parts.slice(1)
   if (head.endsWith('[]')) {
     const key = head.slice(0, -2)
     const items = record[key]
     if (Array.isArray(items)) {
-      for (const [i, item] of items.entries())
-        yield* collect(item, rest, [...path, key, i])
+      for (let i = 0; i < items.length; i++)
+        collect(items[i], rest, [...path, key, i], found)
     }
     return
   }
-  yield* collect(record[head], rest, [...path, head])
+  collect(record[head], rest, [...path, head], found)
 }
 
 /** Sets the value at `path`, which must exist. */

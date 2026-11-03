@@ -62,7 +62,10 @@ export function proseProps(policy: Policy, component: string): string[] {
 
 /** Classifies a markdown unit by its nearest non-layout container. */
 export function kindForContainers(containers: string[], policy: Policy = defaultPolicy): SegmentKind {
-  const parent = containers.findLast(c => !policy.layout.includes(c))
+  let i = containers.length - 1
+  while (i >= 0 && policy.layout.includes(containers[i]!))
+    i--
+  const parent = containers[i]
   if (!parent)
     return 'paragraph'
   if (parent === 'li')

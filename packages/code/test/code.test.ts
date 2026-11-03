@@ -25,8 +25,9 @@ describe('findComments', () => {
       // eslint-disable-next-line no-template-curly-in-string
       'const t = `template // nope ${fn(/* inside an expression */)} done`',
       'const ratio = a / b // divided by two things',
+      'return await /[/*]/.test(x) // after two keywords',
     ].join('\n')
-    expect(texts(code, 'js')).toEqual(['inside an expression', 'divided by two things'])
+    expect(texts(code, 'js')).toEqual(['inside an expression', 'divided by two things', 'after two keywords'])
   })
 
   it('should exclude twoslash directives, tool pragmas and commented-out code', () => {
@@ -93,6 +94,16 @@ describe('findComments', () => {
     expect(isProseComment('Disable `@nuxt/image` module')).toBe(true)
     expect(isProseComment('vite: true,')).toBe(false)
     expect(isProseComment('~/plugins/vuelidate.js')).toBe(false)
+    expect(isProseComment('Don\'t do this... yet')).toBe(true)
+    expect(isProseComment('a b c d')).toBe(false)
+    expect(isProseComment('x1 y2')).toBe(false)
+    expect(isProseComment('ab:c de')).toBe(false)
+    expect(isProseComment('❌ This will fail')).toBe(true)
+    expect(isProseComment('l’état « courant »')).toBe(false)
+    expect(isProseComment('𝒜𝒜 𝒜𝒜')).toBe(true)
+    expect(isProseComment('récupère les données')).toBe(true)
+    expect(isProseComment('“quoted” words')).toBe(true)
+    expect(isProseComment('日本 語')).toBe(false)
   })
 })
 

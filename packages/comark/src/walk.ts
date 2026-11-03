@@ -5,7 +5,7 @@ import type { ComarkDocument } from './tree.ts'
 import { findComments } from '@diglot/code'
 import { kindForContainers, proseProps, stringsAtPaths } from '@diglot/core'
 import { SourceSlicer } from './slice.ts'
-import { children, isElement, textOf } from './tree.ts'
+import { children, elementText, isElement } from './tree.ts'
 
 export type Target
   = | { type: 'range', parent: Node[], start: number, end: number }
@@ -89,7 +89,7 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     if (!policy.codeComments || !element || !language)
       return
     const firstLine = fences[fenceIndex++]
-    for (const comment of findComments(textOf(children(element)), language)) {
+    for (const comment of findComments(elementText(element), language)) {
       const commentLine = firstLine === undefined ? undefined : firstLine + comment.line
       units.push({
         kind: 'code-comment',
@@ -135,7 +135,7 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     if (HEADINGS.has(tag)) {
       const level = Number(tag[1])
       pushInline('heading', container, 2, node.length, containers, tag)
-      trail = Array.from({ length: level }, (_, i) => i < level - 1 ? (trail[i] ?? '') : textOf(children(node)))
+      trail = Array.from({ length: level }, (_, i) => i < level - 1 ? (trail[i] ?? '') : elementText(node))
       return
     }
     if (tag === 'p')

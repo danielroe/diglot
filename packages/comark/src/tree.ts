@@ -1,5 +1,4 @@
 import type { ElementNode, MarkdownDocument, Node } from 'comark'
-import { createMarkdownParser } from 'comark'
 
 /** A parsed comark document, optionally with the markdown it came from. */
 export interface ComarkDocument {
@@ -29,10 +28,12 @@ export async function parse(source: string): Promise<ComarkDocument> {
 
 /** comark records `$.line` (the end line of top-level blocks) only in streaming mode. */
 async function parseStreaming(source: string): Promise<MarkdownDocument> {
+  const { createMarkdownParser } = await import('comark')
   return createMarkdownParser(parserOptions)(source, { streaming: true })
 }
 
 export async function parseInline(markdown: string): Promise<Node[] | undefined> {
+  const { createMarkdownParser } = await import('comark')
   const { nodes } = await createMarkdownParser(parserOptions)(markdown)
   const clean = stripPositions(nodes)
   const only = clean.length === 1 && isElement(clean[0]!) ? clean[0] : undefined
@@ -52,8 +53,17 @@ export function children(node: ElementNode): Node[] {
   return node.slice(2) as Node[]
 }
 
-export function textOf(nodes: Node[]): string {
-  return nodes.map(n => typeof n === 'string' ? n : isElement(n) ? textOf(children(n)) : '').join('')
+/** Concatenated text of the children of `node`. */
+export function elementText(node: ElementNode): string {
+  let text = ''
+  for (let i = 2; i < node.length; i++) {
+    const child = node[i] as Node
+    if (typeof child === 'string')
+      text += child
+    else if (isElement(child))
+      text += elementText(child)
+  }
+  return text
 }
 
 function stripPositions(nodes: Node[]): Node[] {

@@ -37,7 +37,7 @@ export function normalise(nodes: InlineNode[]): InlineNode[] {
 
 function collapse(node: InlineNode): InlineNode {
   if (node.type === 'text')
-    return { type: 'text', value: node.value.replace(/\s+/g, ' ') }
+    return /[^\S ]| {2}/.test(node.value) ? { type: 'text', value: node.value.replace(/\s+/g, ' ') } : node
   if (node.type === 'atomic')
     return node
   return { ...node, children: mergeText(node.children.map(collapse)) }
@@ -114,12 +114,30 @@ export function toMarkdown(nodes: InlineNode[]): string {
 
 /** Re-injects protected spans into a (possibly translated) skeleton. */
 export function fromSkeleton(skeleton: string, placeholders: Placeholder[]): string {
-  return skeleton.replace(/(?<!\\)\{(\/?)(\d+)\}/g, (match, closing: string, id: string) => {
-    const placeholder = placeholders[Number(id)]
+  if (!placeholders.length)
+    return skeleton
+  let out = ''
+  let last = 0
+  for (let open = skeleton.indexOf('{'); open >= 0; open = skeleton.indexOf('{', open + 1)) {
+    if (open > 0 && skeleton.charCodeAt(open - 1) === 0x5C)
+      continue
+    let end = open + 1
+    const closing = skeleton.charCodeAt(end) === 0x2F
+    if (closing)
+      end++
+    const digits = end
+    while (end < skeleton.length && skeleton.charCodeAt(end) >= 0x30 && skeleton.charCodeAt(end) <= 0x39)
+      end++
+    if (end === digits || skeleton.charCodeAt(end) !== 0x7D)
+      continue
+    const placeholder = placeholders[Number(skeleton.slice(digits, end))]
     if (!placeholder)
-      return match
-    return closing ? (placeholder.close ?? '') : placeholder.source
-  })
+      continue
+    out += skeleton.slice(last, open) + (closing ? (placeholder.close ?? '') : placeholder.source)
+    last = end + 1
+    open = end
+  }
+  return last ? out + skeleton.slice(last) : skeleton
 }
 
 /**
@@ -127,7 +145,11 @@ export function fromSkeleton(skeleton: string, placeholders: Placeholder[]): str
  * Escapes are resolved, so text values are literal.
  */
 export function parseSkeleton(skeleton: string, placeholders: Placeholder[], format: SegmentFormat = 'markdown'): SkeletonNode[] {
-  const paired = new Set(placeholders.filter(p => p.close !== undefined).map(p => p.id))
+  const paired = new Set<number>()
+  for (const placeholder of placeholders) {
+    if (placeholder.close !== undefined)
+      paired.add(placeholder.id)
+  }
   const root: SkeletonNode[] = []
   const stack: Array<{ key: string, children: SkeletonNode[] }> = [{ key: '', children: root }]
   const push = (node: SkeletonNode) => {
@@ -139,7 +161,7 @@ export function parseSkeleton(skeleton: string, placeholders: Placeholder[], for
       children.push(node)
   }
   for (const token of tokenize(skeleton, { markers: format === 'markdown' })) {
-    if (token.type === 'char') {
+    if (token.type === 'text' || token.type === 'char') {
       push({ type: 'text', value: token.value })
     }
     else if (token.type === 'marker') {
@@ -173,6 +195,8 @@ export function parseSkeleton(skeleton: string, placeholders: Placeholder[], for
  * CommonMark allows escaping any ASCII punctuation, so over-escaping is safe.
  */
 export function escapeText(value: string): string {
+  if (!/[\\`*_[\]<{}~|:&]/.test(value))
+    return value
   return value
     .replace(/[\\`*_[\]<{}~|]/g, '\\$&')
     .replace(/(^|\s):(?=[a-z])/gi, '$1\\:')
@@ -180,6 +204,8 @@ export function escapeText(value: string): string {
 }
 
 function escapeLineStart(skeleton: string): string {
+  if (!/^[#>+=\-\d]/.test(skeleton))
+    return skeleton
   return skeleton
     .replace(/^(#{1,6}|[>+=-])(?=\s|$)/, '\\$1')
     .replace(/^(\d+)([.)])(?=\s|$)/, '$1\\$2')
@@ -193,21 +219,58 @@ function hasLetters(nodes: InlineNode[]): boolean {
   return nodes.some(node => node.type === 'text' ? /\p{L}/u.test(node.value) : node.type !== 'atomic' && hasLetters(node.children))
 }
 
-function stripPlaceholders(skeleton: string): string {
-  return skeleton.replace(/\{\/?\d+\}/g, ' ')
-}
+// Placeholders hold no letters and their braces end a word, so neither function strips them.
+const LETTER_RE = /\p{L}/u
+const NUMBER_RE = /\p{N}/u
 
 /** True when the skeleton has no letters outside placeholders, so there is nothing to translate. */
 export function isPlaceholderOnly(skeleton: string): boolean {
-  return !/\p{L}/u.test(stripPlaceholders(skeleton))
+  return !LETTER_RE.test(skeleton)
 }
 
-/** Number of words outside placeholders. */
+/** Number of words outside placeholders: runs of letters, numbers, apostrophes and hyphens that start with a letter. */
 export function countWords(skeleton: string): number {
-  return (stripPlaceholders(skeleton).match(/\p{L}[\p{L}\p{N}'’-]*/gu) ?? []).length
+  let count = 0
+  let inWord = false
+  for (let i = 0; i < skeleton.length; i++) {
+    const code = skeleton.charCodeAt(i)
+    let letter: boolean
+    let part: boolean
+    if (code < 0x80) {
+      letter = (code | 0x20) >= 0x61 && (code | 0x20) <= 0x7A
+      part = letter || (code >= 0x30 && code <= 0x39) || code === 0x27 || code === 0x2D
+    }
+    else if (code === 0x2019) {
+      letter = false
+      part = true
+    }
+    else {
+      const point = skeleton.codePointAt(i)!
+      if (point > 0xFFFF)
+        i++
+      const char = String.fromCodePoint(point)
+      letter = LETTER_RE.test(char)
+      part = letter || NUMBER_RE.test(char)
+    }
+    if (inWord) {
+      inWord = part
+    }
+    else if (letter) {
+      inWord = true
+      count++
+    }
+  }
+  return count
 }
 
 /** Plain text of inline content, ignoring protected spans. */
 export function plainText(nodes: InlineNode[]): string {
-  return nodes.map(node => node.type === 'text' ? node.value : node.type === 'atomic' ? '' : plainText(node.children)).join('')
+  let text = ''
+  for (const node of nodes) {
+    if (node.type === 'text')
+      text += node.value
+    else if (node.type !== 'atomic')
+      text += plainText(node.children)
+  }
+  return text
 }

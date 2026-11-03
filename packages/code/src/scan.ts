@@ -19,6 +19,9 @@ const JSON5: CStyle = { line: true, strings: '"\'', template: false, regex: fals
 const CSS: CStyle = { line: false, strings: '"\'', template: false, regex: false }
 const SCSS: CStyle = { line: true, strings: '"\'', template: false, regex: false }
 
+const WORD_RUN_RE = /[\w$]+/y
+const SPACE_RUN_RE = /\s+/y
+const HASH_SPECIAL_RE = /["'#]/g
 const REGEX_KEYWORDS = new Set(['return', 'typeof', 'case', 'do', 'else', 'in', 'of', 'new', 'delete', 'void', 'throw', 'instanceof', 'yield', 'await'])
 
 /** With `close`, returns after the `}` that closes a template expression. */
@@ -27,6 +30,23 @@ function scanCStyle(code: string, syntax: CStyle, out: RawComment[], i = 0, clos
   let last = ''
   let word = ''
   while (i < code.length) {
+    const at = code.charCodeAt(i)
+    if (isWordCode(at)) {
+      WORD_RUN_RE.lastIndex = i
+      WORD_RUN_RE.test(code)
+      const end = WORD_RUN_RE.lastIndex
+      word = code.slice(i, end)
+      last = code[end - 1]!
+      i = end
+      continue
+    }
+    if (at === 0x20 || (at >= 0x09 && at <= 0x0D) || at > 0x7F) {
+      SPACE_RUN_RE.lastIndex = i
+      if (SPACE_RUN_RE.test(code)) {
+        i = SPACE_RUN_RE.lastIndex
+        continue
+      }
+    }
     const ch = code[i]!
     const next = code[i + 1]
     if (syntax.line && ch === '/' && next === '/') {
@@ -70,23 +90,26 @@ function scanCStyle(code: string, syntax: CStyle, out: RawComment[], i = 0, clos
         depth--
       }
     }
-    if (/[\w$]/.test(ch)) {
-      word = /[\w$]/.test(last) ? word + ch : ch
-      last = ch
-    }
-    else if (!/\s/.test(ch)) {
-      last = ch
-      word = ''
-    }
+    last = ch
+    word = ''
     i++
   }
   return i
 }
 
+/** `/[\w$]/.test(ch)` for one character. */
+function isWord(ch: string): boolean {
+  return isWordCode(ch.charCodeAt(0))
+}
+
+function isWordCode(code: number): boolean {
+  return (code >= 0x61 && code <= 0x7A) || (code >= 0x41 && code <= 0x5A) || (code >= 0x30 && code <= 0x39) || code === 0x5F || code === 0x24
+}
+
 function regexAllowed(last: string, word: string): boolean {
   if (!last)
     return true
-  if (/[\w$]/.test(last))
+  if (isWord(last))
     return REGEX_KEYWORDS.has(word)
   return !/[)\]}]/.test(last)
 }
@@ -143,15 +166,19 @@ function lineEnd(code: string, i: number): number {
   return end < 0 ? code.length : end
 }
 
-function scanHash(code: string, out: RawComment[], quotes = '"\''): void {
+function scanHash(code: string, out: RawComment[]): void {
   let i = 0
   while (i < code.length) {
+    HASH_SPECIAL_RE.lastIndex = i
+    if (!HASH_SPECIAL_RE.test(code))
+      return
+    i = HASH_SPECIAL_RE.lastIndex - 1
     const ch = code[i]!
-    if (quotes.includes(ch)) {
+    if (ch !== '#') {
       i = skipString(code, i, ch)
       continue
     }
-    if (ch === '#' && (i === 0 || /\s/.test(code[i - 1]!)) && code[i - 1] !== '$') {
+    if ((i === 0 || /\s/.test(code[i - 1]!)) && code[i - 1] !== '$') {
       const end = lineEnd(code, i)
       out.push({ start: i + 1, end, style: 'line' })
       i = end
@@ -188,15 +215,16 @@ function scanHtml(code: string, out: RawComment[]): void {
   }
 }
 
-const SCANNERS: Record<string, Scanner> = {
-  js: (code, out) => scanCStyle(code, JS, out),
-  json5: (code, out) => scanCStyle(code, JSON5, out),
-  css: (code, out) => scanCStyle(code, CSS, out),
-  scss: (code, out) => scanCStyle(code, SCSS, out),
-  html: scanHtml,
-  bash: (code, out) => scanHash(code, out),
-  yaml: (code, out) => scanHash(code, out),
-  toml: (code, out) => scanHash(code, out),
+/** `delimiters` lists every way a comment found by `scan` can start. */
+const SCANNERS: Record<string, { scan: Scanner, delimiters: string[] }> = {
+  js: { scan: (code, out) => scanCStyle(code, JS, out), delimiters: ['//', '/*'] },
+  json5: { scan: (code, out) => scanCStyle(code, JSON5, out), delimiters: ['//', '/*'] },
+  css: { scan: (code, out) => scanCStyle(code, CSS, out), delimiters: ['/*'] },
+  scss: { scan: (code, out) => scanCStyle(code, SCSS, out), delimiters: ['//', '/*'] },
+  html: { scan: scanHtml, delimiters: ['<!--', '//', '/*'] },
+  bash: { scan: scanHash, delimiters: ['#'] },
+  yaml: { scan: scanHash, delimiters: ['#'] },
+  toml: { scan: scanHash, delimiters: ['#'] },
 }
 
 const ALIASES: Record<string, string> = {
@@ -244,6 +272,7 @@ export function resolveLanguage(language: string): string | undefined {
 export function scanComments(code: string, language: string): RawComment[] {
   const scanner = SCANNERS[resolveLanguage(language) ?? '']
   const out: RawComment[] = []
-  scanner?.(code, out)
+  if (scanner?.delimiters.some(delimiter => code.includes(delimiter)))
+    scanner.scan(code, out)
   return out.sort((a, b) => a.start - b.start)
 }
