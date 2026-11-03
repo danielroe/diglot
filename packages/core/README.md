@@ -80,6 +80,24 @@ A reviewer rejects a translation by setting `review: 'rejected'` and `rejectedBy
 - `recordStatus(record, segment)` returns what a reader sees: `untranslated`, `machine`, `pending-review`, `edited`, `verified` or `rejected` (a rejected record, or a text that fails validation against `segment`). A record carried or updated from a predecessor is `pending-review` until someone edits or verifies it, whatever its `origin`
 - `editRatio(record)` measures how much of the machine candidate a reviewer changed
 
+## Review
+
+`editRecord`, `verifyRecord` and `rejectRecord` take the current record (or `undefined`) and return `{ ok: true, record, warnings }` with the next record, or `{ ok: false, code, message, errors }`:
+
+```ts
+import { editRecord, verifyRecord } from '@diglot/core'
+
+const result = verifyRecord(record, { segment, by: 'danielroe', expected: textTheReviewerSaw })
+if (!result.ok)
+  throw new Error(result.message) // result.code: 'stale', 'rejected', ...
+```
+
+- `editRecord(record, { segment, text, by })` writes a human edit (`origin: 'human'`, `review: 'edited'`), keeping `mt`, `prev` and `derived` and dropping review stamps. It refuses a text that fails validation (`invalid`) and an unchanged text (`unchanged`), unless the record is rejected
+- `verifyRecord(record, { segment, by })` sets `review: 'verified'` and `verifiedBy`. It refuses a missing record (`no-record`), a rejected one (`rejected`: an edit replaces a rejection), a text that fails validation against `segment` (`invalid`) and a verified record (`unchanged`)
+- `rejectRecord(record, { by })` sets `review: 'rejected'` and `rejectedBy` and drops `verifiedBy`. It refuses a missing or rejected record
+
+Each takes `at` (defaults to now) and `expected`, the text the reviewer saw: a record whose text differs is refused as `stale`, and `null` expects no record.
+
 ## Configuration
 
 `defineConfig` types a `diglot.config.ts`; `defaultPolicy` lists the prose props, layout containers and frontmatter paths extracted by default (a dotted path such as `navigation.title` matches a literal `navigation.title` key or a nested `navigation: { title }`, and translations are written back to the key that was read); `Glossary` describes a per-locale `glossary.yml` and `LocaleStyle` a per-locale `style.yml`; `MtConfig` holds the machine translation settings; `LocaleState` describes a per-locale `locale.yml` with the machine translation switch and the review metrics behind it.
