@@ -25,8 +25,9 @@ describe('findComments', () => {
       // eslint-disable-next-line no-template-curly-in-string
       'const t = `template // nope ${fn(/* inside an expression */)} done`',
       'const ratio = a / b // divided by two things',
+      'return await /[/*]/.test(x) // after two keywords',
     ].join('\n')
-    expect(texts(code, 'js')).toEqual(['inside an expression', 'divided by two things'])
+    expect(texts(code, 'js')).toEqual(['inside an expression', 'divided by two things', 'after two keywords'])
   })
 
   it('should exclude twoslash directives, tool pragmas and commented-out code', () => {

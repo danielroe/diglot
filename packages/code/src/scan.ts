@@ -35,8 +35,7 @@ function scanCStyle(code: string, syntax: CStyle, out: RawComment[], i = 0, clos
       WORD_RUN_RE.lastIndex = i
       WORD_RUN_RE.test(code)
       const end = WORD_RUN_RE.lastIndex
-      const chars = code.slice(i, end)
-      word = isWord(last) ? word + chars : chars
+      word = code.slice(i, end)
       last = code[end - 1]!
       i = end
       continue
