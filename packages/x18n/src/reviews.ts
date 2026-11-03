@@ -6,11 +6,12 @@ import { readRecord, writeRecord } from '@diglot/store'
 /**
  * Applies an x18n review thread to a record. The last open approval of the record's
  * current text verifies it, by `reviewer` when given; a change request or a suggestion
- * leaves the record as it is, and so does an approval of a rejected or verified record.
+ * leaves the record as it is, and so does an approval without a value or of a rejected or
+ * verified record.
  */
 export function reviewRecord(record: TranslationRecord, comments: readonly ReviewComment[], reviewer?: string): TranslationRecord {
   const decisive = comments.findLast(c => !c.resolved && (c.type === 'approve' || c.type === 'request-change'))
-  if (decisive?.type !== 'approve')
+  if (decisive?.type !== 'approve' || decisive.value === undefined)
     return record
   const by = reviewer ?? decisive.author?.name ?? decisive.author?.email
   if (!by)

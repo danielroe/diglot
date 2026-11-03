@@ -198,6 +198,7 @@ describe('reviews', () => {
 
   it('should ignore stale approvals and change requests', () => {
     expect(reviewRecord(record(), [approve('something else')])).toEqual(record())
+    expect(reviewRecord(record(), [{ ...approve(''), value: undefined }])).toEqual(record())
     expect(reviewRecord(record(), [approve(record().text), { id: 'b', type: 'request-change', time: '2026-10-06T00:00:00.000Z' }])).toEqual(record())
   })
 
