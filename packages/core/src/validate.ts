@@ -1,3 +1,4 @@
+import type { LocaleStyle } from './glossary.ts'
 import type { GrammarToken } from './grammar.ts'
 import type { Placeholder, Segment, SegmentKind } from './types.ts'
 import { tokenize } from './grammar.ts'
@@ -26,6 +27,8 @@ export type IssueCode
     | 'unclosed'
     | 'unaddressable'
     | 'rejected'
+    | 'length'
+    | 'too-long'
 
 export interface ValidationIssue {
   code: IssueCode
@@ -39,6 +42,29 @@ export interface ValidationResult {
   errors: ValidationIssue[]
   /** Accepted, but worth a reviewer's attention. */
   warnings: ValidationIssue[]
+}
+
+export interface ValidateOptions {
+  /** A locale style. A translation whose `lengthRatio` to a source of 25 characters or more is outside the style's band gets a `length` warning. */
+  style?: Pick<LocaleStyle, 'lengthRatio'>
+  /** A translation of more characters gets a `too-long` error. */
+  maxLength?: number
+}
+
+const PLACEHOLDER_RE = /(?<!\\)\{\/?\d+\}/g
+
+function textLength(skeleton: string): number {
+  return [...skeleton.replace(PLACEHOLDER_RE, '').replace(/\s+/g, ' ').trim()].length
+}
+
+/** Length of a translated skeleton relative to its source, in characters outside placeholders, with whitespace collapsed. */
+export function lengthRatio(translation: string, source: string): number {
+  return textLength(translation) / Math.max(1, textLength(source))
+}
+
+/** The longest translation of `source` that is plausibly a translation of it: four times its length plus 100 characters, and at most 8000. */
+export function maxTranslationLength(source: string): number {
+  return Math.min(8000, source.length * 4 + 100)
 }
 
 /** The parts of a segment that `validate` reads. */
@@ -66,7 +92,7 @@ const PLAIN_MARKUP: Array<[RegExp, string]> = [
  * Plain segments accept text and the source's placeholders, on one line, without markup
  * the source does not have. Code comments additionally reject comment terminators.
  */
-export function validate(translation: string, segment: ValidationTarget): ValidationResult {
+export function validate(translation: string, segment: ValidationTarget, options: ValidateOptions = {}): ValidationResult {
   const errors: ValidationIssue[] = []
   const warnings: ValidationIssue[] = []
   const error = (code: IssueCode, message: string, at?: number) => errors.push({ code, message, ...(at === undefined ? {} : { at }) })
@@ -97,6 +123,14 @@ export function validate(translation: string, segment: ValidationTarget): Valida
   checkPlaceholders(tokens, segment.placeholders, error, warnings)
   if (!plain)
     checkNesting(tokens, segment.placeholders, error)
+  if (options.maxLength !== undefined && translation.length > options.maxLength)
+    error('too-long', `translation is longer than ${options.maxLength} characters`)
+  const band = options.style?.lengthRatio
+  if (band && segment.skeleton && [...segment.skeleton.replace(PLACEHOLDER_RE, '')].length >= 25) {
+    const ratio = lengthRatio(translation, segment.skeleton)
+    if (ratio < band[0] || ratio > band[1])
+      warnings.push({ code: 'length', message: `length ratio ${ratio.toFixed(2)} outside [${band[0]}, ${band[1]}]` })
+  }
   return { ok: errors.length === 0, errors, warnings }
 }
 

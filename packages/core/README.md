@@ -43,6 +43,8 @@ validate('Nuxt [Vite](https://example.com)', segment).errors // link syntax, mis
 
 A translation may contain text, emphasis markers and the placeholders of its source. Repeated code placeholders are a warning. Plain segments (props, frontmatter, labels, code comments) are single-line and may not add markup; code comments may not contain comment terminators.
 
+`validate(translation, segment, { style, maxLength })` also checks length: with a locale's `style.lengthRatio`, a translation of a source of 25 characters or more whose `lengthRatio` (characters outside placeholders) falls outside the band gets a `length` warning, and one longer than `maxLength` gets a `too-long` error. `maxTranslationLength(source)` is the limit `editRecord` applies by default: four times the source plus 100 characters, at most 8000.
+
 `resolveTranslation(segment, translations)` looks up a translation by hash, validates it and re-injects the protected spans of the current source. Translations are skeletons or `TranslationRecord`s, in a map keyed by hash or returned by a lookup function. `parseSkeleton` turns a validated skeleton into a tree for adapters that apply translations to an AST. `pseudoTranslate` produces a valid pseudo-locale translation of any skeleton.
 
 ## Apply events
@@ -92,7 +94,7 @@ if (!result.ok)
   throw new Error(result.message) // result.code: 'stale', 'rejected', ...
 ```
 
-- `editRecord(record, { segment, text, by })` writes a human edit (`origin: 'human'`, `review: 'edited'`), keeping `mt`, `prev` and `derived` and dropping review stamps. It refuses a text that fails validation (`invalid`) and an unchanged text (`unchanged`), unless the record is rejected
+- `editRecord(record, { segment, text, by, style, maxLength })` writes a human edit (`origin: 'human'`, `review: 'edited'`), keeping `mt`, `prev` and `derived` and dropping review stamps. It refuses a text that fails validation or is longer than `maxLength` (`invalid`; `maxTranslationLength` of the source by default, `false` for none) and an unchanged text (`unchanged`), unless the record is rejected
 - `verifyRecord(record, { segment, by })` sets `review: 'verified'` and `verifiedBy`. It refuses a missing record (`no-record`), a rejected one (`rejected`: an edit replaces a rejection), a text that fails validation against `segment` (`invalid`) and a verified record (`unchanged`)
 - `rejectRecord(record, { by })` sets `review: 'rejected'` and `rejectedBy` and drops `verifiedBy`. It refuses a missing or rejected record
 

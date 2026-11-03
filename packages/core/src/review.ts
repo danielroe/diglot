@@ -1,8 +1,9 @@
+import type { LocaleStyle } from './glossary.ts'
 import type { TranslationRecord } from './record.ts'
 import type { Segment } from './types.ts'
 import type { ValidationIssue, ValidationTarget } from './validate.ts'
 import { createRecord, normaliseRecord } from './record.ts'
-import { validate } from './validate.ts'
+import { maxTranslationLength, validate } from './validate.ts'
 
 /**
  * Why a review transition was refused:
@@ -48,11 +49,17 @@ export interface EditOptions extends ReviewOptions {
   segment: Pick<Segment, 'hash' | 'skeleton' | 'salt'> & ValidationTarget
   /** The new translated skeleton. */
   text: string
+  /** The locale's style, for `length` warnings. */
+  style?: Pick<LocaleStyle, 'lengthRatio'>
+  /** Longest accepted text, or `false` for no limit. Defaults to `maxTranslationLength` of the source skeleton. */
+  maxLength?: number | false
 }
 
 export interface VerifyOptions extends ReviewOptions {
   /** Validates the record's text before verifying it. */
   segment?: ValidationTarget
+  /** The locale's style, for `length` warnings. */
+  style?: Pick<LocaleStyle, 'lengthRatio'>
 }
 
 function refuse(code: ReviewRefusalCode, message: string, errors: ValidationIssue[] = []): ReviewRefusal {
@@ -66,12 +73,13 @@ function stale(record: TranslationRecord | undefined, expected: string | null | 
 /**
  * Replaces the text of a segment's record, or creates one, as a human edit. The machine
  * candidate and lineage of the current record are kept; its review stamps are dropped, so an
- * edit also replaces a rejection. An unchanged text is refused unless the record is rejected.
+ * edit also replaces a rejection. A text that fails validation or is longer than `maxLength` is
+ * refused as `invalid`, and an unchanged text as `unchanged` unless the record is rejected.
  */
-export function editRecord(record: TranslationRecord | undefined, { segment, text, by, at = new Date().toISOString(), expected }: EditOptions): ReviewTransition {
+export function editRecord(record: TranslationRecord | undefined, { segment, text, by, at = new Date().toISOString(), expected, style, maxLength = maxTranslationLength(segment.skeleton) }: EditOptions): ReviewTransition {
   if (stale(record, expected))
     return refuse('stale', 'the translation changed since it was loaded')
-  const result = validate(text, segment)
+  const result = validate(text, segment, { style, ...(maxLength === false ? {} : { maxLength }) })
   if (!result.ok)
     return refuse('invalid', result.errors[0]!.message, result.errors)
   if (record?.text === text && record.review !== 'rejected')
@@ -84,14 +92,14 @@ export function editRecord(record: TranslationRecord | undefined, { segment, tex
 }
 
 /** Marks a record's current text as verified. Rejected, invalid and already verified records are refused. */
-export function verifyRecord(record: TranslationRecord | undefined, { segment, by, at = new Date().toISOString(), expected }: VerifyOptions): ReviewTransition {
+export function verifyRecord(record: TranslationRecord | undefined, { segment, by, at = new Date().toISOString(), expected, style }: VerifyOptions): ReviewTransition {
   if (!record)
     return refuse('no-record', 'there is no translation to verify')
   if (stale(record, expected))
     return refuse('stale', 'the translation changed since it was loaded')
   if (record.review === 'rejected')
     return refuse('rejected', 'the translation was rejected: edit it instead')
-  const result = segment ? validate(record.text, segment) : { ok: true, errors: [], warnings: [] }
+  const result = segment ? validate(record.text, segment, { style }) : { ok: true, errors: [], warnings: [] }
   if (!result.ok)
     return refuse('invalid', result.errors[0]!.message, result.errors)
   if (record.review === 'verified')

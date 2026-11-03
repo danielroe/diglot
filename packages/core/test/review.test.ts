@@ -43,6 +43,14 @@ describe('editRecord', () => {
     expect(editRecord(undefined, { segment, text: 'Nuxt repose sur {0}Nitro{/0}.', by: 'danielroe', expected: machine.text })).toMatchObject({ ok: false, code: 'stale' })
   })
 
+  it('should refuse texts much longer than the source and warn about length ratios', () => {
+    const text = `Nuxt repose sur {0}Nitro{/0}${' et encore'.repeat(20)}.`
+    expect(editRecord(machine, { segment, text, by: 'danielroe' })).toMatchObject({ ok: false, code: 'invalid', errors: [{ code: 'too-long' }] })
+    expect(editRecord(machine, { segment, text, by: 'danielroe', maxLength: false })).toMatchObject({ ok: true, warnings: [] })
+    expect(editRecord(machine, { segment, text, by: 'danielroe', maxLength: false, style: { lengthRatio: [0.8, 1.5] } })).toMatchObject({ ok: true, warnings: [{ code: 'length' }] })
+    expect(verifyRecord({ ...machine, text }, { segment, by: 'danielroe', style: { lengthRatio: [0.8, 1.5] } })).toMatchObject({ ok: true, warnings: [{ code: 'length' }] })
+  })
+
   it('should replace a rejection with the same text', () => {
     const result = editRecord(rejected, { segment, text: rejected.text, by: 'danielroe', at, expected: rejected.text })
     expect(result).toMatchObject({ ok: true, record: { review: 'edited' } })

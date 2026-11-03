@@ -1,6 +1,6 @@
 import type { Glossary, GlossaryEntry, LocaleStyle, Placeholder } from '@diglot/core'
 import type { MtSegment, QaCheck, QaIssue } from './types.ts'
-import { matchGlossary, termPattern, validate } from '@diglot/core'
+import { lengthRatio, matchGlossary, termPattern, validate } from '@diglot/core'
 
 export interface QaOptions {
   locale: string
@@ -91,11 +91,6 @@ function checkUntranslated(translation: string, source: string, glossary?: Gloss
   if (target.length >= 4 && target.filter(w => known.has(w)).length / target.length > 0.6)
     return [issue('untranslated', 'warning', 'mostly source-language words')]
   return []
-}
-
-function lengthRatio(translation: string, source: string): number {
-  const length = (s: string) => [...s.replace(PLACEHOLDER, '').replace(/\s+/g, ' ').trim()].length
-  return length(translation) / Math.max(1, length(source))
 }
 
 function checkLengthRatio(translation: string, source: string, locale: string, style?: LocaleStyle): QaIssue[] {
