@@ -1,5 +1,7 @@
 export { readArchive } from './archive.ts'
 export type { ArchiveInput, ReadArchiveOptions, StoreArchive } from './archive.ts'
+export { changedRecords } from './changes.ts'
+export type { RecordSet } from './changes.ts'
 export { fileCoverage, manifestCoverage } from './coverage.ts'
 export type { Coverage, CoverageOptions, RecordLookup } from './coverage.ts'
 export { archiveGlossary, archiveLocaleState, archiveStyle, mergeGlossary, mtEnabled, parseGlossary, parseLocaleState, parseStyle } from './locale-data.ts'

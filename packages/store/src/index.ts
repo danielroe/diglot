@@ -1,5 +1,7 @@
 export { build, parseBundle } from './build.ts'
 export type { BuildOptions, BuildResult, LocaleBundle } from './build.ts'
+export { changedRecords } from './changes.ts'
+export type { RecordSet } from './changes.ts'
 export { loadConfig, resolveConfig } from './config.ts'
 export type { ResolvedConfig } from './config.ts'
 export { fileCoverage, manifestCoverage } from './coverage.ts'

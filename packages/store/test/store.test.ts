@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { policyFingerprint, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, fileCoverage, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, manifestCoverage, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseRecordFile, parseRecordPath, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
+import { build, changedRecords, createManifest, fileCoverage, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, manifestCoverage, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseRecordFile, parseRecordPath, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -54,6 +54,19 @@ describe('records', () => {
     expect(parseRecordFile(undefined, hash)).toBeUndefined()
     expect(parseRecordFile('{', hash)).toBeUndefined()
     expect(parseRecordFile(JSON.stringify({ ...record(hash), origin: 'robot' }), hash)).toBeUndefined()
+  })
+
+  it('should find changed records', () => {
+    const a = record('aaaaaaaaaaaaaaaa')
+    const b = record('bbbbbbbbbbbbbbbb')
+    const c = record('cccccccccccccccc')
+    const before = new Map([[a.hash, a], [b.hash, b], [c.hash, c]])
+    const verified = { ...b, review: 'verified' as const, verifiedBy: { by: 'danielroe', at: b.updatedAt } }
+    const after = new Map([[a.hash, { ...a, updatedAt: '2026-12-01T00:00:00.000Z' }], [b.hash, verified], ['dddddddddddddddd', record('dddddddddddddddd')]])
+    expect(changedRecords(before, after)).toEqual(new Set([b.hash, c.hash, 'dddddddddddddddd']))
+    expect(changedRecords(before, after, ['updatedAt'])).toEqual(new Set([a.hash, c.hash, 'dddddddddddddddd']))
+    expect(changedRecords(new Map([[b.hash, verified]]), new Map([[b.hash, { ...verified, verifiedBy: { by: 'atinux', at: b.updatedAt } }]]), ['verifiedBy'])).toEqual(new Set([b.hash]))
+    expect(changedRecords(after, after)).toEqual(new Set())
   })
 
   it('should refuse to write invalid records and detect misplaced files', async () => {
