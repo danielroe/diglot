@@ -42,3 +42,20 @@ await build(config.root, { locales: config.locales, only: liveHashes(await readM
 - `loadGlossary(root, locale, { shared })` reads the shared glossary (`config.glossary`) and `<locale>/glossary.yml`; locale entries replace shared entries with the same term. Both files accept diglot's shape (`terms` with a `decision` per entry) and [x18n](https://github.com/x18n-dev/x18n)'s `glossary` shape, so one file can serve both tools. See [`@diglot/mt`](../mt#glossary) for the mapping.
 - `loadStyle(root, locale)` reads `<locale>/style.yml`: `rules`, `typography` and `lengthRatio`.
 - `loadLocaleState(root, locale)` reads `<locale>/locale.yml`: `mt.enabled`, and `governance` metrics (`activeReviewers`, `approvalRate`, `reviewLatencyDays`, `updatedAt`) for a governance job to maintain. `mtEnabled(state)` is the switch the Action reads.
+
+## Runtime
+
+`@diglot/store/runtime` reads a store without a checkout or a file system, for servers that serve translations from the latest commit of a translations repository. It has no Node built-in imports.
+
+```ts
+import { readArchive } from '@diglot/store/runtime'
+
+const response = await fetch(`https://codeload.github.com/nuxt/translations/tar.gz/${sha}`)
+const { records, manifests, files } = await readArchive(response.body!, { locales: ['fr'] })
+
+const fr = records.get('fr') // Map<hash, unknown>: read each with `parseRecord`
+```
+
+- `readArchive(input, { locales, manifests })` reads a `tar` or `tar.gz` archive (a stream, `Uint8Array` or `ArrayBuffer`) as it arrives, keeping only records, the manifests in `.diglot/manifest` and the YAML files at the root and in each locale directory. The top-level directory is dropped and `sha` comes from the pax header GitHub writes. Records and manifests that are not valid JSON, records whose `hash` does not match their file name, and manifests of another version are skipped and listed in `invalid`. It rejects when the archive is truncated or the stream errors.
+- `encodeRecords(records, { compression })` serialises a locale's records (a `Map` or object keyed by hash) into one string for a key-value cache: packed into columns with repeated values interned, then compressed and base64-encoded. `compression` is `gzip` (the default, readable everywhere), `zstd` (about three times faster to write and twice as fast to read, but only where `node:zlib` has zstd) or `none`. Values that fail `parseRecord` or sit under another hash are left out. `decodeRecords(data)` reads it back into a `Map<hash, record>`.
+- Where `process.getBuiltinModule` exists (Node, Deno, Bun), both use `node:zlib`; elsewhere `CompressionStream` and `DecompressionStream`.
