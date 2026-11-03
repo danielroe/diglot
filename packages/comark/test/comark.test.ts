@@ -355,6 +355,8 @@ describe('navigation', () => {
 
     const { segments: [page] } = await extract(await parse('---\ntitle: Get Started\n---\n\nBody.'), { file: 'docs/1.intro.md', policy })
     expect(labelSegment('Get Started', { kind: 'frontmatter', file: 'docs/1.intro.md', detail: 'title', policy })!.hash).toBe(page!.hash)
+    const { segments: [titled] } = await extract(await parse('---\ntitle: "%s · Get Started"\n---\n\nBody.'), { file: 'docs/1.intro.md', policy })
+    expect(labelSegment('%s · Get Started', { kind: 'frontmatter', file: 'docs/1.intro.md', detail: 'title', policy })!.hash).toBe(titled!.hash)
     expect(labelSegment(' ')).toBeUndefined()
   })
 
@@ -365,5 +367,9 @@ describe('navigation', () => {
     expect(translateLabel('Broken', translations)).toBe('Broken')
     expect(translateLabel('Missing', translations)).toBe('Missing')
     expect(translateLabel('Get Started', segment => segment.skeleton === 'Get Started' ? 'Démarrer' : undefined)).toBe('Démarrer')
+    const options = { file: 'docs/.navigation.yml', detail: 'titleTemplate', policy: { salt: ({ detail }: SaltInput) => detail } }
+    const salted = new Map([[labelSegment('%s · Get Started with Nuxt', options)!.hash, '{0} · Démarrer avec Nuxt']])
+    expect(translateLabel('%s · Get Started with Nuxt', salted, options)).toBe('%s · Démarrer avec Nuxt')
+    expect(translateLabel('%s · Get Started with Nuxt', salted)).toBe('%s · Get Started with Nuxt')
   })
 })
