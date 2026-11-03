@@ -3,8 +3,9 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { policyFingerprint, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mtEnabled, parseBundle, parseGlossary, parseSources, readManifest, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writeRecord } from '../src/index.ts'
+import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mtEnabled, parseBundle, parseGlossary, parseSources, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -87,6 +88,14 @@ describe('manifest', () => {
     ].join('\n'))
     expect(await readManifest(stateDir, 'main')).toEqual(manifest)
     expect(liveHashes([manifest])).toEqual(new Set(['aaaaaaaaaaaaaaaa']))
+  })
+
+  it('should record the policy fingerprint and write the policy snapshot', async () => {
+    const stateDir = temp()
+    expect(createManifest('main', {}, { policy: policyFingerprint() }).policy).toBe(policyFingerprint())
+    expect(await readPolicy(stateDir)).toBeUndefined()
+    expect(await writePolicy(stateDir, { codeComments: false })).toBe(join(stateDir, 'policy.json'))
+    expect(await readPolicy(stateDir)).toEqual(snapshotPolicy({ codeComments: false }))
   })
 })
 

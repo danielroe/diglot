@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
+import { resolvePolicy, restorePolicy, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
 import { readArchive } from '../src/runtime.ts'
 import { chunked, gzip, tar } from './tar.ts'
@@ -20,6 +21,7 @@ const files: Record<string, string> = {
   'glossary.yml': '- term: Nuxt\n  doNotTranslate: true\n',
   '.diglot/manifest/docs.json': JSON.stringify(manifest),
   '.diglot/manifest/other.json': JSON.stringify({ ...manifest, source: 'other' }),
+  '.diglot/policy.json': JSON.stringify(snapshotPolicy()),
   'dist/fr.json': JSON.stringify({ version: 1, locale: 'fr', records: {} }),
   'README.md': '# translations\n',
 }
@@ -33,6 +35,7 @@ describe('readArchive', () => {
     expect(Object.fromEntries(archive.records.get('fr')!)).toEqual({ '1d4e5186ed79d236': record('1d4e5186ed79d236') })
     expect([...archive.manifests.keys()].sort()).toEqual(['docs', 'other'])
     expect(archive.manifests.get('docs')).toEqual(manifest)
+    expect(restorePolicy(archive.policy!)).toEqual(resolvePolicy())
     expect(Object.fromEntries(archive.files)).toEqual({ 'fr/locale.yml': files['fr/locale.yml'], 'fr/glossary.yml': files['fr/glossary.yml'], 'glossary.yml': files['glossary.yml'] })
     expect(archive.invalid).toEqual(['fr/segments/2a/2a00000000000000.json', 'fr/segments/3b/3b00000000000000.json'])
   })

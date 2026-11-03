@@ -6,6 +6,7 @@ export { loadGlossary, loadLocaleState, loadStyle, mtEnabled, parseGlossary } fr
 export type { LoadGlossaryOptions, X18nGlossaryEntry } from './locale.ts'
 export { createManifest, liveHashes, manifestPath, readManifest, readManifests, serialiseManifest, validationTarget, writeManifest } from './manifest.ts'
 export type { Manifest, ManifestEntry } from './manifest.ts'
+export { policyPath, readPolicy, writePolicy } from './policy.ts'
 export { loadLocale, readRecord, readRecords, recordPath, serialiseRecord, writeRecord } from './records.ts'
 export { DEFAULT_INCLUDE, ensureCheckouts, parseSources, readSource } from './sources.ts'
 export type { CloneUrl, SourceFile, SourceSnapshot } from './sources.ts'

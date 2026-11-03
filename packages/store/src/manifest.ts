@@ -16,16 +16,19 @@ export interface Manifest {
   source: string
   ref?: string
   sha?: string
+  /** `policyFingerprint` of the policy the segments were extracted under. */
+  policy?: string
   files: Record<string, ManifestEntry[]>
 }
 
 /** Builds a manifest from extracted segments. */
-export function createManifest(source: string, files: Record<string, Segment[]>, revision: { ref?: string, sha?: string } = {}): Manifest {
+export function createManifest(source: string, files: Record<string, Segment[]>, revision: { ref?: string, sha?: string, policy?: string } = {}): Manifest {
   return {
     version: 1,
     source,
     ...(revision.ref ? { ref: revision.ref } : {}),
     ...(revision.sha ? { sha: revision.sha } : {}),
+    ...(revision.policy ? { policy: revision.policy } : {}),
     files: Object.fromEntries(Object.entries(files).sort(([a], [b]) => a < b ? -1 : 1).map(([path, segments]) => [path, segments.map(toEntry)])),
   }
 }

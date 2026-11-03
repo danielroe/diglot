@@ -3,9 +3,9 @@ import type { MtOptions, QaIssue, Usage } from '@diglot/mt'
 import type { ManifestEntry, ResolvedConfig } from '@diglot/store'
 import type { CloneUrl } from './sources.ts'
 import { extractSource } from '@diglot/cli'
-import { createRecord, diffSegments, isPlaceholderOnly } from '@diglot/core'
+import { createRecord, diffSegments, isPlaceholderOnly, policyFingerprint } from '@diglot/core'
 import { addUsage, emptyUsage, translateSegments, updateTranslation } from '@diglot/mt'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocale, loadLocaleState, loadStyle, mtEnabled, readManifest, readManifests, validationTarget, writeManifest, writeRecord } from '@diglot/store'
+import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocale, loadLocaleState, loadStyle, mtEnabled, readManifest, readManifests, validationTarget, writeManifest, writePolicy, writeRecord } from '@diglot/store'
 import { relative } from 'pathe'
 import { commitChanges } from './git.ts'
 import { ensureCheckouts } from './sources.ts'
@@ -102,6 +102,8 @@ export async function run(options: RunOptions = {}): Promise<RunResult> {
   const previousEntries = new Map<string, ManifestEntry>()
   const pairs: Array<{ before: string, after: string }> = []
   const sources: SourceReport[] = []
+  const policy = policyFingerprint(config.policy)
+  await writePolicy(config.stateDir, config.policy)
   for (const source of await ensureCheckouts(config, selected, options.cloneUrl)) {
     const { snapshot, files } = await extractSource(config, source)
     const previous = await readManifest(config.stateDir, source.name)
@@ -126,7 +128,7 @@ export async function run(options: RunOptions = {}): Promise<RunResult> {
           titles.set(file, segment.skeleton)
       }
     }
-    await writeManifest(config.stateDir, createManifest(source.name, files, { ref: source.ref, sha: snapshot.sha }))
+    await writeManifest(config.stateDir, createManifest(source.name, files, { ref: source.ref, sha: snapshot.sha, policy }))
     sources.push(report)
     log(`${source.name}: ${report.segments} segments, +${report.added} -${report.removed} ~${report.modified}`)
   }

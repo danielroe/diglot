@@ -1,3 +1,4 @@
+import type { PolicySnapshot } from '@diglot/core'
 import type { Manifest } from './manifest.ts'
 import { builtin } from './builtin.ts'
 
@@ -9,9 +10,11 @@ export interface StoreArchive {
   records: Map<string, Map<string, unknown>>
   /** Source manifests by source name. */
   manifests: Map<string, Manifest>
+  /** The policy snapshot in `.diglot/policy.json`, as parsed JSON. Read it with `restorePolicy`. */
+  policy?: PolicySnapshot
   /** Text of the YAML files at the root and in each locale directory (`glossary.yml`, `fr/locale.yml`), by path. */
   files: Map<string, string>
-  /** Paths of records and manifests that were skipped: not valid JSON, a record whose `hash` differs from its file name, or a manifest of another version. */
+  /** Paths of records, manifests and the policy snapshot that were skipped: not valid JSON, a record whose `hash` differs from its file name, or a manifest of another version. */
   invalid: string[]
 }
 
@@ -27,12 +30,13 @@ export type ArchiveInput = ReadableStream<Uint8Array> | Uint8Array | ArrayBuffer
 
 const RECORD_RE = /^([^/]+)\/segments\/([0-9a-f]{2})\/([0-9a-f]{16})\.json$/
 const MANIFEST_RE = /^\.diglot\/manifest\/([^/]+)\.json$/
+const POLICY_PATH = '.diglot/policy.json'
 const TEXT_RE = /^(?:[^/]+\/)?[^/]+\.ya?ml$/
 
 const BLOCK = 512
 const decoder = new TextDecoder()
 
-type Kind = { type: 'record', locale: string, hash: string } | { type: 'manifest', source: string } | { type: 'text' }
+type Kind = { type: 'record', locale: string, hash: string } | { type: 'manifest', source: string } | { type: 'policy' } | { type: 'text' }
 
 /**
  * Reads the records, manifests and YAML files of a store from a `tar` or `tar.gz` archive of its
@@ -52,6 +56,8 @@ export async function readArchive(input: ArchiveInput, options: ReadArchiveOptio
     const manifest = MANIFEST_RE.exec(path)
     if (manifest)
       return !manifests || manifests.has(manifest[1]!) ? { type: 'manifest', source: manifest[1]! } : undefined
+    if (path === POLICY_PATH)
+      return { type: 'policy' }
     if (TEXT_RE.test(path))
       return { type: 'text' }
   }
@@ -68,6 +74,10 @@ export async function readArchive(input: ArchiveInput, options: ReadArchiveOptio
     }
     catch {
       archive.invalid.push(path)
+      return
+    }
+    if (kind.type === 'policy') {
+      archive.policy = value as PolicySnapshot
       return
     }
     if (kind.type === 'manifest') {

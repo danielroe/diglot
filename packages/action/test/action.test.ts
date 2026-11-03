@@ -145,6 +145,7 @@ describe('run', () => {
     expect(third.totals).toMatchObject({ translated: 1, updated: 2, carried: 1, rejected: 0 })
     expect(third.sources[0]).toMatchObject({ added: 1, removed: 1, modified: 3 })
     expect(third.message!.split('\n')[0]).toBe('chore(fr): translate 1 segments, update 2, carry 1')
+    expect(JSON.parse(git(root, 'show', 'HEAD:.diglot/policy.json'))).toMatchObject({ version: 1, custom: ['salt'] })
     const after = records(root)
     const updated = Object.values(after).filter(r => r.derived === 'update')
     expect(updated.map(r => r.text).sort()).toEqual(['Use {0} in your configuration to add one or more layers. FR', 'layers! FR'])
