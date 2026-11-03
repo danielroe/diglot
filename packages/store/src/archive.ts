@@ -5,13 +5,13 @@ import { builtin } from './builtin.ts'
 export interface StoreArchive {
   /** Commit the archive was made from, from the `comment` of its pax global header (as GitHub writes it). */
   sha?: string
-  /** Record values by locale, then hash, as parsed JSON. They are not validated: read them with `parseRecord`. */
+  /** Record values by locale, then hash, as parsed JSON. Only their `hash` is checked: read them with `parseRecord`. */
   records: Map<string, Map<string, unknown>>
   /** Source manifests by source name. */
   manifests: Map<string, Manifest>
   /** Text of the YAML files at the root and in each locale directory (`glossary.yml`, `fr/locale.yml`), by path. */
   files: Map<string, string>
-  /** Paths of records and manifests that are not valid JSON, skipped. */
+  /** Paths of records and manifests that were skipped: not valid JSON, a record whose `hash` differs from its file name, or a manifest of another version. */
   invalid: string[]
 }
 
@@ -71,10 +71,14 @@ export async function readArchive(input: ArchiveInput, options: ReadArchiveOptio
       return
     }
     if (kind.type === 'manifest') {
-      if (value && typeof value === 'object' && typeof (value as Manifest).files === 'object')
+      if ((value as Manifest | null)?.version === 1 && typeof (value as Manifest).files === 'object')
         archive.manifests.set(kind.source, value as Manifest)
       else
         archive.invalid.push(path)
+      return
+    }
+    if ((value as { hash?: unknown } | null)?.hash !== kind.hash) {
+      archive.invalid.push(path)
       return
     }
     let byHash = archive.records.get(kind.locale)

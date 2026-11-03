@@ -13,6 +13,7 @@ const files: Record<string, string> = {
   'fr/segments/1d/1d4e5186ed79d236.json': `${JSON.stringify(record('1d4e5186ed79d236'), null, 2)}\n`,
   'fr/segments/2a/2a00000000000000.json': '{ not json',
   'fr/segments/ff/1d4e5186ed79d236.json': JSON.stringify(record('1d4e5186ed79d236')),
+  'fr/segments/3b/3b00000000000000.json': JSON.stringify(record('1d4e5186ed79d236')),
   'ja/segments/1d/1d4e5186ed79d236.json': JSON.stringify(record('1d4e5186ed79d236')),
   'fr/locale.yml': 'mt:\n  enabled: true\n',
   'fr/glossary.yml': 'terms: []\n',
@@ -33,7 +34,7 @@ describe('readArchive', () => {
     expect([...archive.manifests.keys()].sort()).toEqual(['docs', 'other'])
     expect(archive.manifests.get('docs')).toEqual(manifest)
     expect(Object.fromEntries(archive.files)).toEqual({ 'fr/locale.yml': files['fr/locale.yml'], 'fr/glossary.yml': files['fr/glossary.yml'], 'glossary.yml': files['glossary.yml'] })
-    expect(archive.invalid).toEqual(['fr/segments/2a/2a00000000000000.json'])
+    expect(archive.invalid).toEqual(['fr/segments/2a/2a00000000000000.json', 'fr/segments/3b/3b00000000000000.json'])
   })
 
   it('should read streams in any chunk size, compressed or not', async () => {
@@ -63,10 +64,10 @@ describe('readArchive', () => {
     }
   })
 
-  it('should list manifests that are not valid JSON or have no files', async () => {
-    const archive = await readArchive(tar('repo', { '.diglot/manifest/a.json': '{', '.diglot/manifest/b.json': '[]', '.diglot/manifest/c.json': JSON.stringify(manifest) }))
+  it('should list manifests that are not valid JSON, have no files or have another version', async () => {
+    const archive = await readArchive(tar('repo', { '.diglot/manifest/a.json': '{', '.diglot/manifest/b.json': '[]', '.diglot/manifest/c.json': JSON.stringify(manifest), '.diglot/manifest/d.json': JSON.stringify({ ...manifest, version: 2 }) }))
     expect([...archive.manifests.keys()]).toEqual(['c'])
-    expect(archive.invalid).toEqual(['.diglot/manifest/a.json', '.diglot/manifest/b.json'])
+    expect(archive.invalid).toEqual(['.diglot/manifest/a.json', '.diglot/manifest/b.json', '.diglot/manifest/d.json'])
   })
 
   it('should read the output of `git archive`', async () => {
