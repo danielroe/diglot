@@ -64,7 +64,7 @@ export function lengthRatio(translation: string, source: string): number {
 
 /** The longest translation of `source` that is plausibly a translation of it: four times its length plus 100 characters, and at most 8000. */
 export function maxTranslationLength(source: string): number {
-  return Math.min(8000, source.length * 4 + 100)
+  return Math.min(8000, [...source].length * 4 + 100)
 }
 
 /** The parts of a segment that `validate` reads. */
@@ -123,7 +123,7 @@ export function validate(translation: string, segment: ValidationTarget, options
   checkPlaceholders(tokens, segment.placeholders, error, warnings)
   if (!plain)
     checkNesting(tokens, segment.placeholders, error)
-  if (options.maxLength !== undefined && translation.length > options.maxLength)
+  if (options.maxLength !== undefined && [...translation].length > options.maxLength)
     error('too-long', `translation is longer than ${options.maxLength} characters`)
   const band = options.style?.lengthRatio
   if (band && segment.skeleton && [...segment.skeleton.replace(PLACEHOLDER_RE, '')].length >= 25) {

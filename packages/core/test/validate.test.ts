@@ -81,7 +81,9 @@ describe('validate', () => {
     expect(validate('Lisez {0}la documentation complète et détaillée{/0} sur {1} avant de commencer.', long, { style: {} }).warnings).toEqual([])
     expect(validate('Lisez {0}la documentation complète et détaillée{/0} sur {1}.', paragraph, { style }).warnings).toEqual([])
     expect(validate('Lisez {0}la doc{/0} sur {1}.', paragraph, { maxLength: 10 })).toMatchObject({ ok: false, errors: [{ code: 'too-long' }] })
+    expect(validate('Lisez {0}la doc{/0} sur {1} 🚀🚀.', paragraph, { maxLength: 31 }).ok).toBe(true)
     expect(maxTranslationLength('Hello')).toBe(120)
+    expect(maxTranslationLength('🚀')).toBe(104)
     expect(maxTranslationLength('a'.repeat(5000))).toBe(8000)
   })
 
