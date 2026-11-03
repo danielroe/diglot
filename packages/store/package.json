@@ -32,7 +32,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18.0"
   },
   "scripts": {
     "build": "tsdown",
@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "@diglot/core": "workspace:*",
-    "c12": "^4.0.0-rc.4",
     "pathe": "^2.0.3",
     "yaml": "^2.9.1"
   }

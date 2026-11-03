@@ -1,8 +1,8 @@
 import type { DiffOptions, DiglotConfig, MtConfig, Policy, SourceConfig } from '@diglot/core'
 import { existsSync } from 'node:fs'
-import { readFile } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
-import { loadConfig as loadC12 } from 'c12'
+import { readFile, stat } from 'node:fs/promises'
+import { registerHooks } from 'node:module'
+import { pathToFileURL } from 'node:url'
 import { join, resolve } from 'pathe'
 import { parseSources } from './sources.ts'
 
@@ -24,20 +24,41 @@ export interface ResolvedConfig {
   mt: MtConfig
 }
 
-/** Loads `diglot.config.*` from `cwd` (via c12) and the sources it points at. */
+const CONFIG_FILES = ['diglot.config.ts', 'diglot.config.mts', 'diglot.config.js', 'diglot.config.mjs']
+
+/** Loads `diglot.config.{ts,mts,js,mjs}` from `cwd` and the sources it points at. */
 export async function loadConfig(cwd = '.', overrides: Partial<DiglotConfig> = {}): Promise<ResolvedConfig> {
-  const { config } = await loadC12<DiglotConfig>({ name: 'diglot', cwd, overrides: overrides as DiglotConfig, rcFile: false, dotenv: false, packageJson: false, globalRc: false, jitiOptions: { alias: coreAlias() } })
-  return resolveConfig(config, resolve(cwd))
+  const root = resolve(cwd)
+  const file = CONFIG_FILES.map(name => join(root, name)).find(path => existsSync(path))
+  const config = file ? await importConfig(file) : {}
+  return resolveConfig({ ...config, ...overrides }, root)
 }
 
+async function importConfig(path: string): Promise<Partial<DiglotConfig>> {
+  aliasCore()
+  const url = pathToFileURL(path)
+  url.searchParams.set('mtime', String((await stat(path)).mtimeMs))
+  const mod = await import(url.href) as { default?: Partial<DiglotConfig> }
+  return mod.default ?? {}
+}
+
+let aliased = false
+
 /** Lets a config import `@diglot/core` without installing it next to the config. */
-function coreAlias(): Record<string, string> {
+function aliasCore(): void {
+  if (aliased)
+    return
+  aliased = true
+  let core: string
   try {
-    return { '@diglot/core': fileURLToPath(import.meta.resolve('@diglot/core')) }
+    core = import.meta.resolve('@diglot/core')
   }
   catch {
-    return {}
+    return
   }
+  registerHooks({
+    resolve: (specifier, context, next) => specifier === '@diglot/core' ? { url: core, shortCircuit: true } : next(specifier, context),
+  })
 }
 
 /** Applies defaults to a config object and loads its sources. */
