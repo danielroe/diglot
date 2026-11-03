@@ -1,6 +1,6 @@
 import type { Placeholder, ValidationTarget } from '../src/index.ts'
 import { describe, expect, it } from 'vitest'
-import { pseudoTranslate, validate } from '../src/index.ts'
+import { lengthRatio, maxTranslationLength, pseudoTranslate, validate } from '../src/index.ts'
 
 const placeholders: Placeholder[] = [
   { id: 0, type: 'link', source: '[', close: '](/docs)' },
@@ -70,6 +70,21 @@ describe('validate', () => {
     expect(codes('renvoie {0} --> <script>', comment)).toContain('comment-terminator')
     expect(codes('renvoie\n{0}', comment)).toContain('multiline')
     expect(codes('renvoie', comment)).toContain('missing-placeholder')
+  })
+
+  it('should check lengths against a locale style and a limit', () => {
+    const style = { lengthRatio: [0.8, 1.5] as [number, number] }
+    expect(lengthRatio('Lisez {0}la doc{/0}  sur {1}.', paragraph.skeleton!)).toBeCloseTo(18 / 21)
+    const long = { ...paragraph, skeleton: 'Read {0}the docs{/0} about {1} before you start.' }
+    expect(validate('Lisez {0}la doc{/0} sur {1} avant de commencer.', long, { style })).toEqual({ ok: true, errors: [], warnings: [] })
+    expect(validate('Lisez {0}la documentation complète et détaillée{/0} sur {1} avant de commencer.', long, { style })).toMatchObject({ ok: true, warnings: [{ code: 'length' }] })
+    expect(validate('Lisez {0}la documentation complète et détaillée{/0} sur {1} avant de commencer.', long, { style: {} }).warnings).toEqual([])
+    expect(validate('Lisez {0}la documentation complète et détaillée{/0} sur {1}.', paragraph, { style }).warnings).toEqual([])
+    expect(validate('Lisez {0}la doc{/0} sur {1}.', paragraph, { maxLength: 10 })).toMatchObject({ ok: false, errors: [{ code: 'too-long' }] })
+    expect(validate('Lisez {0}la doc{/0} sur {1} 🚀🚀.', paragraph, { maxLength: 31 }).ok).toBe(true)
+    expect(maxTranslationLength('Hello')).toBe(120)
+    expect(maxTranslationLength('🚀')).toBe(104)
+    expect(maxTranslationLength('a'.repeat(5000))).toBe(8000)
   })
 
   it('should accept pseudo translations of every segment shape', () => {

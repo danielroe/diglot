@@ -42,3 +42,4 @@ const output = await render(translated)
 - `apply(doc, translations, { copy: false })` translates `doc` in place instead of a copy. Use it when nothing else holds on to `doc`, such as a document parsed for this request.
 - `render(doc)` writes comark markdown, with hard breaks as `:br` and bound HTML attributes such as `:zoom="false"` intact.
 - `extractNavigation(source)` and `applyNavigation(source, translations)` handle `.navigation.yml` files.
+- `labelSegment(value, { kind, file, detail, policy })` builds the segment of one label, hashed as `extractNavigation` hashes a `.navigation.yml` value (`%s` is a placeholder) or, with `kind: 'frontmatter'`, as `extract` hashes a frontmatter value. `translateLabel(value, translations, options)` returns its translation, or `value` without a valid one. Use them to translate navigation trees and `titleTemplate`s at runtime; pass the same `file`, `detail` and `policy` as extraction when the policy has a `salt`.

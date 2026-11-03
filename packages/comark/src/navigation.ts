@@ -7,9 +7,53 @@ export interface NavigationOptions {
   policy?: Partial<Policy>
 }
 
+export interface LabelOptions {
+  /**
+   * `navigation` for a `.navigation.yml` value such as a `title` or `titleTemplate`, where `%s`
+   * is a placeholder, or `frontmatter` for a frontmatter value such as a page `title`. Defaults
+   * to `navigation`.
+   */
+  kind?: 'navigation' | 'frontmatter'
+  /** File the label was extracted from. */
+  file?: string
+  /** Key or frontmatter path of the label, such as `title`, `titleTemplate` or `navigation.title`. */
+  detail?: string
+  /** Only `salt` is read. */
+  policy?: Pick<Policy, 'salt'>
+  /** Ordinal of the segment within its file. Defaults to `0`. */
+  index?: number
+}
+
 interface NavigationUnit {
   draft: SegmentDraft
   range: [number, number]
+}
+
+function labelDraft(value: string, kind: 'navigation' | 'frontmatter', detail?: string): SegmentDraft {
+  return {
+    kind,
+    format: 'plain',
+    content: kind === 'navigation' ? templateInline(value) : value,
+    context: { headingTrail: [], containers: [], ...(detail ? { detail } : {}) },
+    position: { startLine: 1, endLine: 1, precision: 'file' },
+  }
+}
+
+/**
+ * The segment of a plain label, hashed as `extractNavigation` (or, with `kind: 'frontmatter'`,
+ * `extract`) hashes it. Returns `undefined` for an empty label.
+ */
+export function labelSegment(value: string, options: LabelOptions = {}): Segment | undefined {
+  return buildSegment(labelDraft(value, options.kind ?? 'navigation', options.detail), { file: options.file ?? '', index: options.index ?? 0, policy: options.policy })
+}
+
+/** A label in the language of `translations`, or `value` itself without a valid translation. */
+export function translateLabel(value: string, translations: Translations, options: LabelOptions = {}): string {
+  const segment = labelSegment(value, options)
+  if (!segment)
+    return value
+  const resolution = resolveTranslation(segment, translations)
+  return resolution.status === 'ok' ? resolution.text : value
 }
 
 function units(source: string, policy: Policy): NavigationUnit[] {
@@ -19,16 +63,7 @@ function units(source: string, policy: Policy): NavigationUnit[] {
     const node = doc.get(key, true)
     if (!isScalar(node) || typeof node.value !== 'string' || !node.value.trim() || !node.range)
       continue
-    out.push({
-      draft: {
-        kind: 'navigation',
-        format: 'plain',
-        content: templateInline(node.value),
-        context: { headingTrail: [], containers: [], detail: key },
-        position: { startLine: 1, endLine: 1, precision: 'file' },
-      },
-      range: [node.range[0], node.range[1]],
-    })
+    out.push({ draft: labelDraft(node.value, 'navigation', key), range: [node.range[0], node.range[1]] })
   }
   return out
 }

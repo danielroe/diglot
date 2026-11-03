@@ -1,10 +1,12 @@
 import type { Segment, TranslationRecord } from '@diglot/core'
+import type { ManifestEntry } from '../src/index.ts'
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { policyFingerprint, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { build, createManifest, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, mtEnabled, parseBundle, parseGlossary, parseSources, readManifest, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writeRecord } from '../src/index.ts'
+import { build, changedRecords, createManifest, fileCoverage, liveHashes, loadConfig, loadGlossary, loadLocaleState, loadStyle, manifestCoverage, mergeGlossary, mtEnabled, parseBundle, parseGlossary, parseLocaleState, parseRecordFile, parseRecordPath, parseSources, parseStyle, readManifest, readPolicy, readRecord, readRecords, readSource, recordPath, serialiseRecord, writeManifest, writePolicy, writeRecord } from '../src/index.ts'
 
 const temp = () => mkdtempSync(join(tmpdir(), 'diglot-store-'))
 const record = (hash: string, text = 'Bonjour'): TranslationRecord => ({ hash, source: 'Hello', text, origin: 'mt', review: 'none', derived: 'fresh', mt: { model: 'm', candidate: text }, updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -37,6 +39,34 @@ describe('records', () => {
       }
       "
     `)
+  })
+
+  it('should parse record paths and files', () => {
+    const hash = '1d4e5186ed79d236'
+    expect(parseRecordPath(recordPath('pt-BR', hash))).toEqual({ locale: 'pt-BR', hash })
+    expect(parseRecordPath(`fr/segments/ff/${hash}.json`)).toBeUndefined()
+    expect(parseRecordPath(`a/fr/segments/1d/${hash}.json`)).toBeUndefined()
+    expect(parseRecordPath('fr/locale.yml')).toBeUndefined()
+    const text = serialiseRecord(record(hash))
+    expect(parseRecordFile(text)).toEqual(record(hash))
+    expect(parseRecordFile(text, hash)).toEqual(record(hash))
+    expect(parseRecordFile(text, 'ffffffffffffffff')).toBeUndefined()
+    expect(parseRecordFile(undefined, hash)).toBeUndefined()
+    expect(parseRecordFile('{', hash)).toBeUndefined()
+    expect(parseRecordFile(JSON.stringify({ ...record(hash), origin: 'robot' }), hash)).toBeUndefined()
+  })
+
+  it('should find changed records', () => {
+    const a = record('aaaaaaaaaaaaaaaa')
+    const b = record('bbbbbbbbbbbbbbbb')
+    const c = record('cccccccccccccccc')
+    const before = new Map([[a.hash, a], [b.hash, b], [c.hash, c]])
+    const verified = { ...b, review: 'verified' as const, verifiedBy: { by: 'danielroe', at: b.updatedAt } }
+    const after = new Map([[a.hash, { ...a, updatedAt: '2026-12-01T00:00:00.000Z' }], [b.hash, verified], ['dddddddddddddddd', record('dddddddddddddddd')]])
+    expect(changedRecords(before, after)).toEqual(new Set([b.hash, c.hash, 'dddddddddddddddd']))
+    expect(changedRecords(before, after, ['updatedAt'])).toEqual(new Set([a.hash, c.hash, 'dddddddddddddddd']))
+    expect(changedRecords(new Map([[b.hash, verified]]), new Map([[b.hash, { ...verified, verifiedBy: { by: 'atinux', at: b.updatedAt } }]]), ['verifiedBy'])).toEqual(new Set([b.hash]))
+    expect(changedRecords(after, after)).toEqual(new Set())
   })
 
   it('should refuse to write invalid records and detect misplaced files', async () => {
@@ -87,6 +117,31 @@ describe('manifest', () => {
     ].join('\n'))
     expect(await readManifest(stateDir, 'main')).toEqual(manifest)
     expect(liveHashes([manifest])).toEqual(new Set(['aaaaaaaaaaaaaaaa']))
+  })
+
+  it('should count words by validated status', () => {
+    const entry = (hash: string, skeleton: string, words: number, placeholders?: ManifestEntry['placeholders']) => ({ hash, kind: 'paragraph' as const, format: 'markdown' as const, skeleton, words, ...(placeholders ? { placeholders } : {}) })
+    const manifest = { files: {
+      'a.md': [entry('aaaaaaaaaaaaaaaa', 'Use {0}.', 1, ['code']), entry('bbbbbbbbbbbbbbbb', 'Read the docs.', 3), entry('cccccccccccccccc', '{0}', 0, ['image']), entry('dddddddddddddddd', 'Not yet.', 2)],
+      'b.md': [entry('bbbbbbbbbbbbbbbb', 'Read the docs.', 3)],
+    } }
+    const records = new Map([
+      ['aaaaaaaaaaaaaaaa', { ...record('aaaaaaaaaaaaaaaa'), source: 'Use {0}.', text: 'Utilisez.', origin: 'human' as const, review: 'verified' as const, verifiedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' } }],
+      ['bbbbbbbbbbbbbbbb', { ...record('bbbbbbbbbbbbbbbb'), source: 'Read the docs.', text: 'Lisez la doc.' }],
+    ])
+    expect(manifestCoverage(manifest, records)).toEqual({
+      'a.md': { words: 6, byStatus: { rejected: 1, machine: 3, untranslated: 2 } },
+      'b.md': { words: 3, byStatus: { machine: 3 } },
+    })
+    expect(fileCoverage(manifest.files['b.md'], hash => records.get(hash), { visible: r => r.origin === 'human' })).toEqual({ words: 3, byStatus: { untranslated: 3 } })
+  })
+
+  it('should record the policy fingerprint and write the policy snapshot', async () => {
+    const stateDir = temp()
+    expect(createManifest('main', {}, { policy: policyFingerprint() }).policy).toBe(policyFingerprint())
+    expect(await readPolicy(stateDir)).toBeUndefined()
+    expect(await writePolicy(stateDir, { codeComments: false })).toBe(join(stateDir, 'policy.json'))
+    expect(await readPolicy(stateDir)).toEqual(snapshotPolicy({ codeComments: false }))
   })
 })
 
@@ -171,6 +226,20 @@ describe('config', () => {
     expect([mtEnabled(fr), mtEnabled(await loadLocaleState(root, 'ja')), mtEnabled(await loadLocaleState(root, 'de'))]).toEqual([true, false, false])
     writeFileSync(join(root, 'ja/locale.yml'), 'mt:\n  enabled: yes please\n')
     await expect(loadLocaleState(root, 'ja')).rejects.toThrow('mt.enabled')
+  })
+
+  it('should parse and merge locale files without a file system', () => {
+    expect(parseLocaleState(null)).toEqual({})
+    expect(parseLocaleState({ mt: { enabled: true } })).toEqual({ mt: { enabled: true } })
+    expect(() => parseLocaleState('enabled', 'fr/locale.yml')).toThrow('fr/locale.yml: must be a mapping')
+    expect(() => parseLocaleState({ governance: { approvalRate: 'high' } })).toThrow('governance.approvalRate')
+    expect(parseStyle({ lengthRatio: [0.8, 1.8] })).toEqual({ lengthRatio: [0.8, 1.8] })
+    expect(() => parseStyle({ rules: 'Use vous' })).toThrow('rules')
+    const shared = { terms: [{ term: 'Nuxt', decision: 'keep' as const }, { term: 'layer', decision: 'keep' as const }], style: ['shared'] }
+    const own = { terms: [{ term: 'Layer', decision: 'keep-gloss' as const, gloss: 'couche' }] }
+    expect(mergeGlossary(shared, own)).toEqual({ terms: [shared.terms[0], own.terms[0]] })
+    expect(mergeGlossary(shared, { ...own, style: ['own'] })!.style).toEqual(['own'])
+    expect(mergeGlossary(undefined, undefined)).toBeUndefined()
   })
 })
 

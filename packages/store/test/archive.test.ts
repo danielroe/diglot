@@ -2,8 +2,9 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
+import { resolvePolicy, restorePolicy, snapshotPolicy } from '@diglot/core'
 import { describe, expect, it } from 'vitest'
-import { readArchive } from '../src/runtime.ts'
+import { archiveGlossary, archiveLocaleState, archiveStyle, readArchive } from '../src/runtime.ts'
 import { chunked, gzip, tar } from './tar.ts'
 
 const record = (hash: string) => ({ hash, source: 'Hello', text: 'Bonjour', origin: 'mt', review: 'none', derived: 'fresh', updatedAt: '2026-11-01T00:00:00.000Z' })
@@ -20,6 +21,7 @@ const files: Record<string, string> = {
   'glossary.yml': '- term: Nuxt\n  doNotTranslate: true\n',
   '.diglot/manifest/docs.json': JSON.stringify(manifest),
   '.diglot/manifest/other.json': JSON.stringify({ ...manifest, source: 'other' }),
+  '.diglot/policy.json': JSON.stringify(snapshotPolicy()),
   'dist/fr.json': JSON.stringify({ version: 1, locale: 'fr', records: {} }),
   'README.md': '# translations\n',
 }
@@ -33,6 +35,7 @@ describe('readArchive', () => {
     expect(Object.fromEntries(archive.records.get('fr')!)).toEqual({ '1d4e5186ed79d236': record('1d4e5186ed79d236') })
     expect([...archive.manifests.keys()].sort()).toEqual(['docs', 'other'])
     expect(archive.manifests.get('docs')).toEqual(manifest)
+    expect(restorePolicy(archive.policy!)).toEqual(resolvePolicy())
     expect(Object.fromEntries(archive.files)).toEqual({ 'fr/locale.yml': files['fr/locale.yml'], 'fr/glossary.yml': files['fr/glossary.yml'], 'glossary.yml': files['glossary.yml'] })
     expect(archive.invalid).toEqual(['fr/segments/2a/2a00000000000000.json', 'fr/segments/3b/3b00000000000000.json'])
   })
@@ -46,6 +49,19 @@ describe('readArchive', () => {
     }
     expect(expected.sha).toBe('c'.repeat(40))
     expect(expected.files.get(`${'c'.repeat(160)}.yml`)).toBe('y')
+  })
+
+  it('should read the glossary, state and style of a locale', async () => {
+    const archive = await readArchive(tar('repo', { ...files, 'fr/glossary.yml': 'terms:\n  - term: nuxt\n    decision: translate\n    target: Nuxt\n', 'fr/style.yml': 'lengthRatio: [0.8, 1.8]\n', 'ja/locale.yml': '' }))
+    expect(archiveGlossary(archive, 'fr')).toEqual({ terms: [{ term: 'nuxt', decision: 'translate', target: 'Nuxt' }] })
+    expect(archiveGlossary(archive, 'ja')).toEqual({ terms: [{ term: 'Nuxt', decision: 'keep' }] })
+    expect(archiveGlossary(archive, 'ja', { shared: false })).toBeUndefined()
+    expect(archiveLocaleState(archive, 'fr')).toEqual({ mt: { enabled: true } })
+    expect(archiveLocaleState(archive, 'ja')).toEqual({})
+    expect(archiveLocaleState(archive, 'de')).toEqual({})
+    expect(archiveStyle(archive, 'fr')).toEqual({ lengthRatio: [0.8, 1.8] })
+    expect(archiveStyle(archive, 'ja')).toBeUndefined()
+    expect(() => archiveLocaleState({ files: new Map([['fr/locale.yml', 'mt: 1\n']]) }, 'fr')).toThrow('fr/locale.yml: `mt.enabled`')
   })
 
   it('should only read the requested locales and manifests', async () => {

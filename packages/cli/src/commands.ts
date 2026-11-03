@@ -2,8 +2,8 @@ import type { DiffableSegment, SegmentDiff, SegmentStatus } from '@diglot/core'
 import type { ManifestEntry } from '@diglot/store'
 import type { SubCommandsDef } from 'citty'
 import process from 'node:process'
-import { diffSegments, hashSkeleton, isPlaceholderOnly, recordStatus, sentenceDiff, validate } from '@diglot/core'
-import { build, createManifest, liveHashes, loadConfig, loadLocale, readManifest, readManifests, readRecords, validationTarget, writeManifest } from '@diglot/store'
+import { diffSegments, hashSkeleton, isPlaceholderOnly, policyFingerprint, recordStatus, sentenceDiff, validate } from '@diglot/core'
+import { build, createManifest, liveHashes, loadConfig, loadLocale, readManifest, readManifests, readRecords, validationTarget, writeManifest, writePolicy } from '@diglot/store'
 import { defineCommand } from 'citty'
 import { relative } from 'pathe'
 import { checkoutSource } from './checkout.ts'
@@ -29,9 +29,11 @@ const extract = defineCommand({
   },
   async run({ args }) {
     const config = await loadConfig(args.cwd)
+    const policy = policyFingerprint(config.policy)
+    await writePolicy(config.stateDir, config.policy)
     for (const source of selectSources(config, args.source)) {
       const { snapshot, files } = await extractSource(config, source, { spanSources: false })
-      const manifest = createManifest(source.name, files, { ref: source.ref, sha: snapshot.sha })
+      const manifest = createManifest(source.name, files, { ref: source.ref, sha: snapshot.sha, policy })
       const path = await writeManifest(config.stateDir, manifest)
       const segments = Object.values(files).flat()
       print(`${source.name}: ${snapshot.files.length} files, ${segments.length} segments, ${new Set(segments.map(s => s.hash)).size} unique hashes -> ${relative(config.root, path)}`)

@@ -189,14 +189,16 @@ describe('reviews', () => {
     expect(reviewRecord(record(), [approve(record().text)])).toMatchObject({ review: 'verified', verifiedBy: { by: 'clem', at: '2026-10-05T00:00:00.000Z' } })
   })
 
-  it('should clear a rejection when the text is approved', () => {
-    const verified = reviewRecord(record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } }), [approve(record().text)])
-    expect(verified).toMatchObject({ review: 'verified', verifiedBy: { by: 'clem' } })
-    expect(verified.rejectedBy).toBeUndefined()
+  it('should leave rejected and verified records as they are', () => {
+    const rejected = record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })
+    expect(reviewRecord(rejected, [approve(record().text)])).toBe(rejected)
+    const verified = record({ review: 'verified', verifiedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })
+    expect(reviewRecord(verified, [approve(record().text)])).toBe(verified)
   })
 
   it('should ignore stale approvals and change requests', () => {
     expect(reviewRecord(record(), [approve('something else')])).toEqual(record())
+    expect(reviewRecord(record(), [{ ...approve(''), value: undefined }])).toEqual(record())
     expect(reviewRecord(record(), [approve(record().text), { id: 'b', type: 'request-change', time: '2026-10-06T00:00:00.000Z' }])).toEqual(record())
   })
 
@@ -206,13 +208,12 @@ describe('reviews', () => {
 
   it('should apply approvals with an explicit reviewer login', async () => {
     const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-apply-'))
-    const rejected = record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })
-    await writeRecord(root, 'fr', rejected)
-    const data: ReviewData = { threads: { [rejected.hash]: { fr: [approve(rejected.text)] } }, sources: {} }
+    const edited = record({ origin: 'human', review: 'edited' })
+    await writeRecord(root, 'fr', edited)
+    const data: ReviewData = { threads: { [edited.hash]: { fr: [approve(edited.text)] } }, sources: {} }
     const written = await applyReviews(root, data, 'danielroe')
-    expect(written).toEqual([recordPath('fr', rejected.hash)])
+    expect(written).toEqual([recordPath('fr', edited.hash)])
     expect(JSON.parse(readFileSync(join(root, written[0]!), 'utf8'))).toMatchObject({ review: 'verified', verifiedBy: { by: 'danielroe' } })
-    expect(JSON.parse(readFileSync(join(root, written[0]!), 'utf8')).rejectedBy).toBeUndefined()
   })
 })
 

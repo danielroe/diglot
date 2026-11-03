@@ -3,8 +3,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
-import { createRecord, pseudoTranslate } from '@diglot/core'
-import { readManifest, writeRecord } from '@diglot/store'
+import { createRecord, policyFingerprint, pseudoTranslate, resolvePolicy, restorePolicy } from '@diglot/core'
+import { readManifest, readPolicy, writeRecord } from '@diglot/store'
 import { runCommand } from 'citty'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { main } from '../src/index.ts'
@@ -104,6 +104,9 @@ describe('diglot', () => {
     expect(await cli('extract', '--cwd', root)).toBe('docs: 2 files, 5 segments, 5 unique hashes -> .diglot/manifest/docs.json\n')
     const manifest = (await readManifest(join(root, '.diglot'), 'docs'))!
     const entries = Object.values(manifest.files).flat()
+    const policy = (await readPolicy(join(root, '.diglot')))!
+    expect(manifest.policy).toBe(policyFingerprint())
+    expect(restorePolicy(policy)).toEqual(resolvePolicy())
 
     writeFileSync(join(root, 'docs/guide/intro.md'), '---\ntitle: Introduction\n---\n\n# Welcome\n\nNuxt fetches data with `useFetch` and caches it per request.\n\nA brand new closing paragraph appears.\n')
     const diff = JSON.parse(await cli('diff', '--cwd', root, '--json'))

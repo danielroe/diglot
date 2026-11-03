@@ -2,16 +2,7 @@ import type { TranslationRecord } from '@diglot/core'
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { normaliseRecord, parseRecord } from '@diglot/core'
 import { dirname, join } from 'pathe'
-
-/** Path of a record relative to the store root: `<locale>/segments/<hh>/<hash>.json`. */
-export function recordPath(locale: string, hash: string): string {
-  return `${locale}/segments/${hash.slice(0, 2)}/${hash}.json`
-}
-
-/** Serialises a record deterministically: fixed key order, two-space indent, trailing newline. */
-export function serialiseRecord(record: TranslationRecord): string {
-  return `${JSON.stringify(normaliseRecord(record), null, 2)}\n`
-}
+import { recordPath, serialiseRecord } from './record-file.ts'
 
 /** Reads one record, or `undefined` when it does not exist. */
 export async function readRecord(root: string, locale: string, hash: string): Promise<TranslationRecord | undefined> {

@@ -43,6 +43,8 @@ validate('Nuxt [Vite](https://example.com)', segment).errors // link syntax, mis
 
 A translation may contain text, emphasis markers and the placeholders of its source. Repeated code placeholders are a warning. Plain segments (props, frontmatter, labels, code comments) are single-line and may not add markup; code comments may not contain comment terminators.
 
+`validate(translation, segment, { style, maxLength })` also checks length: with a locale's `style.lengthRatio`, a translation of a source of 25 characters or more whose `lengthRatio` (characters outside placeholders) falls outside the band gets a `length` warning, and one longer than `maxLength` gets a `too-long` error. `maxTranslationLength(source)` is the limit `editRecord` applies by default: four times the source plus 100 characters, at most 8000.
+
 `resolveTranslation(segment, translations)` looks up a translation by hash, validates it and re-injects the protected spans of the current source. Translations are skeletons or `TranslationRecord`s, in a map keyed by hash or returned by a lookup function. `parseSkeleton` turns a validated skeleton into a tree for adapters that apply translations to an AST. `pseudoTranslate` produces a valid pseudo-locale translation of any skeleton.
 
 ## Apply events
@@ -80,6 +82,26 @@ A reviewer rejects a translation by setting `review: 'rejected'` and `rejectedBy
 - `recordStatus(record, segment)` returns what a reader sees: `untranslated`, `machine`, `pending-review`, `edited`, `verified` or `rejected` (a rejected record, or a text that fails validation against `segment`). A record carried or updated from a predecessor is `pending-review` until someone edits or verifies it, whatever its `origin`
 - `editRatio(record)` measures how much of the machine candidate a reviewer changed
 
+## Review
+
+`editRecord`, `verifyRecord` and `rejectRecord` take the current record (or `undefined`) and return `{ ok: true, record, warnings }` with the next record, or `{ ok: false, code, message, errors }`:
+
+```ts
+import { editRecord, verifyRecord } from '@diglot/core'
+
+const result = verifyRecord(record, { segment, by: 'danielroe', expected: textTheReviewerSaw })
+if (!result.ok)
+  throw new Error(result.message) // result.code: 'stale', 'rejected', ...
+```
+
+- `editRecord(record, { segment, text, by, style, maxLength })` writes a human edit (`origin: 'human'`, `review: 'edited'`), keeping `mt`, `prev` and `derived` and dropping review stamps. It refuses a text that fails validation or is longer than `maxLength` (`invalid`; `maxTranslationLength` of the source by default, `false` for none) and an unchanged text (`unchanged`), unless the record is rejected. A record whose `hash` is not the segment's is refused as `mismatch`
+- `verifyRecord(record, { segment, by })` sets `review: 'verified'` and `verifiedBy`. It refuses a missing record (`no-record`), a rejected one (`rejected`: an edit replaces a rejection), a text that fails validation against `segment` (`invalid`) and a verified record (`unchanged`)
+- `rejectRecord(record, { by })` sets `review: 'rejected'` and `rejectedBy` and drops `verifiedBy`. It refuses a missing or rejected record
+
+Each takes `at` (defaults to now) and `expected`, the text the reviewer saw: a record whose text differs is refused as `stale`, and `null` expects no record.
+
 ## Configuration
+
+`snapshotPolicy(policy)` returns the serialisable part of a policy with its `policyFingerprint`, for `.diglot/policy.json`. `restorePolicy(snapshot, { salt, codeLabel })` rebuilds the policy for runtime `extract` and `apply`; functions cannot be serialised, so a snapshot lists custom ones in `custom`, and restoring throws unless they are passed in and the result has the same fingerprint. Fingerprints compare functions by their results on a fixed set of inputs.
 
 `defineConfig` types a `diglot.config.ts`; `defaultPolicy` lists the prose props, layout containers and frontmatter paths extracted by default (a dotted path such as `navigation.title` matches a literal `navigation.title` key or a nested `navigation: { title }`, and translations are written back to the key that was read); `Glossary` describes a per-locale `glossary.yml` and `LocaleStyle` a per-locale `style.yml`; `MtConfig` holds the machine translation settings; `LocaleState` describes a per-locale `locale.yml` with the machine translation switch and the review metrics behind it.

@@ -32,7 +32,7 @@ Usages come from the files under `.diglot/sources/<source>`, which `diglot check
 - The rules of the skeleton grammar, `<locale>/style.yml` rules and glossary style rules in translate prompts, and each locale's glossary (the shared `glossary` of `diglot.config.ts` merged with `<locale>/glossary.yml`) as x18n glossary entries.
 - `missing-translation` and `unused-key` are off by default: `x18n status` and the UI show coverage, and `diglot-unused` reports records no manifest lists. With more than one source, `key-conflict` is off too, as a hash shared by two sources is defined in two manifests.
 
-`applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved, including rejected ones. Change requests and suggestions stay x18n review threads.
+`applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved, with `@diglot/core`'s `verifyRecord`: rejected records are left for an edit to replace, and verified records keep their first reviewer. Change requests and suggestions stay x18n review threads.
 
 ## Applying reviews
 
