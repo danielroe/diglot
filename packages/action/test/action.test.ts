@@ -232,6 +232,18 @@ describe('run', () => {
     expect(files.some(p => p.startsWith('.diglot/manifest/'))).toBe(true)
   })
 
+  it('should skip the bundle and leave dist out of the commit when build-dist is false', async () => {
+    const { root } = setup()
+    const { model } = translator()
+    const result = await run({ cwd: root, model, buildDist: false })
+    expect(result.changed).toBe(true)
+    expect(existsSync(join(root, 'dist'))).toBe(false)
+    const files = git(root, 'show', '--name-only', '--format=', 'HEAD').split('\n').filter(Boolean)
+    expect(files.some(p => p.startsWith('dist/'))).toBe(false)
+    expect(files.some(p => p.startsWith('fr/segments/'))).toBe(true)
+    expect(files.some(p => p.startsWith('.diglot/manifest/'))).toBe(true)
+  })
+
   it('should skip locales with machine translation disabled', async () => {
     const { root } = setup()
     write(root, { 'fr/locale.yml': 'mt:\n  enabled: false\ngovernance:\n  approvalRate: 0.31\n' })

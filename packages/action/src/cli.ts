@@ -16,6 +16,7 @@ async function main() {
     ...(limit ? { limit: Number(limit) } : {}),
     retryRejected: input('retry-rejected') === 'true',
     commit: input('commit') !== 'false',
+    buildDist: input('build-dist') !== 'false',
     author: { name: input('git-user-name') || 'diglot[bot]', email: input('git-user-email') || 'diglot[bot]@users.noreply.github.com' },
     log: message => process.stdout.write(`${message}\n`),
   })

@@ -26,6 +26,8 @@ export interface RunOptions {
   retryRejected?: boolean
   /** Commit the changes. Defaults to `true`. */
   commit?: boolean
+  /** Build `dist/<locale>.json` and add it to the commit. Defaults to `true`. */
+  buildDist?: boolean
   /** Commit identity. */
   author?: { name: string, email: string }
   cloneUrl?: CloneUrl
@@ -145,7 +147,8 @@ export async function run(options: RunOptions = {}): Promise<RunResult> {
     log(`${locale}: translated ${report.translated}, updated ${report.updated}, carried ${report.carried}, rejected ${report.rejected}${report.skipped ? `, skipped ${report.skipped}` : ''}${report.deferred ? `, deferred ${report.deferred}` : ''}`)
   }
 
-  await build(config.root, { locales: config.locales, outDir: relative(config.root, config.outDir), only: allLive })
+  if (options.buildDist !== false)
+    await build(config.root, { locales: config.locales, outDir: relative(config.root, config.outDir), only: allLive })
 
   const totals = {
     translated: sum(locales, 'translated'),
@@ -158,7 +161,7 @@ export async function run(options: RunOptions = {}): Promise<RunResult> {
   const stateDir = relative(config.root, config.stateDir)
   const committed = await commitChanges(config.root, [...config.locales, stateDir], message, {
     exclude: [`${stateDir}/checkouts`],
-    force: [relative(config.root, config.outDir)],
+    force: options.buildDist === false ? [] : [relative(config.root, config.outDir)],
     ...(options.commit === false ? {} : { author: options.author ?? { name: 'diglot[bot]', email: 'diglot[bot]@users.noreply.github.com' } }),
   })
   return { sources, locales, totals, changed: committed.changed, ...(committed.changed ? { message } : {}), ...(committed.sha ? { sha: committed.sha } : {}) }

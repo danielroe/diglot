@@ -40,6 +40,7 @@ jobs:
         with:
           sources: ${{ github.event.client_payload.sources || inputs.sources }}
           limit: ${{ inputs.limit }}
+          build-dist: 'false'
           git-user-name: nuxt-translations[bot]
           git-user-email: nuxt-translations[bot]@users.noreply.github.com
         env:

@@ -1,6 +1,6 @@
 # @diglot/action
 
-A GitHub Action for [diglot](../../README.md) translations repositories. On each run it extracts every source, diffs it against the stored manifests, machine-translates what changed for each locale with machine translation enabled, rebuilds `dist/<locale>.json`, and commits the result as one commit.
+A GitHub Action for [diglot](../../README.md) translations repositories. On each run it extracts every source, diffs it against the stored manifests, machine-translates what changed for each locale with machine translation enabled, rebuilds `dist/<locale>.json` (unless `build-dist` is `false`), and commits the result as one commit.
 
 ```yaml
 - uses: actions/checkout@v4
@@ -27,10 +27,10 @@ The Action commits to the checked-out branch and never pushes; pushing is the wo
 3. For each locale whose `<locale>/locale.yml` has `mt.enabled: true`, every live segment without a record is handled once (identical text across sources and branches shares one record):
    - with a predecessor whose record is not rejected: `updateTranslation` from `@diglot/mt`, which carries the text over without a model call when the skeleton is identical and only the hash changed (a context salt, `derived: carry`), and otherwise updates it from the word diff (`derived: update`), case and punctuation edits included;
    - otherwise: `translateSegments`, one request per page, with the locale's glossary and style.
-4. Writes records with `review: none` and `prev` where there is a predecessor (`origin: mt`, except carries, which keep the predecessor's `origin` and `mt`; carried and updated records read as `pending-review`), updates manifests, and builds `dist/<locale>.json` from the live records of every locale.
-5. Commits the changed records, state and bundles as the given identity with a summary message, for example `chore(fr): translate 78 segments, update 12, carry 31`.
+4. Writes records with `review: none` and `prev` where there is a predecessor (`origin: mt`, except carries, which keep the predecessor's `origin` and `mt`; carried and updated records read as `pending-review`), updates manifests, and, unless `build-dist` is `false`, builds `dist/<locale>.json` from the live records of every locale.
+5. Commits the changed records and state (and the bundles, when `build-dist` is not `false`) as the given identity with a summary message, for example `chore(fr): translate 78 segments, update 12, carry 31`.
 
-Records a reviewer rejected (`review: rejected`) are kept as they are and shipped in the bundles, so their segments are not translated again until their source changes. Segments rejected by QA are listed in `.diglot/rejected/<locale>.json` with the reasons and skipped by later runs until their source changes (or `retry-rejected` is set). Locales with machine translation disabled get no new records, but their bundles are still rebuilt. A run with no source changes makes no model calls and no commit.
+Records a reviewer rejected (`review: rejected`) are kept as they are and shipped in the bundles, so their segments are not translated again until their source changes. Segments rejected by QA are listed in `.diglot/rejected/<locale>.json` with the reasons and skipped by later runs until their source changes (or `retry-rejected` is set). Locales with machine translation disabled get no new records, but their bundles are still rebuilt when `build-dist` is not `false`. A run with no source changes makes no model calls and no commit.
 
 ## Inputs
 
@@ -44,6 +44,7 @@ Records a reviewer rejected (`review: rejected`) are kept as they are and shippe
 | `limit` | none | Most segments per locale sent to the model in one run; the rest wait for the next run |
 | `retry-rejected` | `false` | Translate previously rejected segments again |
 | `commit` | `true` | Commit the changes |
+| `build-dist` | `true` | Build `dist/<locale>.json` and add it to the commit |
 | `git-user-name` | `diglot[bot]` | Commit author |
 | `git-user-email` | `diglot[bot]@users.noreply.github.com` | Commit author email |
 

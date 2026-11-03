@@ -27,6 +27,9 @@ inputs:
   commit:
     description: Commit the changes to the current branch
     default: 'true'
+  build-dist:
+    description: Build dist/<locale>.json and add it to the commit
+    default: 'true'
   git-user-name:
     description: Commit author name
     default: diglot[bot]
@@ -79,6 +82,7 @@ runs:
         INPUT_LIMIT: ${{ inputs.limit }}
         INPUT_RETRY-REJECTED: ${{ inputs.retry-rejected }}
         INPUT_COMMIT: ${{ inputs.commit }}
+        INPUT_BUILD-DIST: ${{ inputs.build-dist }}
         INPUT_GIT-USER-NAME: ${{ inputs.git-user-name }}
         INPUT_GIT-USER-EMAIL: ${{ inputs.git-user-email }}
         AI_GATEWAY_API_KEY: ${{ inputs.ai-gateway-api-key || env.AI_GATEWAY_API_KEY }}
