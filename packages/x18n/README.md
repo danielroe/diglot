@@ -32,17 +32,15 @@ Usages come from the files under `.diglot/sources/<source>`, which `diglot check
 - The rules of the skeleton grammar, `<locale>/style.yml` rules and glossary style rules in translate prompts, and each locale's glossary (the shared `glossary` of `diglot.config.ts` merged with `<locale>/glossary.yml`) as x18n glossary entries.
 - `missing-translation` and `unused-key` are off by default: `x18n status` and the UI show coverage, and `diglot-unused` reports records no manifest lists. With more than one source, `key-conflict` is off too, as a hash shared by two sources is defined in two manifests.
 
-`applyReviews(root, reviews)` verifies the records whose current text an x18n `approve` review approved, with `@diglot/core`'s `verifyRecord`: rejected records are left for an edit to replace, and verified records keep their first reviewer. Change requests and suggestions stay x18n review threads.
+## Reviews
 
-## Applying reviews
+Approving a translation in x18n (`x18n review approve <hash> --locale fr`, or the UI) verifies its record: the record becomes `review: 'verified'` with `verifiedBy` set to the reviewer and the time of the approval, and the approval is added to `.x18n/reviews.yml` in the same edit plan. Commit both files together.
 
-`x18n review approve` only writes the approval into `.x18n/reviews.yml`. Run the bundled binary to move the approval onto the record:
+Records are verified with `@diglot/core`'s `verifyRecord`, and only while they still hold the approved text. Rejected records are left for an edit to replace, records that fail validation are not verified, and verified records keep their first reviewer.
 
-```bash
-pnpm exec diglot-x18n apply-reviews
-```
+Applying a suggestion is an edit of the record, so it becomes `edited`. Comments, change requests and resolving a thread leave the record as it is.
 
-A record whose current text the last open approval approved becomes `review: 'verified'`. `verifiedBy.by` is the reviewer: `--reviewer <login>` when given, then the `GITHUB_ACTOR` environment variable, then `gh api user --jq .login`, then git `user.name`. The command prints the record files it changed; commit them together with `.x18n/reviews.yml`.
+`verifiedBy.by` is the login of the approval author's GitHub noreply email. Failing that, when the author is unset or is the project's git identity, it is the `GITHUB_ACTOR` environment variable, then `gh api user --jq .login`. Otherwise it is the author's name, then their email.
 
 ## Limitations
 

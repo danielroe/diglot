@@ -1,5 +1,6 @@
 import type { TranslationRecord } from '@diglot/core'
-import type { HistoryContext, Resource, ReviewComment, ReviewData } from '@x18n/core'
+import type { HistoryContext, Message, Resource, ReviewComment, ReviewEdit } from '@x18n/core'
+import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -9,13 +10,12 @@ import { createRecord, hashSkeleton } from '@diglot/core'
 import { createManifest, recordPath, serialiseManifest, serialiseRecord, writeManifest, writeRecord } from '@diglot/store'
 import { createMemoryHost } from '@x18n/core'
 import { loadWorkspace } from '@x18n/node'
-import { describe, expect, it } from 'vitest'
-import { resolveReviewer } from '../src/cli.ts'
+import { describe, expect, it, onTestFinished, vi } from 'vitest'
 import { editRecord, manifestFormat, recordFormat, serialiseRaw } from '../src/format.ts'
 import { glossaryEntries } from '../src/glossary.ts'
 import { recordHistory } from '../src/history.ts'
 import { findPlaceholders, structureErrors } from '../src/placeholders.ts'
-import { applyReviews, reviewRecord } from '../src/reviews.ts'
+import { githubReviewer, gitIdentity, reviewEdit } from '../src/reviews.ts'
 import { createState } from '../src/state.ts'
 
 const plugin = fileURLToPath(new URL('../src/index.ts', import.meta.url))
@@ -183,68 +183,99 @@ describe('history', () => {
 })
 
 describe('reviews', () => {
-  const approve = (value: string): ReviewComment => ({ id: 'a', type: 'approve', author: { name: 'clem' }, time: '2026-10-05T00:00:00.000Z', value })
-
-  it('should verify a record whose current text was approved', () => {
-    expect(reviewRecord(record(), [approve(record().text)])).toMatchObject({ review: 'verified', verifiedBy: { by: 'clem', at: '2026-10-05T00:00:00.000Z' } })
+  const path = recordPath('fr', record().hash)
+  const resource = { id: path, path, locale: 'fr', namespace: undefined, format: 'diglot-record', block: undefined, readonly: false, finder: 'pattern' } satisfies Resource
+  const at = '2026-10-05T00:00:00.000Z'
+  const edit = (type: ReviewEdit['type'], value: string | undefined): ReviewEdit => {
+    const comment: ReviewComment = { id: 'a', type: type === 'approve' ? 'approve' : 'request-change', author: { name: 'Clem' }, time: at, value }
+    return { type, key: record().hash, locale: 'fr', comment, comments: [comment] }
+  }
+  const review = (text: string, change: ReviewEdit, state = createState()) => reviewEdit(state, () => 'clem')(change, {
+    message: () => ({ resource: path }) as unknown as Message,
+    resource: () => resource,
+    text: p => p === path ? text : undefined,
   })
 
-  it('should leave rejected and verified records as they are', () => {
-    const rejected = record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })
-    expect(reviewRecord(rejected, [approve(record().text)])).toBe(rejected)
-    const verified = record({ review: 'verified', verifiedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })
-    expect(reviewRecord(verified, [approve(record().text)])).toBe(verified)
+  it('should verify a record whose current text was approved, keeping unknown fields', () => {
+    const [write] = review(`${JSON.stringify({ ...record(), note: 'keep me' }, null, 2)}\n`, edit('approve', record().text))!
+    expect(write!.path).toBe(path)
+    expect(JSON.parse(write!.content)).toMatchObject({ review: 'verified', verifiedBy: { by: 'clem', at }, updatedAt: at, note: 'keep me' })
   })
 
-  it('should ignore stale approvals and change requests', () => {
-    expect(reviewRecord(record(), [approve('something else')])).toEqual(record())
-    expect(reviewRecord(record(), [{ ...approve(''), value: undefined }])).toEqual(record())
-    expect(reviewRecord(record(), [approve(record().text), { id: 'b', type: 'request-change', time: '2026-10-06T00:00:00.000Z' }])).toEqual(record())
+  it('should refuse stale approvals and approvals without a value', () => {
+    expect(review(serialiseRecord(record()), edit('approve', 'Salut {0}le monde{/0}'))).toBeUndefined()
+    expect(review(serialiseRecord(record()), edit('approve', undefined))).toBeUndefined()
   })
 
-  it('should prefer an explicit reviewer login', () => {
-    expect(reviewRecord(record(), [approve(record().text)], 'danielroe')).toMatchObject({ review: 'verified', verifiedBy: { by: 'danielroe' } })
+  it('should leave rejected, verified and invalid records as they are', () => {
+    expect(review(serialiseRecord(record({ review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })), edit('approve', record().text))).toBeUndefined()
+    expect(review(serialiseRecord(record({ review: 'verified', verifiedBy: { by: 'atinux', at: '2026-10-02T00:00:00.000Z' } })), edit('approve', record().text))).toBeUndefined()
+    const state = createState()
+    state.segments.set(record().hash, { hash: record().hash, kind: 'paragraph', format: 'markdown', words: 2, skeleton: record().source, placeholders: ['link'] })
+    const invalid = record({ text: 'Bonjour le monde' })
+    expect(review(serialiseRecord(invalid), edit('approve', invalid.text), state)).toBeUndefined()
   })
 
-  it('should apply approvals with an explicit reviewer login', async () => {
-    const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-apply-'))
-    const edited = record({ origin: 'human', review: 'edited' })
-    await writeRecord(root, 'fr', edited)
-    const data: ReviewData = { threads: { [edited.hash]: { fr: [approve(edited.text)] } }, sources: {} }
-    const written = await applyReviews(root, data, 'danielroe')
-    expect(written).toEqual([recordPath('fr', edited.hash)])
-    expect(JSON.parse(readFileSync(join(root, written[0]!), 'utf8'))).toMatchObject({ review: 'verified', verifiedBy: { by: 'danielroe' } })
+  it('should not write a record for other review edits', () => {
+    for (const type of ['request-change', 'resolve-review', 'apply-suggestion'] as const)
+      expect(review(serialiseRecord(record()), edit(type, record().text))).toBeUndefined()
   })
 })
 
 describe('reviewer identity', () => {
-  const identity = { gh: async () => 'ghlogin', git: async () => 'gitname' }
+  const me = { name: 'Clem', email: 'clem@example.com' }
+  const git = () => me
 
-  it('should prefer the explicit reviewer', async () => {
-    expect(await resolveReviewer('danielroe', {}, identity)).toBe('danielroe')
+  it('should use the login of a GitHub noreply email first', () => {
+    const reviewer = githubReviewer({ env: { GITHUB_ACTOR: 'actor' }, gh: () => 'ghlogin', git })
+    expect(reviewer({ name: 'Clem', email: '12345+clem@users.noreply.github.com' })).toBe('clem')
+    expect(reviewer({ email: 'clem@users.noreply.github.com' })).toBe('clem')
   })
 
-  it('should use GITHUB_ACTOR before gh and git', async () => {
-    let ghCalled = false
-    const gh = async () => {
-      ghCalled = true
-      return 'ghlogin'
-    }
-    const result = await resolveReviewer(undefined, { GITHUB_ACTOR: 'actorlogin' }, { ...identity, gh })
-    expect(result).toBe('actorlogin')
-    expect(ghCalled).toBe(false)
+  it('should use GITHUB_ACTOR before gh for the git identity', () => {
+    const gh = vi.fn(() => 'ghlogin')
+    expect(githubReviewer({ env: { GITHUB_ACTOR: 'actor' }, gh, git })(me)).toBe('actor')
+    expect(gh).not.toHaveBeenCalled()
   })
 
-  it('should use gh before git', async () => {
-    expect(await resolveReviewer(undefined, {}, identity)).toBe('ghlogin')
+  it('should ask gh and git once, for the git identity or no author', () => {
+    const gh = vi.fn(() => 'ghlogin')
+    const identity = vi.fn(git)
+    const reviewer = githubReviewer({ env: {}, gh, git: identity })
+    expect(reviewer(me)).toBe('ghlogin')
+    expect(reviewer({ ...me })).toBe('ghlogin')
+    expect(reviewer(undefined)).toBe('ghlogin')
+    expect(gh).toHaveBeenCalledTimes(1)
+    expect(identity).toHaveBeenCalledTimes(1)
   })
 
-  it('should fall back to git user.name', async () => {
-    expect(await resolveReviewer(undefined, {}, { gh: async () => undefined, git: async () => 'gitname' })).toBe('gitname')
+  it('should keep an author other than the git identity', () => {
+    const gh = vi.fn(() => 'ghlogin')
+    const reviewer = githubReviewer({ env: { GITHUB_ACTOR: 'actor' }, gh, git })
+    expect(reviewer({ name: 'Ada', email: 'ada@example.com' })).toBe('Ada')
+    expect(reviewer({ email: 'ada@example.com' })).toBe('ada@example.com')
+    expect(reviewer({ name: 'Clem', email: 'clem@elsewhere.example' })).toBe('Clem')
+    expect(githubReviewer({ env: { GITHUB_ACTOR: 'actor' }, gh, git: () => undefined })(me)).toBe('Clem')
+    expect(gh).not.toHaveBeenCalled()
   })
 
-  it('should return undefined without any identity', async () => {
-    expect(await resolveReviewer(undefined, {}, { gh: async () => undefined, git: async () => undefined })).toBeUndefined()
+  it('should fall back to the author name or email without a login', () => {
+    const reviewer = githubReviewer({ env: {}, gh: () => undefined, git })
+    expect(reviewer(me)).toBe('Clem')
+    expect(githubReviewer({ env: {}, gh: () => undefined, git: () => ({ email: 'clem@example.com' }) })({ email: 'clem@example.com' })).toBe('clem@example.com')
+    expect(reviewer(undefined)).toBeUndefined()
+  })
+
+  it('should read the git identity of a repository', () => {
+    vi.stubEnv('GIT_CONFIG_COUNT', '0')
+    onTestFinished(() => {
+      vi.unstubAllEnvs()
+    })
+    const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-git-'))
+    execFileSync('git', ['init', '-q'], { cwd: root })
+    execFileSync('git', ['config', 'user.name', 'Clem'], { cwd: root })
+    execFileSync('git', ['config', 'user.email', 'clem@example.com'], { cwd: root })
+    expect(gitIdentity(root)).toEqual(me)
   })
 })
 
@@ -334,6 +365,63 @@ describe('x18n project', () => {
     await project.apply(plan)
     expect(JSON.parse(readFileSync(join(root, path), 'utf8'))).toMatchObject({ hash: alpha.hash, source: 'Alpha', text: 'Alpha', origin: 'human', review: 'edited' })
     expect(project.message(alpha.hash, 'fr')?.resource).toBe(path)
+    project.dispose()
+  })
+
+  const author = { name: 'Clem', email: '12345+clem@users.noreply.github.com' }
+  const time = '2026-10-05T00:00:00.000Z'
+
+  it('should verify a record in the plan of an approval', async () => {
+    const { root, segments } = await store()
+    const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
+    await project.ready
+
+    const paragraph = segments.get('Nuxt is powered by {0}Nitro{/0}.')!
+    const path = recordPath('fr', paragraph.hash)
+    const plan = project.plan([{ type: 'review', key: paragraph.hash, locale: 'fr', review: 'approve', author, time }])
+    expect(plan.changes.map(c => c.path).sort()).toEqual(['.x18n/reviews.yml', path])
+    await project.apply(plan)
+    expect(JSON.parse(readFileSync(join(root, path), 'utf8'))).toMatchObject({ text: 'Nuxt est propulsé par {0}Nitro{/0}.', review: 'verified', verifiedBy: { by: 'clem', at: time } })
+    expect(project.message(paragraph.hash, 'fr')?.state).toBe('reviewed')
+    project.dispose()
+  })
+
+  it('should not verify a record changed before the approval', async () => {
+    const { root, segments } = await store()
+    const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
+    await project.ready
+
+    const paragraph = segments.get('Nuxt is powered by {0}Nitro{/0}.')!
+    await project.apply(project.plan([
+      { type: 'set', key: paragraph.hash, locale: 'fr', value: 'Nuxt repose sur {0}Nitro{/0}.' },
+      { type: 'review', key: paragraph.hash, locale: 'fr', review: 'approve', author, time },
+    ]))
+    const written = JSON.parse(readFileSync(join(root, recordPath('fr', paragraph.hash)), 'utf8'))
+    expect(written).toMatchObject({ text: 'Nuxt repose sur {0}Nitro{/0}.', review: 'edited' })
+    expect(written.verifiedBy).toBeUndefined()
+    project.dispose()
+  })
+
+  it('should edit a record when a suggestion is applied, and leave it alone for a change request', async () => {
+    const { root, segments } = await store()
+    const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
+    await project.ready
+
+    const introduction = segments.get('Introduction')!
+    const path = recordPath('fr', introduction.hash)
+    const before = readFileSync(join(root, path), 'utf8')
+    await project.apply(project.plan([
+      { type: 'review', key: introduction.hash, locale: 'fr', review: 'request-change', text: 'Use "Présentation".', author, time },
+      { type: 'review', key: introduction.hash, locale: 'fr', review: 'suggestion', suggestion: 'Présentation', author, time, id: 'sugges' },
+    ]))
+    expect(readFileSync(join(root, path), 'utf8')).toBe(before)
+
+    const plan = project.plan([{ type: 'apply-suggestion', id: 'sugges' }])
+    expect(plan.changes.map(c => c.path).sort()).toEqual(['.x18n/reviews.yml', path])
+    await project.apply(plan)
+    const written = JSON.parse(readFileSync(join(root, path), 'utf8'))
+    expect(written).toMatchObject({ text: 'Présentation', review: 'edited', origin: 'human' })
+    expect(written.verifiedBy).toBeUndefined()
     project.dispose()
   })
 })

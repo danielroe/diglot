@@ -1,40 +1,70 @@
-import type { TranslationRecord } from '@diglot/core'
-import type { ReviewComment, ReviewData } from '@x18n/core'
+import type { Plugin, ReviewAuthor } from '@x18n/core'
+import type { DiglotState } from './state.ts'
+import { execFileSync } from 'node:child_process'
+import process from 'node:process'
 import { verifyRecord } from '@diglot/core'
-import { readRecord, writeRecord } from '@diglot/store'
+import { validationTarget } from '@diglot/store'
+import { parseRawRecord, RECORD_FORMAT, serialiseRaw } from './format.ts'
 
-/**
- * Applies an x18n review thread to a record. The last open approval of the record's
- * current text verifies it, by `reviewer` when given; a change request or a suggestion
- * leaves the record as it is, and so does an approval without a value or of a rejected or
- * verified record.
- */
-export function reviewRecord(record: TranslationRecord, comments: readonly ReviewComment[], reviewer?: string): TranslationRecord {
-  const decisive = comments.findLast(c => !c.resolved && (c.type === 'approve' || c.type === 'request-change'))
-  if (decisive?.type !== 'approve' || decisive.value === undefined)
-    return record
-  const by = reviewer ?? decisive.author?.name ?? decisive.author?.email
-  if (!by)
-    return record
-  const result = verifyRecord(record, { by, at: decisive.time, expected: decisive.value })
-  return result.ok ? result.record : record
+type Reviewer = (author: ReviewAuthor | undefined) => string | undefined
+
+const NOREPLY = /^(?:\d+\+)?([^@]+)@users\.noreply\.github\.com$/i
+
+function run(file: string, args: string[], cwd?: string): string | undefined {
+  try {
+    return execFileSync(file, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 10_000 }).trim() || undefined
+  }
+  catch {
+    return undefined
+  }
 }
 
-/**
- * Verifies the records of `root` that an x18n review file approves. `reviewer` overrides
- * the identity recorded in `verifiedBy.by`. Returns the paths it wrote.
- */
-export async function applyReviews(root: string, data: ReviewData, reviewer?: string): Promise<string[]> {
-  const written: string[] = []
-  for (const [hash, byLocale] of Object.entries(data.threads)) {
-    for (const [locale, comments] of Object.entries(byLocale)) {
-      const record = await readRecord(root, locale, hash)
-      if (!record)
-        continue
-      const next = reviewRecord(record, comments, reviewer)
-      if (next !== record)
-        written.push(await writeRecord(root, locale, next))
+export function gitIdentity(cwd?: string): ReviewAuthor | undefined {
+  const name = run('git', ['config', 'user.name'], cwd)
+  const email = run('git', ['config', 'user.email'], cwd)
+  return name || email ? { name, email } : undefined
+}
+
+interface ReviewerSources {
+  env?: NodeJS.ProcessEnv
+  gh?: () => string | undefined
+  git?: () => ReviewAuthor | undefined
+}
+
+export function githubReviewer({ env = process.env, gh = () => run('gh', ['api', 'user', '--jq', '.login']), git = gitIdentity }: ReviewerSources = {}): Reviewer {
+  let identity: { author: ReviewAuthor | undefined } | undefined
+  let login: { value: string | undefined } | undefined
+  return (author) => {
+    const noreply = author?.email && NOREPLY.exec(author.email)?.[1]
+    if (noreply)
+      return noreply
+    if (author?.name || author?.email) {
+      identity ??= { author: git() }
+      if (author.name !== identity.author?.name || author.email !== identity.author?.email)
+        return author.name || author.email
     }
+    login ??= { value: env.GITHUB_ACTOR?.trim() || gh() }
+    return login.value ?? (author?.name || author?.email)
   }
-  return written
+}
+
+export function reviewEdit(state: DiglotState, reviewer: Reviewer): NonNullable<Plugin['reviewEdit']> {
+  return (edit, ctx) => {
+    if (edit.type !== 'approve' || edit.comment.value === undefined)
+      return undefined
+    const message = ctx.message(edit.key, edit.locale)
+    const resource = message && ctx.resource(message.resource)
+    if (resource?.format !== RECORD_FORMAT)
+      return undefined
+    const text = ctx.text(resource.path)
+    const parsed = text === undefined ? undefined : parseRawRecord(text)
+    if (parsed?.record.text !== edit.comment.value)
+      return undefined
+    const by = reviewer(edit.comment.author)
+    if (!by)
+      return undefined
+    const segment = state.segments.get(edit.key)
+    const result = verifyRecord(parsed.record, { by, at: edit.comment.time, expected: edit.comment.value, segment: segment && validationTarget(segment) })
+    return result.ok ? [{ path: resource.path, content: serialiseRaw({ ...result.record, ...parsed.extra }) }] : undefined
+  }
 }

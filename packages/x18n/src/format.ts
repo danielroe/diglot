@@ -1,4 +1,4 @@
-import type { SegmentStatus } from '@diglot/core'
+import type { SegmentStatus, TranslationRecord } from '@diglot/core'
 import type { ManifestEntry } from '@diglot/store'
 import type { Format, MessageState, MessageTree, NodeRange, TextEdit } from '@x18n/core'
 import type { DiglotState } from './state.ts'
@@ -107,6 +107,16 @@ function readRaw(text: string): RawRecord {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw) || typeof (raw as RawRecord).hash !== 'string')
     throw new Error('not a diglot record')
   return raw as RawRecord
+}
+
+export function parseRawRecord(text: string): { record: TranslationRecord, extra: RawRecord } | undefined {
+  try {
+    const { known, extra } = splitRaw(readRaw(text))
+    return { record: parseRecord(known), extra }
+  }
+  catch {
+    return undefined
+  }
 }
 
 export function editRecord(raw: RawRecord, text: string, now: Date = new Date()): RawRecord {
