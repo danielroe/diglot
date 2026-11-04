@@ -3,13 +3,29 @@ minimumReleaseAgeExclude:
   - '@x18n/builtins@0.1.8'
   - '@x18n/core@0.1.8'
   - '@x18n/node@0.1.8'
+  - '@nuxt/kit@4.6.4'
+  - '@nuxt/nitro-server@4.6.4'
+  - '@nuxt/schema@4.6.4'
+  - '@nuxt/vite-builder@4.6.4'
+  - '@nuxt/vite-server@4.6.4'
+  - nitropack@2.13.6
+  - nuxt@4.6.4
+  - semver@6.3.2
+  - unrouting@0.3.2
 
 trustPolicy: no-downgrade
 shellEmulator: true
 
 packages:
+  - docs
   - packages/*
 
+overrides:
+  # Newer versions overflow the stack in `remark-mdc`, which breaks `llms-full.txt`: https://github.com/nuxt-content/remark-mdc/issues/161
+  mdast-util-to-markdown: 2.1.2
+
 allowBuilds:
+  better-sqlite3: false
   esbuild: false
   simple-git-hooks: true
+  vue-demi: false
