@@ -5,7 +5,7 @@
   "description": "Documentation for diglot, segment-level translation for markdown documentation.",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --host localhost",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "postinstall": "nuxt prepare"
   },
