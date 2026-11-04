@@ -38,7 +38,7 @@ export default defineNuxtConfig({
   fonts: {
     families: [
       { name: 'Geist', provider: 'fontsource', weights: [400, 500, 600, 700], styles: ['normal'], global: true },
-      { name: 'Geist Mono', provider: 'fontsource', weights: [400, 500], styles: ['normal'] },
+      { name: 'Geist Mono', provider: 'fontsource', weights: [400, 500], styles: ['normal'], global: true },
       { name: 'Martian Mono', provider: 'fontsource', weights: [500], styles: ['normal'] },
       { name: 'Grenze Gotisch', provider: 'fontsource', weights: [500, 700], styles: ['normal'], global: true },
     ],

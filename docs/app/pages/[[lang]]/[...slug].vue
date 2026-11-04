@@ -49,8 +49,9 @@ watch(() => navigation?.value, () => {
 
 defineOgImage('Docs', {
   headline: headline.value,
-  title: formatOgTitle(title),
-  description: formatOgDescription(title, description),
+  title,
+  description,
+  path: route.path,
 })
 
 const github = computed(() => appConfig.github ? appConfig.github : null)
