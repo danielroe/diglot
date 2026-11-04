@@ -1,8 +1,8 @@
 minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
-  - '@x18n/builtins@0.1.8'
-  - '@x18n/core@0.1.8'
-  - '@x18n/node@0.1.8'
+  - '@x18n/builtins@0.1.10'
+  - '@x18n/core@0.1.10'
+  - '@x18n/node@0.1.10'
   - '@nuxt/kit@4.6.4'
   - '@nuxt/nitro-server@4.6.4'
   - '@nuxt/schema@4.6.4'
