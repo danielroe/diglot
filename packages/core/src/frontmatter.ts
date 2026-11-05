@@ -44,6 +44,20 @@ function collect(value: unknown, parts: string[], path: ValuePath, found: Array<
   collect(record[head], rest, [...path, head], found)
 }
 
+/**
+ * The span to replace when swapping the YAML scalar at `start`..`end` (a `yaml` node range) in
+ * `source` for a flow scalar. A block scalar's trailing line break stays outside the span, and
+ * the comment on its header line is returned as `suffix` to append to the replacement.
+ */
+export function yamlScalarSpan(source: string, start: number, end: number): { start: number, end: number, suffix: string } {
+  while (end > start && (source[end - 1] === '\n' || source[end - 1] === '\r'))
+    end--
+  const header = /[|>][1-9+-]*[ \t]+(#[^\r\n]*)/y
+  header.lastIndex = start
+  const comment = header.exec(source)?.[1]
+  return { start, end, suffix: comment ? ` ${comment}` : '' }
+}
+
 /** Sets the value at `path`, which must exist. */
 export function setAtPath(data: unknown, path: ValuePath, value: unknown): void {
   let cursor = data as Record<string | number, unknown>

@@ -1,5 +1,5 @@
 import type { ApplyReport, InlineNode, Policy, Segment, SegmentDraft, Translations } from '@diglot/core'
-import { buildSegment, createReport, resolvePolicy, resolveTranslation, tally } from '@diglot/core'
+import { buildSegment, createReport, resolvePolicy, resolveTranslation, tally, yamlScalarSpan } from '@diglot/core'
 import { isScalar, parseDocument } from 'yaml'
 
 export interface NavigationOptions {
@@ -26,7 +26,7 @@ export interface LabelOptions {
 
 interface NavigationUnit {
   draft: SegmentDraft
-  range: [number, number]
+  span: { start: number, end: number, suffix: string }
 }
 
 function labelDraft(value: string, kind: 'navigation' | 'frontmatter', detail?: string): SegmentDraft {
@@ -63,12 +63,7 @@ function units(source: string, policy: Policy): NavigationUnit[] {
     const node = doc.get(key, true)
     if (!isScalar(node) || typeof node.value !== 'string' || !node.value.trim() || !node.range)
       continue
-    const [start] = node.range
-    // Block scalars (`>-`, `|`) end after their trailing line break, which must survive the edit.
-    let end = node.range[1]
-    while (end > start && (source[end - 1] === '\n' || source[end - 1] === '\r'))
-      end--
-    out.push({ draft: labelDraft(node.value, 'navigation', key), range: [start, end] })
+    out.push({ draft: labelDraft(node.value, 'navigation', key), span: yamlScalarSpan(source, node.range[0], node.range[1]) })
   }
   return out
 }
@@ -99,7 +94,7 @@ export function applyNavigation(source: string, translations: Translations, opti
     const resolution = resolveTranslation(segment, translations)
     tally(report, segment, resolution)
     if (resolution.status === 'ok')
-      edits.push([...unit.range, JSON.stringify(resolution.text)])
+      edits.push([unit.span.start, unit.span.end, JSON.stringify(resolution.text) + unit.span.suffix])
   }
   let out = source
   for (const [start, end, text] of edits.sort((a, b) => b[0] - a[0]))
