@@ -84,8 +84,14 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
             atomic('binding')
           }
           else {
-            atomic('component', { name: n.name, ...(/\p{L}/u.test(textOf(n.children ?? [])) ? { hidesText: true } : {}) })
+            atomic('component', component(n))
           }
+          break
+        case 'textDirective':
+          if (source.slice(span.start, span.end) === `:${n.name}`)
+            out.push({ type: 'text', value: source.slice(span.start, span.end) })
+          else
+            atomic('component', component(n))
           break
         case 'html': {
           if (/^<\/?br\s*\/?>$/i.test(n.value!)) {
@@ -180,6 +186,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
       case 'textComponent':
         props(n, [...containers, n.name!])
         return
+      case 'containerDirective':
       case 'containerComponent': {
         const inner = [...containers, n.name!]
         props(n, inner)
@@ -260,6 +267,10 @@ function closingBracket(source: string, open: number): number {
 
 function findImages(nodes: MdNode[]): MdNode[] {
   return nodes.flatMap(n => n.type === 'image' ? [n] : findImages(n.children ?? []))
+}
+
+function component(n: MdNode): { name?: string, hidesText?: true } {
+  return { name: n.name ?? undefined, ...(/\p{L}/u.test(textOf(n.children ?? [])) ? { hidesText: true as const } : {}) }
 }
 
 function textOf(nodes: MdNode[]): string {

@@ -1,17 +1,18 @@
 import type { ApplySegmentEvent, Segment, TranslationRecord } from '@diglot/core'
-import type { Annotation } from '../src/index.ts'
+import type { Annotation, MdNode } from '../src/index.ts'
 import { readFileSync } from 'node:fs'
 import { extract as extractComark, parse as parseComark } from '@diglot/comark'
 import { createRecord, pseudoTranslate } from '@diglot/core'
 import rehypeStringify from 'rehype-stringify'
+import remarkDirective from 'remark-directive'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdc from 'remark-mdc'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
-import { describe, expect, it } from 'vitest'
-import { annotate, apply, extract } from '../src/index.ts'
+import { describe, expect, it, vi } from 'vitest'
+import { annotate, apply, extract, parse } from '../src/index.ts'
 
 const fixture = (name: string) => readFileSync(new URL(`../../../fixtures/nuxt/${name}`, import.meta.url), 'utf8')
 const pseudo = (segments: Segment[]) => new Map(segments.map(s => [s.hash, pseudoTranslate(s.skeleton, s.format)]))
@@ -78,6 +79,65 @@ describe('extract', () => {
             mdast: ['You can also use a function to conditionally transpile. The function will receive an object (\\{ isDev, isServer, isClient, isModern, isLegacy \\}).', 'Do not import from {0} in server code. Use {1} or {2} instead.'],
           }
         : { comark: [], mdast: [] })
+    }
+  })
+})
+
+describe('satteri parser', () => {
+  const remark = unified().use(remarkParse).use(remarkGfm).use(remarkDirective).use(remarkFrontmatter)
+  const keys = ['value', 'depth', 'lang', 'meta', 'alt', 'url', 'title', 'identifier', 'label', 'referenceType', 'ordered', 'checked', 'name', 'attributes']
+  const shape = (n: MdNode): unknown => ({
+    type: n.type,
+    ...Object.fromEntries(keys.filter(k => k in n).map(k => [k, n[k as keyof MdNode]])),
+    position: [n.position?.start, n.position?.end].map(p => [p?.offset, p?.line, p?.column]),
+    ...(n.children ? { children: n.children.map(shape) } : {}),
+  })
+  const UNICODE = '---\ntitle: Héllo 😀\n---\n\n# Ünïcode 😀 title\n\nSee [the docs](/d "Docs"), [ref][r] and `code` 😀 é, Type:string at 10:30am.\n\n| a | b |\n|---|---|\n| 😀 | é |\n\n- [ ] task\n\n[r]: /r\n'
+  const ASIDES = ':::note\nHello 😀 world.\n:::\n\n:::tip[Did you know?]\nAstro helps.\n\nPress :kbd[Ctrl] now.\n:::\n'
+
+  it('should parse the same tree and offsets as remark-directive', async () => {
+    for (const [name, source] of [...FIXTURES.map(name => [name, fixture(name)]), ['unicode', UNICODE], ['asides', ASIDES]] as const) {
+      const expected = shape(await remark.run(remark.parse(source)) as MdNode)
+      expect(shape(await parse(source, { parser: 'satteri' })), name).toEqual(expected)
+    }
+  })
+
+  it('should extract the same segments as remark without MDC', async () => {
+    expect(await extract(UNICODE, { parser: 'satteri' })).toEqual(await extract(UNICODE))
+  })
+
+  it('should extract and apply a pseudo-translated document', async () => {
+    const segments = await extract(UNICODE, { parser: 'satteri' })
+    expect(segments.map(s => s.skeleton)).toEqual(['Héllo 😀', 'Ünïcode 😀 title', 'See {0}the docs{/0}, {1} and {2} 😀 é, Type:string at 10:30am.', 'a', 'b', '😀', 'é', 'task'])
+    const { markdown, report } = await apply(UNICODE, pseudo(segments), { parser: 'satteri' })
+    expect(report.applied).toBe(segments.length)
+    expect((await extract(markdown, { parser: 'satteri' })).map(s => s.skeleton)).toEqual(segments.map(s => pseudoTranslate(s.skeleton, s.format)))
+  })
+
+  it('should translate asides and their titles', async () => {
+    const segments = await extract(ASIDES, { parser: 'satteri' })
+    expect(segments.map(s => [s.kind, s.context.containers, s.skeleton])).toEqual([
+      ['component-slot', ['note'], 'Hello 😀 world.'],
+      ['component-slot', ['tip'], 'Did you know?'],
+      ['component-slot', ['tip'], 'Astro helps.'],
+      ['component-slot', ['tip'], 'Press {0} now.'],
+    ])
+    const { markdown, report } = await apply(ASIDES, pseudo(segments), { parser: 'satteri' })
+    expect(report.applied).toBe(segments.length)
+    expect(markdown).toBe(':::note\n⟦Hélló 😀 wórld.⟧\n:::\n\n:::tip[⟦Díd yóú knów?⟧]\n⟦Ástró hélps.⟧\n\n⟦Préss⟧ :kbd[Ctrl] ⟦nów.⟧\n:::\n')
+  })
+
+  it('should rethrow satteri load errors other than a missing package', async () => {
+    vi.resetModules()
+    vi.doMock('satteri', () => {
+      throw new Error('Cannot find native binding.')
+    })
+    try {
+      const { parse } = await import('../src/parse.ts')
+      await expect(parse('# Title', { parser: 'satteri' })).rejects.toHaveProperty('cause.message', 'Cannot find native binding.')
+    }
+    finally {
+      vi.doUnmock('satteri')
     }
   })
 })
@@ -262,6 +322,16 @@ describe('apply', () => {
     const [description] = await extract(source)
     const { markdown } = await apply(source, new Map([[description!.hash, 'Comment ajouter des scripts.']]))
     expect(markdown).toBe('---\r\ndescription: Comment ajouter des scripts.\r\nlang: en\r\n---\r\n\r\nBody.\r\n')
+  })
+
+  it('should keep a byte order mark and the offsets after it', async () => {
+    const source = '\uFEFF# Title\n\nSee [the docs](/d).\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(source, { parser })
+      expect(segments.map(s => s.skeleton)).toEqual(['Title', 'See {0}the docs{/0}.'])
+      const { markdown } = await apply(source, pseudo(segments), { parser })
+      expect(markdown, parser).toBe('\uFEFF# ⟦Títlé⟧\n\n⟦Séé⟧ [⟦thé dócs⟧](/d).\n')
+    }
   })
 
   it('should reject translations it cannot address and keep the source', async () => {

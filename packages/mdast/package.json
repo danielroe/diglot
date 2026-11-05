@@ -39,6 +39,14 @@
     "prepack": "pnpm build",
     "test": "vitest run"
   },
+  "peerDependencies": {
+    "satteri": "^0.11.6"
+  },
+  "peerDependenciesMeta": {
+    "satteri": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@diglot/code": "workspace:*",
     "@diglot/core": "workspace:*",
@@ -51,6 +59,8 @@
   },
   "devDependencies": {
     "rehype-stringify": "10.0.1",
-    "remark-rehype": "11.1.2"
+    "remark-directive": "4.0.0",
+    "remark-rehype": "11.1.2",
+    "satteri": "0.11.6"
   }
 }
