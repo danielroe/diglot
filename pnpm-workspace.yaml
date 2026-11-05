@@ -22,8 +22,14 @@ packages:
   - packages/*
 
 overrides:
+  # Astro's Markdown renderer pins Sätteri 0.10, and its `svgo` pins older CSS and DOM packages. Those versions are
+  # published with weaker provenance than the ones this repository already uses, which fails the provenance check.
+  '@astrojs/markdown-satteri>satteri': 0.11.6
+  csso>css-tree: ^3.2.1
   # Newer versions overflow the stack in `remark-mdc`, which breaks `llms-full.txt`: https://github.com/nuxt-content/remark-mdc/issues/161
   mdast-util-to-markdown: 2.1.2
+  # For the provenance check, like the overrides above.
+  svgo>css-select: ^7.0.0
 
 allowBuilds:
   better-sqlite3: false
