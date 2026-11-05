@@ -254,8 +254,10 @@ describe('mdx', () => {
     for (const parser of ['remark', 'satteri'] as const) {
       const segments = await extract(source, { format: 'mdx', parser })
       expect(segments.filter(s => s.kind === 'code-label'), parser).toEqual([])
-      const unsynced = await extract(source.replace(' sync', ''), { format: 'mdx', parser })
-      expect(unsynced.filter(s => s.kind === 'code-label').map(s => s.skeleton), parser).toEqual(['Config file'])
+      for (const unsynced of [source.replace(' sync', ''), source.replace(' sync', ' sync={false}')]) {
+        const segments = await extract(unsynced, { format: 'mdx', parser })
+        expect(segments.filter(s => s.kind === 'code-label').map(s => s.skeleton), parser).toEqual(['Config file'])
+      }
     }
   })
 

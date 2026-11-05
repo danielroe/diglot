@@ -238,7 +238,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
     const kids = n.children ?? []
     if (kids.length && kids.every(c => !FLOW.has(c.type)))
       return inline(kindForContainers(inner, policy), kids, n, inner)
-    const sync = synced || (name === 'code-group' && Array.isArray(n.attributes) && n.attributes.some(a => a.type === 'mdxJsxAttribute' && a.name === 'sync'))
+    const sync = synced || (name === 'code-group' && Array.isArray(n.attributes) && n.attributes.some(a => a.type === 'mdxJsxAttribute' && a.name === 'sync' && String((a.value as { value?: unknown } | null)?.value).trim() !== 'false'))
     for (const child of kids)
       visit(child, inner, sync)
   }
