@@ -19,6 +19,7 @@ const ACCENTS: Record<Accent, string> = {
   rose: '#ff637e',
   pink: '#fb64b6',
   blue: '#51a2ff',
+  orange: '#ff8904',
 }
 
 const topic = topicForPath(path)

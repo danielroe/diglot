@@ -54,6 +54,24 @@ const { topic } = defineProps<{
         stroke-width="3"
       />
     </template>
+    <template v-else-if="topic === 'integrations'">
+      <!-- A page that slots into the frame of a site. -->
+      <rect
+        x="9"
+        y="4"
+        width="14"
+        height="17"
+        rx="3"
+        fill="currentColor"
+      />
+      <path
+        d="M4 17v8a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3v-8"
+        fill="none"
+        class="ink-stroke"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+    </template>
     <template v-else-if="topic === 'store'">
       <!-- Records stacked on records. -->
       <rect
