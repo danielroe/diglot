@@ -78,14 +78,15 @@ export async function apply(source: string, translations: Translations, options:
   const edits: Edit[] = []
   const attributes = new Map<MdNode, Record<string, string>>()
   let index = 0
-  for (const unit of walk(await parse(source, { parser: options.parser, format: options.format ?? formatOf(options.file) }), source, policy)) {
+  const format = options.format ?? formatOf(options.file)
+  for (const unit of walk(await parse(source, { parser: options.parser, format }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index, policy })
     if (!segment)
       continue
     index++
     let resolution: Resolution = resolveTranslation(segment, translations)
     if (resolution.status === 'ok') {
-      const edit = editFor(unit, resolution.skeleton, resolution.text, segment.placeholders, source, lines)
+      const edit = editFor(unit, format === 'mdx' ? escapeAngleBrackets(resolution.skeleton) : resolution.skeleton, resolution.text, segment.placeholders, source, lines)
       if (typeof edit === 'string')
         resolution = { status: 'rejected', errors: [{ code: 'unaddressable', message: edit }], ...(resolution.record ? { record: resolution.record } : {}) }
       else
@@ -128,7 +129,7 @@ function isLoose(list: MdNode): boolean {
 }
 
 function blockTarget(target: Target, attributes: Map<MdNode, Record<string, string>>): SegmentTarget | null {
-  if (target.type !== 'range')
+  if (target.type !== 'range' || target.node.type.startsWith('mdxJsx'))
     return null
   return {
     setAttribute: (name, value) => {
@@ -231,41 +232,93 @@ function propEdit(node: MdNode, key: string, value: string, source: string): Edi
 
 /** Replaces a string attribute in the opening tag of an MDX JSX element. */
 function jsxPropEdit(node: MdNode, key: string, value: string, source: string): Edit | undefined {
-  const start = node.position!.start.offset!
-  const tag = source.slice(start, openingTagEnd(source, start))
-  const attr = new RegExp(`\\s${key.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&')}=(?:"[^"]*"|'[^']*')`).exec(tag)
-  const quote = !value.includes('"') ? '"' : !value.includes('\'') ? '\'' : undefined
-  if (!attr || !quote)
+  const attr = jsxStringAttributes(source, node.position!.start.offset!).find(a => a.name === key)
+  if (!attr)
     return
-  const valueStart = start + attr.index + key.length + 2
-  // MDX decodes character references in attribute strings, so a literal one is escaped.
-  return { start: valueStart, end: start + attr.index + attr[0].length, text: () => `${quote}${value.replace(/&(?=#?\w+;)/g, '&amp;')}${quote}` }
+  const quote = value.includes('"') && !value.includes('\'') ? '\'' : '"'
+  // MDX decodes character references in attribute strings.
+  const escaped = value.replace(/&(?=#?\w+;)/g, '&amp;')
+  const text = quote === '"' ? escaped.replaceAll('"', '&quot;') : escaped
+  return { start: attr.start, end: attr.end, text: () => `${quote}${text}${quote}` }
 }
 
-/** The offset after the `>` that closes the opening tag at `start`, skipping quoted strings and expressions. */
-function openingTagEnd(source: string, start: number): number {
-  let quote = ''
-  let depth = 0
-  for (let i = start; i < source.length; i++) {
-    const ch = source[i]
-    if (quote) {
-      if (ch === quote)
-        quote = ''
+/** The string attributes of the JSX opening tag at `start`, with the range of each value including its quotes. */
+function jsxStringAttributes(source: string, start: number): Array<{ name: string, start: number, end: number }> {
+  const attrs: Array<{ name: string, start: number, end: number }> = []
+  let i = start + 1
+  const skipSpace = () => {
+    while (/\s/.test(source[i] ?? ''))
+      i++
+  }
+  while (i < source.length && !/[\s/>{]/.test(source[i]!))
+    i++
+  while (i < source.length) {
+    skipSpace()
+    if (source[i] === '{') {
+      i = expressionEnd(source, i)
+      continue
     }
-    else if (ch === '"' || ch === '\'') {
-      quote = ch
+    const nameStart = i
+    while (i < source.length && !/[\s=/>{]/.test(source[i]!))
+      i++
+    const name = source.slice(nameStart, i)
+    if (!name)
+      break
+    skipSpace()
+    if (source[i] !== '=')
+      continue
+    i++
+    skipSpace()
+    const quote = source[i]
+    if (quote === '{') {
+      i = expressionEnd(source, i)
+    }
+    else if (quote === '"' || quote === '\'') {
+      const close = source.indexOf(quote, i + 1)
+      if (close < 0)
+        break
+      attrs.push({ name, start: i, end: close + 1 })
+      i = close + 1
+    }
+    else {
+      break
+    }
+  }
+  return attrs
+}
+
+/** The offset after the `}` that closes the expression at `open`, skipping strings and comments. */
+function expressionEnd(source: string, open: number): number {
+  let depth = 0
+  for (let i = open; i < source.length; i++) {
+    const ch = source[i]
+    if (ch === '"' || ch === '\'' || ch === '`') {
+      for (i++; i < source.length && source[i] !== ch; i++) {
+        if (source[i] === '\\')
+          i++
+      }
+    }
+    else if (source.startsWith('/*', i)) {
+      const end = source.indexOf('*/', i + 2)
+      i = end < 0 ? source.length : end + 1
+    }
+    else if (source.startsWith('//', i)) {
+      const end = source.indexOf('\n', i)
+      i = end < 0 ? source.length : end
     }
     else if (ch === '{') {
       depth++
     }
-    else if (ch === '}') {
-      depth--
-    }
-    else if (ch === '>' && depth === 0) {
+    else if (ch === '}' && --depth === 0) {
       return i + 1
     }
   }
   return source.length
+}
+
+/** Escapes each `<` that MDX would read as the start of a tag: everything not followed by whitespace. */
+function escapeAngleBrackets(skeleton: string): string {
+  return skeleton.replace(/\\.|<(?!\s)/g, match => match === '<' ? '\\<' : match)
 }
 
 function yamlEdit(yaml: string, offset: number, path: Array<string | number>, value: string): Edit | undefined {

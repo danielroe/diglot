@@ -26,8 +26,7 @@ export interface Unit {
 
 const HEADING_ATTRS_RE = /\s*\{[^{}]*\}\s*$/
 
-/** Inline node types, which an MDX JSX element can hold in place of blocks. */
-const PHRASING = new Set(['text', 'strong', 'emphasis', 'delete', 'inlineCode', 'break', 'image', 'link', 'html', 'mdxJsxTextElement', 'mdxTextExpression'])
+const FLOW = new Set(['blockquote', 'code', 'containerDirective', 'definition', 'footnoteDefinition', 'heading', 'leafDirective', 'list', 'listItem', 'math', 'mdxFlowExpression', 'mdxJsxFlowElement', 'mdxjsEsm', 'paragraph', 'table', 'thematicBreak', 'yaml'])
 
 /** Lists the translatable units of an mdast tree in document order. */
 export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
@@ -235,7 +234,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
     const inner = [...containers, kebabCase(n.name!)]
     props(n, inner)
     const kids = n.children ?? []
-    if (kids.length && kids.every(c => PHRASING.has(c.type)))
+    if (kids.length && kids.every(c => !FLOW.has(c.type)))
       return inline(kindForContainers(inner, policy), kids, n, inner)
     visitChildren(n, inner, synced)
   }

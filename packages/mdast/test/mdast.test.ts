@@ -185,7 +185,8 @@ describe('mdx', () => {
 
   it('should read files ending in .mdx as MDX', async () => {
     expect(await extract(MDX, { file: 'docs/cards.mdx', policy })).toEqual(await extract(MDX, { file: 'docs/cards.mdx', format: 'mdx', policy }))
-    await expect(extract('Read {count} cards.\n', { file: 'docs/cards.md' })).resolves.toHaveLength(1)
+    const [segment] = await extract('Read {count} cards.\n', { file: 'docs/cards.md' })
+    expect(segment!.skeleton).toBe('Read \\{count\\} cards.')
   })
 
   it('should apply translations that remain valid MDX', async () => {
@@ -204,6 +205,51 @@ describe('mdx', () => {
     expect(markdown).toContain('<Card title=\'Les "premiers" pas &amp;amp; plus\' icon="rocket">')
     const [again] = (await extract(markdown, { format: 'mdx', policy })).filter(s => s.kind === 'prop')
     expect(again!.skeleton).toBe('Les "premiers" pas &amp; plus')
+  })
+
+  it('should encode double quotes in props that contain both kinds of quotes', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(MDX, { format: 'mdx', parser, policy })
+      const title = segments.find(s => s.skeleton === 'First steps')!
+      const { markdown, report } = await apply(MDX, new Map([[title.hash, 'L\'étape "une"']]), { format: 'mdx', parser, policy })
+      expect(report.applied, parser).toBe(1)
+      expect(markdown, parser).toContain('<Card title="L\'étape &quot;une&quot;" icon="rocket">')
+      const [again] = (await extract(markdown, { format: 'mdx', parser, policy })).filter(s => s.kind === 'prop')
+      expect(again!.skeleton, parser).toBe('L\'étape "une"')
+    }
+  })
+
+  it('should replace the attribute itself, not a lookalike inside another value', async () => {
+    const source = '<Card note=\'see title="x"\' meta={{ title: "y" }} title = "Hi" />\n'
+    const [title] = await extract(source, { format: 'mdx', policy })
+    const { markdown, report } = await apply(source, new Map([[title!.hash, 'Salut']]), { format: 'mdx', policy })
+    expect(report.applied).toBe(1)
+    expect(markdown).toBe('<Card note=\'see title="x"\' meta={{ title: "y" }} title = "Salut" />\n')
+  })
+
+  it('should escape angle brackets that MDX would read as tags', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const source = 'Use less than five.\n'
+      const [segment] = await extract(source, { format: 'mdx', parser })
+      const { markdown, report } = await apply(source, new Map([[segment!.hash, 'Use x<3, y <= 5, a < b or \\<c.']]), { format: 'mdx', parser })
+      expect(report.applied, parser).toBe(1)
+      expect(markdown, parser).toBe('Use x\\<3, y \\<= 5, a < b or \\<c.\n')
+      await expect(extract(markdown, { format: 'mdx', parser }), parser).resolves.toHaveLength(1)
+    }
+  })
+
+  it('should extract inline JSX content that holds references and directives', async () => {
+    const source = '<Aside>See [the docs][ref] now.</Aside>\n\n<Aside>Use :badge[New] here.</Aside>\n\n[ref]: /docs\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(source, { format: 'mdx', parser })
+      expect(segments.map(s => s.skeleton), parser).toEqual(['See {0} now.', 'Use {0} here.'])
+    }
+  })
+
+  it('should not offer attribute targets for JSX content', async () => {
+    const targets: unknown[] = []
+    await apply('<Aside>One line inside.</Aside>\n\nA paragraph.\n', new Map(), { format: 'mdx', onSegment: event => targets.push(event.target) })
+    expect(targets.map(t => t === null)).toEqual([true, false])
   })
 })
 
