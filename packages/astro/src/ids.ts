@@ -2,22 +2,30 @@
  * Returns the id of an entry in another locale. Source entries live either in the directory
  * of the default locale (`en/guide`) or at the root of the collection (`guide`), and the
  * translated entry lives in the directory of the target locale (`fr/guide`). An index page
- * (`en` or `index`) becomes the locale itself (`fr`), as Astro's default ids do.
+ * (`en` or `index`) becomes the locale itself (`fr`). Like Astro's default ids, the locale
+ * segment is lower case, so `pt-BR` gives `pt-br/guide`.
  */
 export function translatedId(id: string, defaultPath: string, targetPath: string): string {
-  if (id === defaultPath || id === 'index')
-    return targetPath
-  if (id.startsWith(`${defaultPath}/`))
-    return `${targetPath}${id.slice(defaultPath.length)}`
-  return `${targetPath}/${id}`
+  const source = defaultPath.toLowerCase()
+  const target = targetPath.toLowerCase()
+  const lower = id.toLowerCase()
+  if (lower === source || id === 'index')
+    return target
+  if (lower.startsWith(`${source}/`))
+    return `${target}${id.slice(source.length)}`
+  return `${target}/${id}`
 }
 
-/** Whether an entry id belongs to one of the target locales instead of the source. */
-export function isTargetId(id: string, targetPaths: string[]): boolean {
-  return targetPaths.some(path => id === path || id.startsWith(`${path}/`))
+/** Whether an entry id belongs to one of the given locales instead of the source, ignoring case. */
+export function isTargetId(id: string, localePaths: string[]): boolean {
+  const lower = id.toLowerCase()
+  return localePaths.some((path) => {
+    const prefix = path.toLowerCase()
+    return lower === prefix || lower.startsWith(`${prefix}/`)
+  })
 }
 
-const TRANSLATED_MODULE_RE = /\.diglot-[\w-]+\.mdx$/
+const TRANSLATED_MODULE_RE = /\.diglot-[^/]+\.mdx$/
 
 /**
  * Returns the path of the virtual file that holds the translation of an MDX file into a locale:

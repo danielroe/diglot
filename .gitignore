@@ -12,3 +12,4 @@ coverage
 .astro
 packages/astro/test/fixtures/.tmp-*
 examples/astro/translations/.diglot
+*.swp

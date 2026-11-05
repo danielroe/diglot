@@ -1,23 +1,26 @@
 import type { Plugin } from 'vite'
+import { existsSync } from 'node:fs'
 import { isTranslatedModule } from './ids.ts'
 import { getState } from './state.ts'
 
 /**
  * Serves the translated MDX documents of the loader from virtual files next to their sources.
  * Astro imports a deferred entry by its file path with a query, such as `?astroPropagatedAssets`,
- * and `@astrojs/mdx` compiles the code this plugin loads like any other `.mdx` file.
+ * and `@astrojs/mdx` compiles the code this plugin loads like any other `.mdx` file. A file that
+ * exists on disk at such a path is left to Vite.
  */
 export function vitePluginDiglot(): Plugin {
   return {
     name: '@diglot/astro:translated-mdx',
     enforce: 'pre',
     resolveId(id) {
-      if (isTranslatedModule(pathOf(id)))
+      const path = pathOf(id)
+      if (isTranslatedModule(path) && !existsSync(path))
         return id
     },
     load(id) {
       const path = pathOf(id)
-      if (isTranslatedModule(path))
+      if (isTranslatedModule(path) && !existsSync(path))
         return getState().modules.get(path) ?? ''
     },
     configureServer(server) {

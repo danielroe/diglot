@@ -25,7 +25,8 @@ export default function diglot(options: DiglotOptions): AstroIntegration {
           throw new Error('`diglot()` needs the `translations` option: the directory of your translations repository, relative to the project root.')
         if (!config.i18n)
           throw new Error('`diglot()` reads your locales from the `i18n` option of your Astro config. Add `i18n` with a `defaultLocale` and `locales`.')
-        getState().translations = resolve(fileURLToPath(config.root), options.translations)
+        const root = fileURLToPath(config.root)
+        getState().translations.set(resolve(root), resolve(root, options.translations))
         updateConfig({ vite: { plugins: [vitePluginDiglot()] } })
       },
     },
