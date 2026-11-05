@@ -84,7 +84,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
             atomic('binding')
           }
           else {
-            atomic('component', { name: n.name, ...(/\p{L}/u.test(textOf(n.children ?? [])) ? { hidesText: true } : {}) })
+            atomic('component', { name: n.name ?? undefined, ...(/\p{L}/u.test(textOf(n.children ?? [])) ? { hidesText: true } : {}) })
           }
           break
         case 'html': {

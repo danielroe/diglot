@@ -1,5 +1,5 @@
 import type { ApplySegmentEvent, Segment, TranslationRecord } from '@diglot/core'
-import type { Annotation } from '../src/index.ts'
+import type { Annotation, MdNode } from '../src/index.ts'
 import { readFileSync } from 'node:fs'
 import { extract as extractComark, parse as parseComark } from '@diglot/comark'
 import { createRecord, pseudoTranslate } from '@diglot/core'
@@ -11,7 +11,7 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
-import { annotate, apply, extract } from '../src/index.ts'
+import { annotate, apply, extract, parse } from '../src/index.ts'
 
 const fixture = (name: string) => readFileSync(new URL(`../../../fixtures/nuxt/${name}`, import.meta.url), 'utf8')
 const pseudo = (segments: Segment[]) => new Map(segments.map(s => [s.hash, pseudoTranslate(s.skeleton, s.format)]))
@@ -79,6 +79,32 @@ describe('extract', () => {
           }
         : { comark: [], mdast: [] })
     }
+  })
+})
+
+describe('satteri parser', () => {
+  const remark = unified().use(remarkParse).use(remarkGfm).use(remarkFrontmatter)
+  const shape = (n: MdNode): unknown => ({
+    type: n.type,
+    ...Object.fromEntries(['value', 'depth', 'lang', 'meta', 'alt', 'url', 'ordered', 'checked'].filter(k => k in n).map(k => [k, n[k as keyof MdNode]])),
+    position: [n.position?.start.offset, n.position?.end.offset, n.position?.start.line, n.position?.end.line],
+    ...(n.children ? { children: n.children.map(shape) } : {}),
+  })
+  const UNICODE = '---\ntitle: Héllo 😀\n---\n\n# Ünïcode 😀 title\n\nSee [the docs](/d) and `code` 😀 é.\n\n| a | b |\n|---|---|\n| 😀 | é |\n\n- [ ] task\n'
+
+  it('should parse the same tree and offsets as remark without MDC', async () => {
+    for (const [name, source] of [...FIXTURES.map(name => [name, fixture(name)]), ['unicode', UNICODE]] as const) {
+      const expected = shape(await remark.run(remark.parse(source)) as MdNode)
+      expect(shape(await parse(source, { parser: 'satteri' })), name).toEqual(expected)
+    }
+  })
+
+  it('should extract and apply a pseudo-translated document', async () => {
+    const segments = await extract(UNICODE, { parser: 'satteri' })
+    expect(segments.map(s => s.skeleton)).toEqual(['Héllo 😀', 'Ünïcode 😀 title', 'See {0}the docs{/0} and {1} 😀 é.', 'a', 'b', '😀', 'é', 'task'])
+    const { markdown, report } = await apply(UNICODE, pseudo(segments), { parser: 'satteri' })
+    expect(report.applied).toBe(segments.length)
+    expect((await extract(markdown, { parser: 'satteri' })).map(s => s.skeleton)).toEqual(segments.map(s => pseudoTranslate(s.skeleton, s.format)))
   })
 })
 

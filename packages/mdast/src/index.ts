@@ -1,5 +1,5 @@
 import type { ApplyReport, ApplySegmentEvent, AtomicNode, LinkNode, Placeholder, Policy, Resolution, Segment, SegmentTarget, Translations } from '@diglot/core'
-import type { MdNode } from './parse.ts'
+import type { MdNode, Parser } from './parse.ts'
 import type { Span, Target, Unit } from './walk.ts'
 import { buildSegment, createReport, createSegmentEvent, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton, yamlScalarSpan } from '@diglot/core'
 import { isScalar, parseDocument } from 'yaml'
@@ -7,11 +7,13 @@ import { parse } from './parse.ts'
 import { walk } from './walk.ts'
 
 export { parse } from './parse.ts'
-export type { MdNode } from './parse.ts'
+export type { MdNode, ParseOptions, Parser } from './parse.ts'
 
 export interface ExtractOptions {
   /** File path recorded in segment contexts. */
   file?: string
+  /** Markdown parser, `remark` by default. See {@link Parser}. */
+  parser?: Parser
   policy?: Partial<Policy>
 }
 
@@ -19,7 +21,7 @@ export interface ExtractOptions {
 export async function extract(source: string, options: ExtractOptions = {}): Promise<Segment[]> {
   const policy = resolvePolicy(options.policy)
   const segments: Segment[] = []
-  for (const unit of walk(await parse(source), source, policy)) {
+  for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index: segments.length, policy })
     if (segment)
       segments.push(segment)
@@ -66,7 +68,7 @@ export async function apply(source: string, translations: Translations, options:
   const edits: Edit[] = []
   const attributes = new Map<MdNode, Record<string, string>>()
   let index = 0
-  for (const unit of walk(await parse(source), source, policy)) {
+  for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index, policy })
     if (!segment)
       continue
