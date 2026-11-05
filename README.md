@@ -26,6 +26,7 @@ Keeping markdown documents in-sync is tricky, and diglot exists to help solve th
 | [`@diglot/cli`](./packages/cli) | The `diglot` command: `checkout`, `extract`, `diff`, `validate`, `build`, `status`. |
 | [`@diglot/x18n`](./packages/x18n) | Experimental [x18n](https://github.com/x18n-dev/x18n) plugin: hashes as keys, records as messages, source documents as usages. |
 | [`@diglot/astro`](./packages/astro) | [Astro](https://astro.build) integration and content loader that add translated Markdown and MDX pages for the locales of your `i18n` config, built from the records of a translations repository. |
+| [`@diglot/starlight`](./packages/starlight) | [Starlight](https://starlight.astro.build) plugin and docs loader that set up `@diglot/astro` for a Starlight site, its locales and its components. |
 
 ## Quick start
 
