@@ -161,6 +161,8 @@ describe('config', () => {
     const root = temp()
     writeFileSync(join(root, 'diglot.config.ts'), 'export default { locales: [\'French\'] }\n')
     await expect(loadConfig(root)).rejects.toThrow('invalid locale')
+    writeFileSync(join(root, 'diglot.config.ts'), 'export default { locales: [\'fr\'], parser: \'remark\' }\n')
+    await expect(loadConfig(root)).rejects.toThrow('invalid parser "remark"')
   })
 
   it('should load glossaries', async () => {

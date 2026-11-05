@@ -1,13 +1,13 @@
 import type { ApplyReport, ApplySegmentEvent, AtomicNode, LinkNode, Placeholder, Policy, Resolution, Segment, SegmentTarget, Translations } from '@diglot/core'
-import type { MdNode, Parser } from './parse.ts'
+import type { Format, MdNode, Parser } from './parse.ts'
 import type { Span, Target, Unit } from './walk.ts'
 import { buildSegment, createReport, createSegmentEvent, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton, yamlScalarSpan } from '@diglot/core'
 import { isScalar, parseDocument } from 'yaml'
-import { parse } from './parse.ts'
+import { formatOf, parse } from './parse.ts'
 import { walk } from './walk.ts'
 
 export { parse } from './parse.ts'
-export type { MdNode, ParseOptions, Parser } from './parse.ts'
+export type { Format, MdNode, ParseOptions, Parser } from './parse.ts'
 
 const BOM = '\uFEFF'
 
@@ -16,6 +16,8 @@ export interface ExtractOptions {
   file?: string
   /** Markdown parser, `remark` by default. See {@link Parser}. */
   parser?: Parser
+  /** `md` or `mdx`. Defaults to `mdx` when `file` ends in `.mdx`, and to `md` otherwise. */
+  format?: Format
   policy?: Partial<Policy>
 }
 
@@ -25,7 +27,7 @@ export async function extract(source: string, options: ExtractOptions = {}): Pro
     return extract(source.slice(BOM.length), options)
   const policy = resolvePolicy(options.policy)
   const segments: Segment[] = []
-  for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
+  for (const unit of walk(await parse(source, { parser: options.parser, format: options.format ?? formatOf(options.file) }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index: segments.length, policy })
     if (segment)
       segments.push(segment)
@@ -76,14 +78,15 @@ export async function apply(source: string, translations: Translations, options:
   const edits: Edit[] = []
   const attributes = new Map<MdNode, Record<string, string>>()
   let index = 0
-  for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
+  const format = options.format ?? formatOf(options.file)
+  for (const unit of walk(await parse(source, { parser: options.parser, format }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index, policy })
     if (!segment)
       continue
     index++
     let resolution: Resolution = resolveTranslation(segment, translations)
     if (resolution.status === 'ok') {
-      const edit = editFor(unit, resolution.skeleton, resolution.text, segment.placeholders, source, lines)
+      const edit = editFor(unit, format === 'mdx' ? escapeAngleBrackets(resolution.skeleton) : resolution.skeleton, resolution.text, segment.placeholders, source, lines)
       if (typeof edit === 'string')
         resolution = { status: 'rejected', errors: [{ code: 'unaddressable', message: edit }], ...(resolution.record ? { record: resolution.record } : {}) }
       else
@@ -126,7 +129,7 @@ function isLoose(list: MdNode): boolean {
 }
 
 function blockTarget(target: Target, attributes: Map<MdNode, Record<string, string>>): SegmentTarget | null {
-  if (target.type !== 'range')
+  if (target.type !== 'range' || target.node.type.startsWith('mdxJsx'))
     return null
   return {
     setAttribute: (name, value) => {
@@ -149,7 +152,7 @@ function editFor(unit: Unit, skeleton: string, text: string, placeholders: Place
         return 'label cannot contain brackets'
       return { start: target.start, end: target.end, text: () => target.escape ? escapeText(text) : text }
     case 'prop':
-      return propEdit(target.node, target.key, text, source) ?? `prop ${target.key} not found in source`
+      return (target.node.type.startsWith('mdxJsx') ? jsxPropEdit(target.node, target.key, text, source) : propEdit(target.node, target.key, text, source)) ?? `prop ${target.key} not found in source`
     case 'frontmatter': {
       const start = source.indexOf('\n', target.node.position!.start.offset!) + 1
       return yamlEdit(target.node.value!, start, target.path, text) ?? 'frontmatter value not found'
@@ -225,6 +228,98 @@ function propEdit(node: MdNode, key: string, value: string, source: string): Edi
   if (!quote)
     return
   return { start: valueStart, end: valueStart + raw.length, text: () => `${quote}${value}${quote}` }
+}
+
+/** Replaces a string attribute in the opening tag of an MDX JSX element. */
+function jsxPropEdit(node: MdNode, key: string, value: string, source: string): Edit | undefined {
+  const attr = jsxStringAttributes(source, node.position!.start.offset!).find(a => a.name === key)
+  if (!attr)
+    return
+  const original = source[attr.start]!
+  const other = original === '"' ? '\'' : '"'
+  const quote = value.includes(original) && !value.includes(other) ? other : original
+  // MDX decodes character references in attribute strings.
+  const text = value.replace(/&(?=#?\w+;)/g, '&amp;').replaceAll(quote, quote === '"' ? '&quot;' : '&#39;')
+  return { start: attr.start, end: attr.end, text: () => `${quote}${text}${quote}` }
+}
+
+/** The string attributes of the JSX opening tag at `start`, with the range of each value including its quotes. */
+function jsxStringAttributes(source: string, start: number): Array<{ name: string, start: number, end: number }> {
+  const attrs: Array<{ name: string, start: number, end: number }> = []
+  let i = start + 1
+  const skipSpace = () => {
+    while (/\s/.test(source[i] ?? ''))
+      i++
+  }
+  while (i < source.length && !/[\s/>{]/.test(source[i]!))
+    i++
+  while (i < source.length) {
+    skipSpace()
+    if (source[i] === '{') {
+      i = expressionEnd(source, i)
+      continue
+    }
+    const nameStart = i
+    while (i < source.length && !/[\s=/>{]/.test(source[i]!))
+      i++
+    const name = source.slice(nameStart, i)
+    if (!name)
+      break
+    skipSpace()
+    if (source[i] !== '=')
+      continue
+    i++
+    skipSpace()
+    const quote = source[i]
+    if (quote === '{') {
+      i = expressionEnd(source, i)
+    }
+    else if (quote === '"' || quote === '\'') {
+      const close = source.indexOf(quote, i + 1)
+      if (close < 0)
+        break
+      attrs.push({ name, start: i, end: close + 1 })
+      i = close + 1
+    }
+    else {
+      break
+    }
+  }
+  return attrs
+}
+
+/** The offset after the `}` that closes the expression at `open`, skipping strings and comments. */
+function expressionEnd(source: string, open: number): number {
+  let depth = 0
+  for (let i = open; i < source.length; i++) {
+    const ch = source[i]
+    if (ch === '"' || ch === '\'' || ch === '`') {
+      for (i++; i < source.length && source[i] !== ch; i++) {
+        if (source[i] === '\\')
+          i++
+      }
+    }
+    else if (source.startsWith('/*', i)) {
+      const end = source.indexOf('*/', i + 2)
+      i = end < 0 ? source.length : end + 1
+    }
+    else if (source.startsWith('//', i)) {
+      const end = source.indexOf('\n', i)
+      i = end < 0 ? source.length : end
+    }
+    else if (ch === '{') {
+      depth++
+    }
+    else if (ch === '}' && --depth === 0) {
+      return i + 1
+    }
+  }
+  return source.length
+}
+
+/** Escapes each `<` that MDX would read as the start of a tag: everything not followed by whitespace. */
+function escapeAngleBrackets(skeleton: string): string {
+  return skeleton.replace(/\\.|<(?!\s)/g, match => match === '<' ? '\\<' : match)
 }
 
 function yamlEdit(yaml: string, offset: number, path: Array<string | number>, value: string): Edit | undefined {

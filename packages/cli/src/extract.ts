@@ -19,14 +19,24 @@ export async function extractSource(config: ResolvedConfig, source: SourceConfig
   const snapshot = await readSource(source, config.root)
   const files: Record<string, Segment[]> = {}
   for (const { path, content } of snapshot.files) {
-    if (path.endsWith('.yml') || path.endsWith('.yaml'))
-      files[path] = extractNavigation(content, { file: path, policy: config.policy })
-    else if (config.parser === 'mdast')
-      files[path] = await extractMdast(content, { file: path, policy: config.policy })
-    else
-      files[path] = (await extractComark(await parse(content), { file: path, policy: config.policy, ...options })).segments
+    try {
+      files[path] = await extractFile(config, path, content, options)
+    }
+    catch (error) {
+      const { message, line, column } = error as { message: string, line?: number, column?: number }
+      const at = typeof line === 'number' && !message.startsWith(`${line}:`) ? `${line}:${column}: ` : ''
+      throw new Error(`${path}: ${at}${message}`, { cause: error })
+    }
   }
   return { snapshot, files }
+}
+
+async function extractFile(config: ResolvedConfig, path: string, content: string, options: ExtractSourceOptions): Promise<Segment[]> {
+  if (path.endsWith('.yml') || path.endsWith('.yaml'))
+    return extractNavigation(content, { file: path, policy: config.policy })
+  if (config.parser !== 'comark' || path.endsWith('.mdx'))
+    return extractMdast(content, { file: path, parser: config.parser === 'satteri' ? 'satteri' : 'remark', policy: config.policy })
+  return (await extractComark(await parse(content), { file: path, policy: config.policy, ...options })).segments
 }
 
 /** Sources selected by `--source`, all of them by default. */

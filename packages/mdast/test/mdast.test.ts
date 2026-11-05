@@ -142,6 +142,151 @@ describe('satteri parser', () => {
   })
 })
 
+describe('mdx', () => {
+  const MDX = [
+    '---',
+    'title: Cards',
+    '---',
+    '',
+    'import { Aside, Card } from \'@astrojs/starlight/components\'',
+    'export const count = 3',
+    '',
+    '# Getting started',
+    '',
+    'Press <kbd>Ctrl</kbd> to read {count} cards. Braces need a \\{ backslash.',
+    '',
+    '<Card title="First steps" icon="rocket">',
+    '  Install the **package** first.',
+    '</Card>',
+    '',
+    '{/* A comment for authors. */}',
+    '',
+    '<Aside type="tip" title="Did you know?">One line inside.</Aside>',
+    '',
+  ].join('\n')
+  const policy = { props: { card: ['title'], aside: ['title'] } }
+
+  it('should extract text, string props and component slots, and protect JSX and expressions', async () => {
+    const segments = await extract(MDX, { format: 'mdx', policy })
+    expect(segments.map(s => [s.kind, s.context.containers, s.skeleton, s.placeholders.map(p => p.source)])).toEqual([
+      ['frontmatter', [], 'Cards', []],
+      ['heading', [], 'Getting started', []],
+      ['paragraph', [], 'Press {0} to read {1} cards. Braces need a \\{ backslash.', ['<kbd>Ctrl</kbd>', '{count}']],
+      ['prop', ['card'], 'First steps', []],
+      ['component-slot', ['card'], 'Install the **package** first.', []],
+      ['prop', ['aside'], 'Did you know?', []],
+      ['component-slot', ['aside'], 'One line inside.', []],
+    ])
+  })
+
+  it('should extract the same segments with remark and satteri', async () => {
+    expect(await extract(MDX, { format: 'mdx', parser: 'satteri', policy })).toEqual(await extract(MDX, { format: 'mdx', policy }))
+  })
+
+  it('should read files ending in .mdx as MDX', async () => {
+    expect(await extract(MDX, { file: 'docs/cards.mdx', policy })).toEqual(await extract(MDX, { file: 'docs/cards.mdx', format: 'mdx', policy }))
+    const [segment] = await extract('Read {count} cards.\n', { file: 'docs/cards.md' })
+    expect(segment!.skeleton).toBe('Read \\{count\\} cards.')
+  })
+
+  it('should apply translations that remain valid MDX', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(MDX, { format: 'mdx', parser, policy })
+      const { markdown, report } = await apply(MDX, pseudo(segments), { format: 'mdx', parser, policy })
+      expect(report.applied, parser).toBe(segments.length)
+      expect(markdown, parser).toContain('import { Aside, Card } from \'@astrojs/starlight/components\'\nexport const count = 3\n')
+      expect(markdown, parser).toContain('\n{/* A comment for authors. */}\n')
+      expect((await extract(markdown, { format: 'mdx', parser, policy })).map(s => s.skeleton), parser).toEqual(segments.map(s => pseudoTranslate(s.skeleton, s.format)))
+    }
+  })
+
+  it('should quote and escape translated props', async () => {
+    const segments = await extract(MDX, { format: 'mdx', policy })
+    const title = segments.find(s => s.skeleton === 'First steps')!
+    const { markdown } = await apply(MDX, new Map([[title.hash, 'Les "premiers" pas &amp; plus']]), { format: 'mdx', policy })
+    expect(markdown).toContain('<Card title=\'Les "premiers" pas &amp;amp; plus\' icon="rocket">')
+    const [again] = (await extract(markdown, { format: 'mdx', policy })).filter(s => s.kind === 'prop')
+    expect(again!.skeleton).toBe('Les "premiers" pas &amp; plus')
+  })
+
+  it('should encode double quotes in props that contain both kinds of quotes', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(MDX, { format: 'mdx', parser, policy })
+      const title = segments.find(s => s.skeleton === 'First steps')!
+      const { markdown, report } = await apply(MDX, new Map([[title.hash, 'L\'étape "une"']]), { format: 'mdx', parser, policy })
+      expect(report.applied, parser).toBe(1)
+      expect(markdown, parser).toContain('<Card title="L\'étape &quot;une&quot;" icon="rocket">')
+      const [again] = (await extract(markdown, { format: 'mdx', parser, policy })).filter(s => s.kind === 'prop')
+      expect(again!.skeleton, parser).toBe('L\'étape "une"')
+    }
+  })
+
+  it('should replace the attribute itself, not a lookalike inside another value', async () => {
+    const source = '<Card note=\'see title="x"\' meta={{ title: "y" }} data={`}>`} title = "Hi" />\n'
+    const [title] = await extract(source, { format: 'mdx', policy })
+    const { markdown, report } = await apply(source, new Map([[title!.hash, 'Salut']]), { format: 'mdx', policy })
+    expect(report.applied).toBe(1)
+    expect(markdown).toBe('<Card note=\'see title="x"\' meta={{ title: "y" }} data={`}>`} title = "Salut" />\n')
+  })
+
+  it('should keep the quotes of the source prop when the value allows it', async () => {
+    const source = '<Card title=\'Hi\' />\n'
+    const [title] = await extract(source, { format: 'mdx', policy })
+    const cases = [['Salut', '\'Salut\''], ['L\'étape', '"L\'étape"'], ['L\'étape "une"', '\'L&#39;étape "une"\'']]
+    for (const parser of ['remark', 'satteri'] as const) {
+      for (const [value, written] of cases) {
+        const { markdown } = await apply(source, new Map([[title!.hash, value!]]), { format: 'mdx', parser, policy })
+        expect(markdown, parser).toBe(`<Card title=${written} />\n`)
+        expect((await extract(markdown, { format: 'mdx', parser, policy }))[0]!.skeleton, parser).toBe(value)
+      }
+    }
+  })
+
+  it('should extract the content of JSX fragments', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract('<>Fragment text.</>\n\n<>\n  Block fragment.\n</>\n', { format: 'mdx', parser })
+      expect(segments.map(s => [s.kind, s.skeleton]), parser).toEqual([['paragraph', 'Fragment text.'], ['paragraph', 'Block fragment.']])
+    }
+  })
+
+  it('should not translate code labels inside a synced code group', async () => {
+    const source = '<CodeGroup sync>\n\n```ts [Config file]\nexport default {}\n```\n\n</CodeGroup>\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(source, { format: 'mdx', parser })
+      expect(segments.filter(s => s.kind === 'code-label'), parser).toEqual([])
+      for (const unsynced of [source.replace(' sync', ''), source.replace(' sync', ' sync={false}')]) {
+        const segments = await extract(unsynced, { format: 'mdx', parser })
+        expect(segments.filter(s => s.kind === 'code-label').map(s => s.skeleton), parser).toEqual(['Config file'])
+      }
+    }
+  })
+
+  it('should escape angle brackets that MDX would read as tags', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const source = 'Use less than five.\n'
+      const [segment] = await extract(source, { format: 'mdx', parser })
+      const { markdown, report } = await apply(source, new Map([[segment!.hash, 'Use x<3, y <= 5, a < b or \\<c.']]), { format: 'mdx', parser })
+      expect(report.applied, parser).toBe(1)
+      expect(markdown, parser).toBe('Use x\\<3, y \\<= 5, a < b or \\<c.\n')
+      await expect(extract(markdown, { format: 'mdx', parser }), parser).resolves.toHaveLength(1)
+    }
+  })
+
+  it('should extract inline JSX content that holds references and directives', async () => {
+    const source = '<Aside>See [the docs][ref] now.</Aside>\n\n<Aside>Use :badge[New] here.</Aside>\n\n[ref]: /docs\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(source, { format: 'mdx', parser })
+      expect(segments.map(s => s.skeleton), parser).toEqual(['See {0} now.', 'Use {0} here.'])
+    }
+  })
+
+  it('should not offer attribute targets for JSX content', async () => {
+    const targets: unknown[] = []
+    await apply('<Aside>One line inside.</Aside>\n\nA paragraph.\n', new Map(), { format: 'mdx', onSegment: event => targets.push(event.target) })
+    expect(targets.map(t => t === null)).toEqual([true, false])
+  })
+})
+
 describe('onSegment', () => {
   it('should report each segment and annotate block nodes', async () => {
     const segments = await extract(PAGE)

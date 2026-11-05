@@ -18,7 +18,7 @@ Keeping markdown documents in-sync is tricky, and diglot exists to help solve th
 | --- | --- |
 | [`@diglot/core`](./packages/core) | Segment model, placeholder form and hashing, validation, apply helpers, segment diff, sentence diff, translation records, policy and glossary types. No parser dependencies. |
 | [`@diglot/comark`](./packages/comark) | Extract and apply for [comark](https://github.com/comarkdown/comark) documents, plus `.navigation.yml` files. |
-| [`@diglot/mdast`](./packages/mdast) | Extract and apply for markdown parsed with remark (`remark-parse`, `remark-gfm`, `remark-frontmatter`, `remark-mdc`). |
+| [`@diglot/mdast`](./packages/mdast) | Extract and apply for markdown and MDX, parsed with remark (`remark-parse`, `remark-gfm`, `remark-frontmatter`, `remark-mdc` or `remark-mdx`) or [Sätteri](https://satteri.bruits.org). |
 | [`@diglot/code`](./packages/code) | Comment extraction and apply for fenced code blocks. |
 | [`@diglot/store`](./packages/store) | Git record store, source manifests, locale bundles, `sources.yml` and `diglot.config.ts` loading. |
 | [`@diglot/mt`](./packages/mt) | Machine translation with the AI SDK: page-batched translation, minimal updates of existing translations, glossary and style rules, model-free QA. |
