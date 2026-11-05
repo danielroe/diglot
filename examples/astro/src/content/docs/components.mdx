@@ -1,0 +1,18 @@
+---
+title: Components
+description: How the MDX pages of this site are translated.
+---
+
+import Card from '../../components/Card.astro'
+
+export const languages = 3
+
+This page is MDX, so it can use components and expressions. The site speaks {languages} languages, and diglot translates the text around and inside each component.
+
+<Card title="Props are translated" icon="✦">
+  The policy of the translations repository lists which props are prose. The default policy covers the `title` of a card.
+</Card>
+
+<Card title="Code stays as it is" icon="◆">
+  Imports, exports and expressions such as `{languages}` are protected, so a translation can never change them.
+</Card>

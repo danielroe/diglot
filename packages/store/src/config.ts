@@ -38,7 +38,7 @@ async function importConfig(path: string): Promise<Partial<DiglotConfig>> {
   aliasCore()
   const url = pathToFileURL(path)
   url.searchParams.set('mtime', String((await stat(path)).mtimeMs))
-  const mod = await import(url.href) as { default?: Partial<DiglotConfig> }
+  const mod = await import(/* @vite-ignore */ url.href) as { default?: Partial<DiglotConfig> }
   return mod.default ?? {}
 }
 

@@ -1,0 +1,22 @@
+---
+import type { GetStaticPaths } from 'astro'
+import { getCollection, render } from 'astro:content'
+import { parseEntry } from '../i18n'
+
+import Layout from '../layouts/Layout.astro'
+
+export const getStaticPaths = (async () => {
+  const docs = await getCollection('docs')
+  return docs.map((entry) => {
+    const { locale, key } = parseEntry(entry)
+    const slug = [locale === 'en' ? '' : locale, key].filter(Boolean).join('/')
+    return { params: { slug: slug || undefined }, props: { entry } }
+  })
+}) satisfies GetStaticPaths
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+---
+<Layout entry={entry}>
+  <Content />
+</Layout>

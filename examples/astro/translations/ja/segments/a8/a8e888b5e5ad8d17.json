@@ -1,0 +1,9 @@
+{
+  "hash": "a8e888b5e5ad8d17",
+  "source": "The policy of the translations repository lists which props are prose. The default policy covers the {0} of a card.",
+  "text": "どの props が文章かは翻訳リポジトリのポリシーで決まります。デフォルトのポリシーはカードの {0} を対象にしています。",
+  "origin": "mt",
+  "review": "none",
+  "derived": "fresh",
+  "updatedAt": "2026-11-06T00:00:00.000Z"
+}

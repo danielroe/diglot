@@ -1,0 +1,9 @@
+{
+  "hash": "1605ba23d7ffbf7a",
+  "source": "Imports, exports and expressions such as {0} are protected, so a translation can never change them.",
+  "text": "Importe, Exporte und Ausdrücke wie {0} sind geschützt, sodass eine Übersetzung sie nie verändern kann.",
+  "origin": "human",
+  "review": "none",
+  "derived": "fresh",
+  "updatedAt": "2026-11-06T00:00:00.000Z"
+}

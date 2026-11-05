@@ -1,0 +1,9 @@
+{
+  "hash": "767ee3eff8ef4739",
+  "source": "This page is MDX, so it can use components and expressions. The site speaks {0} languages, and diglot translates the text around and inside each component.",
+  "text": "このページは MDX なので、コンポーネントや式を使えます。このサイトは {0} つの言語に対応し、diglot は各コンポーネントの周りと中のテキストを翻訳します。",
+  "origin": "mt",
+  "review": "none",
+  "derived": "fresh",
+  "updatedAt": "2026-11-06T00:00:00.000Z"
+}

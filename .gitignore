@@ -9,3 +9,7 @@ coverage
 .nuxt
 .output
 .data
+.astro
+packages/astro/test/fixtures/.tmp-*
+examples/astro/translations/.diglot
+*.swp
