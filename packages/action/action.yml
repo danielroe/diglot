@@ -76,6 +76,7 @@ runs:
       run: node "${{ github.action_path }}/src/cli.ts" parser
       env:
         INPUT_WORKING-DIRECTORY: ${{ inputs.working-directory }}
+        AI_GATEWAY_API_KEY: ${{ inputs.ai-gateway-api-key || env.AI_GATEWAY_API_KEY }}
     - name: Install Sätteri
       if: steps.config.outputs.parser == 'satteri'
       shell: bash
