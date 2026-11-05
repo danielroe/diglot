@@ -29,8 +29,8 @@ interface Point {
 
 /**
  * `remark` parses with remark-parse, remark-gfm, remark-mdc and remark-frontmatter. `satteri`
- * parses GFM and frontmatter natively in Rust and needs the optional `satteri` peer dependency;
- * it has no MDC support, so MDC components are read as plain markdown.
+ * parses GFM, frontmatter and directives natively in Rust and needs the optional `satteri` peer
+ * dependency; it has no MDC support.
  */
 export type Parser = 'remark' | 'satteri'
 
@@ -45,7 +45,7 @@ const processor = unified().use(remarkParse).use(remarkGfm).use(remarkMdc).use(r
 export async function parse(source: string, options: ParseOptions = {}): Promise<MdNode> {
   if (options.parser === 'satteri') {
     const { markdownToMdast } = await importSatteri()
-    return markdownToMdast(source, { features: { gfm: true, frontmatter: true } }) as MdNode
+    return markdownToMdast(source, { features: { gfm: true, frontmatter: true, directive: true } }) as MdNode
   }
   return await processor.run(processor.parse(source)) as MdNode
 }
@@ -55,6 +55,8 @@ async function importSatteri() {
     return await import('satteri')
   }
   catch (error) {
+    if ((error as { code?: unknown } | null)?.code !== 'ERR_MODULE_NOT_FOUND')
+      throw error
     throw new Error('The `satteri` parser needs the `satteri` package. Install it with `pnpm add satteri`.', { cause: error })
   }
 }
