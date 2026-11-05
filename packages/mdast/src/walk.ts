@@ -1,8 +1,8 @@
 import type { CodeComment } from '@diglot/code'
 import type { InlineNode, Policy, SegmentDraft, SegmentKind, SegmentPosition, ValuePath } from '@diglot/core'
-import type { MdNode } from './parse.ts'
+import type { MdNode, MdxJsxAttribute } from './parse.ts'
 import { commentDraft, findComments } from '@diglot/code'
-import { BREAK_SOURCE, kindForContainers, proseProps, stringsAtPaths } from '@diglot/core'
+import { BREAK_SOURCE, kebabCase, kindForContainers, proseProps, stringsAtPaths } from '@diglot/core'
 import { parse as parseYaml } from 'yaml'
 
 /** Source offsets behind a placeholder. Paired links also record where their text starts and ends. */
@@ -25,6 +25,9 @@ export interface Unit {
 }
 
 const HEADING_ATTRS_RE = /\s*\{[^{}]*\}\s*$/
+
+/** Inline node types, which an MDX JSX element can hold in place of blocks. */
+const PHRASING = new Set(['text', 'strong', 'emphasis', 'delete', 'inlineCode', 'break', 'image', 'link', 'html', 'mdxJsxTextElement', 'mdxTextExpression'])
 
 /** Lists the translatable units of an mdast tree in document order. */
 export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
@@ -93,6 +96,12 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
           else
             atomic('component', component(n))
           break
+        case 'mdxTextExpression':
+          atomic('binding')
+          break
+        case 'mdxJsxTextElement':
+          atomic('component', { name: n.name ?? undefined, ...(/\p{L}/u.test(textOf(n.children ?? [])) ? { hidesText: true } : {}) })
+          break
         case 'html': {
           if (/^<\/?br\s*\/?>$/i.test(n.value!)) {
             out.push({ type: 'atomic', kind: 'break', source: BREAK_SOURCE, data: span })
@@ -133,7 +142,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
   }
 
   const props = (node: MdNode, containers: string[]) => {
-    const attrs = { ...node.fmAttributes, ...node.attributes }
+    const attrs = Array.isArray(node.attributes) ? jsxAttributes(node.attributes) : { ...node.fmAttributes, ...node.attributes }
     for (const prop of proseProps(policy, node.name!)) {
       const key = Object.keys(attrs).find(k => k === prop || k.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase()) === prop)
       const value = key ? attrs[key] : undefined
@@ -163,6 +172,12 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
           props(kids[0]!, [...containers, kids[0]!.name!])
           return
         }
+        // remark-mdx wraps JSX elements that stand on their own lines in a paragraph, where Sätteri reads blocks.
+        if (kids.length && kids.every(c => c.type === 'mdxJsxTextElement' && c.name)) {
+          for (const kid of kids)
+            jsx(kid, containers, synced)
+          return
+        }
         return inline(kindForContainers(containers, policy), n.children!, n, containers)
       }
       case 'tableCell':
@@ -171,7 +186,11 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
         return code(n, containers, synced)
       case 'html':
       case 'thematicBreak':
+      case 'mdxjsEsm':
+      case 'mdxFlowExpression':
         return
+      case 'mdxJsxFlowElement':
+        return n.name ? jsx(n, containers, synced) : visitChildren(n, containers, synced)
       case 'list':
       case 'table':
       case 'tableRow':
@@ -190,7 +209,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
       case 'containerComponent': {
         const inner = [...containers, n.name!]
         props(n, inner)
-        const sync = synced || (n.name === 'code-group' && (n.attributes?.sync !== undefined || n.fmAttributes?.sync !== undefined))
+        const sync = synced || (n.name === 'code-group' && ((!Array.isArray(n.attributes) && n.attributes?.sync !== undefined) || n.fmAttributes?.sync !== undefined))
         for (const child of n.children!)
           visit(child, inner, sync)
         return
@@ -205,6 +224,25 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
         for (const child of n.children ?? [])
           visit(child, containers, synced)
     }
+  }
+
+  /**
+   * An MDX JSX element with a name: its string props, then its content. An element that holds
+   * inline content, such as `<Aside>Text</Aside>` on one line, is one unit, whether the parser
+   * reads it as a block (Sätteri) or as a paragraph around an inline element (remark-mdx).
+   */
+  function jsx(n: MdNode, containers: string[], synced: boolean) {
+    const inner = [...containers, kebabCase(n.name!)]
+    props(n, inner)
+    const kids = n.children ?? []
+    if (kids.length && kids.every(c => PHRASING.has(c.type)))
+      return inline(kindForContainers(inner, policy), kids, n, inner)
+    visitChildren(n, inner, synced)
+  }
+
+  function visitChildren(n: MdNode, containers: string[], synced: boolean) {
+    for (const child of n.children ?? [])
+      visit(child, containers, synced)
   }
 
   function code(n: MdNode, containers: string[], synced: boolean) {
@@ -249,6 +287,16 @@ function attributesEnd(source: string, end: number, limit: number | undefined): 
     return end
   const close = source.indexOf('}', end)
   return close >= 0 && (limit === undefined || close < limit) ? close + 1 : end
+}
+
+/** The string attributes of an MDX JSX element. Expression and spread attributes have no translatable value. */
+function jsxAttributes(attributes: MdxJsxAttribute[]): Record<string, string> {
+  const attrs: Record<string, string> = {}
+  for (const attr of attributes) {
+    if (attr.type === 'mdxJsxAttribute' && attr.name && typeof attr.value === 'string')
+      attrs[attr.name] = attr.value
+  }
+  return attrs
 }
 
 function closingBracket(source: string, open: number): number {

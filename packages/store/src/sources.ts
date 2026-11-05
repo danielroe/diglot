@@ -12,7 +12,7 @@ import { parse as parseYaml } from 'yaml'
 const exec = promisify(execFile)
 
 /** Default document patterns of a source. */
-export const DEFAULT_INCLUDE: string[] = ['**/*.md', '**/.navigation.yml']
+export const DEFAULT_INCLUDE: string[] = ['**/*.md', '**/*.mdx', '**/.navigation.yml']
 
 /** Parses `sources.yml`: either a list of sources or `{ sources: [...] }`. */
 export function parseSources(content: string): SourceConfig[] {

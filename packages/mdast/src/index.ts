@@ -1,13 +1,13 @@
 import type { ApplyReport, ApplySegmentEvent, AtomicNode, LinkNode, Placeholder, Policy, Resolution, Segment, SegmentTarget, Translations } from '@diglot/core'
-import type { MdNode, Parser } from './parse.ts'
+import type { Format, MdNode, Parser } from './parse.ts'
 import type { Span, Target, Unit } from './walk.ts'
 import { buildSegment, createReport, createSegmentEvent, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton, yamlScalarSpan } from '@diglot/core'
 import { isScalar, parseDocument } from 'yaml'
-import { parse } from './parse.ts'
+import { formatOf, parse } from './parse.ts'
 import { walk } from './walk.ts'
 
 export { parse } from './parse.ts'
-export type { MdNode, ParseOptions, Parser } from './parse.ts'
+export type { Format, MdNode, ParseOptions, Parser } from './parse.ts'
 
 const BOM = '\uFEFF'
 
@@ -16,6 +16,8 @@ export interface ExtractOptions {
   file?: string
   /** Markdown parser, `remark` by default. See {@link Parser}. */
   parser?: Parser
+  /** `md` or `mdx`. Defaults to `mdx` when `file` ends in `.mdx`, and to `md` otherwise. */
+  format?: Format
   policy?: Partial<Policy>
 }
 
@@ -25,7 +27,7 @@ export async function extract(source: string, options: ExtractOptions = {}): Pro
     return extract(source.slice(BOM.length), options)
   const policy = resolvePolicy(options.policy)
   const segments: Segment[] = []
-  for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
+  for (const unit of walk(await parse(source, { parser: options.parser, format: options.format ?? formatOf(options.file) }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index: segments.length, policy })
     if (segment)
       segments.push(segment)
@@ -76,7 +78,7 @@ export async function apply(source: string, translations: Translations, options:
   const edits: Edit[] = []
   const attributes = new Map<MdNode, Record<string, string>>()
   let index = 0
-  for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
+  for (const unit of walk(await parse(source, { parser: options.parser, format: options.format ?? formatOf(options.file) }), source, policy)) {
     const segment = buildSegment(unit.draft, { file: options.file ?? '', index, policy })
     if (!segment)
       continue
@@ -149,7 +151,7 @@ function editFor(unit: Unit, skeleton: string, text: string, placeholders: Place
         return 'label cannot contain brackets'
       return { start: target.start, end: target.end, text: () => target.escape ? escapeText(text) : text }
     case 'prop':
-      return propEdit(target.node, target.key, text, source) ?? `prop ${target.key} not found in source`
+      return (target.node.type.startsWith('mdxJsx') ? jsxPropEdit(target.node, target.key, text, source) : propEdit(target.node, target.key, text, source)) ?? `prop ${target.key} not found in source`
     case 'frontmatter': {
       const start = source.indexOf('\n', target.node.position!.start.offset!) + 1
       return yamlEdit(target.node.value!, start, target.path, text) ?? 'frontmatter value not found'
@@ -225,6 +227,45 @@ function propEdit(node: MdNode, key: string, value: string, source: string): Edi
   if (!quote)
     return
   return { start: valueStart, end: valueStart + raw.length, text: () => `${quote}${value}${quote}` }
+}
+
+/** Replaces a string attribute in the opening tag of an MDX JSX element. */
+function jsxPropEdit(node: MdNode, key: string, value: string, source: string): Edit | undefined {
+  const start = node.position!.start.offset!
+  const tag = source.slice(start, openingTagEnd(source, start))
+  const attr = new RegExp(`\\s${key.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&')}=(?:"[^"]*"|'[^']*')`).exec(tag)
+  const quote = !value.includes('"') ? '"' : !value.includes('\'') ? '\'' : undefined
+  if (!attr || !quote)
+    return
+  const valueStart = start + attr.index + key.length + 2
+  // MDX decodes character references in attribute strings, so a literal one is escaped.
+  return { start: valueStart, end: start + attr.index + attr[0].length, text: () => `${quote}${value.replace(/&(?=#?\w+;)/g, '&amp;')}${quote}` }
+}
+
+/** The offset after the `>` that closes the opening tag at `start`, skipping quoted strings and expressions. */
+function openingTagEnd(source: string, start: number): number {
+  let quote = ''
+  let depth = 0
+  for (let i = start; i < source.length; i++) {
+    const ch = source[i]
+    if (quote) {
+      if (ch === quote)
+        quote = ''
+    }
+    else if (ch === '"' || ch === '\'') {
+      quote = ch
+    }
+    else if (ch === '{') {
+      depth++
+    }
+    else if (ch === '}') {
+      depth--
+    }
+    else if (ch === '>' && depth === 0) {
+      return i + 1
+    }
+  }
+  return source.length
 }
 
 function yamlEdit(yaml: string, offset: number, path: Array<string | number>, value: string): Edit | undefined {

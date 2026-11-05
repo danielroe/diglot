@@ -51,7 +51,7 @@ function textRange(text: string, segment: Segment, within: TextRange = { start: 
 export function markdownScanner(state: DiglotState): Scanner {
   return {
     id: 'diglot-markdown',
-    extensions: ['md', 'yml'],
+    extensions: ['md', 'mdx', 'yml'],
     runtime: 'node',
     async scan(file) {
       const config = state.config
@@ -59,13 +59,15 @@ export function markdownScanner(state: DiglotState): Scanner {
       if (!config || !path)
         return { usages: [] }
       const options = { file: path, policy: config.policy }
+      const mdast = { ...options, parser: config.parser === 'satteri' ? 'satteri' as const : 'remark' as const }
       const navigation = file.extension === 'yml'
+      const viaMdast = config.parser !== 'comark' || file.extension === 'mdx'
       const segments = navigation
         ? extractNavigation(file.text, options)
-        : config.parser === 'mdast'
-          ? await extractMdast(file.text, options)
+        : viaMdast
+          ? await extractMdast(file.text, mdast)
           : (await extractComark(await parse(file.text), options)).segments
-      const precise = navigation || config.parser === 'mdast' ? segments : await extractMdast(file.text, options)
+      const precise = navigation || viaMdast ? segments : await extractMdast(file.text, mdast)
       const positions = new Map<string, Segment[]>()
       for (const segment of precise) {
         if (segment.position.precision === 'node')

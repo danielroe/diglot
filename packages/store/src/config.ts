@@ -12,7 +12,7 @@ export interface ResolvedConfig {
   root: string
   locales: string[]
   sources: SourceConfig[]
-  parser: 'comark' | 'mdast'
+  parser: 'comark' | 'mdast' | 'satteri'
   policy: Partial<Policy>
   diff: DiffOptions
   /** Absolute output directory for locale bundles. */

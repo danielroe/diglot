@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
 import { createRecord, policyFingerprint, pseudoTranslate, resolvePolicy, restorePolicy } from '@diglot/core'
+import { extract as extractMdast } from '@diglot/mdast'
 import { readManifest, readPolicy, writeRecord } from '@diglot/store'
 import { runCommand } from 'citty'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -138,6 +139,28 @@ describe('diglot', () => {
     expect(await cli('build', '--cwd', root)).toBe('fr: 4 records (1 rejected) -> dist/fr.json\n')
     const bundle = JSON.parse(readFileSync(join(root, 'dist/fr.json'), 'utf8'))
     expect(Object.keys(bundle.records)).toHaveLength(4)
+  })
+
+  it('should extract with the parser from the configuration', async () => {
+    const root = setup()
+    const source = 'Read [the docs](/d){target="_blank"} now.\n'
+    writeFileSync(join(root, 'docs/guide/intro.md'), source)
+    writeFileSync(join(root, 'diglot.config.ts'), 'export default { locales: [\'fr\'], parser: \'satteri\' }\n')
+    await cli('extract', '--cwd', root)
+    const manifest = (await readManifest(join(root, '.diglot'), 'docs'))!
+    const [satteri] = await extractMdast(source, { parser: 'satteri' })
+    const [remark] = await extractMdast(source)
+    expect(manifest.files['docs/guide/intro.md']!.map(entry => entry.hash)).toEqual([satteri!.hash])
+    expect(satteri!.hash).not.toBe(remark!.hash)
+  })
+
+  it('should extract MDX files with the mdast adapter', async () => {
+    const root = setup()
+    const source = 'import { Card } from \'./card.astro\'\n\n# Cards\n\nRead {count} cards.\n\n<Card>Inside a card.</Card>\n'
+    writeFileSync(join(root, 'docs/guide/cards.mdx'), source)
+    expect(await cli('extract', '--cwd', root)).toBe('docs: 3 files, 8 segments, 8 unique hashes -> .diglot/manifest/docs.json\n')
+    const manifest = (await readManifest(join(root, '.diglot'), 'docs'))!
+    expect(manifest.files['docs/guide/cards.mdx']!.map(entry => entry.hash)).toEqual((await extractMdast(source, { format: 'mdx' })).map(s => s.hash))
   })
 
   it('should fail on an unknown source', async () => {

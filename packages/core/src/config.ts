@@ -53,8 +53,11 @@ export interface DiglotConfig {
   locales: string[]
   /** Path to `sources.yml`, or the sources themselves. Defaults to `sources.yml`. */
   sources?: string | SourceConfig[]
-  /** Markdown parser used for extraction. Defaults to `comark`. */
-  parser?: 'comark' | 'mdast'
+  /**
+   * Markdown parser used for extraction. `comark` and `mdast` read MDC; `satteri` is the mdast adapter
+   * parsing with Sätteri, for markdown without MDC such as Astro sites. Defaults to `comark`.
+   */
+  parser?: 'comark' | 'mdast' | 'satteri'
   policy?: Partial<Policy>
   diff?: DiffOptions
   /** Directory for built locale files. Defaults to `dist`. */

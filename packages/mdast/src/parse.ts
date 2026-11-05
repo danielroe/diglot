@@ -4,7 +4,7 @@ import remarkMdc from 'remark-mdc'
 import remarkParse from 'remark-parse'
 import { unified } from 'unified'
 
-/** The subset of mdast (with remark-mdc extensions) the adapter reads. */
+/** The subset of mdast (with remark-mdc and MDX extensions) the adapter reads. */
 export interface MdNode {
   type: string
   children?: MdNode[]
@@ -14,11 +14,19 @@ export interface MdNode {
   lang?: string | null
   meta?: string | null
   alt?: string | null
-  attributes?: Record<string, unknown> | null
+  /** Attributes of an MDC component, or the attributes of an MDX JSX element. */
+  attributes?: Record<string, unknown> | MdxJsxAttribute[] | null
   fmAttributes?: Record<string, unknown>
   spread?: boolean | null
   data?: { hName?: string, hProperties?: Record<string, unknown> }
   position?: { start: Point, end: Point }
+}
+
+/** An attribute of an MDX JSX element. Expression values and spread attributes are not plain strings. */
+export interface MdxJsxAttribute {
+  type: string
+  name?: string
+  value?: unknown
 }
 
 interface Point {
@@ -34,20 +42,42 @@ interface Point {
  */
 export type Parser = 'remark' | 'satteri'
 
+/**
+ * `md` is markdown, `mdx` is MDX: markdown with JSX, expressions and ESM. MDX is never read as MDC;
+ * both parsers read its `:::` directives instead, as Starlight asides use them.
+ */
+export type Format = 'md' | 'mdx'
+
 export interface ParseOptions {
   /** Defaults to `remark`. */
   parser?: Parser
+  /** Defaults to `md`. */
+  format?: Format
 }
 
 const processor = unified().use(remarkParse).use(remarkGfm).use(remarkMdc).use(remarkFrontmatter)
+// The MDX extensions (with acorn) only load once a document needs them.
+let mdxProcessor: ReturnType<typeof createMdxProcessor> | undefined
 
-/** Parses markdown into an mdast tree with source positions. */
+/** Parses markdown or MDX into an mdast tree with source positions. */
 export async function parse(source: string, options: ParseOptions = {}): Promise<MdNode> {
+  const mdx = options.format === 'mdx'
   if (options.parser === 'satteri') {
-    const { markdownToMdast } = await importSatteri()
-    return markdownToMdast(source, { features: { gfm: true, frontmatter: true, directive: true } }) as MdNode
+    const { markdownToMdast, mdxToMdast } = await importSatteri()
+    return (mdx ? mdxToMdast : markdownToMdast)(source, { features: { gfm: true, frontmatter: true, directive: true } }) as MdNode
   }
-  return await processor.run(processor.parse(source)) as MdNode
+  const remark = mdx ? await (mdxProcessor ??= createMdxProcessor()) : processor
+  return await remark.run(remark.parse(source)) as MdNode
+}
+
+/** The format of a file: `mdx` for `.mdx` files, `md` otherwise. */
+export function formatOf(file: string | undefined): Format {
+  return file?.endsWith('.mdx') ? 'mdx' : 'md'
+}
+
+async function createMdxProcessor() {
+  const [{ default: remarkDirective }, { default: remarkMdx }] = await Promise.all([import('remark-directive'), import('remark-mdx')])
+  return unified().use(remarkParse).use(remarkMdx).use(remarkGfm).use(remarkDirective).use(remarkFrontmatter)
 }
 
 async function importSatteri() {

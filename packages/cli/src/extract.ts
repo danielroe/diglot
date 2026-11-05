@@ -21,8 +21,9 @@ export async function extractSource(config: ResolvedConfig, source: SourceConfig
   for (const { path, content } of snapshot.files) {
     if (path.endsWith('.yml') || path.endsWith('.yaml'))
       files[path] = extractNavigation(content, { file: path, policy: config.policy })
-    else if (config.parser === 'mdast')
-      files[path] = await extractMdast(content, { file: path, policy: config.policy })
+    // comark doesn't read MDX, so `.mdx` files always go through the mdast adapter.
+    else if (config.parser !== 'comark' || path.endsWith('.mdx'))
+      files[path] = await extractMdast(content, { file: path, parser: config.parser === 'satteri' ? 'satteri' : 'remark', policy: config.policy })
     else
       files[path] = (await extractComark(await parse(content), { file: path, policy: config.policy, ...options })).segments
   }

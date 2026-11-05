@@ -1,6 +1,6 @@
 # @diglot/mdast
 
-remark / mdast adapter for [diglot](../../README.md), for markdown parsed with `remark-parse`, `remark-gfm`, `remark-frontmatter` and `remark-mdc`. Suitable for Astro, Docusaurus, Starlight or plain markdown sources.
+remark / mdast adapter for [diglot](../../README.md), for markdown parsed with `remark-parse`, `remark-gfm`, `remark-frontmatter` and `remark-mdc`, and for [MDX](#mdx). Suitable for Astro, Docusaurus, Starlight or plain markdown sources.
 
 ```bash
 pnpm add @diglot/mdast @diglot/core
@@ -16,8 +16,8 @@ const segments = await extract(markdown, { file: 'docs/intro.md' })
 const { markdown: translated, report } = await apply(markdown, new Map([[segments[0].hash, 'Introduction']]))
 ```
 
-- `extract(source, { file, policy })` returns the same segments (and hashes) as `@diglot/comark` for the same document, with node-precise line positions. Protected spans are sliced from the source.
-- `apply(source, translations, { policy })` validates each translation and splices it into the source, so everything outside translated units is preserved byte for byte. Frontmatter and YAML props are rewritten as YAML scalars; inline props keep their attribute syntax; code comments keep their indentation and comment syntax. Units that cannot be located in the source are reported as `unaddressable` and keep their source text.
+- `extract(source, { file, format, parser, policy })` returns the same segments (and hashes) as `@diglot/comark` for the same document, with node-precise line positions. Protected spans are sliced from the source.
+- `apply(source, translations, { format, parser, policy })` validates each translation and splices it into the source, so everything outside translated units is preserved byte for byte. Frontmatter and YAML props are rewritten as YAML scalars; inline props keep their attribute syntax; code comments keep their indentation and comment syntax. Units that cannot be located in the source are reported as `unaddressable` and keep their source text.
 - `apply(source, translations, { onSegment })` calls `onSegment` with an [`ApplySegmentEvent`](../core#apply-events) for each segment. Attributes set with `target.setAttribute(name, value)` on headings, paragraphs and table cells are returned as `annotations`, located in the applied markdown; other segments have a `null` target. `annotate(tree, annotations)` sets them as `data.hProperties` on a tree parsed from that markdown, and renders paragraphs of tight list items as `<span>` so their attributes reach the HTML.
 
   ```ts
@@ -31,7 +31,7 @@ const { markdown: translated, report } = await apply(markdown, new Map([[segment
   annotate(tree, annotations)
   ```
 
-- `parse(source, { parser })` exposes the pipeline the adapter uses.
+- `parse(source, { format, parser })` exposes the pipeline the adapter uses.
 
 ## Parsers
 
@@ -46,5 +46,19 @@ const segments = await extract(markdown, { parser: 'satteri' })
 ```
 
 Sätteri reads directives the same way as remark-directive, which Starlight uses. `:::` blocks such as asides are translated like components with either parser, and with Sätteri their titles (`:::tip[Title]`) are translated too. Inline directives with a label or attributes, such as `:badge[New]`, are kept as placeholders. Sätteri has no MDC support, so block components such as `::card` are not parsed and their markers can end up in translated text. Keep `remark` for MDC sources. For other markdown, both parsers produce the same segments and hashes, so existing translations keep applying. One exception: Sätteri skips TOML frontmatter (`+++`), which remark reads as a paragraph. Pass the same `parser` to `extract` and `apply`.
+
+## MDX
+
+MDX is markdown with JSX components, `{expressions}` and `import` and `export` statements. The adapter reads a document as MDX when `file` ends in `.mdx`, or when you pass `format: 'mdx'`:
+
+```ts
+const segments = await extract(source, { file: 'docs/cards.mdx' })
+```
+
+Both parsers read MDX, remark with `remark-mdx` and Sätteri with its own MDX parser, and they produce the same segments and hashes. MDX is never read as MDC, but `:::` directives such as Starlight asides are read in both formats.
+
+The text inside a JSX element is translated like the content of an MDC component. The string props that the policy lists for a component are translated too, matched by the kebab-case name of the element, so `<LinkCard title="…">` uses the props of `link-card`. Props with an expression value, such as `title={name}`, are left alone. A JSX element inside a sentence, such as `<kbd>Ctrl</kbd>`, and an expression such as `{count}` become placeholders. `import` and `export` statements and expressions on their own lines, comments included, aren't translated.
+
+Validation rejects a translation that contains an unescaped `{` or HTML, so an applied translation can't add JSX or expressions to the page. A translated prop keeps its quotes, and a value that contains a double quote is written in single quotes. A value with both kinds of quotes can't be written, so it is reported as `unaddressable` and keeps its source text.
 
 Heading anchors are generated by the renderer from the heading text, so translated headings get translated anchors unless the renderer supports explicit ids.

@@ -142,6 +142,71 @@ describe('satteri parser', () => {
   })
 })
 
+describe('mdx', () => {
+  const MDX = [
+    '---',
+    'title: Cards',
+    '---',
+    '',
+    'import { Aside, Card } from \'@astrojs/starlight/components\'',
+    'export const count = 3',
+    '',
+    '# Getting started',
+    '',
+    'Press <kbd>Ctrl</kbd> to read {count} cards. Braces need a \\{ backslash.',
+    '',
+    '<Card title="First steps" icon="rocket">',
+    '  Install the **package** first.',
+    '</Card>',
+    '',
+    '{/* A comment for authors. */}',
+    '',
+    '<Aside type="tip" title="Did you know?">One line inside.</Aside>',
+    '',
+  ].join('\n')
+  const policy = { props: { card: ['title'], aside: ['title'] } }
+
+  it('should extract text, string props and component slots, and protect JSX and expressions', async () => {
+    const segments = await extract(MDX, { format: 'mdx', policy })
+    expect(segments.map(s => [s.kind, s.context.containers, s.skeleton, s.placeholders.map(p => p.source)])).toEqual([
+      ['frontmatter', [], 'Cards', []],
+      ['heading', [], 'Getting started', []],
+      ['paragraph', [], 'Press {0} to read {1} cards. Braces need a \\{ backslash.', ['<kbd>Ctrl</kbd>', '{count}']],
+      ['prop', ['card'], 'First steps', []],
+      ['component-slot', ['card'], 'Install the **package** first.', []],
+      ['prop', ['aside'], 'Did you know?', []],
+      ['component-slot', ['aside'], 'One line inside.', []],
+    ])
+  })
+
+  it('should extract the same segments with remark and satteri', async () => {
+    expect(await extract(MDX, { format: 'mdx', parser: 'satteri', policy })).toEqual(await extract(MDX, { format: 'mdx', policy }))
+  })
+
+  it('should read files ending in .mdx as MDX', async () => {
+    expect(await extract(MDX, { file: 'docs/cards.mdx', policy })).toEqual(await extract(MDX, { file: 'docs/cards.mdx', format: 'mdx', policy }))
+    await expect(extract('Read {count} cards.\n', { file: 'docs/cards.md' })).resolves.toHaveLength(1)
+  })
+
+  it('should apply translations that remain valid MDX', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(MDX, { format: 'mdx', parser, policy })
+      const { markdown, report } = await apply(MDX, pseudo(segments), { format: 'mdx', parser, policy })
+      expect(report.applied, parser).toBe(segments.length)
+      expect((await extract(markdown, { format: 'mdx', parser, policy })).map(s => s.skeleton), parser).toEqual(segments.map(s => pseudoTranslate(s.skeleton, s.format)))
+    }
+  })
+
+  it('should quote and escape translated props', async () => {
+    const segments = await extract(MDX, { format: 'mdx', policy })
+    const title = segments.find(s => s.skeleton === 'First steps')!
+    const { markdown } = await apply(MDX, new Map([[title.hash, 'Les "premiers" pas &amp; plus']]), { format: 'mdx', policy })
+    expect(markdown).toContain('<Card title=\'Les "premiers" pas &amp;amp; plus\' icon="rocket">')
+    const [again] = (await extract(markdown, { format: 'mdx', policy })).filter(s => s.kind === 'prop')
+    expect(again!.skeleton).toBe('Les "premiers" pas &amp; plus')
+  })
+})
+
 describe('onSegment', () => {
   it('should report each segment and annotate block nodes', async () => {
     const segments = await extract(PAGE)
