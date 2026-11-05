@@ -49,7 +49,16 @@ export const TOPICS: Topic[] = [
     ],
   },
   { slug: 'review-ui', title: 'Review UI', meta: '@diglot/x18n', accent: 'blue', packages: [] },
-  { slug: 'integrations', title: 'Integrations', meta: '@diglot/astro', accent: 'orange', packages: [] },
+  {
+    slug: 'integrations',
+    title: 'Integrations',
+    meta: 'astro and starlight',
+    accent: 'orange',
+    packages: [
+      { name: '@diglot/astro', path: '/integrations/astro', accent: 'orange' },
+      { name: '@diglot/starlight', path: '/integrations/starlight', accent: 'violet' },
+    ],
+  },
 ]
 
 /** The topic a path belongs to, by its first segment. */
