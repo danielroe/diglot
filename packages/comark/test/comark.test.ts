@@ -346,6 +346,12 @@ describe('navigation', () => {
     expect(out).toBe(source.replace(/title: .*/, 'title: "Démarrer"').replace(/titleTemplate: .*/, 'titleTemplate: "%s · Démarrer avec Nuxt"'))
   })
 
+  it('should keep the header comment and line break of block scalar navigation values', () => {
+    const source = 'title: >- # sidebar\n  Get Started\nicon: i-lucide-rocket\n'
+    const [title] = extractNavigation(source)
+    expect(applyNavigation(source, new Map([[title!.hash, 'Démarrer']])).source).toBe('title: "Démarrer" # sidebar\nicon: i-lucide-rocket\n')
+  })
+
   it('should hash labels as navigation files and frontmatter do', async () => {
     const policy = { salt: ({ kind, detail, file }: SaltInput) => `${kind}:${detail}:${file}` }
     const [title, template] = extractNavigation(fixture('navigation.yml'), { file: 'docs/.navigation.yml', policy })

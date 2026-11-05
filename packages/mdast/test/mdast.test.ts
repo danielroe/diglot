@@ -243,6 +243,27 @@ describe('apply', () => {
     ].join('\n'))
   })
 
+  it('should keep the line break after block scalar frontmatter', async () => {
+    const source = '---\ndescription: >-\n  How to add\n  scripts.\nlang: en\n---\n\nBody.\n'
+    const [description] = await extract(source)
+    const { markdown } = await apply(source, new Map([[description!.hash, 'Comment ajouter des scripts.']]))
+    expect(markdown).toBe('---\ndescription: Comment ajouter des scripts.\nlang: en\n---\n\nBody.\n')
+  })
+
+  it('should keep the comment on a block scalar frontmatter header', async () => {
+    const source = '---\ndescription: >- # keep short\n  How to add\n  scripts.\nlang: en\n---\n\nBody.\n'
+    const [description] = await extract(source)
+    const { markdown } = await apply(source, new Map([[description!.hash, 'Comment ajouter des scripts.']]))
+    expect(markdown).toBe('---\ndescription: Comment ajouter des scripts. # keep short\nlang: en\n---\n\nBody.\n')
+  })
+
+  it('should keep CRLF line breaks after block scalar frontmatter', async () => {
+    const source = '---\r\ndescription: >-\r\n  How to add\r\n  scripts.\r\nlang: en\r\n---\r\n\r\nBody.\r\n'
+    const [description] = await extract(source)
+    const { markdown } = await apply(source, new Map([[description!.hash, 'Comment ajouter des scripts.']]))
+    expect(markdown).toBe('---\r\ndescription: Comment ajouter des scripts.\r\nlang: en\r\n---\r\n\r\nBody.\r\n')
+  })
+
   it('should reject translations it cannot address and keep the source', async () => {
     const source = ':read-more{to="/x" title="Read more"}'
     const [segment] = await extract(source)

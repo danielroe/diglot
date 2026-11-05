@@ -1,7 +1,7 @@
 import type { ApplyReport, ApplySegmentEvent, AtomicNode, LinkNode, Placeholder, Policy, Resolution, Segment, SegmentTarget, Translations } from '@diglot/core'
 import type { MdNode } from './parse.ts'
 import type { Span, Target, Unit } from './walk.ts'
-import { buildSegment, createReport, createSegmentEvent, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton } from '@diglot/core'
+import { buildSegment, createReport, createSegmentEvent, escapeText, normalise, resolvePolicy, resolveTranslation, tally, toSkeleton, yamlScalarSpan } from '@diglot/core'
 import { isScalar, parseDocument } from 'yaml'
 import { parse } from './parse.ts'
 import { walk } from './walk.ts'
@@ -222,8 +222,8 @@ function yamlEdit(yaml: string, offset: number, path: Array<string | number>, va
   const node = doc.getIn(path, true)
   if (!isScalar(node) || !node.range)
     return
-  const [start, end] = node.range
-  return { start: offset + start, end: offset + end, text: () => yamlScalar(value) }
+  const { start, end, suffix } = yamlScalarSpan(yaml, node.range[0], node.range[1])
+  return { start: offset + start, end: offset + end, text: () => yamlScalar(value) + suffix }
 }
 
 function yamlScalar(value: string): string {
