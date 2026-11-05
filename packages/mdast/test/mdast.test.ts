@@ -194,6 +194,8 @@ describe('mdx', () => {
       const segments = await extract(MDX, { format: 'mdx', parser, policy })
       const { markdown, report } = await apply(MDX, pseudo(segments), { format: 'mdx', parser, policy })
       expect(report.applied, parser).toBe(segments.length)
+      expect(markdown, parser).toContain('import { Aside, Card } from \'@astrojs/starlight/components\'\nexport const count = 3\n')
+      expect(markdown, parser).toContain('\n{/* A comment for authors. */}\n')
       expect((await extract(markdown, { format: 'mdx', parser, policy })).map(s => s.skeleton), parser).toEqual(segments.map(s => pseudoTranslate(s.skeleton, s.format)))
     }
   })
@@ -220,11 +222,41 @@ describe('mdx', () => {
   })
 
   it('should replace the attribute itself, not a lookalike inside another value', async () => {
-    const source = '<Card note=\'see title="x"\' meta={{ title: "y" }} title = "Hi" />\n'
+    const source = '<Card note=\'see title="x"\' meta={{ title: "y" }} data={`}>`} title = "Hi" />\n'
     const [title] = await extract(source, { format: 'mdx', policy })
     const { markdown, report } = await apply(source, new Map([[title!.hash, 'Salut']]), { format: 'mdx', policy })
     expect(report.applied).toBe(1)
-    expect(markdown).toBe('<Card note=\'see title="x"\' meta={{ title: "y" }} title = "Salut" />\n')
+    expect(markdown).toBe('<Card note=\'see title="x"\' meta={{ title: "y" }} data={`}>`} title = "Salut" />\n')
+  })
+
+  it('should keep the quotes of the source prop when the value allows it', async () => {
+    const source = '<Card title=\'Hi\' />\n'
+    const [title] = await extract(source, { format: 'mdx', policy })
+    const cases = [['Salut', '\'Salut\''], ['L\'étape', '"L\'étape"'], ['L\'étape "une"', '\'L&#39;étape "une"\'']]
+    for (const parser of ['remark', 'satteri'] as const) {
+      for (const [value, written] of cases) {
+        const { markdown } = await apply(source, new Map([[title!.hash, value!]]), { format: 'mdx', parser, policy })
+        expect(markdown, parser).toBe(`<Card title=${written} />\n`)
+        expect((await extract(markdown, { format: 'mdx', parser, policy }))[0]!.skeleton, parser).toBe(value)
+      }
+    }
+  })
+
+  it('should extract the content of JSX fragments', async () => {
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract('<>Fragment text.</>\n\n<>\n  Block fragment.\n</>\n', { format: 'mdx', parser })
+      expect(segments.map(s => [s.kind, s.skeleton]), parser).toEqual([['paragraph', 'Fragment text.'], ['paragraph', 'Block fragment.']])
+    }
+  })
+
+  it('should not translate code labels inside a synced code group', async () => {
+    const source = '<CodeGroup sync>\n\n```ts [Config file]\nexport default {}\n```\n\n</CodeGroup>\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(source, { format: 'mdx', parser })
+      expect(segments.filter(s => s.kind === 'code-label'), parser).toEqual([])
+      const unsynced = await extract(source.replace(' sync', ''), { format: 'mdx', parser })
+      expect(unsynced.filter(s => s.kind === 'code-label').map(s => s.skeleton), parser).toEqual(['Config file'])
+    }
   })
 
   it('should escape angle brackets that MDX would read as tags', async () => {

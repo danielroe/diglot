@@ -235,10 +235,11 @@ function jsxPropEdit(node: MdNode, key: string, value: string, source: string): 
   const attr = jsxStringAttributes(source, node.position!.start.offset!).find(a => a.name === key)
   if (!attr)
     return
-  const quote = value.includes('"') && !value.includes('\'') ? '\'' : '"'
+  const original = source[attr.start]!
+  const other = original === '"' ? '\'' : '"'
+  const quote = value.includes(original) && !value.includes(other) ? other : original
   // MDX decodes character references in attribute strings.
-  const escaped = value.replace(/&(?=#?\w+;)/g, '&amp;')
-  const text = quote === '"' ? escaped.replaceAll('"', '&quot;') : escaped
+  const text = value.replace(/&(?=#?\w+;)/g, '&amp;').replaceAll(quote, quote === '"' ? '&quot;' : '&#39;')
   return { start: attr.start, end: attr.end, text: () => `${quote}${text}${quote}` }
 }
 

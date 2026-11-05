@@ -172,7 +172,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
           return
         }
         // remark-mdx wraps JSX elements that stand on their own lines in a paragraph, where Sätteri reads blocks.
-        if (kids.length && kids.every(c => c.type === 'mdxJsxTextElement' && c.name)) {
+        if (kids.length && kids.every(c => c.type === 'mdxJsxTextElement')) {
           for (const kid of kids)
             jsx(kid, containers, synced)
           return
@@ -189,7 +189,7 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
       case 'mdxFlowExpression':
         return
       case 'mdxJsxFlowElement':
-        return n.name ? jsx(n, containers, synced) : visitChildren(n, containers, synced)
+        return jsx(n, containers, synced)
       case 'list':
       case 'table':
       case 'tableRow':
@@ -226,22 +226,21 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
   }
 
   /**
-   * An MDX JSX element with a name: its string props, then its content. An element that holds
+   * An MDX JSX element or fragment: its string props, then its content. An element that holds
    * inline content, such as `<Aside>Text</Aside>` on one line, is one unit, whether the parser
    * reads it as a block (Sätteri) or as a paragraph around an inline element (remark-mdx).
    */
   function jsx(n: MdNode, containers: string[], synced: boolean) {
-    const inner = [...containers, kebabCase(n.name!)]
-    props(n, inner)
+    const name = n.name ? kebabCase(n.name) : undefined
+    const inner = name ? [...containers, name] : containers
+    if (name)
+      props(n, inner)
     const kids = n.children ?? []
     if (kids.length && kids.every(c => !FLOW.has(c.type)))
       return inline(kindForContainers(inner, policy), kids, n, inner)
-    visitChildren(n, inner, synced)
-  }
-
-  function visitChildren(n: MdNode, containers: string[], synced: boolean) {
-    for (const child of n.children ?? [])
-      visit(child, containers, synced)
+    const sync = synced || (name === 'code-group' && Array.isArray(n.attributes) && n.attributes.some(a => a.type === 'mdxJsxAttribute' && a.name === 'sync'))
+    for (const child of kids)
+      visit(child, inner, sync)
   }
 
   function code(n: MdNode, containers: string[], synced: boolean) {
