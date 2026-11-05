@@ -163,6 +163,12 @@ describe('diglot', () => {
     expect(manifest.files['docs/guide/cards.mdx']!.map(entry => entry.hash)).toEqual((await extractMdast(source, { format: 'mdx' })).map(s => s.hash))
   })
 
+  it('should name the file that fails to parse', async () => {
+    const root = setup()
+    writeFileSync(join(root, 'docs/guide/broken.mdx'), 'Less than x<3.\n')
+    await expect(cli('extract', '--cwd', root)).rejects.toThrow(/^docs\/guide\/broken\.mdx: 1:\d+: Unexpected character/)
+  })
+
   it('should fail on an unknown source', async () => {
     const root = setup()
     await expect(cli('extract', '--cwd', root, '--source', 'nope')).rejects.toThrow('unknown source "nope"')

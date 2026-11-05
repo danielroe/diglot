@@ -68,6 +68,8 @@ export async function resolveConfig(config: Partial<DiglotConfig>, root: string)
     if (!/^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-\d{3})?$/.test(locale))
       throw new Error(`invalid locale "${locale}", expected a BCP 47 tag such as "fr" or "pt-BR"`)
   }
+  if (config.parser !== undefined && !['comark', 'mdast', 'satteri'].includes(config.parser))
+    throw new Error(`invalid parser "${config.parser}", expected "comark", "mdast" or "satteri"`)
   const sources = Array.isArray(config.sources)
     ? config.sources
     : await readFile(join(root, config.sources ?? 'sources.yml'), 'utf8').then(parseSources, (error: NodeJS.ErrnoException) => {
