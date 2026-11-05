@@ -63,7 +63,12 @@ function units(source: string, policy: Policy): NavigationUnit[] {
     const node = doc.get(key, true)
     if (!isScalar(node) || typeof node.value !== 'string' || !node.value.trim() || !node.range)
       continue
-    out.push({ draft: labelDraft(node.value, 'navigation', key), range: [node.range[0], node.range[1]] })
+    const [start] = node.range
+    // Block scalars (`>-`, `|`) end after their trailing line break, which must survive the edit.
+    let end = node.range[1]
+    while (end > start && (source[end - 1] === '\n' || source[end - 1] === '\r'))
+      end--
+    out.push({ draft: labelDraft(node.value, 'navigation', key), range: [start, end] })
   }
   return out
 }
