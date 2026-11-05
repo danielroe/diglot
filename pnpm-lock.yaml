@@ -442,6 +442,9 @@ importers:
       pathe:
         specifier: ^2.0.3
         version: 2.0.3
+      satteri:
+        specifier: ^0.11.6
+        version: 0.11.6
     devDependencies:
       '@x18n/core':
         specifier: 0.1.10
