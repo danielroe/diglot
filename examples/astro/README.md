@@ -66,7 +66,7 @@ German has a record for every segment of the home page, the guide and the compon
 
 The Japanese records are machine translations. The last section of the Japanese guide has no records, so its text stays in English while the rest of the page is Japanese. The about page has no Japanese records at all, so there is no `/ja/about/`. When you open the about page, the language menu only offers English and German.
 
-The components page is MDX. It imports a `Card` component and uses an expression, and the translated pages render both, with the card titles translated, because the default policy lists the `title` of a card as prose. The home page links to the guide with a relative link, `guide/`, so the link leads to the guide of the same language. URLs are protected from translation, which is why the example avoids absolute links between its pages.
+The components page is MDX. It imports a `Card` component and uses an expression, and the translated pages render both, with the card titles translated, because the default policy lists the `title` of a card as prose. The home page links to the guide with a relative link, `guide/`, so the link leads to the guide of the same language. `trailingSlash: 'always'` in the Astro config keeps every page URL ending in `/`, which that relative link relies on. URLs are protected from translation, which is why the example avoids absolute links between its pages.
 
 `pnpm translations:status` extracts the segments and prints the coverage. The three untranslated German segments are those of the about page, which the site translates by hand:
 

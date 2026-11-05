@@ -8,4 +8,5 @@ export default defineConfig({
     defaultLocale: 'en',
     locales: ['en', 'de', 'ja'],
   },
+  trailingSlash: 'always',
 })
