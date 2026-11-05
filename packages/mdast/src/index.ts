@@ -222,7 +222,9 @@ function yamlEdit(yaml: string, offset: number, path: Array<string | number>, va
   const node = doc.getIn(path, true)
   if (!isScalar(node) || !node.range)
     return
-  const [start, end] = node.range
+  const [start, rangeEnd] = node.range
+  // Block scalars (`>-`, `|`) end after their trailing line break, which must survive the edit.
+  const end = start + yaml.slice(start, rangeEnd).replace(/\n+$/, '').length
   return { start: offset + start, end: offset + end, text: () => yamlScalar(value) }
 }
 
