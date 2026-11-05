@@ -9,6 +9,8 @@ import { walk } from './walk.ts'
 export { parse } from './parse.ts'
 export type { MdNode, ParseOptions, Parser } from './parse.ts'
 
+const BOM = '\uFEFF'
+
 export interface ExtractOptions {
   /** File path recorded in segment contexts. */
   file?: string
@@ -19,6 +21,8 @@ export interface ExtractOptions {
 
 /** Extracts the segments of a markdown document. Protected spans are sliced from the source. */
 export async function extract(source: string, options: ExtractOptions = {}): Promise<Segment[]> {
+  if (source.startsWith(BOM))
+    return extract(source.slice(BOM.length), options)
   const policy = resolvePolicy(options.policy)
   const segments: Segment[] = []
   for (const unit of walk(await parse(source, { parser: options.parser }), source, policy)) {
@@ -62,6 +66,10 @@ interface Edit {
  * source, so everything outside translated units is preserved byte for byte.
  */
 export async function apply(source: string, translations: Translations, options: ApplyOptions = {}): Promise<Applied> {
+  if (source.startsWith(BOM)) {
+    const applied = await apply(source.slice(BOM.length), translations, options)
+    return { ...applied, markdown: BOM + applied.markdown }
+  }
   const policy = resolvePolicy(options.policy)
   const report = createReport()
   const lines = lineOffsets(source)

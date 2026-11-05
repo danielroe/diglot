@@ -324,6 +324,16 @@ describe('apply', () => {
     expect(markdown).toBe('---\r\ndescription: Comment ajouter des scripts.\r\nlang: en\r\n---\r\n\r\nBody.\r\n')
   })
 
+  it('should keep a byte order mark and the offsets after it', async () => {
+    const source = '\uFEFF# Title\n\nSee [the docs](/d).\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      const segments = await extract(source, { parser })
+      expect(segments.map(s => s.skeleton)).toEqual(['Title', 'See {0}the docs{/0}.'])
+      const { markdown } = await apply(source, pseudo(segments), { parser })
+      expect(markdown, parser).toBe('\uFEFF# ⟦Títlé⟧\n\n⟦Séé⟧ [⟦thé dócs⟧](/d).\n')
+    }
+  })
+
   it('should reject translations it cannot address and keep the source', async () => {
     const source = ':read-more{to="/x" title="Read more"}'
     const [segment] = await extract(source)
