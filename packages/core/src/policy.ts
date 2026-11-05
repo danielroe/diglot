@@ -51,6 +51,39 @@ export const defaultPolicy: Policy = {
   codeComments: true,
 }
 
+/**
+ * A policy for Starlight sites: the props of Starlight's components and the frontmatter fields of
+ * its pages that carry prose. Pass it as the `policy` of `diglot.config.ts`.
+ */
+export const starlightPolicy: Partial<Policy> = {
+  props: {
+    'aside': ['title'],
+    'badge': ['text'],
+    'card': ['title'],
+    'icon': ['label'],
+    'link-card': ['title', 'description'],
+    'tab-item': ['label'],
+  },
+  layout: ['card-grid', 'steps', 'tabs'],
+  htmlText: ['summary', 'div', 'details', 'figcaption', 'dt', 'dd'],
+  frontmatter: [
+    'title',
+    'description',
+    'sidebar.label',
+    'sidebar.badge',
+    'sidebar.badge.text',
+    'hero.title',
+    'hero.tagline',
+    'hero.actions[].text',
+    'hero.image.alt',
+    'banner.content',
+    'prev',
+    'prev.label',
+    'next',
+    'next.label',
+  ],
+}
+
 /** Fills a partial policy from `defaultPolicy`. */
 export function resolvePolicy(policy: Partial<Policy> = {}): Policy {
   return { ...defaultPolicy, ...policy }
