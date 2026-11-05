@@ -18,6 +18,7 @@ shellEmulator: true
 
 packages:
   - docs
+  - examples/astro
   - packages/*
 
 overrides:

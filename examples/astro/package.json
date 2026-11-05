@@ -1,0 +1,25 @@
+{
+  "name": "diglot-example-astro",
+  "type": "module",
+  "private": true,
+  "description": "A small Astro site in English, German and Japanese, translated with diglot.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "translations:extract": "diglot extract --cwd translations",
+    "translations:status": "pnpm translations:extract && diglot status --cwd translations",
+    "translations:ui": "pnpm translations:extract && diglot checkout --cwd translations && x18n ui --root translations"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "8.1.2",
+    "@diglot/astro": "workspace:*",
+    "astro": "7.4.4"
+  },
+  "devDependencies": {
+    "@diglot/cli": "workspace:*",
+    "@diglot/x18n": "workspace:*",
+    "@x18n/cli": "0.1.10"
+  }
+}

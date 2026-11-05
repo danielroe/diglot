@@ -1,0 +1,33 @@
+---
+interface Props {
+  title: string
+  icon?: string
+}
+
+const { title, icon } = Astro.props
+---
+<section class="example-card">
+  <h2>{icon && <span aria-hidden="true">{icon}</span>}{title}</h2>
+  <slot />
+</section>
+
+<style>
+  .example-card {
+    margin-block: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--example-border);
+    border-radius: 0.75rem;
+    background: var(--example-surface);
+  }
+
+  .example-card h2 {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .example-card :global(p) {
+    margin: 0;
+  }
+</style>

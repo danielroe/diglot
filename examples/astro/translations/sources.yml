@@ -1,0 +1,6 @@
+sources:
+  - name: site
+    path: ..
+    dir: src/content/docs
+    exclude:
+      - 'de/**'

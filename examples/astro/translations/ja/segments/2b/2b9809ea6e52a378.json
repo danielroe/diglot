@@ -1,0 +1,9 @@
+{
+  "hash": "2b9809ea6e52a378",
+  "source": "This site is written in English and translated into German and Japanese by {0}diglot{/0}. Every translation is a record in the {1} directory, and the loader turns those records into pages when Astro builds the site.",
+  "text": "このサイトは英語で書かれ、{0}diglot{/0} によってドイツ語と日本語に翻訳されています。翻訳はすべて {1} ディレクトリのレコードで、Astro がサイトをビルドするときにローダーがそれらのレコードからページを作ります。",
+  "origin": "mt",
+  "review": "none",
+  "derived": "fresh",
+  "updatedAt": "2026-11-05T00:00:00.000Z"
+}
