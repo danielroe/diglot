@@ -47,8 +47,7 @@
     "@diglot/core": "workspace:*",
     "@diglot/mdast": "workspace:*",
     "@diglot/store": "workspace:*",
-    "pathe": "^2.0.3",
-    "satteri": "^0.11.6"
+    "pathe": "^2.0.3"
   },
   "devDependencies": {
     "@x18n/core": "0.1.10",

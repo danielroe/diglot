@@ -1,5 +1,6 @@
 import { appendFile } from 'node:fs/promises'
 import process from 'node:process'
+import { loadConfig } from '@diglot/store'
 import { run } from './run.ts'
 import { outputs, summary } from './summary.ts'
 
@@ -27,7 +28,16 @@ async function main() {
   process.stdout.write(`${result.sha ? `committed ${result.sha}` : result.changed ? 'changes left uncommitted' : 'no changes'}\n`)
 }
 
-main().catch((error: Error) => {
+async function parser() {
+  const config = await loadConfig(input('working-directory') || '.')
+  process.stdout.write(`parser: ${config.parser}\n`)
+  if (process.env.GITHUB_OUTPUT)
+    await appendFile(process.env.GITHUB_OUTPUT, `parser=${config.parser}\n`)
+}
+
+const command = process.argv[2] === 'parser' ? parser : main
+
+command().catch((error: Error) => {
   process.stdout.write(`::error::${error.message.replace(/\n/g, '%0A')}\n`)
   process.exitCode = 1
 })

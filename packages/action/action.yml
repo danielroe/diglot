@@ -70,6 +70,17 @@ runs:
       shell: bash
       working-directory: ${{ runner.temp }}
       run: npx --yes pnpm@12 --dir "${{ github.action_path }}/../.." install --frozen-lockfile --prod --filter "@diglot/action..."
+    - id: config
+      name: Read config
+      shell: bash
+      run: node "${{ github.action_path }}/src/cli.ts" parser
+      env:
+        INPUT_WORKING-DIRECTORY: ${{ inputs.working-directory }}
+    - name: Install Sätteri
+      if: steps.config.outputs.parser == 'satteri'
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      run: npx --yes pnpm@12 --dir "${{ github.action_path }}/../.." install --frozen-lockfile --filter "@diglot/mdast"
     - id: run
       name: Translate
       shell: bash
