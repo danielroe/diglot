@@ -203,7 +203,8 @@ export function escapeText(value: string): string {
     .replace(/&(?=#?\w+;)/g, '\\&')
 }
 
-function encodeInvisibles(value: string): string {
+/** Writes soft hyphens and no-break spaces as `&shy;` and `&nbsp;`, the spellings markdown segments require. */
+export function encodeInvisibles(value: string): string {
   return value.replace(/\u00AD/g, '&shy;').replace(/\u00A0/g, '&nbsp;')
 }
 

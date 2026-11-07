@@ -45,6 +45,7 @@ describe('validate', () => {
     expect(codes('Lies {0}die Doku{/0} über Such\u00ADmaschinen {1}.')).toContain('entity')
     expect(codes('Lies {0}die Doku{/0} über &amp; {1}.')).toContain('entity')
     expect(validate('Nr.&nbsp;5 {0}die Doku{/0} {1}.', paragraph).ok).toBe(true)
+    expect(codes('Nr.\u00A05 {0}die Doku{/0} {1}.')).toContain('entity')
   })
 
   it('should accept escaped punctuation', () => {

@@ -153,7 +153,7 @@ function count(re: RegExp, text: string): number {
 }
 
 const ENTITY_RE = /&#?\w+;/y
-const SIGNIFICANT_RE = /[`[\]<{}:|&\u00AD]|https?:\/\/|www\./gi
+const SIGNIFICANT_RE = /[`[\]<{}:|&\u00AD\u00A0]|https?:\/\/|www\./gi
 const ALLOWED_ENTITIES = ['&shy;', '&nbsp;']
 
 /** Tokens cover the input without gaps, so each token ends where the next begins. */
@@ -199,6 +199,9 @@ function checkCharacters(input: string, tokens: GrammarToken[], kind: SegmentKin
         break
       case '\u00AD':
         error('entity', 'soft hyphen must be written as &shy;', i)
+        break
+      case '\u00A0':
+        error('entity', 'no-break space must be written as &nbsp;', i)
         break
       default:
         error('bare-url', 'bare URL would autolink', i)

@@ -15,6 +15,13 @@ describe('createSegmentEvent', () => {
     expect(event(new Map())).toMatchObject({ outcome: 'missing', status: 'untranslated' })
   })
 
+  it('should accept records that spell invisible characters raw', () => {
+    const source = segment('Ten thousand words')
+    const record = createRecord({ segment: source, text: 'Dix\u00A0mille mots', origin: 'human' })
+    expect(resolveTranslation(source, new Map([[source.hash, record]]))).toMatchObject({ status: 'ok', skeleton: 'Dix&nbsp;mille mots' })
+    expect(createSegmentEvent(source, resolveTranslation(source, new Map([[source.hash, record]])), null)).toMatchObject({ outcome: 'translated', status: 'edited' })
+  })
+
   it('should keep the source text of a rejected record', () => {
     const source = segment('Three words here')
     const record = createRecord({ segment: source, text: 'Trois mots ici', origin: 'mt', review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-01T00:00:00.000Z' } })
