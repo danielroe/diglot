@@ -1,5 +1,7 @@
 export { readArchive } from './archive.ts'
 export type { ArchiveInput, ReadArchiveOptions, StoreArchive } from './archive.ts'
+export { parseBundle } from './bundle.ts'
+export type { LocaleBundle } from './bundle.ts'
 export { changedRecords } from './changes.ts'
 export type { RecordSet } from './changes.ts'
 export { fileCoverage, manifestCoverage } from './coverage.ts'

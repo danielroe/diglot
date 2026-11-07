@@ -18,6 +18,7 @@ shellEmulator: true
 
 packages:
   - docs
+  - examples/angular
   - examples/astro
   - packages/*
 
@@ -32,7 +33,10 @@ overrides:
   svgo>css-select: ^7.0.0
 
 allowBuilds:
+  '@parcel/watcher': false
   better-sqlite3: false
   esbuild: false
+  lmdb: false
+  msgpackr-extract: false
   simple-git-hooks: true
   vue-demi: false

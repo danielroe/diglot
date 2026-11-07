@@ -1,15 +1,8 @@
-import type { TranslationRecord } from '@diglot/core'
+import type { LocaleBundle } from './bundle.ts'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { normaliseRecord, parseRecord } from '@diglot/core'
+import { normaliseRecord } from '@diglot/core'
 import { join } from 'pathe'
 import { readRecords } from './records.ts'
-
-/** The consumer artifact for one locale, `dist/<locale>.json`. */
-export interface LocaleBundle {
-  version: 1
-  locale: string
-  records: Record<string, TranslationRecord>
-}
 
 export interface BuildOptions {
   locales: string[]
@@ -43,17 +36,4 @@ export async function build(root: string, options: BuildOptions): Promise<BuildR
     results.push({ locale, path, records: kept.length, rejected: kept.filter(r => r.review === 'rejected').length, skipped: all.length - kept.length })
   }
   return results
-}
-
-/** Parses a locale bundle into a map keyed by hash, validating every record. */
-export function parseBundle(content: string | LocaleBundle): Map<string, TranslationRecord> {
-  const bundle = typeof content === 'string' ? JSON.parse(content) as LocaleBundle : content
-  if (bundle.version !== 1 || typeof bundle.records !== 'object')
-    throw new Error('unsupported locale bundle')
-  return new Map(Object.entries(bundle.records).map(([hash, record]) => {
-    const parsed = parseRecord(record)
-    if (parsed.hash !== hash)
-      throw new Error(`bundle key ${hash} does not match record ${parsed.hash}`)
-    return [hash, parsed]
-  }))
 }

@@ -1,0 +1,34 @@
+{
+  "name": "diglot-example-angular",
+  "type": "module",
+  "private": true,
+  "description": "A small Angular app in English and French, translated with diglot.",
+  "scripts": {
+    "translations": "diglot extract --cwd translations && diglot build --cwd translations",
+    "prestart": "pnpm translations",
+    "start": "ng serve",
+    "prebuild": "pnpm translations",
+    "build": "ng build",
+    "translations:status": "pnpm translations && diglot status --cwd translations"
+  },
+  "dependencies": {
+    "@angular/common": "22.2.4",
+    "@angular/compiler": "22.2.4",
+    "@angular/core": "22.2.4",
+    "@angular/platform-browser": "22.2.4",
+    "@angular/platform-server": "22.2.4",
+    "@angular/router": "22.2.4",
+    "@angular/ssr": "22.2.5",
+    "@diglot/angular": "workspace:*",
+    "marked": "18.1.2",
+    "rxjs": "7.8.2",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@angular/build": "22.2.5",
+    "@angular/cli": "22.2.5",
+    "@angular/compiler-cli": "22.2.4",
+    "@diglot/cli": "workspace:*",
+    "typescript": "6.0.3"
+  }
+}

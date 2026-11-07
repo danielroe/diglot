@@ -14,6 +14,7 @@ const packages = [
   { label: '@diglot/action', to: '/workflow/action/overview' },
   { label: '@diglot/cli', to: '/workflow/cli/overview' },
   { label: '@diglot/x18n', to: '/review-ui/overview' },
+  { label: '@diglot/angular', to: '/integrations/angular' },
   { label: '@diglot/astro', to: '/integrations/astro' },
 ]
 
@@ -24,6 +25,7 @@ const learn = [
   { label: 'How-to guides', to: '/guide/how-to/configure' },
   { label: 'Nuxt example', to: '/guide/examples/nuxt-translations' },
   { label: 'Astro example', to: '/guide/examples/astro-site' },
+  { label: 'Angular example', to: '/guide/examples/angular-app' },
 ]
 
 const project = [

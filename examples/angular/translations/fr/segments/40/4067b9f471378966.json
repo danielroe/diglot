@@ -1,0 +1,9 @@
+{
+  "hash": "4067b9f471378966",
+  "source": "This app is written in English and translated into French and Turkish by {0}diglot{/0}. Every translation is a record in the {1} directory, and {2} applies those records when a page loads.",
+  "text": "Cette application est écrite en anglais et traduite en français et en turc par {0}diglot{/0}. Chaque traduction est un enregistrement du répertoire {1}, et {2} applique ces enregistrements au chargement d’une page.",
+  "origin": "human",
+  "review": "none",
+  "derived": "fresh",
+  "updatedAt": "2026-11-07T00:00:00.000Z"
+}
