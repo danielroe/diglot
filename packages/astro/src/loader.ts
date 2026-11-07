@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { apply } from '@diglot/mdast'
 import { loadConfig, loadLocale } from '@diglot/store'
 import { glob } from 'astro/loaders'
+import { stringify } from 'devalue'
 import { relative, resolve } from 'pathe'
 import { splitFrontmatter } from './frontmatter.ts'
 import { isTargetId, translatedId, translatedModulePath } from './ids.ts'
@@ -234,7 +235,7 @@ async function syncTranslations(context: LoaderContext, state: TranslationState,
       owned.set(id, { storedPath, source: filePath, module: mdx ? modulePath : undefined })
       if (mdx)
         setModule(modulePath, translated)
-      const digest = generateDigest(extra ? `${translated}\n${JSON.stringify(extra)}` : translated)
+      const digest = generateDigest(extra ? `${translated}\n${stringify(extra)}` : translated)
       if (existing?.digest === digest)
         continue
       const previous = cached?.get(id)
