@@ -1,9 +1,11 @@
+import type { AstroIntegration } from 'astro'
 import { execFileSync } from 'node:child_process'
 import { cpSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:net'
 import { join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import mdx from '@astrojs/mdx'
 import { createRecord } from '@diglot/core'
 import { extract } from '@diglot/mdast'
 import { writeRecord } from '@diglot/store'
@@ -11,6 +13,7 @@ import { build } from 'astro'
 import { afterAll, describe, expect, it } from 'vitest'
 import { splitFrontmatter } from '../src/frontmatter.ts'
 import { isTargetId, isTranslatedModule, translatedId, translatedModulePath } from '../src/ids.ts'
+import diglot from '../src/integration.ts'
 import { resolveLocales } from '../src/locales.ts'
 
 const fixtures = fileURLToPath(new URL('./fixtures/', import.meta.url))
@@ -37,6 +40,29 @@ function freePort(): Promise<number> {
 afterAll(() => {
   for (const root of copies)
     rmSync(root, { recursive: true, force: true })
+})
+
+describe('diglot', () => {
+  it('should accept an i18n option that a later integration sets', { timeout: 60_000 }, async () => {
+    const root = copyFixture()
+    const late: AstroIntegration = {
+      name: 'late',
+      hooks: {
+        'astro:config:setup': ({ updateConfig }) => {
+          updateConfig({ i18n: { defaultLocale: 'en', locales: ['en', 'fr'], routing: { prefixDefaultLocale: false, redirectToDefaultLocale: false, fallbackType: 'redirect' } } })
+        },
+      },
+    }
+    await build({ root, configFile: false, logLevel: 'error', integrations: [mdx(), diglot({ translations: './translations' }), late] })
+    expect(readFileSync(join(root, 'dist/fr/guide/index.html'), 'utf8')).toContain('<h1 id="premiers-pas">Premiers pas</h1>')
+  })
+
+  it('should require the i18n option', { timeout: 60_000 }, async () => {
+    const root = copyFixture()
+    await expect(build({ root, configFile: false, logLevel: 'silent', integrations: [mdx(), diglot({ translations: './translations' })] }))
+      .rejects
+      .toThrow('reads your locales from the `i18n` option')
+  })
 })
 
 describe('resolveLocales', () => {

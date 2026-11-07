@@ -23,11 +23,14 @@ export default function diglot(options: DiglotOptions): AstroIntegration {
       'astro:config:setup': ({ config, updateConfig }) => {
         if (typeof options?.translations !== 'string')
           throw new Error('`diglot()` needs the `translations` option: the directory of your translations repository, relative to the project root.')
-        if (!config.i18n)
-          throw new Error('`diglot()` reads your locales from the `i18n` option of your Astro config. Add `i18n` with a `defaultLocale` and `locales`.')
         const root = fileURLToPath(config.root)
         getState().translations.set(resolve(root), resolve(root, options.translations))
         updateConfig({ vite: { plugins: [vitePluginDiglot()] } })
+      },
+      // Integrations such as Starlight set `i18n` in their own setup.
+      'astro:config:done': ({ config }) => {
+        if (!config.i18n)
+          throw new Error('`diglot()` reads your locales from the `i18n` option of your Astro config. Add `i18n` with a `defaultLocale` and `locales`.')
       },
     },
   }
