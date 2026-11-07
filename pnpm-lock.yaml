@@ -333,6 +333,12 @@ importers:
       '@diglot/cli':
         specifier: workspace:*
         version: link:../../packages/cli
+      '@diglot/x18n':
+        specifier: workspace:*
+        version: link:../../packages/x18n
+      '@x18n/cli':
+        specifier: 0.1.10
+        version: 0.1.10(@devframes/agentic@1.2.5)(@typescript-eslint/types@8.71.0)(crossws@0.4.17(srvx@1.0.8))(srvx@1.0.8)(typescript@6.0.3)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
