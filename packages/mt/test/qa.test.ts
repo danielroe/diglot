@@ -45,6 +45,7 @@ describe('runQa', () => {
   it('should flag untranslated output', async () => {
     expect(await flags(PARAGRAPH, 'Use {0} in Nuxt v3.12.0 to fetch **data** from the {1}server{/1}. Call {2} again or {3}.')).toContain('untranslated')
     expect(await flags('Server routes', 'Server routes')).toEqual([])
+    expect(await flags('Nr.&nbsp;5 Such&shy;maschine', 'Nr.&nbsp;5 Such&shy;maschine')).toEqual([])
   })
 
   it('should warn about length outliers', async () => {
