@@ -27,7 +27,7 @@ export default function diglot(options: DiglotOptions): AstroIntegration {
         getState().translations.set(resolve(root), resolve(root, options.translations))
         updateConfig({ vite: { plugins: [vitePluginDiglot()] } })
       },
-      // Other integrations, such as Starlight, can set `i18n` in their own setup, so it is checked once the config is final.
+      // Integrations such as Starlight set `i18n` in their own setup.
       'astro:config:done': ({ config }) => {
         if (!config.i18n)
           throw new Error('`diglot()` reads your locales from the `i18n` option of your Astro config. Add `i18n` with a `defaultLocale` and `locales`.')
