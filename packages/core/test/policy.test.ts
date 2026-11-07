@@ -23,6 +23,19 @@ describe('policy snapshots', () => {
     expect(policyFingerprint(restorePolicy(snapshot))).toBe(policyFingerprint(policy))
   })
 
+  it('should leave empty optional lists out of snapshots and fingerprints', () => {
+    const snapshot = snapshotPolicy()
+    expect(snapshot).not.toHaveProperty('opaque')
+    expect(snapshot).not.toHaveProperty('htmlFrontmatter')
+    expect(policyFingerprint()).toBe('f6e446c627d4102c')
+    const opaque = snapshotPolicy({ opaque: ['file-tree'], htmlFrontmatter: ['banner.content'] })
+    expect(opaque).toMatchObject({ opaque: ['file-tree'], htmlFrontmatter: ['banner.content'] })
+    expect(opaque.fingerprint).not.toBe(snapshot.fingerprint)
+    expect(restorePolicy(JSON.parse(JSON.stringify(opaque)))).toMatchObject({ opaque: ['file-tree'], htmlFrontmatter: ['banner.content'] })
+    expect(restorePolicy(snapshot)).toMatchObject({ opaque: [], htmlFrontmatter: [] })
+    expect(() => restorePolicy({ ...snapshot, opaque: 'file-tree' } as never)).toThrow('unsupported')
+  })
+
   it('should require custom functions and detect mismatches', () => {
     const snapshot = snapshotPolicy({ salt })
     expect(snapshot.custom).toEqual(['salt'])

@@ -2,7 +2,7 @@ import type { CodeComment } from '@diglot/code'
 import type { InlineNode, Policy, SegmentDraft, SegmentKind, SegmentPosition, ValuePath } from '@diglot/core'
 import type { MdNode, MdxJsxAttribute } from './parse.ts'
 import { commentDraft, findComments } from '@diglot/code'
-import { BREAK_SOURCE, kebabCase, kindForContainers, proseProps, stringsAtPaths } from '@diglot/core'
+import { BREAK_SOURCE, frontmatterValues, kebabCase, kindForContainers, proseProps } from '@diglot/core'
 import { parse as parseYaml } from 'yaml'
 
 /** Source offsets behind a placeholder. Paired links also record where their text starts and ends. */
@@ -154,8 +154,8 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
     switch (n.type) {
       case 'yaml': {
         const data = parseYaml(n.value!) ?? {}
-        for (const [path, value] of stringsAtPaths(data, policy.frontmatter))
-          units.push({ draft: { kind: 'frontmatter', content: value, context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' } }, target: { type: 'frontmatter', node: n, path } })
+        for (const [path, content] of frontmatterValues(data, policy))
+          units.push({ draft: { kind: 'frontmatter', format: 'plain', content, context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' } }, target: { type: 'frontmatter', node: n, path } })
         return
       }
       case 'heading': {
@@ -208,6 +208,8 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
       case 'containerComponent': {
         const inner = [...containers, n.name!]
         props(n, inner)
+        if (policy.opaque.includes(n.name!))
+          return
         const sync = synced || (n.name === 'code-group' && ((!Array.isArray(n.attributes) && n.attributes?.sync !== undefined) || n.fmAttributes?.sync !== undefined))
         for (const child of n.children!)
           visit(child, inner, sync)
@@ -235,6 +237,8 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
     const inner = name ? [...containers, name] : containers
     if (name)
       props(n, inner)
+    if (name && policy.opaque.includes(name))
+      return
     const kids = n.children ?? []
     if (kids.length && kids.every(c => !FLOW.has(c.type)))
       return inline(kindForContainers(inner, policy), kids, n, inner)

@@ -1,9 +1,9 @@
 import type { CodeComment } from '@diglot/code'
-import type { Policy, SegmentDraft, SegmentKind, SegmentPosition, ValuePath } from '@diglot/core'
+import type { InlineNode, Policy, SegmentDraft, SegmentKind, SegmentPosition, ValuePath } from '@diglot/core'
 import type { ElementNode, Node } from 'comark'
 import type { ComarkDocument } from './tree.ts'
 import { findComments } from '@diglot/code'
-import { kindForContainers, proseProps, stringsAtPaths } from '@diglot/core'
+import { frontmatterValues, kindForContainers, proseProps } from '@diglot/core'
 import { SourceSlicer } from './slice.ts'
 import { children, elementText, isElement } from './tree.ts'
 
@@ -16,6 +16,8 @@ export type Target
 export interface Unit {
   kind: SegmentKind
   content: Node[] | string | CodeComment
+  /** Inline content of a frontmatter value that holds HTML. */
+  inline?: InlineNode[]
   language?: string
   context: SegmentDraft['context']
   position: SegmentPosition
@@ -57,8 +59,8 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     return !(isBoundary(first > start ? parent[first - 1] : undefined, /\n\s*$/) && isBoundary(parent[last + 1], /^\s*\n/))
   }
 
-  for (const [path, value] of stringsAtPaths(doc.frontmatter, policy.frontmatter))
-    units.push({ kind: 'frontmatter', content: value, context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' }, target: { type: 'frontmatter', path } })
+  for (const [path, value] of frontmatterValues(doc.frontmatter, policy))
+    units.push({ kind: 'frontmatter', ...(typeof value === 'string' ? { content: value } : { content: '', inline: value }), context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' }, target: { type: 'frontmatter', path } })
 
   const pushInline = (kind: SegmentKind, parent: Node[], start: number, end: number, containers: string[], detail?: string) => {
     const nodes = parent.slice(start, end)
@@ -152,6 +154,10 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     const inner = tag === 'template' ? [...containers.slice(0, -1), name] : [...containers, name]
     if (tag !== 'template' && tag !== 'li' && tag !== 'blockquote')
       pushProps(node, inner)
+    if (policy.opaque.includes(tag)) {
+      fenceIndex += countFences(node, policy)
+      return
+    }
     visitMixed(container, 2, inner, synced || (tag === 'code-group' && attrs.sync !== undefined), policy.htmlText.includes(tag) ? 'html-block' : undefined)
   }
 
@@ -166,6 +172,20 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
       visitBlock(node, [], false)
   })
   return units
+}
+
+/** Code blocks under `node` that `pushCode` would take a fence line for. */
+function countFences(node: ElementNode, policy: Policy): number {
+  let count = 0
+  for (const child of children(node)) {
+    if (!isElement(child))
+      continue
+    if (child[0] === 'pre')
+      count += policy.codeComments && children(child).some(isElement) && child[1].language ? 1 : 0
+    else
+      count += countFences(child, policy)
+  }
+  return count
 }
 
 function findImages(nodes: Node[]): ElementNode[] {

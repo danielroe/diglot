@@ -153,7 +153,10 @@ function prepare(unit: Unit, file: string, index: number, policy: Policy, spans:
     return toInline(unit.content, unit.slicer, spans).then(content => prepareDraft({ kind: unit.kind, content, context: unit.context, position: unit.position }, file, index, policy, true))
   let draft: SegmentDraft
   let resolvedSources = true
-  if (typeof unit.content === 'string') {
+  if (unit.inline) {
+    draft = { kind: unit.kind, format: 'plain', content: unit.inline, context: unit.context, position: unit.position }
+  }
+  else if (typeof unit.content === 'string') {
     draft = { kind: unit.kind, content: unit.content, context: unit.context, position: unit.position }
   }
   else if (Array.isArray(unit.content)) {

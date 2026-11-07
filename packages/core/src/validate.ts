@@ -121,8 +121,7 @@ export function validate(translation: string, segment: ValidationTarget, options
     checkCharacters(translation, tokens, segment.kind, error)
   }
   checkPlaceholders(tokens, segment.placeholders, error, warnings)
-  if (!plain)
-    checkNesting(tokens, segment.placeholders, error)
+  checkNesting(tokens, segment.placeholders, error)
   if (options.maxLength !== undefined && [...translation].length > options.maxLength)
     error('too-long', `translation is longer than ${options.maxLength} characters`)
   const band = options.style?.lengthRatio

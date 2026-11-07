@@ -124,6 +124,12 @@ describe('extract', () => {
     const custom = (await extract(await parse(source), { policy: { props: { tip: ['label'] }, codeComments: false } })).segments.map(s => s.skeleton)
     expect(custom).toEqual(['Custom label', 'Body.'])
   })
+
+  it('should extract the props of opaque containers but not their content', async () => {
+    const source = '::card\n:::file-tree{label="Files"}\n- src/\n\n```ts\n// Inside the tree\n```\n:::\n\n```ts\nconst a = 1\n// After the tree\n```\n::\n'
+    const { segments } = await extract(await parse(source), { policy: { props: { 'file-tree': ['label'] }, opaque: ['file-tree'] } })
+    expect(segments.map(s => [s.kind, s.skeleton, s.position.startLine])).toEqual([['prop', 'Files', 1], ['code-comment', 'After the tree', 12]])
+  })
 })
 
 describe('apply', () => {
@@ -204,6 +210,15 @@ describe('apply', () => {
     const translations = new Map([[a!.hash, 'Serveur MCP']])
     expect((await apply(literal, translations)).doc.frontmatter).toEqual({ 'navigation.title': 'Serveur MCP' })
     expect((await apply(nested, translations)).doc.frontmatter).toEqual({ navigation: { title: 'Serveur MCP' } })
+  })
+
+  it('should protect the HTML of htmlFrontmatter values', async () => {
+    const doc = await parse('---\nbanner:\n  content: New <a href="/release/">release</a> is <b>out</b>\n---\n\nBody.\n')
+    const policy = { frontmatter: ['banner.content'], htmlFrontmatter: ['banner.content'] }
+    const [banner] = (await extract(doc, { policy })).segments
+    expect([banner!.format, banner!.skeleton]).toEqual(['plain', 'New {0}release{/0} is {1}'])
+    const { doc: out } = await apply(doc, new Map([[banner!.hash, '{1} : la {0}version{/0}']]), { policy })
+    expect(out.frontmatter).toEqual({ banner: { content: '<b>out</b> : la <a href="/release/">version</a>' } })
   })
 
   it('should apply props, alts, frontmatter and code comments', async () => {

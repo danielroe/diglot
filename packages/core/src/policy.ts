@@ -22,8 +22,12 @@ export interface Policy {
   layout: string[]
   /** HTML elements whose text content is translated as `html-block` units. */
   htmlText: string[]
+  /** Containers whose content is not extracted, such as a file tree written as a list. Their props still are. */
+  opaque: string[]
   /** Frontmatter paths that carry prose. `[]` walks every array item, for example `links[].label`. */
   frontmatter: string[]
+  /** Paths of `frontmatter` whose values are HTML. Their tags become placeholders, and the text of a link stays translatable. */
+  htmlFrontmatter: string[]
   /** Keys of `.navigation.yml` files that carry prose. */
   navigation: string[]
   /** Decides whether a code block label reads as prose (`Directory Structure`) rather than a path. */
@@ -45,7 +49,9 @@ export const defaultPolicy: Policy = {
   },
   layout: ['steps', 'card-group', 'code-group'],
   htmlText: ['summary', 'div', 'details', 'figcaption', 'dt', 'dd'],
+  opaque: [],
   frontmatter: ['title', 'description', 'navigation.title', 'head.title', 'links[].label', 'seo.title', 'seo.description'],
+  htmlFrontmatter: [],
   navigation: ['title', 'titleTemplate', 'description'],
   codeLabel: isProseCodeLabel,
   codeComments: true,
@@ -65,7 +71,7 @@ export const starlightPolicy: Partial<Policy> = {
     'tab-item': ['label'],
   },
   layout: ['card-grid', 'steps', 'tabs'],
-  htmlText: ['summary', 'div', 'details', 'figcaption', 'dt', 'dd'],
+  opaque: ['file-tree'],
   frontmatter: [
     'title',
     'description',
@@ -82,6 +88,7 @@ export const starlightPolicy: Partial<Policy> = {
     'next',
     'next.label',
   ],
+  htmlFrontmatter: ['banner.content'],
 }
 
 /** Fills a partial policy from `defaultPolicy`. */
@@ -91,8 +98,13 @@ export function resolvePolicy(policy: Partial<Policy> = {}): Policy {
 
 type PolicyFunction = 'codeLabel' | 'salt'
 
+/** Lists that snapshots and fingerprints leave out when they are empty. */
+type OptionalList = 'opaque' | 'htmlFrontmatter'
+
+const OPTIONAL_LISTS: OptionalList[] = ['opaque', 'htmlFrontmatter']
+
 /** The serialisable part of a policy and a fingerprint of all of it, as written to `.diglot/policy.json`. */
-export interface PolicySnapshot extends Pick<Policy, 'props' | 'layout' | 'htmlText' | 'frontmatter' | 'navigation' | 'codeComments'> {
+export interface PolicySnapshot extends Pick<Policy, 'props' | 'layout' | 'htmlText' | 'frontmatter' | 'navigation' | 'codeComments'>, Partial<Pick<Policy, OptionalList>> {
   version: 1
   /** `policyFingerprint` of the policy. */
   fingerprint: string
@@ -114,7 +126,8 @@ const SALT_PROBES: SaltInput[] = [
 function policyData(policy: Policy): Omit<PolicySnapshot, 'version' | 'fingerprint'> {
   const custom = ([['codeLabel', policy.codeLabel !== isProseCodeLabel], ['salt', Boolean(policy.salt)]] as const).filter(([, is]) => is).map(([name]) => name)
   const { props, layout, htmlText, frontmatter, navigation, codeComments } = policy
-  return { props, layout, htmlText, frontmatter, navigation, codeComments, ...(custom.length ? { custom } : {}) }
+  const lists = Object.fromEntries(OPTIONAL_LISTS.filter(name => policy[name].length).map(name => [name, policy[name]]))
+  return { props, layout, htmlText, ...lists, frontmatter, navigation, codeComments, ...(custom.length ? { custom } : {}) }
 }
 
 function fingerprint(policy: Policy, data: Omit<PolicySnapshot, 'version' | 'fingerprint'>): string {
@@ -126,6 +139,7 @@ function fingerprint(policy: Policy, data: Omit<PolicySnapshot, 'version' | 'fin
     htmlText: sorted(data.htmlText),
     frontmatter: sorted(data.frontmatter),
     navigation: sorted(data.navigation),
+    ...Object.fromEntries(OPTIONAL_LISTS.filter(name => data[name]).map(name => [name, sorted(data[name]!)])),
   }
   const probes = [CODE_LABEL_PROBES.map(label => policy.codeLabel(label)), SALT_PROBES.map(input => policy.salt?.(input) ?? null)]
   return hashSkeleton(JSON.stringify([canonical, probes]))
@@ -158,6 +172,7 @@ function isSnapshot(value: PolicySnapshot): boolean {
     && typeof value.fingerprint === 'string'
     && !!props && typeof props === 'object' && !Array.isArray(props) && Object.values(props).every(isStrings)
     && isStrings(value.layout) && isStrings(value.htmlText) && isStrings(value.frontmatter) && isStrings(value.navigation)
+    && OPTIONAL_LISTS.every(name => value[name] === undefined || isStrings(value[name]))
     && typeof value.codeComments === 'boolean'
     && (value.custom === undefined || isStrings(value.custom))
 }
@@ -177,7 +192,9 @@ export function restorePolicy(snapshot: PolicySnapshot, functions: Partial<Pick<
     props: snapshot.props,
     layout: snapshot.layout,
     htmlText: snapshot.htmlText,
+    opaque: snapshot.opaque ?? [],
     frontmatter: snapshot.frontmatter,
+    htmlFrontmatter: snapshot.htmlFrontmatter ?? [],
     navigation: snapshot.navigation,
     codeComments: snapshot.codeComments,
     codeLabel: functions.codeLabel ?? isProseCodeLabel,
