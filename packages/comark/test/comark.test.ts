@@ -49,6 +49,16 @@ describe('extract', () => {
     expect(spans).toEqual({ sliced: 3, rendered: 0 })
   })
 
+  it('should keep soft hyphen and no-break space entities visible', async () => {
+    const { segments } = await extract(await parse('Search&shy;engine optimisation, No.&nbsp;5.'))
+    expect(segments[0]!.text).toBe('Search&shy;engine optimisation, No.&nbsp;5.')
+    const doc = await parse('Search engine optimisation.')
+    const [segment] = (await extract(doc)).segments
+    const { doc: out, report } = await apply(doc, new Map([[segment!.hash, 'Suchmaschinen&shy;optimierung, Nr.&nbsp;5.']]))
+    expect(report).toEqual({ applied: 1, missing: 0, rejected: [] })
+    expect(out.nodes).toEqual([['p', {}, 'Suchmaschinen\u00ADoptimierung, Nr.\u00A05.']])
+  })
+
   it('should re-render protected spans when there is no source', async () => {
     const { nodes, frontmatter } = await parse('Use `useFetch` and [docs](/docs).')
     const { segments, spans } = await extract({ nodes, frontmatter })

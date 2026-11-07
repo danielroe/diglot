@@ -1,6 +1,6 @@
 import type { TranslationRecord } from '@diglot/core'
 import type { MtOptions, QaIssue, SourceLike, UpdateSources, UpdateTranslationResult } from './types.ts'
-import { matchGlossary, sentenceDiff, splitSentences, validate } from '@diglot/core'
+import { encodeInvisibles, matchGlossary, sentenceDiff, splitSentences, validate } from '@diglot/core'
 import { z } from 'zod'
 import { emptyUsage, generate, resolveModel } from './model.ts'
 import { alignPlaceholders, renumber } from './placeholders.ts'
@@ -91,6 +91,8 @@ export async function updateTranslation(previous: Pick<TranslationRecord, 'text'
       continue
     }
     output = typeset(response.text.trim(), previousText, options)
+    if (next.format !== 'plain')
+      output = encodeInvisibles(output)
     issues = runQa(output, next, options)
     if (!hasErrors(issues))
       return { status: 'ok', text: output, derived: 'update', changedSentences: changed(output), issues, mt: { model: model.modelId, promptVersion: PROMPT_VERSION, candidate: output }, usage }

@@ -70,7 +70,7 @@ function checkPlaceholderLike(translation: string, source: string): QaIssue[] {
 }
 
 function words(skeleton: string, glossary?: Glossary): string[] {
-  let text = skeleton.replace(PLACEHOLDER, ' ')
+  let text = skeleton.replace(PLACEHOLDER, ' ').replace(/&shy;/g, '').replace(/&nbsp;/g, ' ')
   for (const entry of glossary?.terms ?? []) {
     if (entry.decision === 'translate')
       continue

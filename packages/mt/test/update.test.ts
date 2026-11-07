@@ -19,6 +19,13 @@ describe('updateTranslation', () => {
     expect(result).toMatchObject({ status: 'ok', derived: 'update', text: 'Consultez le {0}Guide{/0}, puis utilisez {1} !' })
   })
 
+  it('should write invisible characters in model output as entities', async () => {
+    const after = await segment('Search engine optimisation, no. 5.')
+    const { model } = mockModel(() => ({ text: 'Suchmaschinen\u00ADoptimierung, Nr.\u00A05.' }))
+    const result = await updateTranslation({ text: 'Suchmaschinenoptimierung.' }, { previousSource: 'Search engine optimisation.', nextSource: after }, { locale: 'de', model })
+    expect(result).toMatchObject({ status: 'ok', text: 'Suchmaschinen&shy;optimierung, Nr.&nbsp;5.' })
+  })
+
   it('should update from the word diff and the previous human text', async () => {
     const before = await segment('Read the [guide](/guide) and use `useFetch`.')
     const after = await segment('Read the [guide](/guide) and use `useFetch`. It also works with `$fetch`.')

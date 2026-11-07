@@ -19,7 +19,7 @@ export { buildSegment, buildSegments, hashSkeleton, prepareSegment } from './seg
 export type { BuildOptions } from './segment.ts'
 export { sentenceDiff, splitSentences } from './sentences.ts'
 export type { SentenceDiff } from './sentences.ts'
-export { countWords, escapeText, fromSkeleton, isPlaceholderOnly, normalise, parseSkeleton, plainText, toMarkdown, toSkeleton } from './skeleton.ts'
+export { countWords, encodeInvisibles, escapeText, fromSkeleton, isPlaceholderOnly, normalise, parseSkeleton, plainText, toMarkdown, toSkeleton } from './skeleton.ts'
 export type { SkeletonNode, SkeletonResult } from './skeleton.ts'
 export type * from './types.ts'
 export { lengthRatio, maxTranslationLength, validate } from './validate.ts'

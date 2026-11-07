@@ -15,7 +15,7 @@ export function applyTypography(text: string, typography: LocaleStyle['typograph
   let out = text
   if (typography?.spaceBefore) {
     const marks = escape(typography.spaceBefore)
-    out = out.replace(new RegExp(`(?<=[^\\s\\\\${marks}])${SPACES}?([${marks}])(?=$|[\\s\\p{P}\\p{S}])`, 'gu'), `${NARROW}$1`)
+    out = out.replace(new RegExp(`(?<=[^\\s\\\\${marks}])(?<!&shy|&nbsp)${SPACES}?([${marks}])(?=$|[\\s\\p{P}\\p{S}])`, 'gu'), `${NARROW}$1`)
   }
   if (typography?.spaceAfter) {
     const marks = escape(typography.spaceAfter)
