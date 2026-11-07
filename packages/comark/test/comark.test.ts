@@ -111,6 +111,12 @@ describe('extract', () => {
     ])
   })
 
+  it('should skip fences without a language when placing code comments', async () => {
+    const source = '::card\n```\nplain\n```\n\n```[a.txt]\nplain\n```\n\n```ts\nconst a = 1\n// Explain the next line\n```\n::\n'
+    const { segments } = await extract(await parse(source))
+    expect(segments.map(s => [s.kind, s.position.startLine])).toEqual([['code-comment', 12]])
+  })
+
   it('should not extract code labels from synced code groups', async () => {
     const source = '::code-group{sync="pm"}\n```bash [Using npm]\nnpm i\n```\n::\n\n::code-group\n```bash [Using npm]\nnpm i\n```\n::'
     const { segments } = await extract(await parse(source))
@@ -126,9 +132,9 @@ describe('extract', () => {
   })
 
   it('should extract the props of opaque containers but not their content', async () => {
-    const source = '::card\n:::file-tree{label="Files"}\n- src/\n\n```ts\n// Inside the tree\n```\n:::\n\n```ts\nconst a = 1\n// After the tree\n```\n::\n'
+    const source = '::card\n:::file-tree{label="Files"}\n- src/\n\n```\nplain\n```\n\n```ts\n// Inside the tree\n```\n:::\n\n```ts\nconst a = 1\n// After the tree\n```\n::\n'
     const { segments } = await extract(await parse(source), { policy: { props: { 'file-tree': ['label'] }, opaque: ['file-tree'] } })
-    expect(segments.map(s => [s.kind, s.skeleton, s.position.startLine])).toEqual([['prop', 'Files', 1], ['code-comment', 'After the tree', 12]])
+    expect(segments.map(s => [s.kind, s.skeleton, s.position.startLine])).toEqual([['prop', 'Files', 1], ['code-comment', 'After the tree', 16]])
   })
 })
 

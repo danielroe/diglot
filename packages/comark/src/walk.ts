@@ -88,9 +88,9 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
       units.push({ kind: 'code-label', content: label, context: context(containers, 'filename'), position: blockPosition(), target: { type: 'attr', attrs, key: 'filename' } })
     const element = children(node).find(isElement)
     const language = String(attrs.language ?? '')
+    const firstLine = language ? fences[fenceIndex++] : undefined
     if (!policy.codeComments || !element || !language)
       return
-    const firstLine = fences[fenceIndex++]
     for (const comment of findComments(elementText(element), language)) {
       const commentLine = firstLine === undefined ? undefined : firstLine + comment.line
       units.push({
@@ -155,7 +155,7 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     if (tag !== 'template' && tag !== 'li' && tag !== 'blockquote')
       pushProps(node, inner)
     if (policy.opaque.includes(tag)) {
-      fenceIndex += countFences(node, policy)
+      fenceIndex += countLanguageFences(node)
       return
     }
     visitMixed(container, 2, inner, synced || (tag === 'code-group' && attrs.sync !== undefined), policy.htmlText.includes(tag) ? 'html-block' : undefined)
@@ -174,16 +174,15 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
   return units
 }
 
-/** Code blocks under `node` that `pushCode` would take a fence line for. */
-function countFences(node: ElementNode, policy: Policy): number {
+function countLanguageFences(node: ElementNode): number {
   let count = 0
   for (const child of children(node)) {
     if (!isElement(child))
       continue
     if (child[0] === 'pre')
-      count += policy.codeComments && children(child).some(isElement) && child[1].language ? 1 : 0
+      count += child[1].language ? 1 : 0
     else
-      count += countFences(child, policy)
+      count += countLanguageFences(child)
   }
   return count
 }
@@ -201,16 +200,18 @@ function findImages(nodes: Node[]): ElementNode[] {
   return found
 }
 
+/** First content lines of the fences between `start` and `end` whose info string sets a language. */
 function fenceStarts(lines: string[], [start, end]: [number, number]): number[] {
   const starts: number[] = []
   let fence = ''
   for (let i = start - 1; i < end; i++) {
-    const marker = /^\s*(`{3,}|~{3,})/.exec(lines[i] ?? '')?.[1]
+    const [opening, marker] = /^\s*(`{3,}|~{3,})/.exec(lines[i] ?? '') ?? []
     if (!marker)
       continue
     if (!fence) {
       fence = marker
-      starts.push(i + 2)
+      if (/^[^[{]/.test(lines[i]!.slice(opening!.length).trim()))
+        starts.push(i + 2)
     }
     else if (marker[0] === fence[0] && marker.length >= fence.length && /^\s*[`~]+\s*$/.test(lines[i]!)) {
       fence = ''
