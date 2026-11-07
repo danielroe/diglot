@@ -208,7 +208,7 @@ function encodeInvisibles(value: string): string {
 }
 
 function withoutInvisibles(skeleton: string): string {
-  return skeleton.replace(/(?<!\\)&shy;/g, '').replace(/(?<!\\)&nbsp;/g, ' ')
+  return skeleton.replace(/\u00AD|(?<!\\)&shy;/g, '').replace(/(?<!\\)&nbsp;/g, ' ')
 }
 
 function decodeInvisibles(value: string): string {
