@@ -22,27 +22,31 @@ export function diglotDocsLoader(options: DiglotDocsLoaderOptions = {}): Loader 
     name: 'diglot-docs-loader',
     load(context) {
       const { config } = context
-      const settings = getSettings().get(resolve(fileURLToPath(config.root)))
-      if (!settings)
+      const root = resolve(fileURLToPath(config.root))
+      if (!getSettings().has(root))
         throw new Error('`diglotDocsLoader()` needs the diglot plugin. Add `diglot({ translations })` from `@diglot/starlight` to the `plugins` of your Starlight config.')
       const extensions = config.integrations.some(({ name }) => name === '@astrojs/markdoc') ? [...DOCS_EXTENSIONS, 'mdoc'] : DOCS_EXTENSIONS
       loader ??= diglotLoader({
         ...options,
         base: new URL('content/docs/', config.srcDir),
         pattern: `**/[^_]*.{${extensions.join(',')}}`,
-        data: entry => entryData(entry, settings),
+        data: entry => entryData(entry, getSettings().get(root)!),
       })
       return loader.load(context)
     },
   }
 }
 
-/** The edit link and the last updated date of a translated page, unless its frontmatter sets them. */
+/**
+ * The edit link and the last updated date of a translated page. Frontmatter values other than
+ * `true` are kept. Starlight resolves `true` from the file of the entry, which is the source page,
+ * or for MDX a file that doesn't exist.
+ */
 function entryData({ frontmatter, source, updatedAt }: TranslatedEntry, { editLinkBaseUrl, lastUpdated }: StarlightSettings): Record<string, unknown> {
   const data: Record<string, unknown> = {}
-  if (editLinkBaseUrl && frontmatter.editUrl === undefined)
+  if (editLinkBaseUrl && (frontmatter.editUrl ?? true) === true)
     data.editUrl = `${editLinkBaseUrl.replace(/\/?$/, '/')}${source}`
-  if (lastUpdated && frontmatter.lastUpdated === undefined)
+  if ((frontmatter.lastUpdated ?? lastUpdated) === true)
     data.lastUpdated = updatedAt
   return data
 }

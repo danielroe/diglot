@@ -2,6 +2,7 @@
 title: Basics
 sidebar:
   label: The basics
+lastUpdated: true
 ---
 
 Every page starts here.

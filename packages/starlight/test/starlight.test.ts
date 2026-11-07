@@ -20,20 +20,20 @@ function page(path: string): string {
   return readFileSync(join(root, 'dist', path, 'index.html'), 'utf8')
 }
 
-/** The links of the sidebar, as `[href, label]` pairs. */
 function sidebar(html: string): string[][] {
   const nav = html.slice(html.indexOf('class="sidebar-content'))
   return [...nav.slice(0, nav.indexOf('</nav>')).matchAll(/<a href="([^"]+)"[^>]*>\s*<span[^>]*>([^<]*)/g)].map(([, href, label]) => [href!, label!.trim()])
 }
 
 describe('starlightPolicy', () => {
-  it('should translate the props of Starlight components and Starlight frontmatter', async () => {
-    const source = '---\ntitle: Start\nsidebar:\n  label: Begin\n  badge: New\n---\n\n<LinkCard title="Read more" description="The next page." href="/next/" />\n<TabItem label="npm">Install it.</TabItem>\n'
+  it('should extract Starlight frontmatter and component props, protect banner HTML and skip file trees', async () => {
+    const source = '---\ntitle: Start\nsidebar:\n  label: Begin\n  badge: New\nbanner:\n  content: Read the <a href="/notes/">notes</a>\n---\n\n<LinkCard title="Read more" description="The next page." href="/next/" />\n<TabItem label="npm">Install it.</TabItem>\n\n<FileTree>\n\n- src/\n  - index.md\n\n</FileTree>\n'
     const segments = await extract(source, { format: 'mdx', parser: 'satteri', policy: starlightPolicy })
     expect(segments.map(s => [s.kind, s.context.detail ?? null, s.skeleton])).toEqual([
       ['frontmatter', 'title', 'Start'],
       ['frontmatter', 'sidebar.label', 'Begin'],
       ['frontmatter', 'sidebar.badge', 'New'],
+      ['frontmatter', 'banner.content', 'Read the {0}notes{/0}'],
       ['prop', 'title', 'Read more'],
       ['prop', 'description', 'The next page.'],
       ['prop', 'label', 'npm'],
@@ -71,25 +71,27 @@ describe('diglot for Starlight', () => {
     expect(html).toContain('Les composants Starlight fonctionnent dans les traductions.')
     expect(html).toMatch(/Lire les bases[\s\S]*Commencez par le premier guide\./)
     expect([...html.matchAll(/role="tab" href[^>]*>([^<]*)/g)].map(([, label]) => label)).toEqual(['Installer', 'Configurer'])
-    // Tab panels stay ASCII: inside this monorepo, Starlight's tabs garble non-ASCII text even without diglot.
-    expect(html).toMatch(/Lancez le programme\.[\s\S]*Modifiez la configuration\./)
+    expect(html).toMatch(/Lancez l’installeur\.[\s\S]*Modifiez la configuration\./)
   })
 
   it('should link translated pages to their source for editing', () => {
     expect(page('fr/guides/basics')).toContain('href="https://github.com/example/docs/edit/main/src/content/docs/guides/basics.md"')
     expect(page('fr/guides/components')).toContain('href="https://github.com/example/docs/edit/main/src/content/docs/guides/components.mdx"')
+    expect(page('fr')).toContain('href="https://example.com/edit/home/"')
   })
 
   it('should date translated pages by their newest record', () => {
-    expect(page('fr/guides/basics')).toContain('datetime="2026-10-20T08:00:00.000Z"')
-    expect(page('fr/guides/components')).toContain('datetime="2026-10-20T08:00:00.000Z"')
+    expect(page('fr/guides/basics')).toContain('datetime="2026-10-22T08:00:00.000Z"')
+    expect(page('fr/guides/components')).toContain('datetime="2026-10-21T08:00:00.000Z"')
+    expect(page('fr')).toContain('datetime="2020-01-02T00:00:00.000Z"')
   })
 
-  it('should render Starlight components on the Sätteri version of the repository', () => {
-    const html = page('guides/structure')
-    expect(html).toContain('class="sl-steps"')
-    expect(html).toMatch(/<starlight-file-tree[\s\S]*index\.md/)
-    expect(html).toContain('aria-label="Star"')
+  it('should translate the steps, badges and icons of Starlight and keep file trees', () => {
+    const html = page('fr/guides/structure')
+    expect(html).toMatch(/class="sl-steps"[\s\S]*Créez un projet\.[\s\S]*Ajoutez le plugin\./)
+    expect(html).toMatch(/<starlight-file-tree[\s\S]*src[\s\S]*index\.md/)
+    expect(html).toContain('Nouveau')
+    expect(html).toContain('aria-label="Étoile"')
   })
 
   it('should leave untranslated pages to the fallback of Starlight', () => {
