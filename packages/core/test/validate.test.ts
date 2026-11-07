@@ -40,6 +40,13 @@ describe('validate', () => {
     expect(codes('{0}a{/0} {1} &amp;')).toContain('entity')
   })
 
+  it('should accept a soft hyphen entity and reject the raw character', () => {
+    expect(validate('Lies {0}die Doku{/0} über Such&shy;maschinen {1}.', paragraph).ok).toBe(true)
+    expect(codes('Lies {0}die Doku{/0} über Such\u00ADmaschinen {1}.')).toContain('entity')
+    expect(codes('Lies {0}die Doku{/0} über &amp; {1}.')).toContain('entity')
+    expect(validate('Nr.&nbsp;5 {0}die Doku{/0} {1}.', paragraph).ok).toBe(true)
+  })
+
   it('should accept escaped punctuation', () => {
     expect(validate('{0}a{/0} {1} \\[x\\] \\`y\\` \\<b> \\{z\\}', paragraph).ok).toBe(true)
   })

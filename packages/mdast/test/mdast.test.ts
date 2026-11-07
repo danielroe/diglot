@@ -53,6 +53,23 @@ describe('extract', () => {
     expect(segment!.placeholders.map(p => p.source + (p.close ?? ''))).toEqual(['[](/docs "Title"){target="_blank"}', '`useFetch`{lang="ts"}', '{{ value }}', '<kbd>Ctrl</kbd>'])
   })
 
+  it('should keep soft hyphen and no-break space entities visible', async () => {
+    const [segment] = await extract('Search&shy;engine optimisation, No.&nbsp;5.')
+    expect(segment!.text).toBe('Search&shy;engine optimisation, No.&nbsp;5.')
+    const { markdown } = await apply('Search engine optimisation.\n', new Map([[(await extract('Search engine optimisation.'))[0]!.hash, 'Suchmaschinen&shy;optimierung, Nr.&nbsp;5.']]))
+    expect(markdown).toBe('Suchmaschinen&shy;optimierung, Nr.&nbsp;5.\n')
+  })
+
+  it('should keep literal entity spellings escaped', async () => {
+    const source = 'Write &amp;shy; and &amp;nbsp;.\n'
+    const [segment] = await extract(source)
+    expect(segment!.skeleton).toBe('Write \\&shy; and \\&nbsp;.')
+    const translation = 'Write \\&shy; and \\&nbsp;, then Such&shy;maschine No.&nbsp;5.'
+    const { markdown, report } = await apply(source, new Map([[segment!.hash, translation]]))
+    expect(report.applied).toBe(1)
+    expect((await extract(markdown))[0]!.skeleton).toBe(translation)
+  })
+
   it('should drop heading attributes from heading text', async () => {
     const [segment] = await extract('## Custom anchor {#custom}')
     expect(segment!.skeleton).toBe('Custom anchor')

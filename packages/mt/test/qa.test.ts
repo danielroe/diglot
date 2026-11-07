@@ -97,5 +97,6 @@ describe('applyTypography', () => {
   it('should leave times, escapes and unconfigured locales alone', () => {
     expect(applyTypography('à 10:30, a\\: b', french)).toBe('à 10:30, a\\: b')
     expect(applyTypography('Note: voici', undefined)).toBe('Note: voici')
+    expect(applyTypography('Bravo&nbsp;! Such&shy; und', french)).toBe('Bravo&nbsp;! Such&shy; und')
   })
 })
