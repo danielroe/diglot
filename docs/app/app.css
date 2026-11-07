@@ -807,6 +807,20 @@ a.landing-card:hover {
   --ui-color-primary-950: var(--color-orange-950);
 }
 
+:root[data-accent='red'] {
+  --ui-color-primary-50: var(--color-red-50);
+  --ui-color-primary-100: var(--color-red-100);
+  --ui-color-primary-200: var(--color-red-200);
+  --ui-color-primary-300: var(--color-red-300);
+  --ui-color-primary-400: var(--color-red-400);
+  --ui-color-primary-500: var(--color-red-500);
+  --ui-color-primary-600: var(--color-red-600);
+  --ui-color-primary-700: var(--color-red-700);
+  --ui-color-primary-800: var(--color-red-800);
+  --ui-color-primary-900: var(--color-red-900);
+  --ui-color-primary-950: var(--color-red-950);
+}
+
 @media (max-width: 767px) {
   /* The finished stack is about 1.8 times as tall as it is wide, so short phones get a smaller cube. */
   .cube-stage {

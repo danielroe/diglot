@@ -1,5 +1,5 @@
 /** Tailwind palettes that can stand in for the primary colour. */
-export type Accent = 'lime' | 'emerald' | 'teal' | 'cyan' | 'amber' | 'violet' | 'rose' | 'pink' | 'blue' | 'orange'
+export type Accent = 'lime' | 'emerald' | 'teal' | 'cyan' | 'amber' | 'violet' | 'rose' | 'pink' | 'blue' | 'orange' | 'red'
 
 export interface TopicPackage {
   name: string
@@ -56,7 +56,7 @@ export const TOPICS: Topic[] = [
     accent: 'orange',
     packages: [
       { name: '@diglot/astro', path: '/integrations/astro', accent: 'orange' },
-      { name: '@diglot/starlight', path: '/integrations/starlight', accent: 'violet' },
+      { name: '@diglot/starlight', path: '/integrations/starlight', accent: 'red' },
     ],
   },
 ]
