@@ -215,14 +215,15 @@ async function syncTranslations(context: LoaderContext, state: TranslationState,
         logger.warn(`Skipped the "${path}" translation of "${relativePath}", because "${storedPath}" exists. Rename that file to translate the page.`)
         continue
       }
-      let updatedAt = ''
+      let updatedAt = Number.NEGATIVE_INFINITY
       const { markdown: translated, report } = await apply(markdown, records.get(locale)!, {
         file: relativePath,
         parser,
         policy: diglot.policy,
         onSegment: ({ outcome, record }) => {
-          if (outcome === 'translated' && record && record.updatedAt > updatedAt)
-            updatedAt = record.updatedAt
+          const time = outcome === 'translated' && record ? Date.parse(record.updatedAt) : Number.NaN
+          if (time > updatedAt)
+            updatedAt = time
         },
       })
       const frontmatter = report.applied ? splitFrontmatter(translated) : undefined

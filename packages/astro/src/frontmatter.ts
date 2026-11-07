@@ -20,7 +20,7 @@ export function splitFrontmatter(markdown: string): Frontmatter | undefined {
   const close = lines.findIndex((line, i) => i > 0 && FENCE_RE.test(line.trimEnd()))
   if (close < 0)
     return { data: {}, body: markdown.trim() }
-  const data = parse(lines.slice(1, close).join('\n')) as unknown
+  const data = parse(lines.slice(1, close).join('\n'), { customTags: ['timestamp'], merge: true }) as unknown
   return {
     data: data && typeof data === 'object' && !Array.isArray(data) ? data as Record<string, unknown> : {},
     body: lines.slice(close + 1).join('\n').trim(),
