@@ -66,6 +66,7 @@ describe('skeleton', () => {
     expect(countWords('{0} returns {1}Nuxt’s data{/1}.')).toBe(3)
     expect(countWords('Such&shy;maschine Nr.&nbsp;5')).toBe(2)
     expect(countWords('Such\u00ADmaschine')).toBe(1)
+    expect(countWords('&nbs\u00ADp;')).toBe(1)
     expect(isPlaceholderOnly('{0} {1}')).toBe(true)
     expect(isPlaceholderOnly('{0}s')).toBe(false)
     expect(isPlaceholderOnly('{0}&nbsp;5&shy;')).toBe(true)

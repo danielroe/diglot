@@ -209,7 +209,7 @@ export function encodeInvisibles(value: string): string {
 }
 
 function withoutInvisibles(skeleton: string): string {
-  return skeleton.replace(/\u00AD|(?<!\\)&shy;/g, '').replace(/(?<!\\)&nbsp;/g, ' ')
+  return skeleton.replace(/\u00AD|(?<!\\)&(shy|nbsp);/g, (_, name) => name === 'nbsp' ? ' ' : '')
 }
 
 function decodeInvisibles(value: string): string {
