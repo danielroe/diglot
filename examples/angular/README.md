@@ -53,4 +53,6 @@ Run these from the example's directory:
 | `pnpm translations` | Extracts the segments and builds the bundle in `translations/dist` |
 | `pnpm translations:status` | Shows how much of each locale is translated |
 
+The dev server doesn't watch `translations`. After you edit a record, run `pnpm translations` and reload the page.
+
 `pnpm build` prerenders nine pages: `/en`, `/en/guide` and `/en/about`, and the same three under `/fr` and `/tr`.

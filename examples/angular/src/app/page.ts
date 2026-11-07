@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common'
 import { Component, computed, effect, inject, input } from '@angular/core'
 import { Meta, Title } from '@angular/platform-browser'
 import { Router, RouterLink } from '@angular/router'
-import { diglotDocument } from '@diglot/angular'
+import { DIGLOT_LOCALE, diglotDocument } from '@diglot/angular'
 import { locales, pageName, pages } from './locales'
 import { renderPage } from './markdown'
 
@@ -18,12 +18,12 @@ const notices: Record<string, string> = {
     <header>
       <nav aria-label="Pages">
         @for (page of pages; track page) {
-          <a [routerLink]="link(locale(), page)" [class.current]="page === slug()">{{ pageName(locale(), page) }}</a>
+          <a [routerLink]="link(route(), page)" [class.current]="page === slug()">{{ pageName(route(), page) }}</a>
         }
       </nav>
       <nav aria-label="Languages">
         @for (option of locales; track option.code) {
-          <a [routerLink]="link(option.code, slug())" [attr.hreflang]="option.code" [attr.lang]="option.code" [class.current]="option.code === locale()">{{ option.name }}</a>
+          <a [routerLink]="link(option.code, slug())" [attr.hreflang]="option.code" [attr.lang]="option.code" [class.current]="option.code === route()">{{ option.name }}</a>
         }
       </nav>
     </header>
@@ -46,6 +46,7 @@ export class Page {
   readonly slug = input('index')
   readonly doc = diglotDocument(() => this.slug())
   readonly locale = this.doc.locale
+  protected readonly route = inject(DIGLOT_LOCALE)
   readonly page = computed(() => {
     const markdown = this.doc.markdown()
     return markdown === undefined ? undefined : renderPage(markdown, this.locale())

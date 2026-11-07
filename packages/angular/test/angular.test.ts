@@ -1,21 +1,24 @@
 /* eslint-disable perfectionist/sort-imports -- Angular's packages are partially compiled, so the JIT compiler must load before them. */
 import '@angular/compiler'
 import type { HttpEvent, HttpRequest } from '@angular/common/http'
+import type { Routes } from '@angular/router'
 import type { PolicySnapshot, TranslationRecord } from '@diglot/core'
 import type { LocaleBundle } from '@diglot/store'
 import type { DiglotOptions } from '../src/index.ts'
 import { readFileSync } from 'node:fs'
 import { HttpBackend, HttpErrorResponse, HttpResponse, provideHttpClient } from '@angular/common/http'
-import { ApplicationRef, PLATFORM_ID, signal, TransferState } from '@angular/core'
+import { ApplicationRef, Component, makeStateKey, PLATFORM_ID, signal, TransferState } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { platformServerTesting, ServerTestingModule } from '@angular/platform-server/testing'
 import { provideRouter, Router } from '@angular/router'
+import { RouterTestingHarness } from '@angular/router/testing'
 import { extract as extractComark, parse } from '@diglot/comark'
 import { createRecord, restorePolicy, snapshotPolicy } from '@diglot/core'
 import { extract as extractMdast } from '@diglot/mdast'
 import { Observable } from 'rxjs'
 import { afterEach, beforeAll, describe, expect, it } from 'vitest'
-import { diglotDocument, provideDiglot, resolveParser, translateMarkdown, withDiglotRouteLocale } from '../src/index.ts'
+import { DIGLOT_LOCALE, diglotDocument, provideDiglot, resolveParser, translateMarkdown } from '../src/index.ts'
+import { withDiglotRouteLocale } from '../src/router.ts'
 /* eslint-enable perfectionist/sort-imports */
 
 const docs = new URL('../../astro/test/fixtures/site/src/content/docs/en/', import.meta.url)
@@ -85,14 +88,14 @@ function options(overrides: Partial<DiglotOptions> = {}): DiglotOptions {
   }
 }
 
-function setup({ diglot = options(), platform = 'browser', features = [], served }: { diglot?: DiglotOptions, platform?: 'browser' | 'server', features?: ReturnType<typeof withDiglotRouteLocale>[], served: Map<string, string> }) {
+function setup({ diglot = options(), platform = 'browser', features = [], routes = [], served }: { diglot?: DiglotOptions, platform?: 'browser' | 'server', features?: ReturnType<typeof withDiglotRouteLocale>[], routes?: Routes, served: Map<string, string> }) {
   const backend = new FakeBackend(served)
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
       { provide: HttpBackend, useValue: backend },
       { provide: PLATFORM_ID, useValue: platform },
-      provideRouter([{ path: ':locale/:path', children: [] }, { path: '**', children: [] }]),
+      provideRouter([...routes, { path: ':locale/:path', children: [] }, { path: '**', children: [] }]),
       provideDiglot(diglot, ...features),
     ],
   })
@@ -143,7 +146,7 @@ describe('resolveParser', () => {
 
 describe('provideDiglot', () => {
   it('should fail loudly without a usable policy', () => {
-    expect(() => provideDiglot(options({ policy: undefined as unknown as PolicySnapshot }))).toThrow('`policy` is required')
+    expect(() => provideDiglot(options({ policy: undefined as unknown as PolicySnapshot }))).toThrow('`provideDiglot()` needs the `policy` option')
     expect(() => provideDiglot(options({ policy: { ...policy, fingerprint: 'nope' } }))).toThrow('cannot restore `policy`: the restored policy does not match')
     expect(() => provideDiglot(options({ policy: { ...policy, custom: ['salt'] } }))).toThrow('pass it to restorePolicy')
   })
@@ -200,7 +203,7 @@ describe('diglotDocument', () => {
     const backend = setup({ diglot: options({ locale: () => 'fr' }), served })
     const doc = document(() => 'guide')
     await settle()
-    expect(doc.error()?.message).toBe('[@diglot/angular] cannot fetch /translations/fr.json: Http failure response for /translations/fr.json: 404 Not Found')
+    expect(doc.error()?.message).toBe('`diglotDocument()` cannot fetch /translations/fr.json: Http failure response for /translations/fr.json: 404 Not Found')
     expect(doc.markdown()).toBeUndefined()
     served.set('/translations/fr.json', bundle)
     doc.reload()
@@ -258,6 +261,20 @@ describe('diglotDocument', () => {
     expect(doc.report()).toMatchObject({ applied: 2 })
   })
 
+  it('should load documents again once the app is stable instead of the server copy', async () => {
+    setup({ served: await files() })
+    TestBed.inject(TransferState).set(makeStateKey<{ markdown: string, report: null }>('diglot:en:guide'), { markdown: '# Older\n', report: null })
+    const path = signal('guide')
+    const doc = document(path)
+    expect(doc.markdown()).toBe('# Older\n')
+    await settle()
+    path.set('index')
+    await settle()
+    path.set('guide')
+    await settle()
+    expect(doc.markdown()).toBe(sources.guide)
+  })
+
   it('should drop the document when the next one fails', async () => {
     const path = signal('index')
     setup({ served: await files() })
@@ -273,7 +290,12 @@ describe('diglotDocument', () => {
 })
 
 describe('withDiglotRouteLocale', () => {
-  it('should read the locale from the route before its components load', async () => {
+  const Empty = Component({ template: '' })(class Empty {})
+  const Index = Component({ template: '' })(class Index {
+    readonly doc = diglotDocument(() => 'index')
+  })
+
+  it('should follow the locale of the route', async () => {
     const backend = setup({ diglot: options(), features: [withDiglotRouteLocale()], served: await files() })
     const router = TestBed.inject(Router)
     const doc = document(() => 'index')
@@ -285,5 +307,37 @@ describe('withDiglotRouteLocale', () => {
     await settle()
     expect(doc.locale()).toBe('en')
     expect(backend.requests).not.toContain('/translations/en.json')
+  })
+
+  it('should load the components of a navigation in its locale only', async () => {
+    const backend = setup({ features: [withDiglotRouteLocale()], routes: [{ path: ':locale/page', component: Index }], served: await files() })
+    const harness = await RouterTestingHarness.create('/elsewhere')
+    await harness.navigateByUrl('/fr/page', Index)
+    await settle()
+    expect(backend.requests).toEqual(['/docs/index.md', '/translations/fr.json'])
+  })
+
+  it('should keep the locale of the page on screen while a lazy route loads', async () => {
+    let load!: () => void
+    const lazy = new Promise<typeof Empty>(resolve => load = () => resolve(Empty))
+    setup({ features: [withDiglotRouteLocale()], routes: [{ path: ':locale/lazy', loadComponent: () => lazy }], served: await files() })
+    const router = TestBed.inject(Router)
+    const locale = TestBed.inject(DIGLOT_LOCALE)
+    await router.navigateByUrl('/en/index')
+    const navigation = router.navigateByUrl('/fr/lazy')
+    await new Promise(resolve => setTimeout(resolve))
+    expect(locale()).toBe('en')
+    load()
+    await navigation
+    expect(locale()).toBe('fr')
+  })
+
+  it('should keep the locale when a navigation is cancelled', async () => {
+    setup({ features: [withDiglotRouteLocale()], routes: [{ path: ':locale/blocked', canActivate: [() => false], component: Empty }], served: await files() })
+    const router = TestBed.inject(Router)
+    const locale = TestBed.inject(DIGLOT_LOCALE)
+    await router.navigateByUrl('/en/index')
+    expect(await router.navigateByUrl('/fr/blocked')).toBe(false)
+    expect(locale()).toBe('en')
   })
 })

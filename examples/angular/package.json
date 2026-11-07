@@ -2,7 +2,7 @@
   "name": "diglot-example-angular",
   "type": "module",
   "private": true,
-  "description": "A small Angular app in English and French, translated with diglot.",
+  "description": "A small Angular app in English, French and Turkish, translated with diglot.",
   "scripts": {
     "translations": "diglot extract --cwd translations && diglot build --cwd translations",
     "prestart": "pnpm translations",

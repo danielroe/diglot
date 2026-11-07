@@ -1,13 +1,14 @@
 import type { ActivatedRouteSnapshot } from '@angular/router'
 import type { DiglotFeature } from './provide.ts'
 import { DestroyRef, inject, signal } from '@angular/core'
-import { NavigationCancel, NavigationError, ResolveEnd, Router } from '@angular/router'
+import { NavigationEnd, Router } from '@angular/router'
 import { DIGLOT_CONFIG, DIGLOT_LOCALE } from './tokens.ts'
 
 /**
  * Reads the locale from a route parameter, such as `:locale` in `/:locale/docs/**`. Routes
- * without it show the default locale. The locale changes before the components of a
- * navigation are created, so they never load the previous locale first.
+ * without it show the default locale. The locale changes when a navigation activates its routes:
+ * the components it creates load the new locale first, and the page on screen keeps its locale
+ * until then.
  */
 export function withDiglotRouteLocale(param = 'locale'): DiglotFeature {
   return {
@@ -17,13 +18,11 @@ export function withDiglotRouteLocale(param = 'locale'): DiglotFeature {
       useFactory: () => {
         const router = inject(Router)
         const { defaultLocale } = inject(DIGLOT_CONFIG)
-        const read = (root: ActivatedRouteSnapshot) => routeParam(root, param) ?? defaultLocale
-        const locale = signal(read(router.routerState.snapshot.root))
+        const read = () => routeParam(router.routerState.snapshot.root, param) ?? defaultLocale
+        const locale = signal(read())
         const subscription = router.events.subscribe((event) => {
-          if (event instanceof ResolveEnd)
-            locale.set(read(event.state.root))
-          else if (event instanceof NavigationCancel || event instanceof NavigationError)
-            locale.set(read(router.routerState.snapshot.root))
+          if (event instanceof NavigationEnd)
+            locale.set(read())
         })
         inject(DestroyRef).onDestroy(() => subscription.unsubscribe())
         return locale.asReadonly()

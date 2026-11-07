@@ -55,13 +55,13 @@ export function provideDiglot(options: DiglotOptions, ...features: DiglotFeature
 
 function resolveConfig({ locale: _, policy, policyFunctions, ...options }: DiglotOptions): DiglotConfig {
   if (!policy)
-    throw new Error('[@diglot/angular] `policy` is required: pass the snapshot in `.diglot/policy.json` of your translations repository.')
+    throw new Error('`provideDiglot()` needs the `policy` option: the snapshot in `.diglot/policy.json` of your translations repository.')
   let restored: Policy
   try {
     restored = restorePolicy(policy, policyFunctions)
   }
   catch (error) {
-    throw new Error(`[@diglot/angular] cannot restore \`policy\`: ${(error as Error).message}. Pass the snapshot in \`.diglot/policy.json\` of your translations repository.`, { cause: error })
+    throw new Error(`\`provideDiglot()\` cannot restore \`policy\`: ${(error as Error).message}. Pass the snapshot in \`.diglot/policy.json\` of your translations repository.`, { cause: error })
   }
   return { ...options, parser: resolveParser(options.parser), policy: restored }
 }

@@ -23,8 +23,8 @@ export function resolveParser(parser: unknown): DiglotParser {
   if (parser === 'comark' || parser === 'mdast')
     return parser
   if (parser === 'satteri')
-    throw new Error('[@diglot/angular] the `satteri` parser needs native bindings, which browsers cannot load. Extract with `comark` or `mdast` to use translations in an Angular app.')
-  throw new Error(`[@diglot/angular] unknown parser ${JSON.stringify(parser)}: use \`comark\` or \`mdast\`, the parser your translations repository extracts with.`)
+    throw new Error('the `satteri` parser needs native bindings, which browsers cannot load. Extract with `comark` or `mdast` to use translations in an Angular app.')
+  throw new Error(`unknown parser ${JSON.stringify(parser)}: use \`comark\` or \`mdast\`, the parser your translations repository extracts with.`)
 }
 
 /**

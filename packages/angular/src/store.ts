@@ -2,7 +2,7 @@ import type { TranslationRecord } from '@diglot/core'
 import type { TranslatedDocument } from './translate.ts'
 import { isPlatformServer } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { inject, InjectionToken, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core'
+import { ApplicationRef, inject, InjectionToken, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core'
 import { parseBundle } from '@diglot/store/runtime'
 import { DIGLOT_CONFIG } from './tokens.ts'
 import { translateMarkdown } from './translate.ts'
@@ -19,9 +19,21 @@ export class DiglotStore {
   private readonly transferState = inject(TransferState)
   private readonly server = isPlatformServer(inject(PLATFORM_ID))
   private readonly bundles = new Map<string, Promise<ReadonlyMap<string, TranslationRecord>>>()
+  private hydrating = !this.server
 
-  /** A document rendered on the server, so that the browser shows it without loading it again. */
+  constructor() {
+    if (this.hydrating)
+      void inject(ApplicationRef).whenStable().then(() => this.hydrating = false)
+  }
+
+  /**
+   * A document rendered on the server, so that the browser shows it without loading it again.
+   * Once the application is stable, documents are loaded instead, so that they are never older
+   * than the ones the browser loaded since.
+   */
   transferred({ locale, path }: DocumentRequest): TranslatedDocument | undefined {
+    if (!this.hydrating)
+      return undefined
     return this.transferState.get(stateKey(locale, path), undefined)
   }
 
@@ -42,7 +54,10 @@ export class DiglotStore {
     let bundle = this.bundles.get(locale)
     if (!bundle) {
       bundle = this.get(this.config.bundleUrl(locale)).then(parseBundle)
-      bundle.catch(() => this.bundles.delete(locale))
+      bundle.catch(() => {
+        if (this.bundles.get(locale) === bundle)
+          this.bundles.delete(locale)
+      })
       this.bundles.set(locale, bundle)
     }
     return bundle
@@ -59,7 +74,7 @@ export class DiglotStore {
         return reject(signal.reason)
       const subscription = this.http.get(url, { responseType: 'text', transferCache: false }).subscribe({
         next: resolve,
-        error: (error: Error) => reject(new Error(`[@diglot/angular] cannot fetch ${url}: ${error.message}`, { cause: error })),
+        error: (error: Error) => reject(new Error(`\`diglotDocument()\` cannot fetch ${url}: ${error.message}`, { cause: error })),
       })
       signal?.addEventListener('abort', () => {
         subscription.unsubscribe()

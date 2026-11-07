@@ -12,17 +12,22 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
+    "./router": "./src/router.ts",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.mts",
   "publishConfig": {
     "exports": {
       ".": "./dist/index.mjs",
+      "./router": "./dist/router.mjs",
       "./package.json": "./package.json"
     }
   },
   "typesVersions": {
     "*": {
+      "router": [
+        "./dist/router.d.mts"
+      ],
       "*": [
         "./dist/index.d.mts"
       ]
