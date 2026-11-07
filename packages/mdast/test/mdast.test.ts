@@ -380,6 +380,13 @@ describe('apply', () => {
     expect(markdown).toBe('<!-- keep me -->\n\nBonjour [monde](/w)  \nencore.\n\n* list\n')
   })
 
+  it('should replace the braces of a binding that starts a block', async () => {
+    const source = '{{count}} left\n\n- {{count}} left\n\n| {{a}} | {{b}} |\n| - | - |\n| {{c}} x | y {{d}} |\n'
+    const segments = await extract(source)
+    expect((await apply(source, new Map(segments.map(s => [s.hash, s.skeleton])))).markdown).toBe(source)
+    expect((await apply(source, new Map([[segments[0]!.hash, 'il reste {0}']]))).markdown).toMatch(/^il reste \{\{count\}\}\n/)
+  })
+
   it('should translate image alts inside a translated paragraph', async () => {
     const source = 'See [![The logo](/l.png)](/home) here.'
     const segments = await extract(source)

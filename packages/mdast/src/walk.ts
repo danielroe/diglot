@@ -135,9 +135,11 @@ export function walk(root: MdNode, source: string, policy: Policy): Unit[] {
       return
     const end = kind === 'heading' ? at(nodes.at(-1)!, 'end') : Math.max(at(nodes.at(-1)!, 'end'), at(node, 'end'))
     const content = toInline(nodes, end)
+    const firstSpan = (content[0] as { data?: Span } | undefined)?.data
     const lastSpan = (content.at(-1) as { data?: Span } | undefined)?.data
+    const contentStart = Math.min(at(nodes[0]!, 'start'), firstSpan?.start ?? Infinity)
     const contentEnd = Math.max(at(nodes.at(-1)!, 'end'), lastSpan?.end ?? 0)
-    push(kind, content, node, containers, { type: 'range', node, start: at(nodes[0]!, 'start'), end: contentEnd }, detail)
+    push(kind, content, node, containers, { type: 'range', node, start: contentStart, end: contentEnd }, detail)
   }
 
   const props = (node: MdNode, containers: string[]) => {
