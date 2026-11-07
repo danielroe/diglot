@@ -1,14 +1,16 @@
+import type { AstroIntegration } from 'astro'
 import { execFileSync } from 'node:child_process'
 import { cpSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:net'
 import { join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import mdx from '@astrojs/mdx'
 import { createRecord } from '@diglot/core'
 import { extract } from '@diglot/mdast'
 import { writeRecord } from '@diglot/store'
 import { build } from 'astro'
-import { afterAll, describe, expect, it, vi } from 'vitest'
+import { afterAll, describe, expect, it } from 'vitest'
 import { splitFrontmatter } from '../src/frontmatter.ts'
 import { isTargetId, isTranslatedModule, translatedId, translatedModulePath } from '../src/ids.ts'
 import diglot from '../src/integration.ts'
@@ -41,20 +43,25 @@ afterAll(() => {
 })
 
 describe('diglot', () => {
-  const root = new URL('./fixtures/site/', import.meta.url)
-  const i18n = { defaultLocale: 'en', locales: ['en', 'fr'] }
-
-  it('should accept an i18n option that another integration adds after its setup', () => {
-    const { hooks } = diglot({ translations: './translations' })
-    const setup = hooks['astro:config:setup'] as (params: unknown) => void
-    const done = hooks['astro:config:done'] as (params: unknown) => void
-    expect(() => setup({ config: { root }, updateConfig: vi.fn() })).not.toThrow()
-    expect(() => done({ config: { root, i18n } })).not.toThrow()
+  it('should accept an i18n option that a later integration sets', { timeout: 60_000 }, async () => {
+    const root = copyFixture()
+    const late: AstroIntegration = {
+      name: 'late',
+      hooks: {
+        'astro:config:setup': ({ updateConfig }) => {
+          updateConfig({ i18n: { defaultLocale: 'en', locales: ['en', 'fr'], routing: { prefixDefaultLocale: false, redirectToDefaultLocale: false, fallbackType: 'redirect' } } })
+        },
+      },
+    }
+    await build({ root, configFile: false, logLevel: 'error', integrations: [mdx(), diglot({ translations: './translations' }), late] })
+    expect(readFileSync(join(root, 'dist/fr/guide/index.html'), 'utf8')).toContain('<h1 id="premiers-pas">Premiers pas</h1>')
   })
 
-  it('should require the i18n option once the config is final', () => {
-    const done = diglot({ translations: './translations' }).hooks['astro:config:done'] as (params: unknown) => void
-    expect(() => done({ config: { root } })).toThrow('reads your locales from the `i18n` option')
+  it('should require the i18n option', { timeout: 60_000 }, async () => {
+    const root = copyFixture()
+    await expect(build({ root, configFile: false, logLevel: 'silent', integrations: [mdx(), diglot({ translations: './translations' })] }))
+      .rejects
+      .toThrow('reads your locales from the `i18n` option')
   })
 })
 
