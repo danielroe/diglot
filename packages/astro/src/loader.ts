@@ -34,8 +34,8 @@ export interface TranslatedEntry {
   locale: string
   /** File path of the source entry, relative to the project root. */
   source: string
-  /** The newest `updatedAt` of the records that the page uses. */
-  updatedAt: Date
+  /** The newest `updatedAt` of the records that the page uses, if any of them is a date that `Date.parse` reads. */
+  updatedAt: Date | undefined
   /** The translated frontmatter of the page, before validation. */
   frontmatter: Record<string, unknown>
 }
@@ -230,7 +230,7 @@ async function syncTranslations(context: LoaderContext, state: TranslationState,
       const frontmatter = report.applied ? splitFrontmatter(translated) : undefined
       if (!frontmatter)
         continue
-      const extra = data?.({ id, localePath: path, locale, source: relativePath, updatedAt: new Date(updatedAt), frontmatter: frontmatter.data })
+      const extra = data?.({ id, localePath: path, locale, source: relativePath, updatedAt: Number.isFinite(updatedAt) ? new Date(updatedAt) : undefined, frontmatter: frontmatter.data })
       produced.add(id)
       owned.set(id, { storedPath, source: filePath, module: mdx ? modulePath : undefined })
       if (mdx)

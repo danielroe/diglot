@@ -124,6 +124,7 @@ describe('diglotLoader', () => {
     expect(page('fr/hand')).toContain('<title>Écrite à la main</title>')
     expect(page('fr/guide')).toContain('<h1 id="premiers-pas">Premiers pas</h1>')
     expect(page('fr/guide')).toMatch(/<img alt="Le logo"[^>]* src="\/_astro\/logo\.[\w-]+\.svg"/)
+    expect(page('fr')).toContain('<meta name="translation" content="fr src/content/docs/en/index.md undated">')
     expect(page('fr')).toContain('<p>Lisez le <a href="/en/guide/">guide</a> pour commencer.</p>')
     expect(page('pt-br/guide')).toContain('<h1 id="primeiros-passos">Primeiros passos</h1>\n<p>Install the package with <code>pnpm add example</code>.</p>')
     expect(page('fr/hand')).toContain('Cette page a une traduction écrite à la main.')

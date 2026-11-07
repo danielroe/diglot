@@ -8,8 +8,8 @@ const docs = defineCollection({
     pattern: '**/*.{md,mdx}',
     data: ({ frontmatter, locale, localePath, source, updatedAt }) => ({
       title: `${frontmatter.title} (${locale})`,
-      translation: `${localePath} ${source} ${updatedAt.toISOString()}`,
-      translatedAt: BigInt(updatedAt.getTime()),
+      translation: `${localePath} ${source} ${updatedAt?.toISOString() ?? 'undated'}`,
+      translatedAt: updatedAt && BigInt(updatedAt.getTime()),
     }),
   }),
   schema: z.object({ title: z.string(), description: z.string().optional(), translation: z.string().optional(), translatedAt: z.bigint().optional() }),
