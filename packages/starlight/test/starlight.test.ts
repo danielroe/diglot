@@ -86,6 +86,12 @@ describe('diglot for Starlight', () => {
     expect(page('fr')).toContain('datetime="2020-01-02T00:00:00.000Z"')
   })
 
+  it('should not date translated pages whose records have no readable date', () => {
+    const dates = JSON.parse(readFileSync(join(root, 'dist/last-updated.json'), 'utf8'))
+    expect(dates['fr/guides/structure']).toBe(false)
+    expect(dates['fr/guides/basics']).toBe('2026-10-22T08:00:00.000Z')
+  })
+
   it('should translate the steps, badges and icons of Starlight and keep file trees', () => {
     const html = page('fr/guides/structure')
     expect(html).toMatch(/class="sl-steps"[\s\S]*Créez un projet\.[\s\S]*Ajoutez le plugin\./)

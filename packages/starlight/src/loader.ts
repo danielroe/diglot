@@ -46,7 +46,7 @@ function entryData({ frontmatter, source, updatedAt }: TranslatedEntry, { editLi
   const data: Record<string, unknown> = {}
   if (editLinkBaseUrl && (frontmatter.editUrl ?? true) === true)
     data.editUrl = `${editLinkBaseUrl.replace(/\/?$/, '/')}${source}`
-  if (updatedAt && (frontmatter.lastUpdated ?? lastUpdated) === true)
-    data.lastUpdated = updatedAt
+  if ((frontmatter.lastUpdated ?? lastUpdated) === true)
+    data.lastUpdated = updatedAt ?? false
   return data
 }
