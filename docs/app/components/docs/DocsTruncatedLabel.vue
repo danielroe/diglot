@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false })
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   text: string
   side?: 'left' | 'right'
 }>(), { side: 'right' })
@@ -26,6 +26,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => observer?.disconnect())
+
+watch(() => props.text, measure, { flush: 'post' })
 </script>
 
 <template>
