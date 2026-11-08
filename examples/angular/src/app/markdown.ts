@@ -7,14 +7,14 @@ export interface RenderedPage {
   html: string
 }
 
-/** Renders a page's Markdown, with relative links pointing to the same locale. */
-export function renderPage(markdown: string, locale: string): RenderedPage {
+/** Renders a page's Markdown, with relative links pointing to the pages under `base`. */
+export function renderPage(markdown: string, base: string): RenderedPage {
   const [, frontmatter = '', body = markdown] = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/) ?? []
   const data = (parse(frontmatter) ?? {}) as Partial<RenderedPage>
   const marked = new Marked({
     walkTokens: (token) => {
       if (token.type === 'link' && !/^(?:[a-z]+:|\/|#)/i.test(token.href))
-        token.href = `/${locale}/${token.href}`
+        token.href = `${base}/${token.href}`
     },
   })
   return { title: data.title ?? '', description: data.description ?? '', html: marked.parse(body, { async: false }) }

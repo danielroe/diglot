@@ -2,6 +2,6 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": ["examples/**"],
   "ignoreFiles": ["fixtures/**", "packages/*/test/fixtures/**"],
-  "ignoreDependencies": ["@astrojs/mdx", "@angular/platform-browser-dynamic"],
+  "ignoreDependencies": ["@astrojs/mdx"],
   "ignoreWorkspaces": ["docs", "examples/angular", "examples/astro"]
 }

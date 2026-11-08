@@ -1,6 +1,6 @@
 # diglot Example: Angular
 
-A small [Angular](https://angular.dev) app, written in English and translated into French and Turkish by [diglot](../../README.md). Its pages are Markdown files, and [`@diglot/angular`](../../packages/angular) applies the bundle of `translations`, a translations repository that lives inside the app, when a page loads. Every page is prerendered in all three locales.
+A small [Angular](https://angular.dev) app, written in English and translated into French and Turkish by [diglot](../../README.md). Its pages are Markdown files, and the code in `src/app` applies the bundle of `translations`, a translations repository that lives inside the app, when a page loads. Every page is prerendered in all three locales.
 
 > 🧑‍🚀 **Running it from this repository?** Install from the root of the diglot repository, so that the example uses the local diglot packages.
 
@@ -14,11 +14,17 @@ A small [Angular](https://angular.dev) app, written in English and translated in
 │   ├── app/
 │   │   ├── app.config.server.ts
 │   │   ├── app.config.ts
+│   │   ├── app.html
 │   │   ├── app.routes.server.ts
 │   │   ├── app.routes.ts
 │   │   ├── app.ts
+│   │   ├── diglot-document.ts
+│   │   ├── diglot-store.ts
+│   │   ├── language.ts
 │   │   ├── locales.ts
 │   │   ├── markdown.ts
+│   │   ├── page.css
+│   │   ├── page.html
 │   │   └── page.ts
 │   ├── content/
 │   │   └── docs/
@@ -39,7 +45,7 @@ A small [Angular](https://angular.dev) app, written in English and translated in
 └── package.json
 ```
 
-`src/app/app.config.ts` sets up diglot with `provideDiglot()` and reads the locale from the `:locale` route parameter. `src/app/page.ts` reads its page with `diglotDocument()`, renders it with [marked](https://marked.js.org), and shows a notice when the report says that some text is still in English. `src/app/app.routes.server.ts` prerenders every page in every locale.
+`src/app/diglot-store.ts` fetches the bundles and applies them, and `src/app/diglot-document.ts` turns that into signals. In `src/app/app.routes.ts`, the `/:locale` routes read the language from the route parameter, and the `/picker` routes read it from a signal that the language menu sets. `src/app/page.ts` reads its page with `diglotDocument()`, renders it with [marked](https://marked.js.org), and shows a notice when the report says that some text is still in English. `src/app/app.routes.server.ts` prerenders every page in every locale.
 
 ## 🧞 Commands
 
@@ -56,7 +62,7 @@ Run these from the example's directory:
 
 ## 🌍 What the translations show
 
-`pnpm build` prerenders nine pages: `/en`, `/en/guide` and `/en/about`, and the same three under `/fr` and `/tr`.
+`pnpm build` prerenders twelve pages: `/en`, `/en/guide` and `/en/about`, the same three under `/fr` and `/tr`, and three under `/picker`, plus a redirect at `/`. A link at the top of each page switches between the language in the URL and the language picker. Pages under `/picker` keep the URL when the language changes, so only their English versions are prerendered.
 
 The French and Turkish records live in `translations/fr/segments` and `translations/tr/segments`. They translate every segment except one paragraph of the about page, so that paragraph stays in English, and the page shows a notice that it is only partly translated. The notice comes from the `report` of `diglotDocument()`. The home page links to the guide with a relative link, `guide`, which `src/app/markdown.ts` points to the guide of the same language.
 
@@ -77,4 +83,4 @@ When you approve a translation, its record becomes verified, and the approval is
 
 ## 👀 Want to learn more?
 
-Read the [Angular integration docs](https://diglot.sh/integrations/angular) for the options of `provideDiglot()` and `diglotDocument()`, and the [Review UI docs](https://diglot.sh/review-ui/overview) for what the x18n plugin adds.
+Read the [Angular recipe](https://diglot.sh/guide/how-to/translate-an-angular-app) for a walk through the code, and the [Review UI docs](https://diglot.sh/review-ui/overview) for what the x18n plugin adds.

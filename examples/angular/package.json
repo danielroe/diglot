@@ -21,7 +21,9 @@
     "@angular/platform-server": "22.2.4",
     "@angular/router": "22.2.4",
     "@angular/ssr": "22.2.5",
-    "@diglot/angular": "workspace:*",
+    "@diglot/core": "workspace:*",
+    "@diglot/mdast": "workspace:*",
+    "@diglot/store": "workspace:*",
     "marked": "18.1.2",
     "rxjs": "7.8.2",
     "yaml": "2.9.1"

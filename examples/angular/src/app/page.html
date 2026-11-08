@@ -1,0 +1,51 @@
+<header>
+  <nav aria-label="Pages">
+    @for (page of pages; track page) {
+      <a [routerLink]="link(language(), page)" [class.current]="page === slug()" [attr.aria-current]="page === slug() ? 'page' : null">{{ pageName(language(), page) }}</a>
+    }
+  </nav>
+  <nav aria-label="Languages">
+    @for (option of locales; track option.code) {
+      @if (picker()) {
+        <button
+          type="button"
+          [attr.lang]="option.code"
+          [class.current]="option.code === language()"
+          [attr.aria-pressed]="option.code === language()"
+          (click)="lang.set(option.code)"
+        >
+          {{ option.name }}
+        </button>
+      }
+      @else {
+        <a
+          [routerLink]="link(option.code, slug())"
+          [attr.hreflang]="option.code"
+          [attr.lang]="option.code"
+          [class.current]="option.code === language()"
+          [attr.aria-current]="option.code === language() ? 'true' : null"
+        >
+          {{ option.name }}
+        </a>
+      }
+    }
+  </nav>
+</header>
+<nav class="modes" aria-label="How the language is chosen">
+  <a [routerLink]="'/' + language()" [class.current]="!picker()" [attr.aria-current]="picker() ? null : 'true'">Language in the URL</a>
+  <a routerLink="/picker" (click)="lang.set(language())" [class.current]="picker()" [attr.aria-current]="picker() ? 'true' : null">Language picker</a>
+</nav>
+<main>
+  @if (doc.error()) {
+    <p class="error">This page could not be loaded.</p>
+    <button type="button" (click)="doc.reload()">Try again</button>
+  }
+  @else if (page(); as page) {
+    @if (notice(); as notice) {
+      <aside class="notice">{{ notice }}</aside>
+    }
+    <h1>{{ page.title }}</h1>
+    <p class="description">{{ page.description }}</p>
+    <article [innerHTML]="page.html" (click)="followInternalLink($event)"></article>
+  }
+</main>

@@ -25,7 +25,6 @@ Keeping markdown documents in-sync is tricky, and diglot exists to help solve th
 | [`@diglot/action`](./packages/action) | GitHub Action that extracts sources, machine-translates what changed and commits the records. |
 | [`@diglot/cli`](./packages/cli) | The `diglot` command: `checkout`, `extract`, `diff`, `validate`, `build`, `status`. |
 | [`@diglot/x18n`](./packages/x18n) | Experimental [x18n](https://github.com/x18n-dev/x18n) plugin: hashes as keys, records as messages, source documents as usages. |
-| [`@diglot/angular`](./packages/angular) | [Angular](https://angular.dev) providers that show Markdown documents in the current locale, applied from the bundles of a translations repository in the browser and during server rendering. |
 | [`@diglot/astro`](./packages/astro) | [Astro](https://astro.build) integration and content loader that add translated Markdown and MDX pages for the locales of your `i18n` config, built from the records of a translations repository. |
 
 ## Quick start

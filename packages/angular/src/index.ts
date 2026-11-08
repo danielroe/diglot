@@ -1,7 +1,0 @@
-export { diglotDocument } from './document.ts'
-export type { DiglotDocument } from './document.ts'
-export { provideDiglot } from './provide.ts'
-export type { DiglotFeature, DiglotOptions } from './provide.ts'
-export { DIGLOT_LOCALE } from './tokens.ts'
-export { resolveParser, translateMarkdown } from './translate.ts'
-export type { DiglotParser, TranslatedDocument, TranslateOptions } from './translate.ts'

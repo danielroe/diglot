@@ -14,7 +14,6 @@ const packages = [
   { label: '@diglot/action', to: '/workflow/action/overview' },
   { label: '@diglot/cli', to: '/workflow/cli/overview' },
   { label: '@diglot/x18n', to: '/review-ui/overview' },
-  { label: '@diglot/angular', to: '/integrations/angular' },
   { label: '@diglot/astro', to: '/integrations/astro' },
 ]
 
