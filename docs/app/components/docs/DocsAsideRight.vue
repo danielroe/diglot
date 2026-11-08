@@ -30,10 +30,10 @@ const contentTocVariants = useUIConfig('contentToc')
       :class="{ 'hidden lg:block': subNavigationMode }"
     >
       <template #link="{ link }">
-        <span
-          class="truncate"
-          :title="link.text"
-        >{{ link.text }}</span>
+        <DocsTruncatedLabel
+          :text="link.text"
+          side="left"
+        />
       </template>
 
       <template #bottom>

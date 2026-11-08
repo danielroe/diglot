@@ -46,11 +46,6 @@ export default defineAppConfig({
         root: 'bg-default/70 backdrop-blur-lg border-default',
       },
     },
-    contentNavigation: {
-      slots: {
-        linkTitle: 'whitespace-normal',
-      },
-    },
     pageLinks: {
       slots: {
         linkLabel: 'truncate pe-4',
