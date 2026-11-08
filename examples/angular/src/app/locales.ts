@@ -19,7 +19,9 @@ export function isLocale(code: string | undefined): boolean {
   return locales.some(locale => locale.code === code)
 }
 
-export function isPagePath(pathname: string): boolean {
-  const [section, slug, ...rest] = pathname.split('/').filter(Boolean)
-  return !rest.length && (section === 'picker' || isLocale(section)) && (!slug || (pages as readonly string[]).includes(slug))
+export function pagePath(pathname: string): string | undefined {
+  const segments = pathname.split('/').filter(Boolean)
+  const [section, slug, ...rest] = segments
+  const isPage = !rest.length && (section === 'picker' || isLocale(section)) && (!slug || (pages as readonly string[]).includes(slug))
+  return isPage ? `/${segments.join('/')}` : undefined
 }
