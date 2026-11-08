@@ -4,7 +4,7 @@ import { Meta, Title } from '@angular/platform-browser'
 import { Router, RouterLink } from '@angular/router'
 import { diglotDocument } from './diglot-document'
 import { DIGLOT_LOCALE, lang } from './language'
-import { locales, pageName, pages } from './locales'
+import { isPagePath, locales, pageName, pages } from './locales'
 import { renderPage } from './markdown'
 
 const notices: Record<string, string> = {
@@ -58,11 +58,16 @@ export class Page {
   /** Follows links inside the page with the router instead of reloading the app. */
   protected followInternalLink(event: MouseEvent): void {
     const anchor = (event.target as Element).closest('a')
-    const href = anchor?.getAttribute('href')
-    if (href?.startsWith('/') && !href.startsWith('//') && !anchor?.target && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-      event.preventDefault()
-      void this.router.navigateByUrl(href)
-    }
+    if (!anchor || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !this.isPageLink(anchor))
+      return
+    event.preventDefault()
+    void this.router.navigateByUrl(`${anchor.pathname}${anchor.search}${anchor.hash}`)
+  }
+
+  private isPageLink(anchor: HTMLAnchorElement): boolean {
+    const opensHere = !anchor.target || anchor.target === '_self'
+    const rootRelative = anchor.getAttribute('href')?.startsWith('/') ?? false
+    return opensHere && rootRelative && !anchor.hasAttribute('download') && anchor.origin === this.document.location.origin && isPagePath(anchor.pathname)
   }
 
   private base(locale: string): string {

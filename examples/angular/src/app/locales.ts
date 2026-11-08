@@ -18,3 +18,8 @@ export function pageName(locale: string, slug: (typeof pages)[number]): string {
 export function isLocale(code: string | undefined): boolean {
   return locales.some(locale => locale.code === code)
 }
+
+export function isPagePath(pathname: string): boolean {
+  const [section, slug, ...rest] = pathname.split('/').filter(Boolean)
+  return !rest.length && (section === 'picker' || isLocale(section)) && (!slug || (pages as readonly string[]).includes(slug))
+}
