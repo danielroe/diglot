@@ -1,10 +1,10 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const { text, side = 'right' } = defineProps<{
   text: string
   side?: 'left' | 'right'
-}>(), { side: 'right' })
+}>()
 
 const label = useTemplateRef<HTMLElement>('label')
 const truncated = ref(false)
@@ -27,7 +27,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => observer?.disconnect())
 
-watch(() => props.text, measure, { flush: 'post' })
+watch(() => text, measure, { flush: 'post' })
 </script>
 
 <template>
@@ -36,7 +36,6 @@ watch(() => props.text, measure, { flush: 'post' })
     :disabled="!truncated"
     :content="{ side }"
     :delay-duration="0"
-    :ui="{ content: 'ring-primary' }"
     disable-hoverable-content
   >
     <span
