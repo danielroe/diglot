@@ -53,6 +53,23 @@ describe('extract', () => {
     expect(segment!.placeholders.map(p => p.source + (p.close ?? ''))).toEqual(['[](/docs "Title"){target="_blank"}', '`useFetch`{lang="ts"}', '{{ value }}', '<kbd>Ctrl</kbd>'])
   })
 
+  it('should keep soft hyphen and no-break space entities visible', async () => {
+    const [segment] = await extract('Search&shy;engine optimisation, No.&nbsp;5.')
+    expect(segment!.text).toBe('Search&shy;engine optimisation, No.&nbsp;5.')
+    const { markdown } = await apply('Search engine optimisation.\n', new Map([[(await extract('Search engine optimisation.'))[0]!.hash, 'Suchmaschinen&shy;optimierung, Nr.&nbsp;5.']]))
+    expect(markdown).toBe('Suchmaschinen&shy;optimierung, Nr.&nbsp;5.\n')
+  })
+
+  it('should keep literal entity spellings escaped', async () => {
+    const source = 'Write &amp;shy; and &amp;nbsp;.\n'
+    const [segment] = await extract(source)
+    expect(segment!.skeleton).toBe('Write \\&shy; and \\&nbsp;.')
+    const translation = 'Write \\&shy; and \\&nbsp;, then Such&shy;maschine No.&nbsp;5.'
+    const { markdown, report } = await apply(source, new Map([[segment!.hash, translation]]))
+    expect(report.applied).toBe(1)
+    expect((await extract(markdown))[0]!.skeleton).toBe(translation)
+  })
+
   it('should drop heading attributes from heading text', async () => {
     const [segment] = await extract('## Custom anchor {#custom}')
     expect(segment!.skeleton).toBe('Custom anchor')
@@ -181,6 +198,16 @@ describe('mdx', () => {
 
   it('should extract the same segments with remark and satteri', async () => {
     expect(await extract(MDX, { format: 'mdx', parser: 'satteri', policy })).toEqual(await extract(MDX, { format: 'mdx', policy }))
+  })
+
+  it('should extract the props of opaque containers but not their content', async () => {
+    const opaque = { props: { 'file-tree': ['label'] }, opaque: ['file-tree'] }
+    const mdx = '<FileTree label="Files">\n\n- src/\n  - index.md\n\n</FileTree>\n\nAfter the tree.\n'
+    const md = ':::file-tree{label="Files"}\n- docs/\n:::\n\nAfter the tree.\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      expect((await extract(mdx, { format: 'mdx', parser, policy: opaque })).map(s => [s.kind, s.skeleton]), parser).toEqual([['prop', 'Files'], ['paragraph', 'After the tree.']])
+      expect((await extract(md, { parser, policy: opaque })).map(s => [s.kind, s.skeleton]), parser).toEqual([['prop', 'Files'], ['paragraph', 'After the tree.']])
+    }
   })
 
   it('should read files ending in .mdx as MDX', async () => {
@@ -397,6 +424,15 @@ describe('apply', () => {
     const translations = new Map([[a!.hash, 'Serveur MCP']])
     expect((await apply(literal, translations)).markdown).toBe(literal.replace('MCP Server', 'Serveur MCP'))
     expect((await apply(nested, translations)).markdown).toBe(nested.replace('MCP Server', 'Serveur MCP'))
+  })
+
+  it('should protect the HTML of htmlFrontmatter values', async () => {
+    const source = '---\nbanner:\n  content: New <a href="/release/">release</a> is <b>out</b>\n---\n\nBody.\n'
+    const policy = { frontmatter: ['banner.content'], htmlFrontmatter: ['banner.content'] }
+    const [banner] = await extract(source, { policy })
+    expect([banner!.format, banner!.skeleton]).toEqual(['plain', 'New {0}release{/0} is {1}'])
+    const { markdown } = await apply(source, new Map([[banner!.hash, '{1} : la {0}version{/0}']]), { policy })
+    expect(markdown).toContain('content: "<b>out</b> : la <a href=\\"/release/\\">version</a>"')
   })
 
   it('should apply props, frontmatter, labels and code comments', async () => {

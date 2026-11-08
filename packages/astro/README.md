@@ -42,6 +42,10 @@ export const collections = { docs }
 
 A locale gets a page as soon as at least one translation applies to it, and text without a usable translation stays in the source language. A page you write for a locale yourself is used as it is. MDX pages need [`@astrojs/mdx`](https://docs.astro.build/en/guides/integrations-guide/mdx/), and their components, relative imports and images work the same way as in the source. During `astro dev`, changes to the records, the configuration or a source page show up without a restart.
 
+`diglotLoader()` also takes a `data` function, which returns fields to add to each translated entry. It receives the entry's `id`, `locale`, `localePath`, `source` file and translated `frontmatter`, and `updatedAt`, the date of the newest translation that the page uses.
+
+For a Starlight site, use [`@diglot/starlight`](../starlight), which sets up the integration for Starlight.
+
 The package needs Astro 7 and Node.js 22.23.4 or later. It translates pages with YAML frontmatter in content collections.
 
 See the [Astro integration docs](https://diglot.sh/integrations/astro) for entry ids, hand-written pages and limitations, and [`examples/astro`](../../examples/astro) for a site in English, German and Japanese.

@@ -2,7 +2,7 @@ import type { GlossaryEntry } from '@diglot/core'
 import type { DedupedSkeleton } from './placeholders.ts'
 import type { PromptSegment } from './prompts.ts'
 import type { MtSegment, PageContext, QaIssue, RejectedSegment, SegmentTranslation, TranslateSegmentsOptions, TranslateSegmentsResult } from './types.ts'
-import { isPlaceholderOnly, matchGlossary } from '@diglot/core'
+import { encodeInvisibles, isPlaceholderOnly, matchGlossary } from '@diglot/core'
 import { z } from 'zod'
 import { emptyUsage, generate, resolveModel } from './model.ts'
 import { dedupePlaceholders } from './placeholders.ts'
@@ -58,7 +58,8 @@ export async function translateSegments(segments: MtSegment[], options: Translat
           continue
         }
         item.raw = raw
-        item.text = applyTypography(item.deduped.expand(raw.trim()), options.style?.typography)
+        const text = applyTypography(item.deduped.expand(raw.trim()), options.style?.typography)
+        item.text = item.segment.format === 'plain' ? text : encodeInvisibles(text)
         item.issues = runQa(item.text, item.segment, options)
       }
       pending = pending.filter(item => hasErrors(item.issues))

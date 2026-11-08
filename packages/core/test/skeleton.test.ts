@@ -43,6 +43,13 @@ describe('skeleton', () => {
     expect(toSkeleton([text('a_b * c'), code('`x`')], 'plain').skeleton).toBe('a_b * c{0}')
   })
 
+  it('should wrap links with translatable text in plain content', () => {
+    const html = (children: InlineNode[]): InlineNode => ({ type: 'link', children, open: '<a href="/x/">', close: '</a>' })
+    const result = toSkeleton([text('see '), html([text('a_b')]), html([text('https://x.dev')])], 'plain')
+    expect(result.skeleton).toBe('see {0}a_b{/0}{1}')
+    expect(fromSkeleton('voir {0}a_b{/0}{1}', result.placeholders)).toBe('voir <a href="/x/">a_b</a><a href="/x/">https://x.dev</a>')
+  })
+
   it('should re-inject placeholders', () => {
     const { skeleton, placeholders } = toSkeleton([text('see '), link([text('Nitro')])])
     expect(fromSkeleton(skeleton, placeholders)).toBe('see [Nitro](https://nitro.build/)')
@@ -64,8 +71,12 @@ describe('skeleton', () => {
 
   it('should count words outside placeholders', () => {
     expect(countWords('{0} returns {1}Nuxt’s data{/1}.')).toBe(3)
+    expect(countWords('Such&shy;maschine Nr.&nbsp;5')).toBe(2)
+    expect(countWords('Such\u00ADmaschine')).toBe(1)
+    expect(countWords('&nbs\u00ADp;')).toBe(1)
     expect(isPlaceholderOnly('{0} {1}')).toBe(true)
     expect(isPlaceholderOnly('{0}s')).toBe(false)
+    expect(isPlaceholderOnly('{0}&nbsp;5&shy;')).toBe(true)
   })
 })
 

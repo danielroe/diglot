@@ -1,9 +1,9 @@
 import type { CodeComment } from '@diglot/code'
-import type { Policy, SegmentDraft, SegmentKind, SegmentPosition, ValuePath } from '@diglot/core'
+import type { InlineNode, Policy, SegmentDraft, SegmentKind, SegmentPosition, ValuePath } from '@diglot/core'
 import type { ElementNode, Node } from 'comark'
 import type { ComarkDocument } from './tree.ts'
 import { findComments } from '@diglot/code'
-import { kindForContainers, proseProps, stringsAtPaths } from '@diglot/core'
+import { frontmatterValues, kindForContainers, proseProps } from '@diglot/core'
 import { SourceSlicer } from './slice.ts'
 import { children, elementText, isElement } from './tree.ts'
 
@@ -16,6 +16,8 @@ export type Target
 export interface Unit {
   kind: SegmentKind
   content: Node[] | string | CodeComment
+  /** Inline content of a frontmatter value that holds HTML. */
+  inline?: InlineNode[]
   language?: string
   context: SegmentDraft['context']
   position: SegmentPosition
@@ -57,8 +59,8 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     return !(isBoundary(first > start ? parent[first - 1] : undefined, /\n\s*$/) && isBoundary(parent[last + 1], /^\s*\n/))
   }
 
-  for (const [path, value] of stringsAtPaths(doc.frontmatter, policy.frontmatter))
-    units.push({ kind: 'frontmatter', content: value, context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' }, target: { type: 'frontmatter', path } })
+  for (const [path, value] of frontmatterValues(doc.frontmatter, policy))
+    units.push({ kind: 'frontmatter', ...(typeof value === 'string' ? { content: value } : { content: '', inline: value }), context: context([], path.join('.')), position: { startLine: 1, endLine: 1, precision: 'file' }, target: { type: 'frontmatter', path } })
 
   const pushInline = (kind: SegmentKind, parent: Node[], start: number, end: number, containers: string[], detail?: string) => {
     const nodes = parent.slice(start, end)
@@ -86,9 +88,9 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
       units.push({ kind: 'code-label', content: label, context: context(containers, 'filename'), position: blockPosition(), target: { type: 'attr', attrs, key: 'filename' } })
     const element = children(node).find(isElement)
     const language = String(attrs.language ?? '')
+    const firstLine = language ? fences[fenceIndex++] : undefined
     if (!policy.codeComments || !element || !language)
       return
-    const firstLine = fences[fenceIndex++]
     for (const comment of findComments(elementText(element), language)) {
       const commentLine = firstLine === undefined ? undefined : firstLine + comment.line
       units.push({
@@ -152,6 +154,10 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
     const inner = tag === 'template' ? [...containers.slice(0, -1), name] : [...containers, name]
     if (tag !== 'template' && tag !== 'li' && tag !== 'blockquote')
       pushProps(node, inner)
+    if (policy.opaque.includes(tag)) {
+      fenceIndex += countLanguageFences(node)
+      return
+    }
     visitMixed(container, 2, inner, synced || (tag === 'code-group' && attrs.sync !== undefined), policy.htmlText.includes(tag) ? 'html-block' : undefined)
   }
 
@@ -168,6 +174,19 @@ export function walk(doc: ComarkDocument, policy: Policy): Unit[] {
   return units
 }
 
+function countLanguageFences(node: ElementNode): number {
+  let count = 0
+  for (const child of children(node)) {
+    if (!isElement(child))
+      continue
+    if (child[0] === 'pre')
+      count += child[1].language ? 1 : 0
+    else
+      count += countLanguageFences(child)
+  }
+  return count
+}
+
 function findImages(nodes: Node[]): ElementNode[] {
   const found: ElementNode[] = []
   const visit = (node: Node) => {
@@ -181,16 +200,18 @@ function findImages(nodes: Node[]): ElementNode[] {
   return found
 }
 
+/** First content lines of the fences between `start` and `end` whose info string sets a language. */
 function fenceStarts(lines: string[], [start, end]: [number, number]): number[] {
   const starts: number[] = []
   let fence = ''
   for (let i = start - 1; i < end; i++) {
-    const marker = /^\s*(`{3,}|~{3,})/.exec(lines[i] ?? '')?.[1]
+    const [opening, marker] = /^\s*(`{3,}|~{3,})/.exec(lines[i] ?? '') ?? []
     if (!marker)
       continue
     if (!fence) {
       fence = marker
-      starts.push(i + 2)
+      if (/^[^[{]/.test(lines[i]!.slice(opening!.length).trim()))
+        starts.push(i + 2)
     }
     else if (marker[0] === fence[0] && marker.length >= fence.length && /^\s*[`~]+\s*$/.test(lines[i]!)) {
       fence = ''

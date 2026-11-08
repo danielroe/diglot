@@ -37,7 +37,7 @@ export function normalise(nodes: InlineNode[]): InlineNode[] {
 
 function collapse(node: InlineNode): InlineNode {
   if (node.type === 'text')
-    return /[^\S ]| {2}/.test(node.value) ? { type: 'text', value: node.value.replace(/\s+/g, ' ') } : node
+    return /[^\S \u00A0]| {2}/.test(node.value) ? { type: 'text', value: node.value.replace(/[^\S\u00A0]+/g, ' ') } : node
   if (node.type === 'atomic')
     return node
   return { ...node, children: mergeText(node.children.map(collapse)) }
@@ -71,7 +71,7 @@ export function toSkeleton(nodes: InlineNode[], format: SegmentFormat = 'markdow
   const visit = (node: InlineNode): string => {
     switch (node.type) {
       case 'text':
-        return markdown ? escapeText(node.value) : node.value
+        return markdown ? encodeInvisibles(escapeText(node.value)) : node.value
       case 'strong':
       case 'emphasis':
       case 'delete': {
@@ -81,8 +81,9 @@ export function toSkeleton(nodes: InlineNode[], format: SegmentFormat = 'markdow
       case 'link': {
         const id = placeholders.length
         byId.push(node)
-        if (!markdown || !hasLetters(node.children) || isUrlLike(plainText(node.children))) {
-          placeholders.push({ id, type: 'link', source: node.open + toMarkdown(node.children) + node.close })
+        if (!hasLetters(node.children) || isUrlLike(plainText(node.children))) {
+          const inner = toSkeleton(node.children, format)
+          placeholders.push({ id, type: 'link', source: node.open + fromSkeleton(inner.skeleton, inner.placeholders) + node.close })
           return `{${id}}`
         }
         placeholders.push({ id, type: 'link', source: node.open, close: node.close })
@@ -162,7 +163,7 @@ export function parseSkeleton(skeleton: string, placeholders: Placeholder[], for
   }
   for (const token of tokenize(skeleton, { markers: format === 'markdown' })) {
     if (token.type === 'text' || token.type === 'char') {
-      push({ type: 'text', value: token.value })
+      push({ type: 'text', value: format === 'markdown' && token.type === 'text' ? decodeInvisibles(token.value) : token.value })
     }
     else if (token.type === 'marker') {
       if (stack.at(-1)!.key === token.value) {
@@ -203,6 +204,19 @@ export function escapeText(value: string): string {
     .replace(/&(?=#?\w+;)/g, '\\&')
 }
 
+/** Writes soft hyphens and no-break spaces as `&shy;` and `&nbsp;`, the spellings markdown segments require. */
+export function encodeInvisibles(value: string): string {
+  return value.replace(/\u00AD/g, '&shy;').replace(/\u00A0/g, '&nbsp;')
+}
+
+function withoutInvisibles(skeleton: string): string {
+  return skeleton.replace(/\u00AD|(?<!\\)&(shy|nbsp);/g, (_, name) => name === 'nbsp' ? ' ' : '')
+}
+
+function decodeInvisibles(value: string): string {
+  return value.replace(/&shy;/g, '\u00AD').replace(/&nbsp;/g, '\u00A0')
+}
+
 function escapeLineStart(skeleton: string): string {
   if (!/^[#>+=\-\d]/.test(skeleton))
     return skeleton
@@ -225,11 +239,12 @@ const NUMBER_RE = /\p{N}/u
 
 /** True when the skeleton has no letters outside placeholders, so there is nothing to translate. */
 export function isPlaceholderOnly(skeleton: string): boolean {
-  return !LETTER_RE.test(skeleton)
+  return !LETTER_RE.test(withoutInvisibles(skeleton))
 }
 
 /** Number of words outside placeholders: runs of letters, numbers, apostrophes and hyphens that start with a letter. */
 export function countWords(skeleton: string): number {
+  skeleton = withoutInvisibles(skeleton)
   let count = 0
   let inWord = false
   for (let i = 0; i < skeleton.length; i++) {

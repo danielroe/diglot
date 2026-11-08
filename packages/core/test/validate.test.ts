@@ -40,6 +40,14 @@ describe('validate', () => {
     expect(codes('{0}a{/0} {1} &amp;')).toContain('entity')
   })
 
+  it('should accept a soft hyphen entity and reject the raw character', () => {
+    expect(validate('Lies {0}die Doku{/0} über Such&shy;maschinen {1}.', paragraph).ok).toBe(true)
+    expect(codes('Lies {0}die Doku{/0} über Such\u00ADmaschinen {1}.')).toContain('entity')
+    expect(codes('Lies {0}die Doku{/0} über &amp; {1}.')).toContain('entity')
+    expect(validate('Nr.&nbsp;5 {0}die Doku{/0} {1}.', paragraph).ok).toBe(true)
+    expect(codes('Nr.\u00A05 {0}die Doku{/0} {1}.')).toContain('entity')
+  })
+
   it('should accept escaped punctuation', () => {
     expect(validate('{0}a{/0} {1} \\[x\\] \\`y\\` \\<b> \\{z\\}', paragraph).ok).toBe(true)
   })
@@ -61,6 +69,12 @@ describe('validate', () => {
     expect(codes('Lire [la](https://x) suite', prop)).toContain('markup')
     expect(codes('Lire <b>la</b> suite', prop)).toContain('markup')
     expect(validate('Utiliser <NuxtLink>', { ...prop, skeleton: 'Use <NuxtLink>' }).ok).toBe(true)
+  })
+
+  it('should reject paired placeholders out of order in plain segments', () => {
+    const banner: ValidationTarget = { kind: 'frontmatter', format: 'plain', placeholders: [{ id: 0, type: 'link', source: '<a href="/x/">', close: '</a>' }], skeleton: 'See {0}this{/0}' }
+    expect(validate('Voir {0}ceci{/0}', banner).ok).toBe(true)
+    expect(codes('Voir {/0}ceci{0}', banner)).toContain('nesting')
   })
 
   it('should reject comment terminators and newlines in code comments', () => {

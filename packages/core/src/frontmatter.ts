@@ -1,4 +1,68 @@
+import type { Policy } from './policy.ts'
+import type { InlineNode } from './types.ts'
+
 export type ValuePath = Array<string | number>
+
+const HTML_TAG_RE = /<!--[\s\S]*?-->|<(\/?)([a-z][\w-]*)\b(?:[^"'>]|"[^"]*"|'[^']*')*>/gi
+
+/**
+ * The frontmatter strings that `policy` extracts, as `[path, content]`. Values at the
+ * `htmlFrontmatter` paths of `policy` are split by `htmlInline`.
+ */
+export function frontmatterValues(data: unknown, policy: Pick<Policy, 'frontmatter' | 'htmlFrontmatter'>): Array<[ValuePath, string | InlineNode[]]> {
+  const html = new Set(Array.from(stringsAtPaths(data, policy.htmlFrontmatter), ([path]) => JSON.stringify(path)))
+  return Array.from(stringsAtPaths(data, policy.frontmatter), ([path, value]) => [path, html.has(JSON.stringify(path)) ? htmlInline(value) : value])
+}
+
+/**
+ * Splits an HTML string into text and placeholders. A link becomes a paired placeholder around
+ * its text, any other element with its content and any lone tag or comment becomes one
+ * placeholder.
+ */
+export function htmlInline(html: string): InlineNode[] {
+  const out: InlineNode[] = []
+  const tags = [...html.matchAll(HTML_TAG_RE)]
+  let last = 0
+  for (let i = 0; i < tags.length; i++) {
+    const tag = tags[i]!
+    const [source, closing, tagName] = tag
+    const name = tagName?.toLowerCase()
+    const start = tag.index
+    let end = start + source.length
+    let node: InlineNode = { type: 'atomic', kind: 'html', source, ...(name ? { name } : {}) }
+    const close = name && !closing && !source.endsWith('/>') ? closingTag(tags, i, name) : -1
+    if (close >= 0) {
+      const closeTag = tags[close]!
+      const inner = html.slice(end, closeTag.index)
+      end = closeTag.index + closeTag[0].length
+      node = name === 'a'
+        ? { type: 'link', open: source, close: closeTag[0], children: htmlInline(inner) }
+        : { type: 'atomic', kind: 'html', name: name!, source: html.slice(start, end), ...(/\p{L}/u.test(inner.replace(HTML_TAG_RE, '')) ? { hidesText: true } : {}) }
+      i = close
+    }
+    if (start > last)
+      out.push({ type: 'text', value: html.slice(last, start) })
+    out.push(node)
+    last = end
+  }
+  if (last < html.length)
+    out.push({ type: 'text', value: html.slice(last) })
+  return out
+}
+
+function closingTag(tags: RegExpExecArray[], open: number, name: string): number {
+  let depth = 0
+  for (let i = open + 1; i < tags.length; i++) {
+    const [source, closing, other] = tags[i]!
+    if (other?.toLowerCase() !== name || source.endsWith('/>'))
+      continue
+    if (!closing)
+      depth++
+    else if (depth-- === 0)
+      return i
+  }
+  return -1
+}
 
 /**
  * Yields `[path, value]` for every non-empty string at the given dotted paths. `key[]` walks

@@ -121,8 +121,7 @@ export function validate(translation: string, segment: ValidationTarget, options
     checkCharacters(translation, tokens, segment.kind, error)
   }
   checkPlaceholders(tokens, segment.placeholders, error, warnings)
-  if (!plain)
-    checkNesting(tokens, segment.placeholders, error)
+  checkNesting(tokens, segment.placeholders, error)
   if (options.maxLength !== undefined && [...translation].length > options.maxLength)
     error('too-long', `translation is longer than ${options.maxLength} characters`)
   const band = options.style?.lengthRatio
@@ -153,7 +152,8 @@ function count(re: RegExp, text: string): number {
 }
 
 const ENTITY_RE = /&#?\w+;/y
-const SIGNIFICANT_RE = /[`[\]<{}:|&]|https?:\/\/|www\./gi
+const SIGNIFICANT_RE = /[`[\]<{}:|&\u00AD\u00A0]|https?:\/\/|www\./gi
+const ALLOWED_ENTITIES = ['&shy;', '&nbsp;']
 
 /** Tokens cover the input without gaps, so each token ends where the next begins. */
 function checkCharacters(input: string, tokens: GrammarToken[], kind: SegmentKind, error: Report) {
@@ -193,8 +193,14 @@ function checkCharacters(input: string, tokens: GrammarToken[], kind: SegmentKin
         break
       case '&':
         ENTITY_RE.lastIndex = i
-        if (ENTITY_RE.test(input))
+        if (ENTITY_RE.test(input) && !ALLOWED_ENTITIES.some(entity => input.startsWith(entity, i)))
           error('entity', 'HTML entity', i)
+        break
+      case '\u00AD':
+        error('entity', 'soft hyphen must be written as &shy;', i)
+        break
+      case '\u00A0':
+        error('entity', 'no-break space must be written as &nbsp;', i)
         break
       default:
         error('bare-url', 'bare URL would autolink', i)

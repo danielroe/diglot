@@ -71,6 +71,13 @@ describe('translateSegments', () => {
     expect(result.usage.requests).toBe(2)
   })
 
+  it('should write invisible characters in model output as entities', async () => {
+    const input = await segments('Search engine optimisation, no. 5.\n')
+    const { model } = mockModel(call => ({ translations: requested(call).map(s => ({ id: s.id, text: 'Suchmaschinen\u00ADoptimierung, Nr.\u00A05.' })) }))
+    const result = await translateSegments(input, { locale: 'de', model })
+    expect(result.translations.map(t => t.text)).toEqual(['Suchmaschinen&shy;optimierung, Nr.&nbsp;5.'])
+  })
+
   it('should reject segments that still fail after the retries and report why', async () => {
     const input = await segments('Use `useFetch` in a [page](/p).\n\nHello world\n')
     const { model, calls } = mockModel(call => ({ translations: requested(call).filter(s => s.id !== 's2').map(s => ({ id: s.id, text: s.id === 's1' ? '[page](https://evil.example) {0}' : french(s.text) })) }))

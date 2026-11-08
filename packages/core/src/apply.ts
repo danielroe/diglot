@@ -2,7 +2,7 @@ import type { SegmentStatus, TranslationRecord } from './record.ts'
 import type { Segment } from './types.ts'
 import type { ValidationIssue } from './validate.ts'
 import { recordStatus } from './record.ts'
-import { fromSkeleton, isPlaceholderOnly } from './skeleton.ts'
+import { encodeInvisibles, fromSkeleton, isPlaceholderOnly } from './skeleton.ts'
 import { validate } from './validate.ts'
 
 /** Translated skeletons or translation records by segment hash, or a lookup function. */
@@ -77,7 +77,8 @@ export function resolveTranslation(segment: Segment, translations: Translations)
   const record = typeof found === 'string' ? undefined : { record: found }
   if (typeof found !== 'string' && found.review === 'rejected')
     return { status: 'rejected', errors: [{ code: 'rejected', message: `rejected by ${found.rejectedBy?.by ?? 'a reviewer'}` }], record: found }
-  const skeleton = typeof found === 'string' ? found : found.text
+  const text = typeof found === 'string' ? found : found.text
+  const skeleton = segment.format === 'plain' ? text : encodeInvisibles(text)
   const result = validate(skeleton, segment)
   if (!result.ok)
     return { status: 'rejected', errors: result.errors, ...record }

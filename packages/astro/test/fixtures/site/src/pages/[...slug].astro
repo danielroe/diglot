@@ -10,6 +10,6 @@ const { entry } = Astro.props
 const { Content } = await render(entry)
 ---
 <html>
-  <head><title>{entry.data.title}</title><meta name="description" content={entry.data.description} /></head>
+  <head><title>{entry.data.title}</title><meta name="description" content={entry.data.description} /><meta name="translation" content={entry.data.translation} /></head>
   <body><Content /></body>
 </html>

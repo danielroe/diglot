@@ -1,6 +1,7 @@
 import type { Segment } from './types.ts'
 import type { ValidationTarget } from './validate.ts'
 import { similarity } from './diff.ts'
+import { encodeInvisibles } from './skeleton.ts'
 import { validate } from './validate.ts'
 
 /** How the current text was produced. */
@@ -166,7 +167,7 @@ export function recordStatus(record: TranslationRecord | undefined, segment?: Va
     return 'untranslated'
   if (record.review === 'rejected')
     return 'rejected'
-  if (segment && !validate(record.text, segment).ok)
+  if (segment && !validate(segment.format === 'plain' ? record.text : encodeInvisibles(record.text), segment).ok)
     return 'rejected'
   if (record.review === 'verified')
     return 'verified'
