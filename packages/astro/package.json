@@ -1,7 +1,7 @@
 {
   "name": "@diglot/astro",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Astro content loader for diglot translations",
   "license": "MIT",
   "repository": {
