@@ -81,8 +81,9 @@ export function toSkeleton(nodes: InlineNode[], format: SegmentFormat = 'markdow
       case 'link': {
         const id = placeholders.length
         byId.push(node)
-        if (!markdown || !hasLetters(node.children) || isUrlLike(plainText(node.children))) {
-          placeholders.push({ id, type: 'link', source: node.open + toMarkdown(node.children) + node.close })
+        if (!hasLetters(node.children) || isUrlLike(plainText(node.children))) {
+          const inner = toSkeleton(node.children, format)
+          placeholders.push({ id, type: 'link', source: node.open + fromSkeleton(inner.skeleton, inner.placeholders) + node.close })
           return `{${id}}`
         }
         placeholders.push({ id, type: 'link', source: node.open, close: node.close })

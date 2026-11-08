@@ -15,6 +15,7 @@ const packages = [
   { label: '@diglot/cli', to: '/workflow/cli/overview' },
   { label: '@diglot/x18n', to: '/review-ui/overview' },
   { label: '@diglot/astro', to: '/integrations/astro' },
+  { label: '@diglot/starlight', to: '/integrations/starlight' },
 ]
 
 const learn = [

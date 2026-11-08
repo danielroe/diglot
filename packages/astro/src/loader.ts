@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { apply } from '@diglot/mdast'
 import { loadConfig, loadLocale } from '@diglot/store'
 import { glob } from 'astro/loaders'
+import { stringify } from 'devalue'
 import { relative, resolve } from 'pathe'
 import { splitFrontmatter } from './frontmatter.ts'
 import { isTargetId, translatedId, translatedModulePath } from './ids.ts'
@@ -16,7 +17,28 @@ import { deleteModule, getState, setModule } from './state.ts'
 
 type GlobOptions = Parameters<typeof glob>[0]
 
-export type DiglotLoaderOptions = Pick<GlobOptions, 'base' | 'generateId' | 'pattern'>
+export interface DiglotLoaderOptions extends Pick<GlobOptions, 'base' | 'generateId' | 'pattern'> {
+  /**
+   * Returns fields to add to the data of a translated entry, before it is validated against the
+   * collection schema. Fields from the translated frontmatter with the same name are replaced.
+   */
+  data?: (entry: TranslatedEntry) => Record<string, unknown> | undefined
+}
+
+/** A translated entry, as `data` receives it. */
+export interface TranslatedEntry {
+  id: string
+  /** Path of the Astro locale, such as `pt-br`. */
+  localePath: string
+  /** Locale of the records, such as `pt-BR`. */
+  locale: string
+  /** File path of the source entry, relative to the project root. */
+  source: string
+  /** The newest `updatedAt` of the records that the page uses, if any of them is a date that `Date.parse` reads. */
+  updatedAt: Date | undefined
+  /** The translated frontmatter of the page, before validation. */
+  frontmatter: Record<string, unknown>
+}
 
 type Entry = ReturnType<DataStore['values']>[number]
 type Watcher = NonNullable<LoaderContext['watcher']>
@@ -51,7 +73,8 @@ const SOURCE_RE = /\.mdx?$/
  * such as pages translated by hand, are kept as they are.
  */
 export function diglotLoader(options: DiglotLoaderOptions): Loader {
-  const source = glob(options)
+  const { data, ...globOptions } = options
+  const source = glob(globOptions)
   return {
     name: 'diglot-loader',
     async load(context) {
@@ -68,7 +91,7 @@ export function diglotLoader(options: DiglotLoaderOptions): Loader {
         logger.warn(`The translations directory "${translationsRoot}" does not exist.`)
       let state = await loadTranslations(context, translationsRoot)
       const owned = new Map<string, OwnedEntry>()
-      const ids = await syncTranslations(context, state, owned, { cached })
+      const ids = await syncTranslations(context, state, owned, { cached, data })
       logger.info(`Added ${ids.size} translated ${ids.size === 1 ? 'entry' : 'entries'}.`)
 
       if (!watcher)
@@ -107,7 +130,7 @@ export function diglotLoader(options: DiglotLoaderOptions): Loader {
             await Promise.all(pending)
             if (reloading)
               state = await loadTranslations(context, translationsRoot)
-            await syncTranslations(context, state, owned, { only })
+            await syncTranslations(context, state, owned, { data, only })
             logger.info('Reloaded translations.')
           }).catch((error: Error) => logger.error(`Failed to reload translations: ${error.message}`))
         }, DEBOUNCE_MS)
@@ -158,6 +181,7 @@ interface SyncOptions {
   cached?: Map<string, Entry>
   /** Absolute paths of the source files to sync. Defaults to every source file. */
   only?: Set<string>
+  data?: DiglotLoaderOptions['data']
 }
 
 /**
@@ -167,7 +191,7 @@ interface SyncOptions {
  * `owned` holds each translated entry that the loader set, by id. Returns the ids of the
  * translated entries.
  */
-async function syncTranslations(context: LoaderContext, state: TranslationState, owned: Map<string, OwnedEntry>, { cached, only }: SyncOptions = {}): Promise<Set<string>> {
+async function syncTranslations(context: LoaderContext, state: TranslationState, owned: Map<string, OwnedEntry>, { cached, data, only }: SyncOptions = {}): Promise<Set<string>> {
   const { config, generateDigest, logger, parseData, renderMarkdown, store } = context
   const { config: diglot, defaultPath, localePaths, records, targets } = state
   const projectRoot = fileURLToPath(config.root)
@@ -192,15 +216,26 @@ async function syncTranslations(context: LoaderContext, state: TranslationState,
         logger.warn(`Skipped the "${path}" translation of "${relativePath}", because "${storedPath}" exists. Rename that file to translate the page.`)
         continue
       }
-      const { markdown: translated, report } = await apply(markdown, records.get(locale)!, { file: relativePath, parser, policy: diglot.policy })
+      let updatedAt = Number.NEGATIVE_INFINITY
+      const { markdown: translated, report } = await apply(markdown, records.get(locale)!, {
+        file: relativePath,
+        parser,
+        policy: diglot.policy,
+        onSegment: ({ outcome, record }) => {
+          const time = outcome === 'translated' && record ? Date.parse(record.updatedAt) : Number.NaN
+          if (time > updatedAt)
+            updatedAt = time
+        },
+      })
       const frontmatter = report.applied ? splitFrontmatter(translated) : undefined
       if (!frontmatter)
         continue
+      const extra = data?.({ id, localePath: path, locale, source: relativePath, updatedAt: Number.isFinite(updatedAt) ? new Date(updatedAt) : undefined, frontmatter: frontmatter.data })
       produced.add(id)
       owned.set(id, { storedPath, source: filePath, module: mdx ? modulePath : undefined })
       if (mdx)
         setModule(modulePath, translated)
-      const digest = generateDigest(translated)
+      const digest = generateDigest(extra ? `${translated}\n${stringify(extra)}` : translated)
       if (existing?.digest === digest)
         continue
       const previous = cached?.get(id)
@@ -208,13 +243,13 @@ async function syncTranslations(context: LoaderContext, state: TranslationState,
         store.set(previous)
         continue
       }
-      const data = await parseData({ id, data: frontmatter.data, filePath })
+      const entryData = await parseData({ id, data: { ...frontmatter.data, ...extra }, filePath })
       if (mdx) {
-        store.set({ id, data, body: frontmatter.body, filePath: storedPath, digest, deferredRender: true })
+        store.set({ id, data: entryData, body: frontmatter.body, filePath: storedPath, digest, deferredRender: true })
         continue
       }
       const rendered = await renderMarkdown(translated, { fileURL: pathToFileURL(filePath) })
-      store.set({ id, data, body: frontmatter.body, filePath: storedPath, digest, rendered, assetImports: rendered.metadata?.imagePaths })
+      store.set({ id, data: entryData, body: frontmatter.body, filePath: storedPath, digest, rendered, assetImports: rendered.metadata?.imagePaths })
     }
   }
   for (const [id, entry] of owned) {

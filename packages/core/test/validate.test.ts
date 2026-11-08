@@ -71,6 +71,12 @@ describe('validate', () => {
     expect(validate('Utiliser <NuxtLink>', { ...prop, skeleton: 'Use <NuxtLink>' }).ok).toBe(true)
   })
 
+  it('should reject paired placeholders out of order in plain segments', () => {
+    const banner: ValidationTarget = { kind: 'frontmatter', format: 'plain', placeholders: [{ id: 0, type: 'link', source: '<a href="/x/">', close: '</a>' }], skeleton: 'See {0}this{/0}' }
+    expect(validate('Voir {0}ceci{/0}', banner).ok).toBe(true)
+    expect(codes('Voir {/0}ceci{0}', banner)).toContain('nesting')
+  })
+
   it('should reject comment terminators and newlines in code comments', () => {
     const comment: ValidationTarget = { kind: 'code-comment', format: 'plain', placeholders: [{ id: 0, type: 'code', source: '`x`' }], skeleton: 'returns {0}' }
     expect(validate('renvoie {0}', comment).ok).toBe(true)

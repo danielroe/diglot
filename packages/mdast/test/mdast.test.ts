@@ -200,6 +200,16 @@ describe('mdx', () => {
     expect(await extract(MDX, { format: 'mdx', parser: 'satteri', policy })).toEqual(await extract(MDX, { format: 'mdx', policy }))
   })
 
+  it('should extract the props of opaque containers but not their content', async () => {
+    const opaque = { props: { 'file-tree': ['label'] }, opaque: ['file-tree'] }
+    const mdx = '<FileTree label="Files">\n\n- src/\n  - index.md\n\n</FileTree>\n\nAfter the tree.\n'
+    const md = ':::file-tree{label="Files"}\n- docs/\n:::\n\nAfter the tree.\n'
+    for (const parser of ['remark', 'satteri'] as const) {
+      expect((await extract(mdx, { format: 'mdx', parser, policy: opaque })).map(s => [s.kind, s.skeleton]), parser).toEqual([['prop', 'Files'], ['paragraph', 'After the tree.']])
+      expect((await extract(md, { parser, policy: opaque })).map(s => [s.kind, s.skeleton]), parser).toEqual([['prop', 'Files'], ['paragraph', 'After the tree.']])
+    }
+  })
+
   it('should read files ending in .mdx as MDX', async () => {
     expect(await extract(MDX, { file: 'docs/cards.mdx', policy })).toEqual(await extract(MDX, { file: 'docs/cards.mdx', format: 'mdx', policy }))
     const [segment] = await extract('Read {count} cards.\n', { file: 'docs/cards.md' })
@@ -414,6 +424,15 @@ describe('apply', () => {
     const translations = new Map([[a!.hash, 'Serveur MCP']])
     expect((await apply(literal, translations)).markdown).toBe(literal.replace('MCP Server', 'Serveur MCP'))
     expect((await apply(nested, translations)).markdown).toBe(nested.replace('MCP Server', 'Serveur MCP'))
+  })
+
+  it('should protect the HTML of htmlFrontmatter values', async () => {
+    const source = '---\nbanner:\n  content: New <a href="/release/">release</a> is <b>out</b>\n---\n\nBody.\n'
+    const policy = { frontmatter: ['banner.content'], htmlFrontmatter: ['banner.content'] }
+    const [banner] = await extract(source, { policy })
+    expect([banner!.format, banner!.skeleton]).toEqual(['plain', 'New {0}release{/0} is {1}'])
+    const { markdown } = await apply(source, new Map([[banner!.hash, '{1} : la {0}version{/0}']]), { policy })
+    expect(markdown).toContain('content: "<b>out</b> : la <a href=\\"/release/\\">version</a>"')
   })
 
   it('should apply props, frontmatter, labels and code comments', async () => {

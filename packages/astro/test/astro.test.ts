@@ -103,6 +103,10 @@ describe('splitFrontmatter', () => {
     expect(splitFrontmatter('# No frontmatter\n')).toEqual({ data: {}, body: '# No frontmatter' })
   })
 
+  it('should read dates and merge keys like Astro', () => {
+    expect(splitFrontmatter('---\nbase: &base\n  a: 1\nlastUpdated: 2020-01-02\nmerged:\n  <<: *base\n---\n')!.data).toEqual({ base: { a: 1 }, lastUpdated: new Date('2020-01-02T00:00:00.000Z'), merged: { a: 1 } })
+  })
+
   it('should skip TOML frontmatter', () => {
     expect(splitFrontmatter('+++\ntitle = "Hello"\n+++\n')).toBeUndefined()
   })
@@ -114,9 +118,13 @@ describe('diglotLoader', () => {
     await build({ root, logLevel: 'error' })
     const page = (path: string) => readFileSync(join(root, 'dist', path, 'index.html'), 'utf8')
 
-    expect(page('fr/guide')).toContain('<title>Guide</title><meta name="description" content="Découvrez comment le site est construit.">')
+    expect(page('fr/guide')).toContain('<title>Guide (fr)</title><meta name="description" content="Découvrez comment le site est construit."><meta name="translation" content="fr src/content/docs/en/guide.md 2026-11-06T00:00:00.000Z">')
+    expect(page('pt-br/guide')).toContain('<title>Guia (pt-BR)</title>')
+    expect(page('pt-br/guide')).toContain('<meta name="translation" content="pt-br src/content/docs/en/guide.md 2026-11-01T00:00:00.000Z">')
+    expect(page('fr/hand')).toContain('<title>Écrite à la main</title>')
     expect(page('fr/guide')).toContain('<h1 id="premiers-pas">Premiers pas</h1>')
     expect(page('fr/guide')).toMatch(/<img alt="Le logo"[^>]* src="\/_astro\/logo\.[\w-]+\.svg"/)
+    expect(page('fr')).toContain('<meta name="translation" content="fr src/content/docs/en/index.md undated">')
     expect(page('fr')).toContain('<p>Lisez le <a href="/en/guide/">guide</a> pour commencer.</p>')
     expect(page('pt-br/guide')).toContain('<h1 id="primeiros-passos">Primeiros passos</h1>\n<p>Install the package with <code>pnpm add example</code>.</p>')
     expect(page('fr/hand')).toContain('Cette page a une traduction écrite à la main.')
@@ -152,8 +160,11 @@ describe('diglotLoader', () => {
 
       const source = join(root, 'src/content/docs/en/guide.md')
       const heading = (await extract(readFileSync(source, 'utf8'), { parser: 'satteri' })).find(s => s.kind === 'heading')!
-      await writeRecord(join(root, 'translations'), 'fr', createRecord({ segment: heading, text: 'Bien démarrer', origin: 'human', updatedAt: '2026-11-02T00:00:00.000Z' }))
+      await writeRecord(join(root, 'translations'), 'fr', createRecord({ segment: heading, text: 'Bien démarrer', origin: 'human', updatedAt: '2026-11-10T00:00:00.000Z' }))
       await waitFor('Bien démarrer')
+      await waitFor('content="fr src/content/docs/en/guide.md 2026-11-10T00:00:00.000Z"')
+      await writeRecord(join(root, 'translations'), 'fr', createRecord({ segment: heading, text: 'Bien démarrer', origin: 'human', updatedAt: '2026-11-06T01:00:00+02:00' }))
+      await waitFor('content="fr src/content/docs/en/guide.md 2026-11-06T00:00:00.000Z"')
 
       writeFileSync(source, readFileSync(source, 'utf8').replace('# Getting started', '# Getting started\n\nA new paragraph.'))
       await waitFor('A new paragraph.')

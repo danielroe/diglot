@@ -1,5 +1,5 @@
 /** Tailwind palettes that can stand in for the primary colour. */
-export type Accent = 'lime' | 'emerald' | 'teal' | 'cyan' | 'amber' | 'violet' | 'rose' | 'pink' | 'blue' | 'orange'
+export type Accent = 'lime' | 'emerald' | 'teal' | 'cyan' | 'amber' | 'violet' | 'rose' | 'pink' | 'blue' | 'orange' | 'red'
 
 export interface TopicPackage {
   name: string
@@ -49,7 +49,16 @@ export const TOPICS: Topic[] = [
     ],
   },
   { slug: 'review-ui', title: 'Review UI', meta: '@diglot/x18n', accent: 'blue', packages: [] },
-  { slug: 'integrations', title: 'Integrations', meta: '@diglot/astro', accent: 'orange', packages: [] },
+  {
+    slug: 'integrations',
+    title: 'Integrations',
+    meta: 'astro and starlight',
+    accent: 'orange',
+    packages: [
+      { name: '@diglot/astro', path: '/integrations/astro', accent: 'orange' },
+      { name: '@diglot/starlight', path: '/integrations/starlight', accent: 'red' },
+    ],
+  },
 ]
 
 /** The topic a path belongs to, by its first segment. */
