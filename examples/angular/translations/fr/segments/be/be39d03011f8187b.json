@@ -1,0 +1,9 @@
+{
+  "hash": "be39d03011f8187b",
+  "source": "Every page is a Markdown file in {0}. Its frontmatter holds a {1} and a {2}, and both are translated together with the text.",
+  "text": "Chaque page est un fichier Markdown dans {0}. Son frontmatter contient un champ {1} et un champ {2}, qui sont traduits avec le texte.",
+  "origin": "human",
+  "review": "none",
+  "derived": "fresh",
+  "updatedAt": "2026-11-07T00:00:00.000Z"
+}

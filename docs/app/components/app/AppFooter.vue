@@ -25,6 +25,7 @@ const learn = [
   { label: 'How-to guides', to: '/guide/how-to/configure' },
   { label: 'Nuxt example', to: '/guide/examples/nuxt-translations' },
   { label: 'Astro example', to: '/guide/examples/astro-site' },
+  { label: 'Angular example', to: '/guide/examples/angular-app' },
 ]
 
 const project = [

@@ -2,5 +2,5 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": ["examples/**"],
   "ignoreFiles": ["fixtures/**", "packages/*/test/fixtures/**"],
-  "ignoreWorkspaces": ["docs", "examples/astro"]
+  "ignoreWorkspaces": ["docs", "examples/angular", "examples/astro"]
 }

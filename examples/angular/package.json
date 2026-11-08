@@ -1,0 +1,40 @@
+{
+  "name": "diglot-example-angular",
+  "type": "module",
+  "private": true,
+  "description": "A small Angular app in English, French and Turkish, translated with diglot.",
+  "scripts": {
+    "prestart": "pnpm translations:build",
+    "start": "ng serve",
+    "prebuild": "pnpm translations:build",
+    "build": "ng build",
+    "translations:extract": "diglot extract --cwd translations",
+    "translations:build": "pnpm translations:extract && diglot build --cwd translations",
+    "translations:status": "pnpm translations:extract && diglot status --cwd translations",
+    "translations:ui": "pnpm translations:extract && diglot checkout --cwd translations && x18n ui --root translations"
+  },
+  "dependencies": {
+    "@angular/common": "22.2.4",
+    "@angular/compiler": "22.2.4",
+    "@angular/core": "22.2.4",
+    "@angular/platform-browser": "22.2.4",
+    "@angular/platform-server": "22.2.4",
+    "@angular/router": "22.2.4",
+    "@angular/ssr": "22.2.5",
+    "@diglot/core": "workspace:*",
+    "@diglot/mdast": "workspace:*",
+    "@diglot/store": "workspace:*",
+    "marked": "18.1.2",
+    "rxjs": "7.8.2",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@angular/build": "22.2.5",
+    "@angular/cli": "22.2.5",
+    "@angular/compiler-cli": "22.2.4",
+    "@diglot/cli": "workspace:*",
+    "@diglot/x18n": "workspace:*",
+    "@x18n/cli": "0.1.10",
+    "typescript": "6.0.3"
+  }
+}

@@ -10,6 +10,8 @@ coverage
 .output
 .data
 .astro
+.angular
 packages/*/test/fixtures/.tmp-*
+examples/angular/translations/.diglot
 examples/astro/translations/.diglot
 *.swp

@@ -1,0 +1,21 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+body {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+a {
+  color: inherit;
+}
+
+pre {
+  overflow-x: auto;
+  padding: 1rem;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
