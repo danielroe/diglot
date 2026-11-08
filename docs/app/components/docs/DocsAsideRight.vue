@@ -29,6 +29,13 @@ const contentTocVariants = useUIConfig('contentToc')
       :links="links"
       :class="{ 'hidden lg:block': subNavigationMode }"
     >
+      <template #link="{ link }">
+        <span
+          class="truncate"
+          :title="link.text"
+        >{{ link.text }}</span>
+      </template>
+
       <template #bottom>
         <DocsAsideRightBottom />
       </template>
