@@ -37,8 +37,8 @@
 </nav>
 <main>
   @if (doc.error()) {
-    <p class="error">This page could not be loaded.</p>
-    <button type="button" (click)="doc.reload()">Try again</button>
+    <p class="error" lang="en">This page could not be loaded.</p>
+    <button type="button" lang="en" (click)="doc.reload()">Try again</button>
   }
   @else if (page(); as page) {
     @if (notice(); as notice) {

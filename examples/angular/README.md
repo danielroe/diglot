@@ -1,6 +1,6 @@
 # diglot Example: Angular
 
-A small [Angular](https://angular.dev) app, written in English and translated into French and Turkish by [diglot](../../README.md). Its pages are Markdown files, and the code in `src/app` applies the bundle of `translations`, a translations repository that lives inside the app, when a page loads. Every page is prerendered in all three locales.
+A small [Angular](https://angular.dev) app, written in English and translated into French and Turkish by [diglot](../../README.md). Its pages are Markdown files, and the code in `src/app` applies the bundle of `translations`, a translations repository that lives inside the app, when a page loads. The pages under `/en`, `/fr` and `/tr` are prerendered, and the language picker pages under `/picker` are prerendered in English.
 
 > 🧑‍🚀 **Running it from this repository?** Install from the root of the diglot repository, so that the example uses the local diglot packages.
 
@@ -45,7 +45,7 @@ A small [Angular](https://angular.dev) app, written in English and translated in
 └── package.json
 ```
 
-`src/app/diglot-store.ts` fetches the bundles and applies them, and `src/app/diglot-document.ts` turns that into signals. In `src/app/app.routes.ts`, the `/:locale` routes read the language from the route parameter, and the `/picker` routes read it from a signal that the language menu sets. `src/app/page.ts` reads its page with `diglotDocument()`, renders it with [marked](https://marked.js.org), and shows a notice when the report says that some text is still in English. `src/app/app.routes.server.ts` prerenders every page in every locale.
+`src/app/diglot-store.ts` fetches the bundles and applies them, and `src/app/diglot-document.ts` turns that into signals. In `src/app/app.routes.ts`, the `/:locale` routes read the language from the route parameter, and the `/picker` routes read it from a signal that the language menu sets. `src/app/page.ts` reads its page with `diglotDocument()`, renders it with [marked](https://marked.js.org), and shows a notice when the report says that some text is still in English. `src/app/app.routes.server.ts` prerenders each page under `/en`, `/fr` and `/tr`, and the English pages under `/picker`.
 
 ## 🧞 Commands
 

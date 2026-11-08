@@ -59,7 +59,7 @@ export class Page {
   protected followInternalLink(event: MouseEvent): void {
     const anchor = (event.target as Element).closest('a')
     const href = anchor?.getAttribute('href')
-    if (href?.startsWith('/') && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+    if (href?.startsWith('/') && !href.startsWith('//') && !anchor?.target && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
       event.preventDefault()
       void this.router.navigateByUrl(href)
     }
