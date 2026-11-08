@@ -29,7 +29,7 @@ export class Page {
   protected readonly language = inject(DIGLOT_LOCALE)
 
   protected readonly doc = diglotDocument(() => this.slug())
-  protected readonly locale = this.doc.locale
+  private readonly locale = this.doc.locale
   protected readonly page = computed(() => {
     const markdown = this.doc.markdown()
     return markdown === undefined ? undefined : renderPage(markdown, this.base(this.locale()))
@@ -59,7 +59,7 @@ export class Page {
   protected followInternalLink(event: MouseEvent): void {
     const anchor = (event.target as Element).closest('a')
     const href = anchor?.getAttribute('href')
-    if (href?.startsWith('/') && !event.metaKey && !event.ctrlKey) {
+    if (href?.startsWith('/') && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
       event.preventDefault()
       void this.router.navigateByUrl(href)
     }

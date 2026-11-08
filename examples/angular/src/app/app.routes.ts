@@ -20,6 +20,7 @@ export const routes: Routes = [
     path: ':locale',
     canMatch: [(_route, segments) => isLocale(segments[0]?.path)],
     providers: [provideRouteLocale('locale')],
+    data: { picker: false },
     children: pageRoutes,
   },
   { path: '**', redirectTo: defaultLocale },
