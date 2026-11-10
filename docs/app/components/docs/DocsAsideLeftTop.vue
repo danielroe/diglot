@@ -31,11 +31,15 @@ const topics = computed(() => sections.value.map((section) => {
             />
           </span>
           <span class="flex min-w-0 flex-1 flex-col leading-tight">
-            <span class="truncate text-sm font-medium">{{ topic.label }}</span>
-            <span
+            <DocsTruncatedLabel
+              :text="topic.label"
+              class="text-sm font-medium"
+            />
+            <DocsTruncatedLabel
               v-if="topic.meta"
-              class="topic-meta truncate font-mono text-xs text-dimmed"
-            >{{ topic.meta }}</span>
+              :text="topic.meta"
+              class="topic-meta font-mono text-xs text-dimmed"
+            />
           </span>
         </NuxtLink>
       </li>
