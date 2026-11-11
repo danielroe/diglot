@@ -214,6 +214,25 @@ describe('hot updates', () => {
     expect(sent.find(p => p.type === 'custom')).toMatchObject({ data: { locale: 'fr', catalog: { [footer.hash]: 'Pied de page' } } })
   })
 
+  it('should send a catalog again when a component keeps its text but changes its placeholders', { timeout: 30_000 }, async () => {
+    const { dir, translations } = project('src/Hello.vue', '<template><p>Hello {{ name }}</p></template>\n')
+    const file = join(dir, 'src/Hello.vue')
+    const [hello] = await extract(readFileSync(file, 'utf8'), { file: 'src/Hello.vue' })
+    await writeRecord(translations, 'fr', createRecord({ segment: hello!, text: 'Bonjour {0} {0}', origin: 'human' }))
+    // The plugin's hooks, as a dev server calls them, without Vite's module graph in the way.
+    const plugin = diglot({ translations }) as any
+    await plugin.configResolved({ root: dir, plugins: [] })
+    const sent: HotPayload[] = []
+    plugin.configureServer({ watcher: { add() {} }, environments: { client: { hot: { send: (payload: HotPayload) => sent.push(payload) }, moduleGraph: { getModuleById() {} } } } })
+    const context = { warn() {} }
+    await plugin.transform.call(context, readFileSync(file, 'utf8'), file)
+    expect(plugin.load('\0virtual:diglot/fr')).toContain('Bonjour {0} {0}')
+
+    // The same skeleton, `Hello {0}`, with an element that a translation can't repeat.
+    await plugin.transform.call(context, '<template><p>Hello <img src="x"></p></template>\n', file)
+    expect(sent).toContainEqual({ type: 'custom', event: 'diglot:locale', data: { locale: 'fr', catalog: {} } })
+  })
+
   it('should send changed records to the page of each dev server that shares the plugin, as in Nuxt', { timeout: 30_000 }, async () => {
     const translations = repository()
     const footer = await segment('Card.vue')

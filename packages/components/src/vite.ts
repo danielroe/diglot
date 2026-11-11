@@ -128,9 +128,10 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       const key = relative(config.root, id)
       const result = await transform(code, { file: key, policy })
       const segments = result?.segments ?? []
-      const hashes = (list?: Segment[]) => list?.map(segment => segment.hash).join()
-      // Most edits change code around the text, and leave every catalog as it was.
-      const changed = hashes(files.get(key)) !== hashes(segments)
+      // Most edits change code around the text, and leave every catalog as it was. Placeholders
+      // count too: the same skeleton with other placeholders can validate differently.
+      const signature = (list?: Segment[]) => JSON.stringify(list?.map(segment => [segment.hash, segment.placeholders]))
+      const changed = signature(files.get(key)) !== signature(segments)
       files.set(key, segments)
       if (changed)
         sendChanged()
