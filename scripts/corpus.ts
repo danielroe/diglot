@@ -14,8 +14,10 @@ import process from 'node:process'
 import { isDeepStrictEqual, parseArgs } from 'node:util'
 import { findComments } from '@diglot/code'
 import { apply as applyComark, extract as extractComark, extractNavigation, parse, render } from '@diglot/comark'
+import { transform as transformComponent } from '@diglot/components'
 import { diffSegments, isPlaceholderOnly, pseudoTranslate, validate } from '@diglot/core'
 import { apply as applyMdast, extract as extractMdast } from '@diglot/mdast'
+import { compileTemplate, parse as parseSfc } from '@vue/compiler-sfc'
 
 const { values } = parseArgs({ options: { out: { type: 'string' } } })
 const root = process.env.DIGLOT_CORPUS ?? '/tmp/repos'
@@ -264,6 +266,42 @@ async function moduleRepo(name: string) {
   return totals
 }
 
+function templateErrors(code: string, filename: string, ssr: boolean): string[] {
+  const { descriptor, errors } = parseSfc(code, { filename })
+  if (errors.length || !descriptor.template)
+    return errors.map(String)
+  return compileTemplate({ source: descriptor.template.content, filename, id: 'x', ssr, ssrCssVars: [], compilerOptions: { bindingMetadata: {} } })
+    .errors
+    .map(error => typeof error === 'string' ? error : error.message)
+}
+
+/** Rewrites every Vue component of nuxt/nuxt; each must still compile for the DOM and for SSR wherever it compiled before. */
+async function components() {
+  const cwd = join(root, 'nuxt-main')
+  const totals = { files: 0, rewritten: 0, segments: 0, props: 0, skipped: 0, compiled: 0 }
+  const failures: string[] = []
+  for (const path of globSync('**/*.vue', { cwd, exclude: ['**/node_modules/**'] }).sort()) {
+    const source = readFileSync(join(cwd, path), 'utf8')
+    const result = await transformComponent(source, { file: path })
+    totals.files++
+    if (!result?.segments.length)
+      continue
+    totals.rewritten++
+    totals.segments += result.segments.length
+    totals.props += result.segments.filter(s => s.kind === 'prop').length
+    totals.skipped += result.skipped.length
+    for (const ssr of [false, true]) {
+      const before = templateErrors(source, path, ssr)
+      const after = templateErrors(result.code, path, ssr)
+      if (before.length || !after.length)
+        totals.compiled++
+      else
+        failures.push(`${path}${ssr ? ' (ssr)' : ''}: ${after[0]}`)
+    }
+  }
+  return { ...totals, failures: failures.slice(0, 20) }
+}
+
 const started = Date.now()
 const report = {
   files: { total: files.length, markdown: markdown.length },
@@ -273,6 +311,7 @@ const report = {
   dedupe: await dedupe(),
   codeComments: await codeComments(),
   fonts: await moduleRepo('nuxt-fonts'),
+  components: await components(),
   seconds: 0,
 }
 report.seconds = Math.round((Date.now() - started) / 1000)

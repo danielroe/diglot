@@ -4,6 +4,7 @@ import type { Scanner, TextRange, UsageCandidate } from '@x18n/core'
 import type { DiglotState } from './state.ts'
 import { matchesGlob } from 'node:path'
 import { extract as extractComark, extractNavigation, parse } from '@diglot/comark'
+import { extensions as componentExtensions, extract as extractComponent } from '@diglot/components'
 import { isPlaceholderOnly } from '@diglot/core'
 import { extract as extractMdast } from '@diglot/mdast'
 import { DEFAULT_INCLUDE } from '@diglot/store'
@@ -42,10 +43,15 @@ function lineRange(text: string, starts: number[], startLine: number, endLine: n
   return { start, end: Math.max(start, end) }
 }
 
-function textRange(text: string, segment: Segment, within: TextRange = { start: 0, end: text.length }): TextRange | undefined {
+function textRange(text: string, segment: Segment, within: TextRange = { start: 0, end: text.length }, taken: TextRange[] = []): TextRange | undefined {
   const needle = segment.text.split(/\s+/).slice(0, 6).join(' ')
-  const at = needle ? text.slice(within.start, within.end).indexOf(needle) : -1
-  return at < 0 ? undefined : { start: within.start + at, end: within.start + at + needle.length }
+  if (!needle)
+    return
+  for (let at = text.indexOf(needle, within.start); at >= 0 && at + needle.length <= within.end; at = text.indexOf(needle, at + 1)) {
+    const end = at + needle.length
+    if (!taken.some(range => at < range.end && range.start < end))
+      return { start: at, end }
+  }
 }
 
 export function markdownScanner(state: DiglotState): Scanner {
@@ -68,32 +74,59 @@ export function markdownScanner(state: DiglotState): Scanner {
           ? await extractMdast(file.text, mdast)
           : (await extractComark(await parse(file.text), options)).segments
       const precise = navigation || viaMdast ? segments : await extractMdast(file.text, mdast)
-      const positions = new Map<string, Segment[]>()
-      for (const segment of precise) {
-        if (segment.position.precision === 'node')
-          positions.set(segment.hash, [...positions.get(segment.hash) ?? [], segment])
-      }
-      const starts = lineStarts(file.text)
-      const seen = new Map<string, number>()
-      const taken = new Set<string>()
-      const usages: UsageCandidate[] = []
-      for (const segment of segments) {
-        if (isPlaceholderOnly(segment.skeleton))
-          continue
-        const nth = seen.get(segment.hash) ?? 0
-        seen.set(segment.hash, nth + 1)
-        const position = segment.position.precision === 'node' ? segment.position : positions.get(segment.hash)?.[nth]?.position ?? segment.position
-        let range = position.precision === 'file'
-          ? textRange(file.text, segment) ?? { start: 0, end: 0 }
-          : lineRange(file.text, starts, position.startLine, position.endLine)
-        if (taken.has(`${range.start}:${range.end}`))
-          range = textRange(file.text, segment, range) ?? range
-        while (taken.has(`${range.start}:${range.end}`) && range.start < range.end)
-          range = { start: range.start + 1, end: range.end }
-        taken.add(`${range.start}:${range.end}`)
-        usages.push({ raw: segment.hash, range, expression: range, kind: 'marker', dynamic: false })
-      }
-      return { usages }
+      return { usages: usages(file.text, segments, precise) }
     },
   }
+}
+
+/** A `diglot-components` scanner over the Vue, React and Svelte components of each source. */
+export function componentScanner(state: DiglotState): Scanner {
+  return {
+    id: 'diglot-components',
+    extensions: componentExtensions,
+    runtime: 'node',
+    async scan(file) {
+      const config = state.config
+      const path = config && sourceFile(config, relative(state.prefix || '.', file.path))
+      if (!config || !path)
+        return { usages: [] }
+      const segments = await extractComponent(file.text, { file: path, policy: config.policy })
+      return { usages: usages(file.text, segments, segments, true) }
+    },
+  }
+}
+
+/**
+ * Usages of the segments that have text, at the lines of their nodes in `precise`. With `exact`, at
+ * their text within those lines when it is there, so that two segments on a line get their own.
+ */
+function usages(text: string, segments: Segment[], precise: Segment[], exact = false): UsageCandidate[] {
+  const positions = new Map<string, Segment[]>()
+  for (const segment of precise) {
+    if (segment.position.precision === 'node')
+      positions.set(segment.hash, [...positions.get(segment.hash) ?? [], segment])
+  }
+  const starts = lineStarts(text)
+  const seen = new Map<string, number>()
+  const taken = new Set<string>()
+  const usages: UsageCandidate[] = []
+  for (const segment of segments) {
+    if (isPlaceholderOnly(segment.skeleton))
+      continue
+    const nth = seen.get(segment.hash) ?? 0
+    seen.set(segment.hash, nth + 1)
+    const position = segment.position.precision === 'node' ? segment.position : positions.get(segment.hash)?.[nth]?.position ?? segment.position
+    let range = position.precision === 'file'
+      ? textRange(text, segment) ?? { start: 0, end: 0 }
+      : lineRange(text, starts, position.startLine, position.endLine)
+    if (exact)
+      range = textRange(text, segment, range, usages.map(usage => usage.range)) ?? range
+    else if (taken.has(`${range.start}:${range.end}`))
+      range = textRange(text, segment, range) ?? range
+    while (taken.has(`${range.start}:${range.end}`) && range.start < range.end)
+      range = { start: range.start + 1, end: range.end }
+    taken.add(`${range.start}:${range.end}`)
+    usages.push({ raw: segment.hash, range, expression: range, kind: 'marker', dynamic: false })
+  }
+  return usages
 }

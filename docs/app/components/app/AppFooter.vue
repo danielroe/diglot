@@ -8,6 +8,7 @@ const packages = [
   { label: '@diglot/core', to: '/core/overview' },
   { label: '@diglot/comark', to: '/adapters/comark' },
   { label: '@diglot/mdast', to: '/adapters/mdast' },
+  { label: '@diglot/components', to: '/integrations/components' },
   { label: '@diglot/code', to: '/adapters/code' },
   { label: '@diglot/store', to: '/store/overview' },
   { label: '@diglot/mt', to: '/machine-translation/overview' },

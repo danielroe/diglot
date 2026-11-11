@@ -1,5 +1,5 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  ignores: ['.workmux/**', 'fixtures/**'],
+  ignores: ['.workmux/**', 'fixtures/**', 'packages/*/test/fixtures/**'],
 })

@@ -1,0 +1,263 @@
+{
+  "vue/Attrs.vue": [
+    "3 alt: Company logo",
+    "4 placeholder: Search messages",
+    "5 title: Close the dialog",
+    "5 aria-label: Close"
+  ],
+  "vue/Card.vue": [
+    "8: Default footer"
+  ],
+  "vue/Icon.vue": [],
+  "vue/InlineAttrs.vue": [
+    "2: Read {0}the guide{/0} before you start.",
+    "2 title: Open the guide"
+  ],
+  "vue/Interp.vue": [
+    "6: Hello {0}, you have {1} unread of {2}.",
+    "8: Sum: {0} and {1}"
+  ],
+  "vue/Marker.vue": [
+    "2: Use {name} as a placeholder",
+    "3: Numbers 1 < 2 > 0",
+    "4: Quote's \"double\" and back\\slash"
+  ],
+  "vue/Mixed.vue": [
+    "6: Read the {0}documentation{/0} before you {1}deploy{/1}.",
+    "7: Hi {0}, {1}welcome {2}back{/2}{/1}!",
+    "12: Line one{0}line two"
+  ],
+  "vue/Nested.vue": [
+    "3: One {0}two {1}three {2}four{/2}{/1}{/0} five",
+    "10: Email",
+    "11: Only bold"
+  ],
+  "vue/OptOut.vue": [
+    "4: Send {0} to a friend",
+    "5: Run {0} first."
+  ],
+  "vue/Plain.vue": [
+    "3: Welcome back",
+    "4: You have no new notifications.",
+    "5: Save changes"
+  ],
+  "vue/Repeat.vue": [
+    "6: {0} and {1} and {2}",
+    "7: Save",
+    "8: Save"
+  ],
+  "vue/Slots.vue": [
+    "6 title: Card title",
+    "6: Card body text",
+    "8: Footer text",
+    "10: Press {0} to close"
+  ],
+  "vue/Structure.vue": [
+    "7: Item {0} is ready",
+    "9: Status:",
+    "9: all good",
+    "9: broken",
+    "10: Inside a template",
+    "11: Before block",
+    "13: Inner block",
+    "13: After block"
+  ],
+  "vue/Whitespace.vue": [
+    "5: {0}Tight{/0}{1}words{/1}",
+    "7: {0}Bold{/0}{1}italic{/1}",
+    "10: lots of spaces",
+    "11: padded {0}",
+    "12: a b & c <tag>",
+    "13: {0} {1}x{/1} {2}"
+  ],
+  "react/Arrow.jsx": [
+    "3 title: Unread count",
+    "3: {0} new",
+    "6 aria-label: Inbox",
+    "8: Written as an arrow with an expression body."
+  ],
+  "react/Attrs.tsx": [
+    "1: Module level text",
+    "6 alt: Company logo",
+    "7 placeholder: Search messages",
+    "8 title: Close the dialog",
+    "8 aria-label: Close",
+    "11: {0}{1}T&J{/1}{2}",
+    "14 title: Tom & Jerry"
+  ],
+  "react/Card.tsx": [],
+  "react/Components.tsx": [
+    "10 title: Card title",
+    "10: Footer text",
+    "10: Card body text",
+    "13: Press {0} to close",
+    "16: A member component"
+  ],
+  "react/Icon.tsx": [],
+  "react/InlineAttrs.tsx": [
+    "3: Read {0}the guide{/0} before you start.",
+    "5 title: Open the guide"
+  ],
+  "react/Interp.tsx": [
+    "7: Hello {0}, you have {1} unread of {2}.",
+    "11: Sum: {0} and {1}"
+  ],
+  "react/Marker.tsx": [
+    "4: Use {name} as a placeholder",
+    "5: Numbers 1 < 2 > 0",
+    "6: Quote's \"double\" and back\\slash"
+  ],
+  "react/Mixed.tsx": [
+    "7: Read the {0}documentation{/0} before you {1}deploy{/1}.",
+    "14: Hi {0}, {1}welcome {2}back{/2}{/1}!",
+    "21: Line one{0}line two"
+  ],
+  "react/Nested.tsx": [
+    "4: One{0}two {1}three {2}four{/2}{/1}{/0}five",
+    "14: Email",
+    "18: Only bold"
+  ],
+  "react/OptOut.tsx": [
+    "5: Send {0} to a friend",
+    "8: Run {0} first."
+  ],
+  "react/Plain.tsx": [
+    "4: Welcome back",
+    "5: You have no new notifications.",
+    "6: Save changes"
+  ],
+  "react/Repeat.tsx": [
+    "8: {0} and {1} and {2}",
+    "10: Save",
+    "11: Save"
+  ],
+  "react/Structure.tsx": [
+    "10: Item {0} is ready",
+    "13: Status:",
+    "13: all good",
+    "13: broken",
+    "14: Inside a fragment",
+    "15: Nothing here yet",
+    "16: Before block",
+    "18: Inner block",
+    "18: After block"
+  ],
+  "react/Whitespace.tsx": [
+    "7: {0}Tight{/0}{1}words{/1}",
+    "11: {0}Bold{/0} {1}italic{/1}",
+    "13: lots of spaces",
+    "14: padded {0}",
+    "15: a b & c <tag> © —",
+    "17: {0} {1}x{/1} {2}",
+    "19: Tabbed across lines",
+    "20: first line after a blank line"
+  ],
+  "svelte/Attrs.svelte": [
+    "2 alt: Company logo",
+    "3 placeholder: Search messages",
+    "4 title: Close the dialog",
+    "4 aria-label: Close"
+  ],
+  "svelte/Card.svelte": [
+    "10: Default footer"
+  ],
+  "svelte/Edges.svelte": [
+    "7: Page title",
+    "8: Hello",
+    "8: block",
+    "8: bye",
+    "10: {0} items left, {1} done",
+    "14: One",
+    "14: Two",
+    "15: Body",
+    "15: Foot",
+    "15: more",
+    "16: Say",
+    "16: dynamic",
+    "16: words",
+    "18: Mixed",
+    "18: {0}bold{/0} end"
+  ],
+  "svelte/Icon.svelte": [],
+  "svelte/InlineAttrs.svelte": [
+    "1: Read {0}the guide{/0} before you start.",
+    "1 title: Open the guide"
+  ],
+  "svelte/Interp.svelte": [
+    "6: Hello {0}, you have {1} unread of {2}.",
+    "8: Sum: {0} and {1}"
+  ],
+  "svelte/Legacy.svelte": [
+    "5: Legacy {0} items",
+    "6: Fallback text"
+  ],
+  "svelte/Marker.svelte": [
+    "1: Use {name} as a placeholder",
+    "2: Numbers 1 < 2 > 0",
+    "3: Quote's \"double\" and back\\slash"
+  ],
+  "svelte/Mixed.svelte": [
+    "6: Read the {0}documentation{/0} before you {1}deploy{/1}.",
+    "7: Hi {0}, {1}welcome {2}back{/2}{/1}!",
+    "12: Line one{0}line two"
+  ],
+  "svelte/Nested.svelte": [
+    "2: One {0}two {1}three {2}four{/2}{/1}{/0} five",
+    "9: Email",
+    "10: Only bold"
+  ],
+  "svelte/OptOut.svelte": [
+    "3: Send {0} to a friend",
+    "4: Run {0} first.",
+    "6: Raw",
+    "6: text"
+  ],
+  "svelte/Plain.svelte": [
+    "2: Welcome back",
+    "3: You have no new notifications.",
+    "4: Save changes"
+  ],
+  "svelte/Preserve.svelte": [
+    "3: Keep this {0}as written{/0}"
+  ],
+  "svelte/Repeat.svelte": [
+    "6: {0} and {1} and {2}",
+    "7: Save",
+    "8: Save"
+  ],
+  "svelte/Root.svelte": [],
+  "svelte/Slots.svelte": [
+    "6 title: Card title",
+    "6: Card body text",
+    "8: Footer text",
+    "10: Press {0} to close",
+    "11: Go {0} now",
+    "11 title: Inline card"
+  ],
+  "svelte/Structure.svelte": [
+    "9: Item {0} is ready",
+    "11: No items",
+    "14: Status:",
+    "14: all good",
+    "14: broken",
+    "15: Inside a block",
+    "16: Before block",
+    "18: Inner block",
+    "18: After block",
+    "21: Keyed text",
+    "22: Loading",
+    "22: Loaded {0}",
+    "23: Label",
+    "23: {0} here"
+  ],
+  "svelte/Whitespace.svelte": [
+    "5: {0}Tight{/0}{1}words{/1}",
+    "7: {0}Bold{/0} {1}italic{/1}",
+    "10: lots of spaces",
+    "11: {0}padded {1}{/0}",
+    "12: a b & c <tag>",
+    "13: {0} {1}x{/1} {2}",
+    "14: Spread across lines with a comment",
+    "20: Cell text"
+  ]
+}

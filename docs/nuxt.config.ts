@@ -19,7 +19,7 @@ export default defineNuxtConfig({
         },
         highlight: {
           theme: CODE_THEME,
-          langs: ['bash', 'diff', 'json', 'jsonc', 'md', 'mdc', 'ts', 'vue', 'yaml'],
+          langs: ['bash', 'diff', 'html', 'json', 'jsonc', 'md', 'mdc', 'svelte', 'ts', 'tsx', 'vue', 'yaml'],
         },
       },
     },
