@@ -1,6 +1,7 @@
 import type { Segment, SourceConfig } from '@diglot/core'
 import type { ResolvedConfig, SourceSnapshot } from '@diglot/store'
 import { extract as extractComark, extractNavigation, parse } from '@diglot/comark'
+import { extract as extractComponent, isComponent } from '@diglot/components'
 import { extract as extractMdast } from '@diglot/mdast'
 import { readSource } from '@diglot/store'
 
@@ -32,6 +33,8 @@ export async function extractSource(config: ResolvedConfig, source: SourceConfig
 }
 
 async function extractFile(config: ResolvedConfig, path: string, content: string, options: ExtractSourceOptions): Promise<Segment[]> {
+  if (isComponent(path))
+    return extractComponent(content, { file: path, policy: config.policy })
   if (path.endsWith('.yml') || path.endsWith('.yaml'))
     return extractNavigation(content, { file: path, policy: config.policy })
   if (config.parser !== 'comark' || path.endsWith('.mdx'))

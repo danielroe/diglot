@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@diglot/comark": "workspace:*",
+    "@diglot/components": "workspace:*",
     "@diglot/core": "workspace:*",
     "@diglot/mdast": "workspace:*",
     "@diglot/store": "workspace:*",

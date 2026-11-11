@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
-import { createRecord, policyFingerprint, pseudoTranslate, resolvePolicy, restorePolicy } from '@diglot/core'
+import { createRecord, hashSkeleton, policyFingerprint, pseudoTranslate, resolvePolicy, restorePolicy } from '@diglot/core'
 import { extract as extractMdast } from '@diglot/mdast'
 import { readManifest, readPolicy, writeRecord } from '@diglot/store'
 import { runCommand } from 'citty'
@@ -161,6 +161,19 @@ describe('diglot', () => {
     expect(await cli('extract', '--cwd', root)).toBe('docs: 3 files, 8 segments, 8 unique hashes -> .diglot/manifest/docs.json\n')
     const manifest = (await readManifest(join(root, '.diglot'), 'docs'))!
     expect(manifest.files['docs/guide/cards.mdx']!.map(entry => entry.hash)).toEqual((await extractMdast(source, { format: 'mdx' })).map(s => s.hash))
+  })
+
+  it('should extract the components that a source includes', async () => {
+    const root = setup()
+    const component = '<template>\n  <p>Read the <a href="/docs">documentation</a>.</p>\n  <img alt="Logo" src="/logo.png">\n</template>\n'
+    writeFileSync(join(root, 'docs/guide/Intro.vue'), component)
+    writeFileSync(join(root, 'sources.yml'), 'sources:\n  - name: docs\n    path: .\n    dir: docs\n    include: [\'**/*.md\', \'**/*.vue\']\n')
+    await cli('extract', '--cwd', root)
+    const manifest = (await readManifest(join(root, '.diglot'), 'docs'))!
+    expect(manifest.files['docs/guide/Intro.vue']).toEqual([
+      { hash: hashSkeleton('Read the {0}documentation{/0}.', undefined, 'plain'), kind: 'html-block', format: 'plain', words: 3, skeleton: 'Read the {0}documentation{/0}.', placeholders: ['link'] },
+      { hash: hashSkeleton('Logo', undefined, 'plain'), kind: 'prop', format: 'plain', words: 1, skeleton: 'Logo' },
+    ])
   })
 
   it('should name the file that fails to parse', async () => {

@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { extract, parse } from '@diglot/comark'
+import { extract as extractComponent } from '@diglot/components'
 import { createRecord, hashSkeleton } from '@diglot/core'
 import { createManifest, recordPath, serialiseManifest, serialiseRecord, writeManifest, writeRecord } from '@diglot/store'
 import { createMemoryHost } from '@x18n/core'
@@ -422,6 +423,53 @@ describe('x18n project', () => {
     const written = JSON.parse(readFileSync(join(root, path), 'utf8'))
     expect(written).toMatchObject({ text: 'Présentation', review: 'edited', origin: 'human' })
     expect(written.verifiedBy).toBeUndefined()
+    project.dispose()
+  })
+})
+
+describe('components', () => {
+  it('should list, locate and check the segments of components, and write translations as records', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'diglot-x18n-'))
+    const component = '<template>\n  <p>Read the <a href="/docs">documentation</a> before you <strong>deploy</strong>.</p>\n  <button title="Close the dialog">Close</button>\n</template>\n'
+    mkdirSync(join(root, '.diglot/sources/app'), { recursive: true })
+    writeFileSync(join(root, '.diglot/sources/app/Card.vue'), component)
+    writeFileSync(join(root, 'diglot.config.mjs'), 'export default { locales: [\'fr\'] }\n')
+    writeFileSync(join(root, 'sources.yml'), 'sources:\n  - name: app\n    include: [\'**/*.vue\']\n')
+    writeFileSync(join(root, 'x18n.config.mjs'), `import diglot from ${JSON.stringify(plugin)}\nexport default { plugins: [diglot()] }\n`)
+    const segments = await extractComponent(component, { file: 'Card.vue' })
+    await writeManifest(join(root, '.diglot'), createManifest('app', { 'Card.vue': segments }))
+    const [read, title, close] = segments
+    const load = async () => {
+      const { project } = (await loadWorkspace({ cwd: root, upward: false, cache: false })).projects[0]!
+      await project.ready
+      return project
+    }
+
+    let project = await load()
+    expect(segments.map(s => s.skeleton)).toEqual(['Read the {0}documentation{/0} before you {1}deploy{/1}.', 'Close the dialog', 'Close'])
+    expect(project.keys()).toHaveLength(3)
+    for (const segment of segments) {
+      expect(project.message(segment.hash, 'en')?.value).toBe(segment.skeleton)
+      const [usage] = project.usages({ key: segment.hash })
+      expect(usage!.usage.path).toBe('.diglot/sources/app/Card.vue')
+    }
+    const located = (hash: string) => {
+      const { range } = project.usages({ key: hash })[0]!.usage
+      return component.slice(range.start, range.end)
+    }
+    expect(located(read!.hash)).toContain('Read the <a href="/docs">documentation</a>')
+    expect(located(title!.hash)).toContain('Close the dialog')
+
+    await project.apply(project.plan([
+      { type: 'set', key: read!.hash, locale: 'fr', value: 'Lisez la {0}documentation{/0} avant de {1}déployer{/1}.' },
+      { type: 'set', key: close!.hash, locale: 'fr', value: 'Fermer {9}' },
+    ]))
+    project.dispose()
+    project = await load()
+    const codes = project.analyze().diagnostics.filter(d => d.locale === 'fr').map(d => `${d.code} ${d.key}`)
+    expect(codes).toContain(`diglot-validate ${close!.hash}`)
+    expect(codes.filter(c => c.endsWith(read!.hash))).toEqual([])
+    expect(JSON.parse(readFileSync(join(root, recordPath('fr', read!.hash)), 'utf8'))).toMatchObject({ text: 'Lisez la {0}documentation{/0} avant de {1}déployer{/1}.', origin: 'human' })
     project.dispose()
   })
 })

@@ -212,6 +212,9 @@ importers:
       '@diglot/comark':
         specifier: workspace:*
         version: link:packages/comark
+      '@diglot/components':
+        specifier: workspace:*
+        version: link:packages/components
       '@diglot/core':
         specifier: workspace:*
         version: link:packages/core
@@ -230,6 +233,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 5.1.0
         version: 5.1.0(vitest@5.1.0)
+      '@vue/compiler-sfc':
+        specifier: 3.5.44
+        version: 3.5.44
       eslint:
         specifier: 10.14.0
         version: 10.14.0(jiti@2.7.0)(supports-color@10.2.2)
@@ -371,6 +377,9 @@ importers:
       '@diglot/comark':
         specifier: workspace:*
         version: link:../comark
+      '@diglot/components':
+        specifier: workspace:*
+        version: link:../components
       '@diglot/core':
         specifier: workspace:*
         version: link:../core
@@ -560,6 +569,9 @@ importers:
       '@diglot/comark':
         specifier: workspace:*
         version: link:../comark
+      '@diglot/components':
+        specifier: workspace:*
+        version: link:../components
       '@diglot/core':
         specifier: workspace:*
         version: link:../core

@@ -1,6 +1,7 @@
 import type { Segment } from '@diglot/core'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { compileTemplate, parse } from '@vue/compiler-sfc'
 import { describe, expect, it } from 'vitest'
 import { extract, transform } from '../src/index.ts'
 import { components, fixtures } from './utils.ts'
@@ -197,4 +198,21 @@ describe('svelte', () => {
 
 it('should leave other files alone', async () => {
   expect(await transform('export const a = 1', { file: 'a.ts' })).toBeUndefined()
+})
+
+describe('vue templates', () => {
+  function errors(code: string, file: string, ssr: boolean): string[] {
+    const { descriptor, errors } = parse(code, { filename: file })
+    if (errors.length || !descriptor.template)
+      return errors.map(String)
+    const result = compileTemplate({ source: descriptor.template.content, filename: file, id: 'x', ssr, ssrCssVars: [], compilerOptions: { bindingMetadata: {} } })
+    return result.errors.map(error => typeof error === 'string' ? error : error.message)
+  }
+
+  it.each(components(join(fixtures, 'vue')))('should still compile %s for the DOM and for the server', async (file) => {
+    const code = readFileSync(join(fixtures, 'vue', file), 'utf8')
+    const result = await rewrite(code, file)
+    for (const ssr of [false, true])
+      expect(errors(result.code, file, ssr)).toEqual(errors(code, file, ssr))
+  })
 })

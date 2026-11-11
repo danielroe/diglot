@@ -8,7 +8,7 @@ import { recordHistory } from './history.ts'
 import { skeletonSyntax } from './placeholders.ts'
 import { createRecordIndex } from './records.ts'
 import { githubReviewer, gitIdentity, reviewEdit } from './reviews.ts'
-import { markdownScanner, sourceGlobs } from './scanner.ts'
+import { componentScanner, markdownScanner, sourceGlobs } from './scanner.ts'
 import { createState, loadState } from './state.ts'
 
 declare module '@x18n/core' {
@@ -64,7 +64,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
     },
     localeFinders: [recordFinder(state)],
     formats: [manifestFormat(), recordFormat(state)],
-    scanners: [markdownScanner(state)],
+    scanners: [markdownScanner(state), componentScanner(state)],
     placeholders: [skeletonSyntax],
     checks: [validateCheck(index), reviewCheck(index), unusedCheck(index)],
     histories: [recordHistory(() => sourceLocale)],
