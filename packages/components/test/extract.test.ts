@@ -168,6 +168,13 @@ describe('react', () => {
     expect(result.skipped.map(s => [s.reason, s.text])).toEqual([['attribute outside a component', 'Name'], ['attribute outside a component', 'Close']])
   })
 
+  it('should leave text in `<title>` and `<option>` outside a component as it is', async () => {
+    const code = 'const Heading = () => <title>Hello</title>\nexport const list = items.map(Heading)'
+    const result = await rewrite(code, 'x.tsx')
+    expect(result.code).toBe(code)
+    expect(result.skipped).toEqual([{ line: 1, reason: 'text in <title> outside a component', text: 'Hello' }])
+  })
+
   it('should call the hook in components passed to a higher-order component', async () => {
     const result = await rewrite('const Page = () => <img alt="Logo" />\nexport default observer(Page)', 'x.tsx')
     expect(result.code).toContain('const Page = () => { const __diglot = __useTranslate(); return (<img alt={__diglot(')

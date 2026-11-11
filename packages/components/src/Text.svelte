@@ -9,7 +9,7 @@
 </script>
 
 {#snippet render(list: SkeletonNode[])}
-  {#each list as node, i (i)}
+  {#each t.keyed(list) as [key, node] (key)}
     {#if node.type === 'text'}{node.value}{:else if node.type === 'placeholder'}
       {@const part = parts[`__p${node.id}`]}
       {#if part && node.children}

@@ -71,7 +71,8 @@ export interface Run extends Span {
 
 /** How a framework writes runs and attributes back into its code. */
 export interface Emitter {
-  run: (run: Run) => string
+  /** Returns `undefined` to leave the run as it is. */
+  run: (run: Run) => string | undefined
   /** Returns `undefined` to leave the attribute as it is. */
   attribute: (attribute: Attribute, hash: string) => string | undefined
   /** Adds what the rewritten file needs, such as an import, once it has segments. */
@@ -255,7 +256,13 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
         return { type: 'element', source: code.slice(data.start, data.end) }
       return { type: 'element', source: openTag(data, [...containers, data.name]) + code.slice(data.start + data.open.length, data.end) }
     })
-    s.overwrite(start, end, emit.run({ parent: containers.at(-1), hash: prepared.segment.hash, source, parts, start, end }))
+    const replacement = emit.run({ parent: containers.at(-1), hash: prepared.segment.hash, source, parts, start, end })
+    if (replacement === undefined) {
+      segments.splice(segments.indexOf(prepared.segment), 1)
+      skipped.push({ line: lines(at.start), reason: `text in <${containers.at(-1)}> outside a component`, text: source.trim() })
+      return
+    }
+    s.overwrite(start, end, replacement)
   }
 
   function walk(element: ElementNode, containers: string[]) {

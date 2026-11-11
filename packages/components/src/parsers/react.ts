@@ -219,7 +219,9 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
   }
   const emit: Emitter = {
     run(run: Run) {
-      if (TEXT_ONLY.has(run.parent!) && run.parts.every(part => part.type === 'expression') && hook(run)) {
+      if (TEXT_ONLY.has(run.parent!)) {
+        if (!run.parts.every(part => part.type === 'expression') || !hook(run))
+          return
         const values = run.parts.length ? `, [${run.parts.map(part).join(', ')}]` : ''
         return `{__diglot('${run.hash}', ${literal(run.source)}${values})}`
       }

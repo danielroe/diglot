@@ -2,7 +2,7 @@ import type { SkeletonNode } from '@diglot/core'
 import type { ReactElement, ReactNode } from 'react'
 import type { Diglot, Translate } from './diglot.ts'
 import { createContext, createElement, Fragment, useCallback, useContext, useSyncExternalStore } from 'react'
-import { createDiglot } from './diglot.ts'
+import { createDiglot, keys } from './diglot.ts'
 
 export { createDiglot }
 export type { Catalog, Diglot, DiglotOptions, Translate } from './diglot.ts'
@@ -56,20 +56,28 @@ export function useDiglot(): Diglot {
 /** Renders segments as text in the current locale, for attributes. */
 export function useTranslate(): Translate {
   const [diglot, version, locale] = useSubscription()
-  return useCallback((hash, source, values) => diglot.t(hash, source, values, locale), [diglot, version, locale])
+  return useCallback((hash, source, values) => diglot.t(hash, source, values?.map(text), locale), [diglot, version, locale])
+}
+
+/** A value as React renders it in text. */
+function text(value: unknown): string {
+  if (Array.isArray(value))
+    return value.map(text).join('')
+  return value == null || typeof value === 'boolean' ? '' : String(value)
 }
 
 /** Renders a placeholder: an atomic one as a node, a paired one as a function of the text it wraps. */
 export type Part = ReactNode | ((children: ReactNode) => ReactNode)
 
 function render(nodes: SkeletonNode[], parts: Part[]): ReactNode {
-  return createElement(Fragment, null, ...nodes.map((node): ReactNode => {
+  const keyed = keys(nodes)
+  return createElement(Fragment, null, ...nodes.map((node, i): ReactNode => {
     if (node.type === 'text')
       return node.value
     if (node.type !== 'placeholder')
       return null
     const part = parts[node.id]
-    return node.children ? (part as (children: ReactNode) => ReactNode)(render(node.children, parts)) : part as ReactNode
+    return createElement(Fragment, { key: keyed[i] }, node.children ? (part as (children: ReactNode) => ReactNode)(render(node.children, parts)) : part as ReactNode)
   }))
 }
 

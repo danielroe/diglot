@@ -1,8 +1,8 @@
 import type { SkeletonNode } from '@diglot/core'
 import type { App, InjectionKey, VNodeArrayChildren } from 'vue'
 import type { Diglot, DiglotOptions } from './diglot.ts'
-import { defineComponent, inject, shallowRef, toDisplayString } from 'vue'
-import { createDiglot as createState } from './diglot.ts'
+import { defineComponent, Fragment, h, inject, shallowReactive, shallowRef, toDisplayString } from 'vue'
+import { createDiglot as createState, keys } from './diglot.ts'
 
 export type { Catalog, Diglot, DiglotOptions } from './diglot.ts'
 
@@ -25,19 +25,22 @@ export function createDiglot(options: DiglotOptions = {}): Diglot & { install: (
       s: { type: String, required: true },
     },
     setup(props, { slots }) {
-      // One component per list of nodes, which parsing caches by text, so that the components inside an element keep their state.
-      const wrappers = new WeakMap<SkeletonNode[], () => VNodeArrayChildren>()
-      function wrap(nodes: SkeletonNode[]) {
-        let wrapper = wrappers.get(nodes)
+      // One component per paired placeholder, rendering the nodes it wraps in the current translation, so that the components inside it keep their state.
+      const wrapped = shallowReactive(new Map<number, SkeletonNode[]>())
+      const wrappers = new Map<number, () => VNodeArrayChildren>()
+      function wrap(id: number, nodes: SkeletonNode[]) {
+        wrapped.set(id, nodes)
+        let wrapper = wrappers.get(id)
         if (!wrapper)
-          wrappers.set(nodes, wrapper = () => render(nodes))
+          wrappers.set(id, wrapper = () => render(wrapped.get(id)!))
         return wrapper
       }
       function render(nodes: SkeletonNode[]): VNodeArrayChildren {
-        return nodes.map((node) => {
+        const keyed = keys(nodes)
+        return nodes.map((node, i) => {
           if (node.type !== 'placeholder')
             return node.type === 'text' ? node.value : null
-          return slots[node.id]?.(node.children && { __children: wrap(node.children) })
+          return h(Fragment, { key: keyed[i] }, slots[node.id]?.(node.children && { __children: wrap(node.id, node.children) }))
         })
       }
       return () => {

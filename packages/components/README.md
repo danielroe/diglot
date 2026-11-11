@@ -88,6 +88,8 @@ Only markup is read. Strings in your scripts, and strings in expressions such as
 
 A sentence ends at an element that can't sit inside one, such as a `<div>` or a component with content, and at a conditional or repeated element (`v-if`, `v-for`, `{#if}`, JSX inside `{…}`). Text keeps the whitespace its framework renders, and its segment is the same text with whitespace collapsed, so the same text has one hash in every component and every framework. Text that holds placeholder syntax such as `{0}` is left alone, and the plugin warns about it.
 
+The rewrite adds names that start with two underscores, such as `__diglot`, and Svelte's `Diglot__Text`, so keep those names out of your components. A translation can reorder placeholders: each keeps its identity, so the state of a component or an input inside one survives.
+
 Segments are `plain`: text runs are `html-block` units and attributes are `prop` units, with the attribute name as `detail`.
 
 In React, the rewrite calls a hook in function components, including those passed to `memo()` and `forwardRef()`, so attributes are translated inside them only, and the plugin warns about the others, such as attributes in class components. A capitalised function that the module calls, or passes to another function as in `items.map(Row)`, is a helper, not a component, and so is an async function. Text renders through `<DiglotText>`, which needs no hook, except in `<title>` and `<option>`, which only take strings. Give an `<option>` a `value`, so that what a form submits doesn't change with the locale.

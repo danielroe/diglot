@@ -47,6 +47,21 @@ const INSTANCES = Symbol.for('@diglot/components')
 
 const display = (value: unknown) => value == null ? '' : String(value)
 
+/**
+ * A key for each node, the same for a placeholder wherever a translation moves it, so that a
+ * framework keeps the state of what it renders. A repeated placeholder gets a key per occurrence.
+ */
+export function keys(nodes: SkeletonNode[]): string[] {
+  const seen = new Map<number, number>()
+  return nodes.map((node, i) => {
+    if (node.type !== 'placeholder')
+      return `t${i}`
+    const occurrence = seen.get(node.id) ?? 0
+    seen.set(node.id, occurrence + 1)
+    return occurrence ? `${node.id}.${occurrence}` : `${node.id}`
+  })
+}
+
 function parse(skeleton: string): SkeletonNode[] {
   const paired = [...skeleton.matchAll(/\{\/(\d+)\}/g)].map((match): Placeholder => ({ id: Number(match[1]), type: 'html', source: '', close: '' }))
   return parseSkeleton(skeleton, paired, 'plain')

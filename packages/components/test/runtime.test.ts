@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from 'vitest'
 import { createApp, defineComponent, h, nextTick, onMounted, ref, resolveComponent } from 'vue'
-import { createDiglot } from '../src/diglot.ts'
+import { createDiglot, keys } from '../src/diglot.ts'
 import { createDiglot as createVueDiglot, useDiglot } from '../src/vue.ts'
 
 describe('createDiglot', () => {
@@ -57,6 +57,10 @@ describe('createDiglot', () => {
     expect(diglot.t('abc', 'Hello')).toBe('Bonjour')
   })
 
+  it('should key each placeholder by its id wherever it moves', () => {
+    expect(keys([{ type: 'text', value: 'a' }, { type: 'placeholder', id: 1 }, { type: 'placeholder', id: 0 }, { type: 'placeholder', id: 1 }])).toEqual(['t0', '1', '0', '1.1'])
+  })
+
   it('should parse a translation into text and placeholder nodes', () => {
     const diglot = createDiglot({ locale: 'fr', messages: { fr: { abc: 'Lisez {0}la doc{/0}{1}' } } })
     expect(diglot.nodes('abc', 'Read {0}the docs{/0}{1}')).toEqual([
@@ -98,9 +102,9 @@ describe('vue', () => {
     createApp(Text).use(diglot).mount(root)
     diglot.update('fr', { abc: 'Lisez {0}la doc {1}{/0}', other: 'Autre' })
     await nextTick()
-    diglot.update('fr', { abc: 'Lisez {0}la doc {1}{/0}' })
+    diglot.update('fr', { abc: 'Consultez {0}la documentation {1}{/0}' })
     await nextTick()
-    expect(root.innerHTML).toBe('Lisez <a>la doc <i>new</i></a>')
+    expect(root.innerHTML).toBe('Consultez <a>la documentation <i>new</i></a>')
     expect(mounted).toBe(1)
   })
 
