@@ -74,6 +74,10 @@ const diglot = createDiglot({ ...translations, locale, messages: catalog ? { [lo
 
 In SvelteKit, do this in a universal `+layout.ts` `load` function and create the state in the root `+layout.svelte` with the data it returns. Outside a component you can also await `diglot.ready`, which settles once the starting catalog is loaded.
 
+### Nuxt
+
+Add the plugin to `vite.plugins` in `nuxt.config.ts`. The Vite root of Nuxt is the `app` directory, so a translations repository next to it is `'../translations'`. Then install the runtime in a Nuxt plugin: load the catalog of the request's locale on the server, keep it in `useState` so the client hydrates from the payload, and pass it as `messages`. The [docs](https://diglot.sh/integrations/components#nuxt) show the whole plugin.
+
 ### Tests
 
 Vitest reads your Vite config, so it rewrites your components too. In Vue, install the runtime when you mount them, for example with `global: { plugins: [createDiglot()] }` in Vue Test Utils. React and Svelte components render in the source locale without a provider.

@@ -192,4 +192,46 @@ describe('hot updates', () => {
     expect(listener).toHaveBeenCalledOnce()
     vi.unstubAllGlobals()
   })
+
+  it('should send a changed record to a page that got its catalog from the server', { timeout: 30_000 }, async () => {
+    const translations = repository()
+    const footer = await segment('Card.vue')
+    const server = await createServer({ logLevel: 'silent', configFile: false, root, server: { port: 0 }, plugins: [diglot({ translations }), vue()] })
+    await server.listen()
+    await server.pluginContainer.buildStart({})
+    const sent: HotPayload[] = []
+    const hot = server.environments.client.hot
+    const send = hot.send.bind(hot)
+    hot.send = ((payload: HotPayload) => {
+      sent.push(payload)
+      send(payload)
+    }) as typeof hot.send
+
+    await writeRecord(translations, 'fr', createRecord({ segment: footer, text: 'Pied de page', origin: 'human' }))
+    await vi.waitFor(() => expect(sent.some(p => p.type === 'custom' && p.event === 'diglot:locale')).toBe(true), { timeout: 10_000 })
+    await server.close()
+
+    expect(sent.find(p => p.type === 'custom')).toMatchObject({ data: { locale: 'fr', catalog: { [footer.hash]: 'Pied de page' } } })
+  })
+
+  it('should send changed records to the page of each dev server that shares the plugin, as in Nuxt', { timeout: 30_000 }, async () => {
+    const translations = repository()
+    const footer = await segment('Card.vue')
+    const plugin = diglot({ translations })
+    const client = await createServer({ logLevel: 'silent', configFile: false, root, server: { port: 0 }, plugins: [plugin, vue()] })
+    const ssr = await createServer({ logLevel: 'silent', configFile: false, root, server: { middlewareMode: true, hmr: false }, plugins: [plugin, vue()] })
+    await client.listen()
+    await client.pluginContainer.buildStart({})
+    const sent: HotPayload[] = []
+    const hot = client.environments.client.hot
+    const send = hot.send.bind(hot)
+    hot.send = ((payload: HotPayload) => {
+      sent.push(payload)
+      send(payload)
+    }) as typeof hot.send
+
+    await writeRecord(translations, 'fr', createRecord({ segment: footer, text: 'Pied de page', origin: 'human' }))
+    await vi.waitFor(() => expect(sent.some(p => p.type === 'custom' && p.event === 'diglot:locale')).toBe(true), { timeout: 10_000 })
+    await Promise.all([client.close(), ssr.close()])
+  })
 })

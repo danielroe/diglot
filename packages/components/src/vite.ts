@@ -44,7 +44,8 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
   /** The catalog of each locale module loaded so far, as JSON. */
   const sent = new Map<string, string>()
   let config: ResolvedConfig
-  let server: ViteDevServer | undefined
+  /** Dev servers that share this plugin, as Nuxt's client and server builds do. */
+  const servers = new Set<ViteDevServer>()
   let translations: string | undefined
   let policy: Partial<Policy> | undefined
   /** JSX is read as React only when the app uses the React plugin, so that Vue JSX or Solid stays as it is. */
@@ -133,8 +134,8 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       if (result?.segments.length)
         return { code: result.code, map: { ...result.map, sources: [id] } }
     },
-    configureServer(devServer) {
-      server = devServer
+    configureServer(server) {
+      servers.add(server)
       if (translations)
         server.watcher.add(translations)
     },
@@ -144,6 +145,9 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       if (!translated)
         return
       if (this.environment.name === 'client') {
+        // A page rendered on the server may hold this catalog without importing its module.
+        if (!sent.has(path.locale))
+          sent.set(path.locale, JSON.stringify(catalog(path.locale)))
         const record = type === 'delete' ? undefined : parseRecordFile(await read(), path.hash)
         if (record)
           translated.set(path.hash, record)
@@ -157,7 +161,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
 
   /** Sends each loaded catalog that changed to the browser, and invalidates its module. */
   function sendChanged() {
-    if (!server)
+    if (!servers.size)
       return
     for (const [locale, before] of sent) {
       const after = catalog(locale)
@@ -165,12 +169,14 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       if (json === before)
         continue
       sent.set(locale, json)
-      for (const environment of Object.values(server.environments)) {
-        const module = environment.moduleGraph.getModuleById(`${RESOLVED}/${locale}`)
-        if (module)
-          environment.moduleGraph.invalidateModule(module)
+      for (const server of servers) {
+        for (const environment of Object.values(server.environments)) {
+          const module = environment.moduleGraph.getModuleById(`${RESOLVED}/${locale}`)
+          if (module)
+            environment.moduleGraph.invalidateModule(module)
+        }
+        server.environments.client.hot.send({ type: 'custom', event: 'diglot:locale', data: { locale, catalog: after } })
       }
-      server.environments.client.hot.send({ type: 'custom', event: 'diglot:locale', data: { locale, catalog: after } })
     }
   }
 }
