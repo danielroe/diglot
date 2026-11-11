@@ -16,7 +16,10 @@
     "./svelte": "./src/svelte.ts",
     "./vite": "./src/vite.ts",
     "./vue": "./src/vue.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./client": {
+      "types": "./client.d.ts"
+    }
   },
   "types": "./dist/index.d.mts",
   "publishConfig": {
@@ -26,7 +29,10 @@
       "./svelte": "./dist/svelte.mjs",
       "./vite": "./dist/vite.mjs",
       "./vue": "./dist/vue.mjs",
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./client": {
+        "types": "./client.d.ts"
+      }
     }
   },
   "typesVersions": {
@@ -49,6 +55,7 @@
     }
   },
   "files": [
+    "client.d.ts",
     "dist"
   ],
   "engines": {
