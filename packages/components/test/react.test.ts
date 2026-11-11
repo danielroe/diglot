@@ -7,7 +7,7 @@ import { expect, it, vi } from 'vitest'
 import { createDiglot, DiglotProvider, DiglotText, useTranslate } from '../src/react.ts'
 
 function Values() {
-  return createElement('option', null, useTranslate()('abc', 'Hello {0}{1}', [false, ['Ada', 'Bob']]))
+  return createElement('option', null, useTranslate()('abc', 'Hello {0}{1}{2}', [false, ['Ada', 'Bob'], new Set([1, 2])]))
 }
 
 Reflect.set(globalThis, 'IS_REACT_ACT_ENVIRONMENT', true)
@@ -47,7 +47,7 @@ it('should hydrate in the initial locale after an earlier `setLocale`, then show
 })
 
 it('should render values in text as React does', () => {
-  expect(renderToString(createElement(Values))).toBe('<option>Hello AdaBob</option>')
+  expect(renderToString(createElement(Values))).toBe('<option>Hello AdaBob12</option>')
 })
 
 it('should keep the state of placeholders that a translation reorders', async () => {

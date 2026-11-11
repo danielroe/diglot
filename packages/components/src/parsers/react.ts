@@ -210,9 +210,9 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
   scan(program.body, false)
 
   const hooked = new Set<Node>()
-  /** The component around a span, which then calls the hook. */
+  /** The component whose body holds a span, which then calls the hook. Its parameters can't see the hook. */
   function hook(at: Span): Node | undefined {
-    const fn = components.find(component => component.start <= at.start && at.end <= component.end)
+    const fn = components.find(component => component.body.start <= at.start && at.end <= component.body.end)
     if (fn)
       hooked.add(fn)
     return fn

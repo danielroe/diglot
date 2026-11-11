@@ -61,9 +61,11 @@ export function useTranslate(): Translate {
 
 /** A value as React renders it in text. */
 function text(value: unknown): string {
-  if (Array.isArray(value))
-    return value.map(text).join('')
-  return value == null || typeof value === 'boolean' ? '' : String(value)
+  if (value == null || typeof value === 'boolean')
+    return ''
+  if (typeof value === 'object' && Symbol.iterator in value)
+    return Array.from(value as Iterable<unknown>, text).join('')
+  return String(value)
 }
 
 /** Renders a placeholder: an atomic one as a node, a paired one as a function of the text it wraps. */

@@ -175,6 +175,13 @@ describe('react', () => {
     expect(result.skipped).toEqual([{ line: 1, reason: 'text in <title> outside a component', text: 'Hello' }])
   })
 
+  it('should leave attributes in the parameters of a component as they are', async () => {
+    const result = await rewrite('export default function Page({ icon = <img alt="Profile" /> } = {}) { return <div title="Page">{icon}</div> }', 'x.tsx')
+    expect(result.code).toContain('icon = <img alt="Profile" />')
+    expect(result.code).toContain(`<div title={__diglot('${result.segments[0]!.hash}', 'Page')}>`)
+    expect(result.skipped.map(s => s.text)).toEqual(['Profile'])
+  })
+
   it('should call the hook in components passed to a higher-order component', async () => {
     const result = await rewrite('const Page = () => <img alt="Logo" />\nexport default observer(Page)', 'x.tsx')
     expect(result.code).toContain('const Page = () => { const __diglot = __useTranslate(); return (<img alt={__diglot(')
