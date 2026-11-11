@@ -73,6 +73,12 @@ export default defineAppConfig({
       },
     },
     prose: {
+      // Tabs named after a framework take its logo.
+      codeIcon: {
+        vue: 'i-simple-icons-vuedotjs',
+        react: 'i-simple-icons-react',
+        svelte: 'i-simple-icons-svelte',
+      },
       h2: {
         slots: {
           base: 'mt-16 border-t border-dashed border-default pt-10 font-medium',
