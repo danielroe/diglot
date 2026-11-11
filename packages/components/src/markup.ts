@@ -62,6 +62,8 @@ export type Part
 
 /** A run of text that renders through the runtime. `source` is its text as rendered, in placeholder form; `parts` are indexed by placeholder id. */
 export interface Run extends Span {
+  /** The element the run is in, if any. */
+  parent?: string
   hash: string
   source: string
   parts: Part[]
@@ -253,7 +255,7 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
         return { type: 'element', source: code.slice(data.start, data.end) }
       return { type: 'element', source: openTag(data, [...containers, data.name]) + code.slice(data.start + data.open.length, data.end) }
     })
-    s.overwrite(start, end, emit.run({ hash: prepared.segment.hash, source, parts, start, end }))
+    s.overwrite(start, end, emit.run({ parent: containers.at(-1), hash: prepared.segment.hash, source, parts, start, end }))
   }
 
   function walk(element: ElementNode, containers: string[]) {

@@ -125,6 +125,9 @@ function part(part: Part): string {
   }
 }
 
+/** Elements whose children React renders as a string, so text in them can't be a component. */
+const TEXT_ONLY = new Set(['title', 'option'])
+
 /** Wrappers whose first argument is a component: `memo()` and `forwardRef()`, also as `React.memo()`. */
 const WRAPPERS = new Set(['memo', 'forwardRef'])
 
@@ -160,7 +163,7 @@ const stringValue = (node: Node): string | undefined => node.type === 'JSXAttrib
 /**
  * Parses a JSX or TSX module. Every outermost JSX element or fragment is a root, and JSX inside
  * `{…}` is control flow, walked as a block. Text renders through `<DiglotText>`, which works
- * anywhere, or as a string inside a function component. Attributes render through the
+ * anywhere, or as a string in `<title>` and `<option>` inside a function component. Attributes render through the
  * `useTranslate()` that the rewrite calls at the top of their component.
  */
 export async function parseReact(code: string, file: string): Promise<Parsed | undefined> {
@@ -270,8 +273,7 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
   }
   const emit: Emitter = {
     run(run: Run) {
-      // Text alone renders as a string, which also suits elements that only take text, such as `<title>` and `<option>`.
-      if (!run.parts.length && hook(run))
+      if (!run.parts.length && TEXT_ONLY.has(run.parent!) && hook(run))
         return `{__diglot('${run.hash}', ${literal(run.source)})}`
       return `<__DiglotText h="${run.hash}" s={${literal(run.source)}}${run.parts.length ? ` p={[${run.parts.map(part).join(', ')}]}` : ''} />`
     },

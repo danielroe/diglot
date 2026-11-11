@@ -108,7 +108,7 @@ describe('react', () => {
   it('should follow the whitespace rule of JSX', async () => {
     const result = await rewrite(component('<p>\n  One\n    two  three\n\n  four\n</p>'), 'x.tsx')
     expect(result.segments.map(s => s.skeleton)).toEqual(['One two three four'])
-    expect(result.code).toContain(`{__diglot('${result.segments[0]!.hash}', 'One two  three four')}`)
+    expect(result.code).toContain(`s={'One two  three four'}`)
     expect(await skeletons(component('<p>\n  Read the{" "}\n  <a>docs</a>{" "}\n  now\n</p>'), 'x.tsx')).toEqual(['Read the {0}docs{/0} now'])
   })
 
@@ -141,11 +141,12 @@ describe('react', () => {
     expect(result.code.startsWith('"use client";\nimport { DiglotText')).toBe(true)
   })
 
-  it('should render text alone as a string inside a component, for elements that only take text', async () => {
-    const result = await rewrite(component('<><title>Settings</title><select><option value="en">English</option></select></>'), 'x.tsx')
+  it('should render text in `<title>` and `<option>` as a string, and other text through `DiglotText`', async () => {
+    const result = await rewrite(component('<><title>Settings</title><select><option value="en">English</option></select><p>Hello</p></>'), 'x.tsx')
     const [title, option] = result.segments
     expect(result.code).toContain(`<title>{__diglot('${title!.hash}', 'Settings')}</title>`)
     expect(result.code).toContain(`<option value="en">{__diglot('${option!.hash}', 'English')}</option>`)
+    expect(result.code).toContain(`<p><__DiglotText h="${result.segments[2]!.hash}" s={'Hello'} /></p>`)
   })
 
   it('should call the hook in components only, and warn about attributes elsewhere', async () => {

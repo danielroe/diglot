@@ -90,7 +90,7 @@ A sentence ends at an element that can't sit inside one, such as a `<div>`, and 
 
 Segments are `plain`: text runs are `html-block` units and attributes are `prop` units, with the attribute name as `detail`.
 
-In React, the rewrite calls a hook in function components, including those passed to `memo()` and `forwardRef()`, so attributes are translated inside them only, and the plugin warns about the others, such as attributes in class components. A capitalised function that the module calls directly is a helper, not a component. Text renders through `<DiglotText>`, which works anywhere, or as a string inside a function component when it has no elements or expressions.
+In React, the rewrite calls a hook in function components, including those passed to `memo()` and `forwardRef()`, so attributes are translated inside them only, and the plugin warns about the others, such as attributes in class components. A capitalised function that the module calls directly is a helper, not a component. Text renders through `<DiglotText>`, which needs no hook, except in `<title>` and `<option>`, which only take strings. Give an `<option>` a `value`, so that what a form submits doesn't change with the locale.
 
 ## Translations
 
