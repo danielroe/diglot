@@ -4,7 +4,7 @@ import { act, createElement } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 import { expect, it, vi } from 'vitest'
-import { createDiglot, DiglotProvider, DiglotText, useTranslate } from '../src/runtime/react.ts'
+import { createDiglot, DiglotProvider, DiglotText, useTranslate } from '../src/react.ts'
 
 Reflect.set(globalThis, 'IS_REACT_ACT_ENVIRONMENT', true)
 

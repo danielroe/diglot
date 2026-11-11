@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { createDiglot } from '../src/runtime/diglot.ts'
+import { createDiglot } from '../src/diglot.ts'
 
 it('should run without Node built-ins', () => {
   const diglot = createDiglot({ locale: 'fr', messages: { fr: { abc: 'Bonjour {0}' } } })

@@ -1,112 +1,72 @@
-import type { SFCTemplateBlock } from '@vue/compiler-sfc'
-import type { Attribute, ElementNode, Emitter, MarkupNode, Parsed, Part, Run } from './markup.ts'
-import { literal } from './markup.ts'
+import type { SkeletonNode } from '@diglot/core'
+import type { App, InjectionKey, Slots, VNodeArrayChildren } from 'vue'
+import type { Diglot, DiglotOptions } from './diglot.ts'
+import { defineComponent, inject, shallowRef, toDisplayString } from 'vue'
+import { createDiglot as createState } from './diglot.ts'
 
-type TemplateChildNode = NonNullable<SFCTemplateBlock['ast']>['children'][number]
-type VueElement = Extract<TemplateChildNode, { tagType: unknown }>
+export type { Catalog, Diglot, DiglotOptions } from './diglot.ts'
 
-// `NodeTypes` and `ElementTypes` of `@vue/compiler-core`, which the SFC compiler does not re-export as values.
-const ELEMENT = 1
-const TEXT = 2
-const COMMENT = 3
-const INTERPOLATION = 5
-const ATTRIBUTE = 6
-const DIRECTIVE = 7
-const COMPONENT = 1
+const key: InjectionKey<Diglot> = Symbol('diglot')
 
-/** Directives that make an element conditional or repeated, or replace its content. */
-const STRUCTURAL = new Set(['if', 'else-if', 'else', 'for', 'slot', 'html', 'text', 'pre', 'memo', 'once'])
-
-const isBlank = (value: string) => !/[^\t\r\n\f ]/.test(value)
-
-/**
- * The text Vue renders for a child under `whitespace: 'condense'`: blank text first or last, or
- * between two elements across a newline, renders nothing; other blank text renders one space;
- * other text has its whitespace runs condensed.
- */
-function rendered(children: TemplateChildNode[], i: number): string {
-  const content = (children[i] as { content: string }).content
-  if (!isBlank(content))
-    return content.replace(/[\t\r\n\f ]+/g, ' ')
-  const previous = children[i - 1]?.type
-  const next = children[i + 1]?.type
-  if (previous === undefined || next === undefined)
-    return ''
-  if ((previous === COMMENT && (next === COMMENT || next === ELEMENT)) || (previous === ELEMENT && (next === COMMENT || (next === ELEMENT && /[\r\n]/.test(content)))))
-    return ''
-  return ' '
-}
-
-function toNodes(code: string, children: TemplateChildNode[]): MarkupNode[] {
-  return children.flatMap((node, i): MarkupNode[] => {
-    const span = { start: node.loc.start.offset, end: node.loc.end.offset }
-    switch (node.type) {
-      case TEXT:
-        return [{ type: 'text', value: rendered(children, i), ...span }]
-      case COMMENT:
-        return [{ type: 'comment', ...span }]
-      case INTERPOLATION:
-        return [{ type: 'expression', code: (node.content as { content: string }).content, ...span }]
-      case ELEMENT:
-        return [toElement(code, node as VueElement)]
-      default:
-        return []
-    }
+function render(nodes: SkeletonNode[], slots: Slots): VNodeArrayChildren {
+  return nodes.map((node) => {
+    if (node.type !== 'placeholder')
+      return node.type === 'text' ? node.value : null
+    const children = node.children
+    return slots[node.id]?.(children && { __children: () => render(children, slots) })
   })
 }
 
-function toElement(code: string, node: VueElement): ElementNode {
-  const { start, end } = { start: node.loc.start.offset, end: node.loc.end.offset }
-  const props = node.props
-  const openEnd = code.indexOf('>', props.at(-1)?.loc.end.offset ?? start + 1 + node.tag.length) + 1
-  const attributes: Attribute[] = props.flatMap(prop => prop.type === ATTRIBUTE && prop.value
-    ? [{ name: prop.name, value: prop.value.content, start: prop.loc.start.offset, end: prop.loc.end.offset }]
-    : [])
-  return {
-    type: 'element',
-    name: node.tag,
-    component: node.tagType === COMPONENT,
-    structural: props.some(prop => prop.type === DIRECTIVE && STRUCTURAL.has(prop.name)),
-    optOut: attributes.some(a => a.name === 'translate' && a.value === 'no') || props.some(prop => (prop.type === DIRECTIVE && prop.name === 'pre') || prop.name === 'v-pre') || /^<[^>]*\sv-pre[\s>/=]/.test(code.slice(start, openEnd)),
-    open: code.slice(start, openEnd),
-    close: node.isSelfClosing || openEnd === end ? '' : code.slice(code.lastIndexOf('</', end - 1), end),
-    attributes,
-    children: toNodes(code, node.children),
-    start,
-    end,
+/**
+ * Creates the locale state and a Vue plugin that installs it: rewritten templates call `$diglot`
+ * for text and render `<DiglotText>` for text with elements, and both re-render when the locale or
+ * its catalog changes.
+ */
+export function createDiglot(options: DiglotOptions = {}): Diglot & { install: (app: App) => void } {
+  const diglot = createState(options)
+  // A render that reads `version` re-runs when the locale or its catalog changes.
+  const version = shallowRef(0)
+  diglot.subscribe(() => version.value++)
+  const DiglotText = defineComponent({
+    name: 'DiglotText',
+    props: {
+      h: { type: String, required: true },
+      s: { type: String, required: true },
+    },
+    setup(props, { slots }) {
+      return () => {
+        void version.value
+        return render(diglot.nodes(props.h, props.s), slots)
+      }
+    },
+  })
+  // Reading `locale` in a render tracks it too, for locale switchers.
+  const tracked = new Proxy(diglot, {
+    get(target, property, receiver) {
+      if (property === 'locale')
+        void version.value
+      return Reflect.get(target, property, receiver)
+    },
+  })
+  return Object.assign(tracked, {
+    install(app: App) {
+      app.config.globalProperties.$diglot = (hash: string, source: string, values?: unknown[]) => {
+        void version.value
+        return diglot.t(hash, source, values?.map(toDisplayString))
+      }
+      app.provide(key, tracked)
+      app.component('DiglotText', DiglotText)
+    },
+  })
+}
+
+/** The locale state of the app, for a locale switcher. */
+export function useDiglot(): Diglot {
+  return inject(key)!
+}
+
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $diglot: (hash: string, source: string, values?: unknown[]) => string
   }
-}
-
-function slot(part: Part, id: number): string {
-  switch (part.type) {
-    case 'expression':
-      return `<template #${id}>{{ ${part.code} }}</template>`
-    case 'element':
-      return `<template #${id}>${part.source}</template>`
-    case 'wrapper':
-      return `<template #${id}="{ __children }">${part.open}<component :is="__children" />${part.close}</template>`
-  }
-}
-
-const emit: Emitter = {
-  run(run: Run) {
-    if (run.parts.every(part => part.type === 'expression')) {
-      const values = run.parts.length ? `, [${run.parts.map(part => `(${part.code})`).join(', ')}]` : ''
-      return `{{ $diglot('${run.hash}', ${literal(run.source)}${values}) }}`
-    }
-    return `<DiglotText h="${run.hash}" :s="${literal(run.source)}">${run.parts.map(slot).join('')}</DiglotText>`
-  },
-  attribute(attribute, hash) {
-    return `:${attribute.name}="$diglot('${hash}', ${literal(attribute.value)})"`
-  },
-}
-
-/** Parses the template of a single-file component. Templates in another language than HTML are left alone. */
-export async function parseVue(code: string, file: string): Promise<Parsed | undefined> {
-  const { parse } = await import('@vue/compiler-sfc')
-  const { descriptor } = parse(code, { filename: file, sourceMap: false, ignoreEmpty: false })
-  const template = descriptor.template
-  if (!template?.ast || (template.lang && template.lang !== 'html'))
-    return
-  return { nodes: toNodes(code, template.ast.children), emit }
 }

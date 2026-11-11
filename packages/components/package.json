@@ -12,36 +12,36 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
-    "./runtime/react": "./src/runtime/react.ts",
-    "./runtime/svelte": "./src/runtime/svelte.ts",
-    "./runtime/vue": "./src/runtime/vue.ts",
+    "./react": "./src/react.ts",
+    "./svelte": "./src/svelte.ts",
     "./vite": "./src/vite.ts",
+    "./vue": "./src/vue.ts",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.mts",
   "publishConfig": {
     "exports": {
       ".": "./dist/index.mjs",
-      "./runtime/react": "./dist/runtime/react.mjs",
-      "./runtime/svelte": "./dist/runtime/svelte.mjs",
-      "./runtime/vue": "./dist/runtime/vue.mjs",
+      "./react": "./dist/react.mjs",
+      "./svelte": "./dist/svelte.mjs",
       "./vite": "./dist/vite.mjs",
+      "./vue": "./dist/vue.mjs",
       "./package.json": "./package.json"
     }
   },
   "typesVersions": {
     "*": {
       "react": [
-        "./dist/runtime/react.d.mts"
+        "./dist/react.d.mts"
       ],
       "svelte": [
-        "./dist/runtime/svelte.d.mts"
+        "./dist/svelte.d.mts"
       ],
       "vite": [
         "./dist/vite.d.mts"
       ],
       "vue": [
-        "./dist/runtime/vue.d.mts"
+        "./dist/vue.d.mts"
       ],
       "*": [
         "./dist/index.d.mts"

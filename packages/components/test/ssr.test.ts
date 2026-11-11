@@ -1,4 +1,4 @@
-import type { Catalog } from '../src/runtime/diglot.ts'
+import type { Catalog } from '../src/diglot.ts'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
@@ -10,9 +10,9 @@ import { createServer } from 'vite'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createSSRApp, h } from 'vue'
 import { renderToString as renderVue } from 'vue/server-renderer'
-import { createDiglot } from '../src/runtime/diglot.ts'
-import { createDiglot as createVueDiglot } from '../src/runtime/vue.ts'
+import { createDiglot } from '../src/diglot.ts'
 import diglot from '../src/vite.ts'
+import { createDiglot as createVueDiglot } from '../src/vue.ts'
 import { canonical, components, fixtures, pseudoTranslations, quiet, runtime, unpseudo } from './utils.ts'
 
 type Server = Awaited<ReturnType<typeof createServer>>

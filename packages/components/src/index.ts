@@ -1,9 +1,9 @@
 import type { Policy, Segment } from '@diglot/core'
 import type { Parsed, Transformed } from './markup.ts'
 import { transformMarkup } from './markup.ts'
-import { parseReact } from './react.ts'
-import { parseSvelte } from './svelte.ts'
-import { parseVue } from './vue.ts'
+import { parseReact } from './parsers/react.ts'
+import { parseSvelte } from './parsers/svelte.ts'
+import { parseVue } from './parsers/vue.ts'
 
 export type { Skipped, Transformed } from './markup.ts'
 

@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from 'vitest'
 import { createApp, defineComponent, h, nextTick } from 'vue'
-import { createDiglot } from '../src/runtime/diglot.ts'
-import { createDiglot as createVueDiglot, useDiglot } from '../src/runtime/vue.ts'
+import { createDiglot } from '../src/diglot.ts'
+import { createDiglot as createVueDiglot, useDiglot } from '../src/vue.ts'
 
 describe('createDiglot', () => {
   it('should keep the whitespace of the source around a translation', () => {

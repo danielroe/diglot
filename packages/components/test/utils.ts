@@ -14,7 +14,7 @@ type Node = DefaultTreeAdapterMap['childNode']
 export const fixtures = fileURLToPath(new URL('./fixtures/', import.meta.url))
 
 export function runtime(framework: 'react' | 'svelte' | 'vue'): string {
-  return fileURLToPath(new URL(`../src/runtime/${framework}.ts`, import.meta.url))
+  return fileURLToPath(new URL(`../src/${framework}.ts`, import.meta.url))
 }
 
 /** The components of a fixture directory, sorted. */
