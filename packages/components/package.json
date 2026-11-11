@@ -97,6 +97,7 @@
   "dependencies": {
     "@diglot/core": "workspace:*",
     "@diglot/store": "workspace:*",
+    "entities": "^9.0.0",
     "magic-string": "^0.30.21",
     "pathe": "^2.0.3"
   },

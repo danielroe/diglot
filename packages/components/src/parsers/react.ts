@@ -1,71 +1,9 @@
 import type { Attribute, BlockNode, ElementNode, Emitter, MarkupNode, Parsed, Part, Run, Span, TextNode } from '../markup.ts'
+import { decodeHTMLStrict as decode } from 'entities/decode'
 import { literal } from '../markup.ts'
 
 /** oxc's ESTree, read loosely: only the node types JSX extraction needs. */
 type Node = Record<string, any> & Span & { type: string }
-
-const ENTITIES: Record<string, string> = {
-  amp: '&',
-  lt: '<',
-  gt: '>',
-  quot: '"',
-  apos: '\'',
-  nbsp: ' ',
-  shy: '­',
-  ensp: ' ',
-  emsp: ' ',
-  thinsp: ' ',
-  zwnj: '‌',
-  zwj: '‍',
-  ndash: '–',
-  mdash: '—',
-  lsquo: '‘',
-  rsquo: '’',
-  sbquo: '‚',
-  ldquo: '“',
-  rdquo: '”',
-  bdquo: '„',
-  laquo: '«',
-  raquo: '»',
-  lsaquo: '‹',
-  rsaquo: '›',
-  hellip: '…',
-  bull: '•',
-  middot: '·',
-  copy: '©',
-  reg: '®',
-  trade: '™',
-  deg: '°',
-  plusmn: '±',
-  times: '×',
-  divide: '÷',
-  minus: '−',
-  euro: '€',
-  pound: '£',
-  yen: '¥',
-  cent: '¢',
-  sect: '§',
-  para: '¶',
-  iexcl: '¡',
-  iquest: '¿',
-  larr: '←',
-  rarr: '→',
-  uarr: '↑',
-  darr: '↓',
-  harr: '↔',
-  hearts: '♥',
-  star: '☆',
-  check: '✓',
-}
-
-function decode(value: string): string {
-  return value.replace(/&(?:#(\d+)|#x([\da-f]+)|([a-z]\w*));/gi, (match, decimal?: string, hex?: string, name?: string) => {
-    if (name)
-      return ENTITIES[name] ?? match
-    const point = decimal ? Number(decimal) : Number.parseInt(hex!, 16)
-    return point <= 0x10FFFF ? String.fromCodePoint(point) : match
-  })
-}
 
 /** The text JSX renders: each line trimmed where it meets a line break, blank lines dropped, the rest joined by one space. */
 function jsxText(raw: string): string {
@@ -131,15 +69,19 @@ const TEXT_ONLY = new Set(['title', 'option'])
 /** Wrappers whose first argument is a component: `memo()` and `forwardRef()`, also as `React.memo()`. */
 const WRAPPERS = new Set(['memo', 'forwardRef'])
 
-/** The function of a component: `node` itself, or the function a wrapper receives. */
-function componentFunction(node: Node | undefined): Node | undefined {
-  if (isFunction(node))
-    return node
-  const callee = node?.type === 'CallExpression' ? node.callee as Node : undefined
-  return WRAPPERS.has(callee?.type === 'MemberExpression' ? callee.property.name : callee?.name) ? componentFunction(node!.arguments[0]) : undefined
+function isWrapper(node: Node): boolean {
+  const callee = node.callee as Node
+  return WRAPPERS.has(callee.type === 'MemberExpression' ? callee.property.name : callee.name)
 }
 
-/** Capitalised functions the module calls directly: helpers that return JSX, not components. */
+/** The function of a component: `node` itself, or the function a wrapper receives. Async functions are server components, which can't call hooks. */
+function componentFunction(node: Node | undefined): Node | undefined {
+  if (isFunction(node))
+    return node!.async ? undefined : node
+  return node?.type === 'CallExpression' && isWrapper(node) ? componentFunction(node.arguments[0]) : undefined
+}
+
+/** Capitalised functions the module calls directly or passes to another function, such as `items.map(Row)`: helpers that return JSX, not components. */
 function helpers(node: unknown, out = new Set<string>()): Set<string> {
   if (Array.isArray(node)) {
     for (const child of node)
@@ -147,8 +89,12 @@ function helpers(node: unknown, out = new Set<string>()): Set<string> {
   }
   else if (node && typeof node === 'object') {
     const current = node as Node
-    if (current.type === 'CallExpression' && current.callee.type === 'Identifier' && isCapitalised(current.callee.name))
-      out.add(current.callee.name)
+    if (current.type === 'CallExpression') {
+      for (const node of [current.callee, ...(isWrapper(current) ? [] : current.arguments)] as Node[]) {
+        if (node.type === 'Identifier' && isCapitalised(node.name))
+          out.add(node.name)
+      }
+    }
     for (const key in current) {
       if (key !== 'parent')
         helpers(current[key], out)
@@ -236,7 +182,7 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
     if (node.type !== 'FunctionDeclaration' && node.type !== 'VariableDeclarator')
       return
     if (isCapitalised(node.id?.name) && !called.has(node.id.name))
-      return node.type === 'FunctionDeclaration' ? node : componentFunction(node.init)
+      return componentFunction(node.type === 'FunctionDeclaration' ? node : node.init)
   }
   function scan(node: unknown, inComponent: boolean) {
     if (Array.isArray(node)) {

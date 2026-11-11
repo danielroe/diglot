@@ -63,7 +63,9 @@ function toElement(code: string, node: VueElement): ElementNode {
   const end = node.loc.end.offset
   const props = node.props
   const openEnd = code.indexOf('>', props.at(-1)?.loc.end.offset ?? start + 1 + node.tag.length) + 1
-  const attributes: Attribute[] = props.flatMap(prop => prop.type === ATTRIBUTE && prop.value
+  // A static attribute that is also bound, such as `title="a" :title="b"`, is left as it is, as the rewrite would bind it twice.
+  const bound = new Set(props.flatMap(prop => prop.type === DIRECTIVE && prop.name === 'bind' && prop.arg && 'isStatic' in prop.arg && prop.arg.isStatic ? [prop.arg.content] : []))
+  const attributes: Attribute[] = props.flatMap(prop => prop.type === ATTRIBUTE && prop.value && !bound.has(prop.name)
     ? [{ name: prop.name, value: prop.value.content, start: prop.loc.start.offset, end: prop.loc.end.offset }]
     : [])
   return {

@@ -8,9 +8,12 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import vue from '@vitejs/plugin-vue'
 import { createServer } from 'vite'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createSSRApp, h } from 'vue'
+import { renderToString } from 'vue/server-renderer'
 import { createDiglot } from '../src/diglot.ts'
 import { extract } from '../src/index.ts'
 import diglot from '../src/vite.ts'
+import { createDiglot as createVueDiglot } from '../src/vue.ts'
 import { fixtures, runtime } from './utils.ts'
 
 const root = join(fixtures, 'vue')
@@ -86,6 +89,28 @@ describe('virtual:diglot', () => {
     const { render } = await server.ssrLoadModule('svelte/server')
     const { default: fr } = await server.ssrLoadModule('virtual:diglot/fr')
     expect(render(App, { props: { diglot: createDiglot({ locale: 'fr', messages: { fr } }) } }).body).toContain('<p>Bonjour</p>')
+    await server.close()
+  })
+
+  it('should warn about a component it can\'t parse, and read the others', async () => {
+    const { dir, translations } = project('src/Broken.svelte', '<p>Hello {</p>\n')
+    writeFileSync(join(dir, 'src/Card.vue'), '<template><p>Hello</p></template>\n')
+    const [hello] = await extract('<template><p>Hello</p></template>\n', { file: 'src/Card.vue' })
+    await writeRecord(translations, 'fr', createRecord({ segment: hello!, text: 'Bonjour', origin: 'human' }))
+    const warn = vi.fn()
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, customLogger: { warn, info() {}, warnOnce() {}, error() {}, clearScreen() {}, hasErrorLogged: () => false, hasWarned: false }, plugins: [diglot({ translations }), vue()] })
+    await server.pluginContainer.buildStart({})
+    expect(warn.mock.calls.join()).toContain('src/Broken.svelte is not translated')
+    expect((await server.ssrLoadModule('virtual:diglot/fr')).default).toEqual({ [hello!.hash]: 'Bonjour' })
+    await server.close()
+  })
+
+  it('should render entities in Vue templates as written', async () => {
+    const { dir } = project('src/Entities.vue', '<template><p title="&amp;copy; 2024">Tom &amp;amp; Jerry</p></template>\n')
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, plugins: [diglot(), vue()] })
+    const { default: component } = await server.ssrLoadModule('/src/Entities.vue')
+    const app = createSSRApp({ render: () => h(component) }).use(createVueDiglot())
+    expect(await renderToString(app)).toBe('<p title="&amp;copy; 2024">Tom &amp;amp; Jerry</p>')
     await server.close()
   })
 

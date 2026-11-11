@@ -321,7 +321,7 @@ function lineIndex(code: string): (offset: number) => number {
   }
 }
 
-/** A JavaScript string literal that is also safe inside an HTML attribute, a Vue interpolation and JSX. */
+/** A JavaScript string literal that is also safe inside an HTML attribute, a Vue interpolation and JSX, where entities are decoded. */
 export function literal(value: string): string {
-  return `'${value.replace(/[\\'"{}<>\n\r\u2028\u2029]/g, c => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`)}'`
+  return `'${value.replace(/[\\'"&{}<>\n\r\u2028\u2029]/g, c => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`)}'`
 }

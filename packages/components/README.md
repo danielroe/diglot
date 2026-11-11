@@ -6,7 +6,7 @@ Translate the text of Vue, React and Svelte components without keys or `t()` cal
 pnpm add @diglot/components
 ```
 
-Each framework needs its parser: `@vue/compiler-sfc` for Vue (it comes with `vue`), `oxc-parser` for React, and `svelte` for Svelte.
+Each framework needs its parser: `@vue/compiler-sfc` for Vue (it comes with `vue`), `oxc-parser` for React, and `svelte` for Svelte. `.jsx` and `.tsx` files are read as React. Install the parsers in the translations repository too, for `diglot extract`.
 
 ## Usage
 
@@ -80,17 +80,17 @@ Vitest reads your Vite config, so it rewrites your components too. In Vue, insta
 
 ## What is translated
 
-- Text, with the elements and expressions inside it. `Read the <a href="/docs">docs</a>, {{ name }}` is the segment `Read the {0}docs{/0}, {1}`: an element that wraps text becomes a paired placeholder, and an expression, a component or an element such as `<code>` or `<br>` becomes an atomic one.
+- Text, with the elements and expressions inside it. `Read the <a href="/docs">docs</a>, {{ name }}` is the segment `Read the {0}docs{/0}, {1}`: an inline element or a router link that wraps text becomes a paired placeholder, and an expression, a component without content, or an element such as `<code>` or `<br>` becomes an atomic one.
 - The attributes people read: `title`, `alt`, `placeholder`, `label`, `aria-label`, `aria-description`, `aria-placeholder` and `aria-roledescription`, when their value is static.
 - Elements with `translate="no"`, and Vue elements with `v-pre`, stay as they are. So does the content of `code`, `pre`, `kbd`, `samp`, `var`, `svg`, `math`, `script`, `style` and `textarea`, though their readable attributes are translated. Use `translate="no"` for names, such as your brand.
 
 Only markup is read. Strings in your scripts, and strings in expressions such as `{{ ok ? 'Yes' : 'No' }}` or `label={'Save'}`, stay as they are.
 
-A sentence ends at an element that can't sit inside one, such as a `<div>`, and at a conditional or repeated element (`v-if`, `v-for`, `{#if}`, JSX inside `{…}`). Text keeps the whitespace its framework renders, and its segment is the same text with whitespace collapsed, so the same text has one hash in every component and every framework. Text that holds placeholder syntax such as `{0}` is left alone, and the plugin warns about it.
+A sentence ends at an element that can't sit inside one, such as a `<div>` or a component with content, and at a conditional or repeated element (`v-if`, `v-for`, `{#if}`, JSX inside `{…}`). Text keeps the whitespace its framework renders, and its segment is the same text with whitespace collapsed, so the same text has one hash in every component and every framework. Text that holds placeholder syntax such as `{0}` is left alone, and the plugin warns about it.
 
 Segments are `plain`: text runs are `html-block` units and attributes are `prop` units, with the attribute name as `detail`.
 
-In React, the rewrite calls a hook in function components, including those passed to `memo()` and `forwardRef()`, so attributes are translated inside them only, and the plugin warns about the others, such as attributes in class components. A capitalised function that the module calls directly is a helper, not a component. Text renders through `<DiglotText>`, which needs no hook, except in `<title>` and `<option>`, which only take strings. Give an `<option>` a `value`, so that what a form submits doesn't change with the locale.
+In React, the rewrite calls a hook in function components, including those passed to `memo()` and `forwardRef()`, so attributes are translated inside them only, and the plugin warns about the others, such as attributes in class components. A capitalised function that the module calls, or passes to another function as in `items.map(Row)`, is a helper, not a component, and so is an async function. Text renders through `<DiglotText>`, which needs no hook, except in `<title>` and `<option>`, which only take strings. Give an `<option>` a `value`, so that what a form submits doesn't change with the locale.
 
 ## Translations
 

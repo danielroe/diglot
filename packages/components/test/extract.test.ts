@@ -84,6 +84,11 @@ describe('vue', () => {
     expect(result.code).toContain('<template #0="{ __children }"><a :href="u"><component :is="__children" /></a></template><template #1><br></template>')
   })
 
+  it('should leave an attribute that is also bound as it is', async () => {
+    const code = template('<input title="Search" :title="label">')
+    expect((await rewrite(code, 'x.vue')).code).toBe(code)
+  })
+
   it('should skip text that reads as a placeholder', async () => {
     const result = await rewrite(template('<p>Use {0} here</p><p>Use {name} here</p>'), 'x.vue')
     expect(result.segments.map(s => s.skeleton)).toEqual(['Use {name} here'])
@@ -160,6 +165,15 @@ describe('react', () => {
     expect(result.code).toContain('const Columns = show => show ? [<th title="Name" />] : [];')
     expect(result.code).toContain('memo(forwardRef((props, ref) => { const __diglot = __useTranslate(); return (<input')
     expect(result.skipped.map(s => [s.reason, s.text])).toEqual([['attribute outside a component', 'Name'], ['attribute outside a component', 'Close']])
+  })
+
+  it('should not call the hook in functions passed to other functions, or in async components', async () => {
+    const result = await rewrite([
+      `function Row(item) { return <li title="Item">{item}</li> }`,
+      `export default async function Page({ items }) { return <ul title="List">{items.map(Row)}</ul> }`,
+    ].join('\n'), 'x.tsx')
+    expect(result.code).not.toContain('__useTranslate()')
+    expect(result.skipped.map(s => s.text)).toEqual(['Item', 'List'])
   })
 
   it('should read .jsx and leave modules without JSX text alone', async () => {

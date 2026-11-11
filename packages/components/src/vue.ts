@@ -1,5 +1,5 @@
 import type { SkeletonNode } from '@diglot/core'
-import type { App, InjectionKey, Slots, VNodeArrayChildren } from 'vue'
+import type { App, InjectionKey, VNodeArrayChildren } from 'vue'
 import type { Diglot, DiglotOptions } from './diglot.ts'
 import { defineComponent, inject, shallowRef, toDisplayString } from 'vue'
 import { createDiglot as createState } from './diglot.ts'
@@ -7,15 +7,6 @@ import { createDiglot as createState } from './diglot.ts'
 export type { Catalog, Diglot, DiglotOptions } from './diglot.ts'
 
 const key: InjectionKey<Diglot> = Symbol('diglot')
-
-function render(nodes: SkeletonNode[], slots: Slots): VNodeArrayChildren {
-  return nodes.map((node) => {
-    if (node.type !== 'placeholder')
-      return node.type === 'text' ? node.value : null
-    const children = node.children
-    return slots[node.id]?.(children && { __children: () => render(children, slots) })
-  })
-}
 
 /**
  * Creates the locale state and a Vue plugin that installs it: rewritten templates call `$diglot`
@@ -34,9 +25,24 @@ export function createDiglot(options: DiglotOptions = {}): Diglot & { install: (
       s: { type: String, required: true },
     },
     setup(props, { slots }) {
+      // One component per list of nodes, which parsing caches by text, so that the components inside an element keep their state.
+      const wrappers = new WeakMap<SkeletonNode[], () => VNodeArrayChildren>()
+      function wrap(nodes: SkeletonNode[]) {
+        let wrapper = wrappers.get(nodes)
+        if (!wrapper)
+          wrappers.set(nodes, wrapper = () => render(nodes))
+        return wrapper
+      }
+      function render(nodes: SkeletonNode[]): VNodeArrayChildren {
+        return nodes.map((node) => {
+          if (node.type !== 'placeholder')
+            return node.type === 'text' ? node.value : null
+          return slots[node.id]?.(node.children && { __children: wrap(node.children) })
+        })
+      }
       return () => {
         void version.value
-        return render(diglot.nodes(props.h, props.s), slots)
+        return render(diglot.nodes(props.h, props.s))
       }
     },
   })

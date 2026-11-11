@@ -30,7 +30,7 @@ export interface Diglot {
   readonly locales: string[]
   /** Settles once the catalog of the starting locale is loaded. Await it before a server render. */
   readonly ready: Promise<void>
-  /** Loads the catalog of a locale if needed, then switches to it. */
+  /** Loads the catalog of a locale if needed, then switches to it, unless a later call asked for another locale. */
   setLocale: (locale: string) => Promise<void>
   /** A segment as text in the current locale, or in `locale`. */
   t: (hash: string, source: string, values?: readonly unknown[], locale?: string) => string
@@ -60,8 +60,10 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
   const sourceLocale = options.sourceLocale ?? 'en'
   const initialLocale = options.locale ?? sourceLocale
   let locale = initialLocale
+  let requested = initialLocale
   const catalogs = new Map(Object.entries(options.messages ?? {}))
   const loaders = new Map(Object.entries(options.locales ?? {}))
+  const loading = new Map<string, Promise<void>>()
   const listeners = new Set<() => void>()
   const parsed = new Map<string, SkeletonNode[]>()
   const changed = () => listeners.forEach(listener => listener())
@@ -74,23 +76,32 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
     return source.match(/^\s*/)![0] + translation + source.match(/\s*$/)![0]
   }
 
-  /** Loads the catalog of a locale. Throws right away for a locale without one, so that `createDiglot` does too. */
+  /** Loads the catalog of a locale once. Throws right away for a locale without one, so that `createDiglot` does too. */
   function load(next: string): Promise<void> {
     if (next === sourceLocale || catalogs.has(next))
       return Promise.resolve()
     const loader = loaders.get(next)
     if (!loader)
       throw new Error(`no catalog for the locale "${next}"`)
-    return loader().then(catalog => void catalogs.set(next, catalog))
+    let promise = loading.get(next)
+    if (!promise) {
+      promise = loader().then((catalog) => {
+        catalogs.set(next, catalog)
+        if (next === locale)
+          changed()
+      }, (error) => {
+        loading.delete(next)
+        throw error
+      })
+      loading.set(next, promise)
+    }
+    return promise
   }
 
   const diglot: Diglot = {
     sourceLocale,
     initialLocale,
-    ready: load(locale).then(() => {
-      if (catalogs.has(locale))
-        changed()
-    }),
+    ready: load(locale),
     get locale() {
       return locale
     },
@@ -98,8 +109,9 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
       return [sourceLocale, ...new Set([...loaders.keys(), ...catalogs.keys()].filter(l => l !== sourceLocale))]
     },
     async setLocale(next) {
+      requested = next
       await load(next)
-      if (next === locale)
+      if (next !== requested || next === locale)
         return
       locale = next
       changed()

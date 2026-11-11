@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from 'vitest'
-import { createApp, defineComponent, h, nextTick } from 'vue'
+import { createApp, defineComponent, h, nextTick, onMounted, resolveComponent } from 'vue'
 import { createDiglot } from '../src/diglot.ts'
 import { createDiglot as createVueDiglot, useDiglot } from '../src/vue.ts'
 
@@ -24,6 +24,24 @@ describe('createDiglot', () => {
     expect(diglot.t('abc', 'Hello')).toBe('Bonjour')
     await expect(diglot.setLocale('de')).rejects.toThrow('no catalog for the locale "de"')
     expect(() => createDiglot({ locale: 'de' })).toThrow('no catalog for the locale "de"')
+  })
+
+  it('should switch to the locale of the last call, and load each catalog once', async () => {
+    const slow = vi.fn(() => new Promise<Record<string, string>>(resolve => setTimeout(resolve, 20, { abc: 'Bonjour' })))
+    const diglot = createDiglot({ locales: { fr: slow, de: async () => ({ abc: 'Hallo' }) } })
+    await Promise.all([diglot.setLocale('fr'), diglot.setLocale('de'), diglot.setLocale('fr')])
+    expect(diglot.locale).toBe('fr')
+    expect(slow).toHaveBeenCalledOnce()
+    await Promise.all([diglot.setLocale('fr'), diglot.setLocale('de')])
+    expect(diglot.locale).toBe('de')
+  })
+
+  it('should retry a catalog that failed to load', async () => {
+    const load = vi.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValue({ abc: 'Bonjour' })
+    const diglot = createDiglot({ locales: { fr: load } })
+    await expect(diglot.setLocale('fr')).rejects.toThrow('offline')
+    await diglot.setLocale('fr')
+    expect(diglot.t('abc', 'Hello')).toBe('Bonjour')
   })
 
   it('should parse a translation into text and placeholder nodes', () => {
@@ -51,5 +69,25 @@ describe('vue', () => {
     await diglot.setLocale('fr')
     await nextTick()
     expect(root.innerHTML).toBe('<p>fr: Bonjour</p>')
+  })
+
+  it('should keep the state of components inside an element when its catalog changes', async () => {
+    let mounted = 0
+    const Badge = defineComponent({ setup: () => onMounted(() => mounted++), render: () => h('i', 'new') })
+    const Text = defineComponent({
+      render: () => h(resolveComponent('DiglotText'), { h: 'abc', s: 'Read {0}the docs {1}{/0}' }, {
+        0: ({ __children }: { __children: () => unknown }) => h('a', h(__children)),
+        1: () => h(Badge),
+      }),
+    })
+    const diglot = createVueDiglot({ locale: 'fr', messages: { fr: { abc: 'Lisez {0}la doc {1}{/0}' } } })
+    const root = document.createElement('div')
+    createApp(Text).use(diglot).mount(root)
+    diglot.update('fr', { abc: 'Lisez {0}la doc {1}{/0}', other: 'Autre' })
+    await nextTick()
+    diglot.update('fr', { abc: 'Lisez {0}la doc {1}{/0}' })
+    await nextTick()
+    expect(root.innerHTML).toBe('Lisez <a>la doc <i>new</i></a>')
+    expect(mounted).toBe(1)
   })
 })

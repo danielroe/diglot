@@ -75,11 +75,19 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
         records.set(locale, await loadLocale(translations, locale))
     },
     async buildStart() {
+      if (!translations)
+        return
       // Every component, not only the ones this build imports, so that no catalog misses a segment.
       for await (const file of components(config.root)) {
         const key = relative(config.root, file)
-        if (!files.has(key))
+        if (files.has(key))
+          continue
+        try {
           files.set(key, (await transform(await readFile(file, 'utf8'), { file: key, policy }))?.segments ?? [])
+        }
+        catch (error) {
+          this.warn(`${key} is not translated: ${(error as Error).message}`)
+        }
       }
     },
     resolveId(id) {

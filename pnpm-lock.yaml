@@ -425,6 +425,9 @@ importers:
       '@diglot/store':
         specifier: workspace:*
         version: link:../store
+      entities:
+        specifier: ^9.0.0
+        version: 9.0.0
       magic-string:
         specifier: ^0.30.21
         version: 0.30.21
