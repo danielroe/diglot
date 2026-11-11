@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, vi } from 'vitest'
-import { createApp, defineComponent, h, nextTick, onMounted, resolveComponent } from 'vue'
+import { createApp, defineComponent, h, nextTick, onMounted, ref, resolveComponent } from 'vue'
 import { createDiglot } from '../src/diglot.ts'
 import { createDiglot as createVueDiglot, useDiglot } from '../src/vue.ts'
 
@@ -89,5 +89,22 @@ describe('vue', () => {
     await nextTick()
     expect(root.innerHTML).toBe('Lisez <a>la doc <i>new</i></a>')
     expect(mounted).toBe(1)
+  })
+
+  it('should keep the elements of components inside an element when the parent renders again', async () => {
+    const count = ref(0)
+    const Text = defineComponent({
+      render: () => h('p', [h(resolveComponent('DiglotText'), { h: 'abc', s: 'Hello {0}world {1}{/0}' }, {
+        0: ({ __children }: { __children: () => unknown }) => h('b', h(__children)),
+        1: () => h('input'),
+      }), ` ${count.value}`]),
+    })
+    const root = document.createElement('div')
+    createApp(Text).use(createVueDiglot()).mount(root)
+    const input = root.querySelector('input')
+    count.value++
+    await nextTick()
+    expect(root.innerHTML).toBe('<p>Hello <b>world <input></b> 1</p>')
+    expect(root.querySelector('input')).toBe(input)
   })
 })

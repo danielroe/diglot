@@ -5,7 +5,10 @@ import { join } from 'node:path'
 import { createRecord } from '@diglot/core'
 import { recordPath, writeRecord } from '@diglot/store'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import react from '@vitejs/plugin-react'
 import vue from '@vitejs/plugin-vue'
+import { createElement } from 'react'
+import { renderToString as renderReact } from 'react-dom/server'
 import { createServer } from 'vite'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createSSRApp, h } from 'vue'
@@ -111,6 +114,14 @@ describe('virtual:diglot', () => {
     const { default: component } = await server.ssrLoadModule('/src/Entities.vue')
     const app = createSSRApp({ render: () => h(component) }).use(createVueDiglot())
     expect(await renderToString(app)).toBe('<p title="&amp;copy; 2024">Tom &amp;amp; Jerry</p>')
+    await server.close()
+  })
+
+  it('should keep the selected React option, whose text is a string', async () => {
+    const { dir } = project('src/Select.tsx', 'export default function Select({ name }) { return <select defaultValue="Hello Ada" onChange={() => {}}><option>Bye</option><option>Hello {name}</option></select> }\n')
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, resolve: { alias: { '@diglot/components/react': runtime('react') } }, plugins: [diglot(), react()] })
+    const { default: Select } = await server.ssrLoadModule('/src/Select.tsx')
+    expect(renderReact(createElement(Select, { name: 'Ada' }))).toBe('<select><option>Bye</option><option selected="">Hello Ada</option></select>')
     await server.close()
   })
 

@@ -147,11 +147,12 @@ describe('react', () => {
   })
 
   it('should render text in `<title>` and `<option>` as a string, and other text through `DiglotText`', async () => {
-    const result = await rewrite(component('<><title>Settings</title><select><option value="en">English</option></select><p>Hello</p></>'), 'x.tsx')
+    const result = await rewrite(component('<><title>Settings</title><select><option value="en">English</option><option>Hello {name}</option></select><p>Hello</p></>'), 'x.tsx')
     const [title, option] = result.segments
     expect(result.code).toContain(`<title>{__diglot('${title!.hash}', 'Settings')}</title>`)
     expect(result.code).toContain(`<option value="en">{__diglot('${option!.hash}', 'English')}</option>`)
-    expect(result.code).toContain(`<p><__DiglotText h="${result.segments[2]!.hash}" s={'Hello'} /></p>`)
+    expect(result.code).toContain(`<option>{__diglot('${result.segments[2]!.hash}', 'Hello \\u007b0\\u007d', [(name)])}</option>`)
+    expect(result.code).toContain(`<p><__DiglotText h="${result.segments[3]!.hash}" s={'Hello'} /></p>`)
   })
 
   it('should call the hook in components only, and warn about attributes elsewhere', async () => {

@@ -219,8 +219,10 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
   }
   const emit: Emitter = {
     run(run: Run) {
-      if (!run.parts.length && TEXT_ONLY.has(run.parent!) && hook(run))
-        return `{__diglot('${run.hash}', ${literal(run.source)})}`
+      if (TEXT_ONLY.has(run.parent!) && run.parts.every(part => part.type === 'expression') && hook(run)) {
+        const values = run.parts.length ? `, [${run.parts.map(part).join(', ')}]` : ''
+        return `{__diglot('${run.hash}', ${literal(run.source)}${values})}`
+      }
       return `<__DiglotText h="${run.hash}" s={${literal(run.source)}}${run.parts.length ? ` p={[${run.parts.map(part).join(', ')}]}` : ''} />`
     },
     attribute(attribute, hash) {
