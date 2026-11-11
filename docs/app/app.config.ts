@@ -116,7 +116,7 @@ export default defineAppConfig({
         base: 'border-default font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted',
       },
       td: {
-        base: 'border-default [&_code]:whitespace-nowrap',
+        base: 'border-default align-baseline [&_code]:whitespace-nowrap',
       },
       callout: {
         slots: {
