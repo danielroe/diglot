@@ -52,11 +52,12 @@ export const TOPICS: Topic[] = [
   {
     slug: 'integrations',
     title: 'Integrations',
-    meta: 'astro and starlight',
+    meta: 'astro, starlight and components',
     accent: 'orange',
     packages: [
       { name: '@diglot/astro', path: '/integrations/astro', accent: 'orange' },
       { name: '@diglot/starlight', path: '/integrations/starlight', accent: 'red' },
+      { name: '@diglot/components', path: '/integrations/components', accent: 'amber' },
     ],
   },
 ]
