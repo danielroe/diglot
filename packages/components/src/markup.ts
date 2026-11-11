@@ -244,7 +244,8 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
       skipped.push({ line: lines(at.start), reason: 'text reads as a placeholder', text: source.trim() })
       return
     }
-    const prepared = prepareSegment(draft('html-block', inlineNodes, at, containers), { file, index: segments.length, policy: resolved })!
+    const count = segments.length
+    const prepared = prepareSegment(draft('html-block', inlineNodes, at, containers), { file, index: count, policy: resolved })!
     segments.push(prepared.segment)
     const parts = prepared.nodes.map((node, id): Part => {
       const data = node.data as ExpressionNode | ElementNode
@@ -258,8 +259,8 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
     })
     const replacement = emit.run({ parent: containers.at(-1), hash: prepared.segment.hash, source, parts, start, end })
     if (replacement === undefined) {
-      segments.splice(segments.indexOf(prepared.segment), 1)
-      skipped.push({ line: lines(at.start), reason: `text in <${containers.at(-1)}> outside a component`, text: source.trim() })
+      segments.length = count
+      skipped.push({ line: lines(at.start), reason: `text in <${containers.at(-1)}> that the framework can't render here`, text: source.trim() })
       return
     }
     s.overwrite(start, end, replacement)

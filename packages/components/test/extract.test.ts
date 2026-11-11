@@ -172,7 +172,7 @@ describe('react', () => {
     const code = 'const Heading = () => <title>Hello</title>\nexport const list = items.map(Heading)'
     const result = await rewrite(code, 'x.tsx')
     expect(result.code).toBe(code)
-    expect(result.skipped).toEqual([{ line: 1, reason: 'text in <title> outside a component', text: 'Hello' }])
+    expect(result.skipped).toEqual([{ line: 1, reason: 'text in <title> that the framework can\'t render here', text: 'Hello' }])
   })
 
   it('should leave attributes in the parameters of a component as they are', async () => {
