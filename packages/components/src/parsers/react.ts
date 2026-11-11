@@ -125,14 +125,43 @@ function part(part: Part): string {
   }
 }
 
+/** Wrappers whose first argument is a component: `memo()` and `forwardRef()`, also as `React.memo()`. */
+const WRAPPERS = new Set(['memo', 'forwardRef'])
+
+/** The function of a component: `node` itself, or the function a wrapper receives. */
+function componentFunction(node: Node | undefined): Node | undefined {
+  if (isFunction(node))
+    return node
+  const callee = node?.type === 'CallExpression' ? node.callee as Node : undefined
+  return WRAPPERS.has(callee?.type === 'MemberExpression' ? callee.property.name : callee?.name) ? componentFunction(node!.arguments[0]) : undefined
+}
+
+/** Capitalised functions the module calls directly: helpers that return JSX, not components. */
+function helpers(node: unknown, out = new Set<string>()): Set<string> {
+  if (Array.isArray(node)) {
+    for (const child of node)
+      helpers(child, out)
+  }
+  else if (node && typeof node === 'object') {
+    const current = node as Node
+    if (current.type === 'CallExpression' && current.callee.type === 'Identifier' && isCapitalised(current.callee.name))
+      out.add(current.callee.name)
+    for (const key in current) {
+      if (key !== 'parent')
+        helpers(current[key], out)
+    }
+  }
+  return out
+}
+
 const attributeName = (node: Node): string => node.type === 'JSXAttribute' && node.name.type === 'JSXIdentifier' ? node.name.name : ''
 const stringValue = (node: Node): string | undefined => node.type === 'JSXAttribute' && node.value?.type === 'Literal' && typeof node.value.value === 'string' ? node.value.value : undefined
 
 /**
  * Parses a JSX or TSX module. Every outermost JSX element or fragment is a root, and JSX inside
- * `{…}` is control flow, walked as a block. A run renders as `<DiglotText>`, which works anywhere JSX
- * does. Attributes call the `useDiglot()` that the rewrite adds to the top of their component, and
- * are left alone outside a component.
+ * `{…}` is control flow, walked as a block. Text renders through `<DiglotText>`, which works
+ * anywhere, or as a string inside a function component. Attributes render through the
+ * `useTranslate()` that the rewrite calls at the top of their component.
  */
 export async function parseReact(code: string, file: string): Promise<Parsed | undefined> {
   const { parseSync } = await import('oxc-parser')
@@ -195,8 +224,17 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
   }
 
   const roots: Node[] = []
-  /** Outermost component functions. */
+  const called = helpers(program.body)
+  /** Outermost function components, where the rewrite can call a hook. */
   const components: Node[] = []
+  function component(node: Node): Node | undefined {
+    if (node.type === 'ExportDefaultDeclaration')
+      return node.declaration.id && called.has(node.declaration.id.name) ? undefined : componentFunction(node.declaration)
+    if (node.type !== 'FunctionDeclaration' && node.type !== 'VariableDeclarator')
+      return
+    if (isCapitalised(node.id?.name) && !called.has(node.id.name))
+      return node.type === 'FunctionDeclaration' ? node : componentFunction(node.init)
+  }
   function scan(node: unknown, inComponent: boolean) {
     if (Array.isArray(node)) {
       for (const child of node)
@@ -210,18 +248,10 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
       roots.push(current)
       return
     }
-    if (!inComponent) {
-      const fn = current.type === 'FunctionDeclaration' && isCapitalised(current.id?.name)
-        ? current
-        : current.type === 'VariableDeclarator' && isCapitalised(current.id?.name) && isFunction(current.init)
-          ? current.init
-          : current.type === 'ExportDefaultDeclaration' && isFunction(current.declaration)
-            ? current.declaration
-            : undefined
-      if (fn) {
-        components.push(fn)
-        inComponent = true
-      }
+    const fn = inComponent ? undefined : component(current)
+    if (fn) {
+      components.push(fn)
+      inComponent = true
     }
     for (const key in current) {
       if (key !== 'parent')
@@ -231,26 +261,33 @@ export async function parseReact(code: string, file: string): Promise<Parsed | u
   scan(program.body, false)
 
   const hooked = new Set<Node>()
+  /** The component around a span, which then calls the hook. */
+  function hook(at: Span): Node | undefined {
+    const fn = components.find(component => component.start <= at.start && at.end <= component.end)
+    if (fn)
+      hooked.add(fn)
+    return fn
+  }
   const emit: Emitter = {
     run(run: Run) {
+      // Text alone renders as a string, which also suits elements that only take text, such as `<title>` and `<option>`.
+      if (!run.parts.length && hook(run))
+        return `{__diglot('${run.hash}', ${literal(run.source)})}`
       return `<__DiglotText h="${run.hash}" s={${literal(run.source)}}${run.parts.length ? ` p={[${run.parts.map(part).join(', ')}]}` : ''} />`
     },
     attribute(attribute, hash) {
-      const fn = components.find(component => component.start <= attribute.start && attribute.end <= component.end)
-      if (!fn)
-        return
-      hooked.add(fn)
-      return `${attribute.name}={__diglot('${hash}', ${literal(attribute.value)})}`
+      if (hook(attribute))
+        return `${attribute.name}={__diglot('${hash}', ${literal(attribute.value)})}`
     },
     finish(s) {
-      const hook = 'const __diglot = __useTranslate();'
+      const statement = 'const __diglot = __useTranslate();'
       for (const fn of hooked) {
         const body = fn.body as Node
         if (body.type === 'BlockStatement' || body.type === 'FunctionBody') {
-          s.appendLeft((body.body as Node[]).filter(isDirective).at(-1)?.end ?? body.start + 1, ` ${hook}`)
+          s.appendLeft((body.body as Node[]).filter(isDirective).at(-1)?.end ?? body.start + 1, ` ${statement}`)
         }
         else {
-          s.appendLeft(body.start, `{ ${hook} return (`)
+          s.appendLeft(body.start, `{ ${statement} return (`)
           s.appendRight(body.end, '); }')
         }
       }

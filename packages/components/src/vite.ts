@@ -41,7 +41,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
   const sourceLocale = options.sourceLocale ?? 'en'
   const files = new Map<string, Segment[]>()
   const records = new Map<string, Map<string, TranslationRecord>>()
-  /** The last catalog sent to the browser, by locale. */
+  /** The catalog of each locale module loaded so far, as JSON. */
   const sent = new Map<string, string>()
   let config: ResolvedConfig
   let server: ViteDevServer | undefined
@@ -79,7 +79,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       for await (const file of components(config.root)) {
         const key = relative(config.root, file)
         if (!files.has(key))
-          files.set(key, await extractFile(await readFile(file, 'utf8'), file))
+          files.set(key, (await transform(await readFile(file, 'utf8'), { file: key, policy }))?.segments ?? [])
       }
     },
     resolveId(id) {
@@ -111,28 +111,28 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
     async transform(code, id) {
       if (!isComponent(id) || id.includes('/node_modules/') || /[?&]type=/.test(id))
         return
-      const key = relative(config.root, id.replace(/[?#].*$/, ''))
+      const path = id.replace(/[?#].*$/, '')
+      const key = relative(config.root, path)
       const result = await transform(code, { file: key, policy })
       files.set(key, result?.segments ?? [])
       sendChanged()
-      if (!result?.segments.length)
-        return
-      for (const skipped of result.skipped)
+      for (const skipped of result?.skipped ?? [])
         this.warn(`${key}:${skipped.line} is not translated (${skipped.reason}): ${skipped.text}`)
-      return { code: result.code, map: result.map }
+      if (result?.segments.length)
+        return { code: result.code, map: { ...result.map, sources: [path] } }
     },
     configureServer(devServer) {
       server = devServer
       if (translations)
         server.watcher.add(translations)
     },
-    async hotUpdate({ file, read }) {
+    async hotUpdate({ type, file, read }) {
       const path = translations && file.startsWith(`${translations}/`) ? parseRecordPath(relative(translations, file)) : undefined
       const translated = path && records.get(path.locale)
       if (!translated)
         return
       if (this.environment.name === 'client') {
-        const record = parseRecordFile(await read() || undefined, path.hash)
+        const record = type === 'delete' ? undefined : parseRecordFile(await read(), path.hash)
         if (record)
           translated.set(path.hash, record)
         else
@@ -141,10 +141,6 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       }
       return []
     },
-  }
-
-  async function extractFile(code: string, file: string): Promise<Segment[]> {
-    return (await transform(code, { file: relative(config.root, file), policy }))?.segments ?? []
   }
 
   /** Sends each loaded catalog that changed to the browser, and invalidates its module. */

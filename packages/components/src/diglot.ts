@@ -63,7 +63,7 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
   const catalogs = new Map(Object.entries(options.messages ?? {}))
   const loaders = new Map(Object.entries(options.locales ?? {}))
   const listeners = new Set<() => void>()
-  let parsed = new Map<string, SkeletonNode[]>()
+  const parsed = new Map<string, SkeletonNode[]>()
   const changed = () => listeners.forEach(listener => listener())
 
   /** The skeleton to render: the translation with the whitespace around the source, or the source. */
@@ -74,13 +74,14 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
     return source.match(/^\s*/)![0] + translation + source.match(/\s*$/)![0]
   }
 
-  async function load(next: string) {
+  /** Loads the catalog of a locale. Throws right away for a locale without one, so that `createDiglot` does too. */
+  function load(next: string): Promise<void> {
     if (next === sourceLocale || catalogs.has(next))
-      return
+      return Promise.resolve()
     const loader = loaders.get(next)
     if (!loader)
       throw new Error(`no catalog for the locale "${next}"`)
-    catalogs.set(next, await loader())
+    return loader().then(catalog => void catalogs.set(next, catalog))
   }
 
   const diglot: Diglot = {
@@ -116,7 +117,6 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
     },
     update(next, catalog) {
       catalogs.set(next, catalog)
-      parsed = new Map()
       if (next === locale)
         changed()
     },

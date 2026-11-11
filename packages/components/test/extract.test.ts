@@ -58,6 +58,18 @@ describe('vue', () => {
     expect(await skeletons(template('<p>Status: <span v-if="ok">good</span><span v-else>bad</span></p>'), 'x.vue')).toEqual(['Status:', 'good', 'bad'])
   })
 
+  it('should translate the attributes of elements whose content it leaves alone', async () => {
+    const result = await rewrite(template('<textarea placeholder="Write a comment">draft</textarea><pre title="Output">a b</pre><code translate="no" title="Kept">x</code>'), 'x.vue')
+    expect(result.segments.map(s => [s.context.detail, s.skeleton])).toEqual([['placeholder', 'Write a comment'], ['title', 'Output']])
+  })
+
+  it('should translate the attributes of elements inside a sentence', async () => {
+    const result = await rewrite(template('<p>Made with <img src="/h.svg" alt="love"> by us</p>'), 'x.vue')
+    const [sentence, alt] = result.segments
+    expect([sentence!.skeleton, alt!.skeleton]).toEqual(['Made with {0} by us', 'love'])
+    expect(result.code).toContain(`<template #0><img src="/h.svg" :alt="$diglot('${alt!.hash}', 'love')"></template>`)
+  })
+
   it('should give the same text one hash, whatever its interpolations are called', async () => {
     const segments = await extract(template('<p>Save</p><button>Save</button><p>Hi {{ user.name }}</p><p>Hi {{ account.displayName }}</p>'), { file: 'x.vue' })
     expect(new Set(segments.map(s => s.hash)).size).toBe(2)
@@ -96,7 +108,7 @@ describe('react', () => {
   it('should follow the whitespace rule of JSX', async () => {
     const result = await rewrite(component('<p>\n  One\n    two  three\n\n  four\n</p>'), 'x.tsx')
     expect(result.segments.map(s => s.skeleton)).toEqual(['One two three four'])
-    expect(result.code).toContain(`s={'One two  three four'}`)
+    expect(result.code).toContain(`{__diglot('${result.segments[0]!.hash}', 'One two  three four')}`)
     expect(await skeletons(component('<p>\n  Read the{" "}\n  <a>docs</a>{" "}\n  now\n</p>'), 'x.tsx')).toEqual(['Read the {0}docs{/0} now'])
   })
 
@@ -129,6 +141,26 @@ describe('react', () => {
     expect(result.code.startsWith('"use client";\nimport { DiglotText')).toBe(true)
   })
 
+  it('should render text alone as a string inside a component, for elements that only take text', async () => {
+    const result = await rewrite(component('<><title>Settings</title><select><option value="en">English</option></select></>'), 'x.tsx')
+    const [title, option] = result.segments
+    expect(result.code).toContain(`<title>{__diglot('${title!.hash}', 'Settings')}</title>`)
+    expect(result.code).toContain(`<option value="en">{__diglot('${option!.hash}', 'English')}</option>`)
+  })
+
+  it('should call the hook in components only, and warn about attributes elsewhere', async () => {
+    const result = await rewrite([
+      `const Columns = show => show ? [<th title="Name" />] : [];`,
+      `const Search = memo(forwardRef((props, ref) => <input ref={ref} placeholder="Search" />));`,
+      `class Old extends Component { render() { return <button title="Close" />; } }`,
+      `export default function Table({ show }) { return <table title="Table">{Columns(show)}</table>; }`,
+    ].join('\n'), 'x.tsx')
+    expect(result.segments.map(s => s.skeleton)).toEqual(['Search', 'Table'])
+    expect(result.code).toContain('const Columns = show => show ? [<th title="Name" />] : [];')
+    expect(result.code).toContain('memo(forwardRef((props, ref) => { const __diglot = __useTranslate(); return (<input')
+    expect(result.skipped.map(s => [s.reason, s.text])).toEqual([['attribute outside a component', 'Name'], ['attribute outside a component', 'Close']])
+  })
+
   it('should read .jsx and leave modules without JSX text alone', async () => {
     expect(await skeletons(component('<p>Hello</p>'), 'x.jsx')).toEqual(['Hello'])
     expect(await extract('export const n = 1;', { file: 'x.tsx' })).toEqual([])
@@ -150,9 +182,9 @@ describe('svelte', () => {
     expect(result.code).toMatch(/^<script>import \{ DiglotText as Diglot__Text, translate as __translate \} from '@diglot\/components\/svelte'; const __diglot = __translate\(\);<\/script>/)
   })
 
-  it('should add its import to the instance script, not the module one', async () => {
+  it('should add its import to the end of the instance script, not to the module one', async () => {
     const result = await rewrite('<script module lang="ts">export const a = 1;</script><script lang="ts">let b: number = 2;</script><p>Hi</p>', 'x.svelte')
-    expect(result.code).toContain('<script lang="ts">\nimport { DiglotText')
+    expect(result.code).toContain(`<script lang="ts">let b: number = 2;\nimport { DiglotText as Diglot__Text, translate as __translate } from '@diglot/components/svelte'; const __diglot = __translate();\n</script>`)
     expect(result.code).toContain('<script module lang="ts">export const a = 1;</script>')
   })
 
@@ -170,9 +202,9 @@ describe('svelte', () => {
     expect(result.skipped[0]!.reason).toBe('text reads as a placeholder')
   })
 
-  it('should translate static attributes only', async () => {
-    const result = await rewrite('<img alt="Logo" src="/a.png"><input placeholder={p}><Card title="Hi" />', 'x.svelte')
-    expect(result.segments.map(s => [s.context.detail, s.skeleton])).toEqual([['alt', 'Logo'], ['title', 'Hi']])
+  it('should translate static attributes only, including those of elements whose content it leaves alone', async () => {
+    const result = await rewrite('<img alt="Logo" src="/a.png"><input placeholder={p}><Card title="Hi" /><textarea placeholder="Bio"></textarea>', 'x.svelte')
+    expect(result.segments.map(s => [s.context.detail, s.skeleton])).toEqual([['alt', 'Logo'], ['title', 'Hi'], ['placeholder', 'Bio']])
     expect(result.code).toContain(`alt={$__diglot('${result.segments[0]!.hash}', 'Logo')}`)
   })
 

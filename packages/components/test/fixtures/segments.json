@@ -231,7 +231,8 @@
     "6: Card body text",
     "8: Footer text",
     "10: Press {0} to close",
-    "11: Go {0} now"
+    "11: Go {0} now",
+    "11 title: Inline card"
   ],
   "svelte/Structure.svelte": [
     "9: Item {0} is ready",

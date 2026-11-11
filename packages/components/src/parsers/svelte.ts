@@ -154,8 +154,9 @@ export async function parseSvelte(code: string): Promise<Parsed | undefined> {
           s.remove(node.start, node.end)
       }
       const setup = `import { DiglotText as Diglot__Text, translate as __translate } from '@diglot/components/svelte'; const __diglot = __translate();`
+      // At the end of the script, so that it reads the instance a `setDiglot()` above it provides.
       if (instance)
-        s.appendLeft(instance.content.start, `\n${setup}\n`)
+        s.appendLeft(instance.content.end, `\n${setup}\n`)
       else
         s.prepend(`<script>${setup}</script>`)
     },

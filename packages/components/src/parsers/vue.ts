@@ -15,7 +15,10 @@ const DIRECTIVE = 7
 const COMPONENT = 1
 
 /** Directives that make an element conditional or repeated, or replace its content. */
-const STRUCTURAL = new Set(['if', 'else-if', 'else', 'for', 'slot', 'html', 'text', 'pre', 'memo', 'once'])
+const STRUCTURAL = new Set(['if', 'else-if', 'else', 'for', 'slot', 'html', 'text', 'memo', 'once'])
+
+/** `v-pre`, which the parser leaves out of the props of its element. */
+const V_PRE_RE = /^<[^>]*\sv-pre[\s>/=]/
 
 const isBlank = (value: string) => !/[^\t\r\n\f ]/.test(value)
 
@@ -56,7 +59,8 @@ function toNodes(code: string, children: TemplateChildNode[]): MarkupNode[] {
 }
 
 function toElement(code: string, node: VueElement): ElementNode {
-  const { start, end } = { start: node.loc.start.offset, end: node.loc.end.offset }
+  const start = node.loc.start.offset
+  const end = node.loc.end.offset
   const props = node.props
   const openEnd = code.indexOf('>', props.at(-1)?.loc.end.offset ?? start + 1 + node.tag.length) + 1
   const attributes: Attribute[] = props.flatMap(prop => prop.type === ATTRIBUTE && prop.value
@@ -67,7 +71,7 @@ function toElement(code: string, node: VueElement): ElementNode {
     name: node.tag,
     component: node.tagType === COMPONENT,
     structural: props.some(prop => prop.type === DIRECTIVE && STRUCTURAL.has(prop.name)),
-    optOut: attributes.some(a => a.name === 'translate' && a.value === 'no') || props.some(prop => (prop.type === DIRECTIVE && prop.name === 'pre') || prop.name === 'v-pre') || /^<[^>]*\sv-pre[\s>/=]/.test(code.slice(start, openEnd)),
+    optOut: attributes.some(a => a.name === 'translate' && a.value === 'no') || V_PRE_RE.test(code.slice(start, openEnd)),
     open: code.slice(start, openEnd),
     close: node.isSelfClosing || openEnd === end ? '' : code.slice(code.lastIndexOf('</', end - 1), end),
     attributes,

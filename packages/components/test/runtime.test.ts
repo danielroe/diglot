@@ -23,6 +23,7 @@ describe('createDiglot', () => {
     expect(listener).toHaveBeenCalledOnce()
     expect(diglot.t('abc', 'Hello')).toBe('Bonjour')
     await expect(diglot.setLocale('de')).rejects.toThrow('no catalog for the locale "de"')
+    expect(() => createDiglot({ locale: 'de' })).toThrow('no catalog for the locale "de"')
   })
 
   it('should parse a translation into text and placeholder nodes', () => {

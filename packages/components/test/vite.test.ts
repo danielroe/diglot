@@ -1,16 +1,17 @@
 import type { HotPayload } from 'vite'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createRecord } from '@diglot/core'
-import { writeRecord } from '@diglot/store'
+import { recordPath, writeRecord } from '@diglot/store'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import vue from '@vitejs/plugin-vue'
 import { createServer } from 'vite'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createDiglot } from '../src/diglot.ts'
 import { extract } from '../src/index.ts'
 import diglot from '../src/vite.ts'
-import { fixtures } from './utils.ts'
+import { fixtures, runtime } from './utils.ts'
 
 const root = join(fixtures, 'vue')
 const repositories: string[] = []
@@ -24,6 +25,15 @@ function repository(): string {
   writeFileSync(join(dir, 'diglot.config.ts'), `export default { locales: ['fr', 'de'] }\n`)
   repositories.push(dir)
   return dir
+}
+
+/** A project with one component, next to the fixtures so that it resolves their dependencies, and its translations repository. */
+function project(file: string, code: string): { dir: string, translations: string } {
+  const dir = mkdtempSync(join(fixtures, '.tmp-'))
+  repositories.push(dir)
+  mkdirSync(join(dir, file, '..'), { recursive: true })
+  writeFileSync(join(dir, file), code)
+  return { dir, translations: repository() }
 }
 
 afterEach(() => {
@@ -57,6 +67,28 @@ describe('virtual:diglot', () => {
     await server.close()
   })
 
+  it('should map rewritten components to their files', async () => {
+    const { dir } = project('src/components/Card.vue', '<template><p>Hello</p></template>\n')
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, plugins: [diglot(), vue()] })
+    const result = await server.environments.client.transformRequest('/src/components/Card.vue')
+    expect(result!.map).toMatchObject({ sources: ['Card.vue'] })
+    await server.close()
+  })
+
+  it('should translate the text of the component that provides the instance', async () => {
+    const app = '<script>\n  import { setDiglot } from "@diglot/components/svelte";\n  let { diglot } = $props();\n  setDiglot(diglot);\n</script>\n\n<p>Hello</p>\n'
+    const { dir, translations } = project('src/App.svelte', app)
+    const [hello] = await extract(app, { file: 'src/App.svelte' })
+    await writeRecord(translations, 'fr', createRecord({ segment: hello!, text: 'Bonjour', origin: 'human' }))
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, resolve: { alias: { '@diglot/components/svelte': runtime('svelte') } }, plugins: [diglot({ translations }), svelte({ configFile: false })] })
+    await server.pluginContainer.buildStart({})
+    const { default: App } = await server.ssrLoadModule('/src/App.svelte')
+    const { render } = await server.ssrLoadModule('svelte/server')
+    const { default: fr } = await server.ssrLoadModule('virtual:diglot/fr')
+    expect(render(App, { props: { diglot: createDiglot({ locale: 'fr', messages: { fr } }) } }).body).toContain('<p>Bonjour</p>')
+    await server.close()
+  })
+
   it('should serve only the source locale without a translations repository', async () => {
     const server = await createServer({ logLevel: 'silent', configFile: false, root, appType: 'custom', server: { middlewareMode: true, ws: false }, plugins: [diglot(), vue()] })
     expect((await server.ssrLoadModule('virtual:diglot')).default).toEqual({ sourceLocale: 'en', locales: {} })
@@ -65,7 +97,7 @@ describe('virtual:diglot', () => {
 })
 
 describe('hot updates', () => {
-  it('should send a changed record to the page without a full reload', { timeout: 30_000 }, async () => {
+  it('should send changed and deleted records to the page without a full reload', { timeout: 30_000 }, async () => {
     const translations = repository()
     const footer = await segment('Card.vue')
     const server = await createServer({ logLevel: 'silent', configFile: false, root, server: { port: 0 }, plugins: [diglot({ translations }), vue()] })
@@ -83,10 +115,14 @@ describe('hot updates', () => {
 
     await writeRecord(translations, 'fr', createRecord({ segment: footer, text: 'Pied de page', origin: 'human' }))
     await vi.waitFor(() => expect(sent.some(p => p.type === 'custom' && p.event === 'diglot:locale')).toBe(true), { timeout: 10_000 })
+
+    rmSync(join(translations, recordPath('fr', footer.hash)))
+    await vi.waitFor(() => expect(sent.filter(p => p.type === 'custom' && p.event === 'diglot:locale')).toHaveLength(2), { timeout: 10_000 })
     await server.close()
 
-    const update = sent.find(p => p.type === 'custom' && p.event === 'diglot:locale') as { data: { locale: string, catalog: Record<string, string> } }
-    expect(update.data).toEqual({ locale: 'fr', catalog: { [footer.hash]: 'Pied de page' } })
+    const [update, removal] = sent.filter(p => p.type === 'custom' && p.event === 'diglot:locale') as Array<{ data: { locale: string, catalog: Record<string, string> } }>
+    expect(update!.data).toEqual({ locale: 'fr', catalog: { [footer.hash]: 'Pied de page' } })
+    expect(removal!.data).toEqual({ locale: 'fr', catalog: {} })
     expect(sent.some(p => p.type === 'full-reload')).toBe(false)
     expect(code).toContain(`import.meta.hot.on('diglot:locale'`)
 
@@ -96,7 +132,7 @@ describe('hot updates', () => {
     const listener = vi.fn()
     page.subscribe(listener)
     for (const ref of (globalThis as any)[Symbol.for('@diglot/components')])
-      ref.deref()?.update(update.data.locale, update.data.catalog)
+      ref.deref()?.update(update!.data.locale, update!.data.catalog)
     expect(page.t(footer.hash, 'Default footer')).toBe('Pied de page')
     expect(listener).toHaveBeenCalledOnce()
     vi.unstubAllGlobals()

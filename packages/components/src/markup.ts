@@ -103,7 +103,7 @@ const INLINE = new Set(['a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'data', 'del', '
 /** Elements that sit inside a sentence whole, content included. */
 const OPAQUE = new Set(['br', 'wbr', 'img', 'code', 'kbd', 'samp', 'var', 'svg', 'math'])
 
-/** Elements whose content is never translated. */
+/** Elements whose content is never translated. Their attributes are. */
 const SKIP = new Set(['script', 'style', 'pre', 'code', 'kbd', 'samp', 'var', 'svg', 'math', 'textarea'])
 
 const CODE = new Set(['code', 'kbd', 'samp', 'var'])
@@ -183,8 +183,10 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
         continue
       const segment = buildSegment(draft('prop', attribute.value, attribute, containers, attribute.name), { file, index: segments.length, policy: resolved })!
       const replacement = emit.attribute(attribute, segment.hash)
-      if (replacement === undefined)
+      if (replacement === undefined) {
+        skipped.push({ line: lines(attribute.start), reason: 'attribute outside a component', text: attribute.value })
         continue
+      }
       segments.push(segment)
       out.push([attribute, replacement])
     }
@@ -235,8 +237,7 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
     const at = { start: first.start, end }
     const inlineNodes = inline(nodes)
     const source = toSkeleton(inlineNodes, 'plain').skeleton
-    const ambiguous = findText(nodes, node => PLACEHOLDER_RE.test(node.value))
-    if (ambiguous) {
+    if (hasPlaceholderSyntax(nodes)) {
       skipped.push({ line: lines(at.start), reason: 'text reads as a placeholder', text: source.trim() })
       return
     }
@@ -248,7 +249,7 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
         return { type: 'expression', code: data.code }
       if (prepared.segment.placeholders[id]!.close !== undefined)
         return { type: 'wrapper', open: openTag(data, [...containers, data.name]), close: data.close }
-      if (isOpaque(data))
+      if (data.optOut)
         return { type: 'element', source: code.slice(data.start, data.end) }
       return { type: 'element', source: openTag(data, [...containers, data.name]) + code.slice(data.start + data.open.length, data.end) }
     })
@@ -256,11 +257,12 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
   }
 
   function walk(element: ElementNode, containers: string[]) {
-    if (element.optOut || SKIP.has(element.name))
+    if (element.optOut)
       return
     for (const [attribute, replacement] of attributes(element, containers))
       s.overwrite(attribute.start, attribute.end, replacement)
-    children(element.children, [...containers, element.name])
+    if (!SKIP.has(element.name))
+      children(element.children, [...containers, element.name])
   }
 
   function children(nodes: MarkupNode[], containers: string[]) {
@@ -291,18 +293,14 @@ export function transformMarkup(code: string, file: string, parsed: Parsed, poli
   children(root, [])
   if (segments.length)
     emit.finish?.(s)
-  return { code: s.toString(), map: s.generateMap({ source: file, hires: true }), segments, skipped }
+  return { code: s.toString(), map: s.generateMap({ source: file, includeContent: true, hires: true }), segments, skipped }
 }
 
-function findText(nodes: MarkupNode[], test: (node: TextNode) => boolean): TextNode | undefined {
-  for (const node of nodes) {
-    const found = node.type === 'text' ? (test(node) ? node : undefined) : node.type === 'element' && !isOpaque(node) ? findText(node.children, test) : undefined
-    if (found)
-      return found
-  }
+function hasPlaceholderSyntax(nodes: MarkupNode[]): boolean {
+  return nodes.some(node => node.type === 'text' ? PLACEHOLDER_RE.test(node.value) : node.type === 'element' && !isOpaque(node) && hasPlaceholderSyntax(node.children))
 }
 
-/** Returns the 1-based line of an offset. */
+/** Maps an offset to its 1-based line. */
 function lineIndex(code: string): (offset: number) => number {
   const starts = [0]
   for (let i = code.indexOf('\n'); i !== -1; i = code.indexOf('\n', i + 1))
