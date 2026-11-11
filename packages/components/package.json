@@ -1,0 +1,111 @@
+{
+  "name": "@diglot/components",
+  "type": "module",
+  "version": "0.2.2",
+  "description": "Extract and translate the text of Vue, React and Svelte components at build time",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielroe/diglot.git",
+    "directory": "packages/components"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/runtime/react.ts",
+    "./svelte": "./src/runtime/svelte.ts",
+    "./vite": "./src/vite.ts",
+    "./vue": "./src/runtime/vue.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.mjs",
+      "./react": "./dist/runtime/react.mjs",
+      "./svelte": "./dist/runtime/svelte.mjs",
+      "./vite": "./dist/vite.mjs",
+      "./vue": "./dist/runtime/vue.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "react": [
+        "./dist/runtime/react.d.mts"
+      ],
+      "svelte": [
+        "./dist/runtime/svelte.d.mts"
+      ],
+      "vite": [
+        "./dist/vite.d.mts"
+      ],
+      "vue": [
+        "./dist/runtime/vue.d.mts"
+      ],
+      "*": [
+        "./dist/index.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@vue/compiler-sfc": "^3.5.0",
+    "oxc-parser": ">=0.150.0",
+    "react": ">=18.0.0",
+    "svelte": "^5.0.0",
+    "vite": ">=7.0.0",
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@vue/compiler-sfc": {
+      "optional": true
+    },
+    "oxc-parser": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@diglot/core": "workspace:*",
+    "@diglot/store": "workspace:*",
+    "magic-string": "^0.30.21",
+    "pathe": "^2.0.3"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "@vitejs/plugin-vue": "6.0.10",
+    "@vue/compiler-sfc": "3.5.44",
+    "oxc-parser": "0.156.0",
+    "parse5": "8.1.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "svelte": "5.57.3",
+    "vite": "8.3.6",
+    "vue": "3.5.44"
+  }
+}
