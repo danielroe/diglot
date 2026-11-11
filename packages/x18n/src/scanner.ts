@@ -43,10 +43,15 @@ function lineRange(text: string, starts: number[], startLine: number, endLine: n
   return { start, end: Math.max(start, end) }
 }
 
-function textRange(text: string, segment: Segment, within: TextRange = { start: 0, end: text.length }): TextRange | undefined {
+function textRange(text: string, segment: Segment, within: TextRange = { start: 0, end: text.length }, taken: TextRange[] = []): TextRange | undefined {
   const needle = segment.text.split(/\s+/).slice(0, 6).join(' ')
-  const at = needle ? text.slice(within.start, within.end).indexOf(needle) : -1
-  return at < 0 ? undefined : { start: within.start + at, end: within.start + at + needle.length }
+  if (!needle)
+    return
+  for (let at = text.indexOf(needle, within.start); at >= 0 && at + needle.length <= within.end; at = text.indexOf(needle, at + 1)) {
+    const end = at + needle.length
+    if (!taken.some(range => at < range.end && range.start < end))
+      return { start: at, end }
+  }
 }
 
 export function markdownScanner(state: DiglotState): Scanner {
@@ -86,13 +91,16 @@ export function componentScanner(state: DiglotState): Scanner {
       if (!config || !path)
         return { usages: [] }
       const segments = await extractComponent(file.text, { file: path, policy: config.policy })
-      return { usages: usages(file.text, segments, segments) }
+      return { usages: usages(file.text, segments, segments, true) }
     },
   }
 }
 
-/** Usages of the segments that have text, at the lines of their nodes in `precise`. */
-function usages(text: string, segments: Segment[], precise: Segment[]): UsageCandidate[] {
+/**
+ * Usages of the segments that have text, at the lines of their nodes in `precise`. With `exact`, at
+ * their text within those lines when it is there, so that two segments on a line get their own.
+ */
+function usages(text: string, segments: Segment[], precise: Segment[], exact = false): UsageCandidate[] {
   const positions = new Map<string, Segment[]>()
   for (const segment of precise) {
     if (segment.position.precision === 'node')
@@ -111,7 +119,9 @@ function usages(text: string, segments: Segment[], precise: Segment[]): UsageCan
     let range = position.precision === 'file'
       ? textRange(text, segment) ?? { start: 0, end: 0 }
       : lineRange(text, starts, position.startLine, position.endLine)
-    if (taken.has(`${range.start}:${range.end}`))
+    if (exact)
+      range = textRange(text, segment, range, usages.map(usage => usage.range)) ?? range
+    else if (taken.has(`${range.start}:${range.end}`))
       range = textRange(text, segment, range) ?? range
     while (taken.has(`${range.start}:${range.end}`) && range.start < range.end)
       range = { start: range.start + 1, end: range.end }

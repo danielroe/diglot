@@ -127,8 +127,13 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
         return
       const key = relative(config.root, id)
       const result = await transform(code, { file: key, policy })
-      files.set(key, result?.segments ?? [])
-      sendChanged()
+      const segments = result?.segments ?? []
+      const hashes = (list?: Segment[]) => list?.map(segment => segment.hash).join()
+      // Most edits change code around the text, and leave every catalog as it was.
+      const changed = hashes(files.get(key)) !== hashes(segments)
+      files.set(key, segments)
+      if (changed)
+        sendChanged()
       for (const skipped of result?.skipped ?? [])
         this.warn(`${key}:${skipped.line} is not translated (${skipped.reason}): ${skipped.text}`)
       if (result?.segments.length)

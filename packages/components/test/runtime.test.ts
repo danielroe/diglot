@@ -36,6 +36,16 @@ describe('createDiglot', () => {
     expect(diglot.locale).toBe('de')
   })
 
+  it('should keep a hot update that arrives while the catalog loads', async () => {
+    let resolve!: (catalog: Record<string, string>) => void
+    const diglot = createDiglot({ locales: { fr: () => new Promise(r => resolve = r) } })
+    const switching = diglot.setLocale('fr')
+    diglot.update('fr', { abc: 'Salut' })
+    resolve({ abc: 'Bonjour' })
+    await switching
+    expect(diglot.t('abc', 'Hello')).toBe('Salut')
+  })
+
   it('should keep loading a locale when a locale without a catalog is asked for', async () => {
     const diglot = createDiglot({ locales: { fr: async () => ({ abc: 'Bonjour' }) } })
     const fr = diglot.setLocale('fr')

@@ -23,7 +23,7 @@ export default defineConfig({
 })
 ```
 
-`translations` is the directory of the translations repository, the one that holds `diglot.config.ts`, relative to the Vite root. Without it, components render in the source locale. `sourceLocale` defaults to `en`.
+`translations` is the directory of the translations repository, the one that holds `diglot.config.ts`, relative to the Vite root. Without it, components render in the source locale, so create the state below without `locale`. `sourceLocale` defaults to `en`.
 
 Then create the locale state in your app. `virtual:diglot` holds the source locale and a loader for the catalog of each locale that `diglot.config.ts` lists:
 
@@ -72,7 +72,7 @@ const catalog = await translations.locales[locale]?.()
 const diglot = createDiglot({ ...translations, locale, messages: catalog ? { [locale]: catalog } : {} })
 ```
 
-In SvelteKit, do this in a universal `+layout.ts` `load` function and create the state in the root `+layout.svelte` with the data it returns. Outside a component you can also await `diglot.ready`, which settles once the starting catalog is loaded.
+The browser needs the same catalog before it hydrates: pass it as `messages` there too, or await `diglot.ready` before you hydrate. In SvelteKit, do this in a universal `+layout.ts` `load` function and create the state in the root `+layout.svelte` with the data it returns. Outside a component you can also await `diglot.ready`, which settles once the starting catalog is loaded.
 
 ### Nuxt
 
@@ -107,7 +107,7 @@ Translations are diglot records. List your components in `sources.yml`, extract 
 sources:
   - name: app
     path: ..
-    include: ['src/**/*.{vue,tsx,svelte}']
+    include: ['src/**/*.{vue,jsx,tsx,svelte}']
     exclude: ['**/*.test.*']
 ```
 

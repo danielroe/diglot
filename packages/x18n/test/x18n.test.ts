@@ -459,6 +459,7 @@ describe('components', () => {
     }
     expect(located(read!.hash)).toContain('Read the <a href="/docs">documentation</a>')
     expect(located(title!.hash)).toContain('Close the dialog')
+    expect(project.usages({ key: close!.hash })[0]!.usage.range.start).toBe(component.indexOf('>Close<') + 1)
 
     await project.apply(project.plan([
       { type: 'set', key: read!.hash, locale: 'fr', value: 'Lisez la {0}documentation{/0} avant de {1}déployer{/1}.' },

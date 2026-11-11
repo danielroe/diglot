@@ -45,6 +45,10 @@ describe('vue', () => {
     expect(result.code).toContain('<p translate="no">Nimiq</p>')
   })
 
+  it('should read `v-pre` on the tag only, not in the value of an attribute', async () => {
+    expect(await skeletons(template('<p title="no v-pre here">Kept</p><p :class="a > 0" v-pre>{{ raw }} text</p>'), 'x.vue')).toEqual(['no v-pre here', 'Kept'])
+  })
+
   it('should translate readable attributes', async () => {
     const result = await rewrite(template('<img alt="Logo" src="/a.png"><input placeholder="Search" name="q">'), 'x.vue')
     expect(result.segments.map(s => [s.kind, s.context.detail, s.skeleton])).toEqual([

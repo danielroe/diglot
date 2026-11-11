@@ -18,7 +18,7 @@ const COMPONENT = 1
 const STRUCTURAL = new Set(['if', 'else-if', 'else', 'for', 'slot', 'html', 'text', 'memo', 'once'])
 
 /** `v-pre`, which the parser leaves out of the props of its element. */
-const V_PRE_RE = /^<[^>]*\sv-pre[\s>/=]/
+const V_PRE_RE = /\sv-pre[\s>/=]/
 
 const isBlank = (value: string) => !/[^\t\r\n\f ]/.test(value)
 
@@ -58,6 +58,11 @@ function toNodes(code: string, children: TemplateChildNode[]): MarkupNode[] {
   })
 }
 
+/** An opening tag with its props blanked out, so that their values can't look like a directive. */
+function withoutProps(open: string, start: number, props: VueElement['props']): string {
+  return props.reduce((tag, prop) => tag.slice(0, prop.loc.start.offset - start) + ' '.repeat(prop.loc.end.offset - prop.loc.start.offset) + tag.slice(prop.loc.end.offset - start), open)
+}
+
 function toElement(code: string, node: VueElement): ElementNode {
   const start = node.loc.start.offset
   const end = node.loc.end.offset
@@ -73,7 +78,7 @@ function toElement(code: string, node: VueElement): ElementNode {
     name: node.tag,
     component: node.tagType === COMPONENT,
     structural: props.some(prop => prop.type === DIRECTIVE && STRUCTURAL.has(prop.name)),
-    optOut: attributes.some(a => a.name === 'translate' && a.value === 'no') || V_PRE_RE.test(code.slice(start, openEnd)),
+    optOut: attributes.some(a => a.name === 'translate' && a.value === 'no') || V_PRE_RE.test(withoutProps(code.slice(start, openEnd), start, props)),
     open: code.slice(start, openEnd),
     close: node.isSelfClosing || openEnd === end ? '' : code.slice(code.lastIndexOf('</', end - 1), end),
     attributes,

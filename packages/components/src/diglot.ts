@@ -101,6 +101,9 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
     let promise = loading.get(next)
     if (!promise) {
       promise = loader().then((catalog) => {
+        // A hot update that arrived while the loader ran is newer.
+        if (catalogs.has(next))
+          return
         catalogs.set(next, catalog)
         if (next === locale)
           changed()
