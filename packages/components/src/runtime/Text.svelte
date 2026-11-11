@@ -1,19 +1,9 @@
 <script lang="ts">
   import type { SkeletonNode } from '@diglot/core'
   import type { Snippet } from 'svelte'
-  import type { Translator } from './svelte.ts'
+  import type { DiglotTextProps } from './svelte.ts'
 
-  let {
-    t,
-    h,
-    s,
-    ...parts
-  }: {
-    t: Translator
-    h: string
-    s: string
-    [part: `__p${number}`]: Snippet<[Snippet]> | Snippet
-  } = $props()
+  let { t, h, s, ...parts }: DiglotTextProps = $props()
 
   const nodes = $derived(t.nodes(h, s))
 </script>

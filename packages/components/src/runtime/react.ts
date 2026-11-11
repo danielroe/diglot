@@ -1,5 +1,5 @@
 import type { SkeletonNode } from '@diglot/core'
-import type { ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import type { Diglot, Translate } from './diglot.ts'
 import { createContext, createElement, Fragment, useCallback, useContext, useSyncExternalStore } from 'react'
 import { createDiglot } from './diglot.ts'
@@ -44,7 +44,7 @@ function useSubscription(): [Diglot, number, string | undefined] {
 }
 
 /** Provides `diglot` to the components below. Without a provider, components share one instance per module. */
-export function DiglotProvider({ diglot, children }: { diglot: Diglot, children?: ReactNode }) {
+export function DiglotProvider({ diglot, children }: { diglot: Diglot, children?: ReactNode }): ReactElement {
   return createElement(Context.Provider, { value: diglot }, children)
 }
 
@@ -74,7 +74,7 @@ function render(nodes: SkeletonNode[], parts: Part[]): ReactNode {
 }
 
 /** A segment: `h` its hash, `s` its source, `p` its placeholders by id. */
-export function DiglotText({ h, s, p = [] }: { h: string, s: string, p?: Part[] }) {
+export function DiglotText({ h, s, p = [] }: { h: string, s: string, p?: Part[] }): ReactNode {
   const [diglot, , locale] = useSubscription()
   return render(diglot.nodes(h, s, locale), p)
 }

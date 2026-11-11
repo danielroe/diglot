@@ -12,20 +12,20 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
-    "./react": "./src/runtime/react.ts",
-    "./svelte": "./src/runtime/svelte.ts",
+    "./runtime/react": "./src/runtime/react.ts",
+    "./runtime/svelte": "./src/runtime/svelte.ts",
+    "./runtime/vue": "./src/runtime/vue.ts",
     "./vite": "./src/vite.ts",
-    "./vue": "./src/runtime/vue.ts",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.mts",
   "publishConfig": {
     "exports": {
       ".": "./dist/index.mjs",
-      "./react": "./dist/runtime/react.mjs",
-      "./svelte": "./dist/runtime/svelte.mjs",
+      "./runtime/react": "./dist/runtime/react.mjs",
+      "./runtime/svelte": "./dist/runtime/svelte.mjs",
+      "./runtime/vue": "./dist/runtime/vue.mjs",
       "./vite": "./dist/vite.mjs",
-      "./vue": "./dist/runtime/vue.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -100,6 +100,7 @@
     "@vitejs/plugin-react": "6.3.0",
     "@vitejs/plugin-vue": "6.0.10",
     "@vue/compiler-sfc": "3.5.44",
+    "happy-dom": "21.0.4",
     "oxc-parser": "0.156.0",
     "parse5": "8.1.0",
     "react": "19.3.1",

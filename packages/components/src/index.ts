@@ -21,7 +21,7 @@ export interface ExtractOptions {
 }
 
 /** File extensions of the components this package reads. */
-export const extensions = Object.keys(parsers)
+export const extensions: string[] = Object.keys(parsers)
 
 /** Whether `file` is a component this package reads, by its extension. Queries are ignored. */
 export function isComponent(file: string): boolean {

@@ -1,18 +1,29 @@
 import type { SkeletonNode } from '@diglot/core'
+import type { Component, Snippet } from 'svelte'
 import type { Readable } from 'svelte/store'
 import type { Diglot, Translate } from './diglot.ts'
 import { getContext, hasContext, setContext } from 'svelte'
 import { readable } from 'svelte/store'
 import { createDiglot } from './diglot.ts'
+import Text from './Text.svelte'
 
 export { createDiglot }
 export type { Catalog, Diglot, DiglotOptions, Translate } from './diglot.ts'
-export { default as DiglotText } from './Text.svelte'
 
 /** Renders segments in one locale: as text, and as nodes for `<DiglotText>`. */
 export interface Translator extends Translate {
   nodes: (hash: string, source: string) => SkeletonNode[]
 }
+
+/** A segment with elements: `t` the translator, `h` its hash, `s` its source, and a snippet `__p<id>` for each placeholder. */
+export interface DiglotTextProps {
+  t: Translator
+  h: string
+  s: string
+  [part: `__p${number}`]: Snippet<[Snippet]> | Snippet
+}
+
+export const DiglotText: Component<DiglotTextProps> = Text
 
 const key = Symbol('diglot')
 let fallback: Diglot | undefined
