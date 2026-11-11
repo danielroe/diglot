@@ -125,6 +125,25 @@ describe('virtual:diglot', () => {
     await server.close()
   })
 
+  it('should leave other views of a component alone, such as `?raw`', async () => {
+    const { dir, translations } = project('src/Card.vue', '<template><p>Hello</p></template>\n')
+    const [hello] = await extract('<template><p>Hello</p></template>\n', { file: 'src/Card.vue' })
+    await writeRecord(translations, 'fr', createRecord({ segment: hello!, text: 'Bonjour', origin: 'human' }))
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, plugins: [diglot({ translations }), vue()] })
+    await server.pluginContainer.buildStart({})
+    expect((await server.ssrLoadModule('/src/Card.vue?raw')).default).toBe('<template><p>Hello</p></template>\n')
+    expect((await server.ssrLoadModule('virtual:diglot/fr')).default).toEqual({ [hello!.hash]: 'Bonjour' })
+    await server.close()
+  })
+
+  it('should leave JSX alone without the React plugin', async () => {
+    const code = 'export const Note = () => <p>Hello</p>\n'
+    const { dir } = project('src/Note.tsx', code)
+    const server = await createServer({ logLevel: 'silent', configFile: false, root: dir, appType: 'custom', server: { middlewareMode: true, ws: false }, plugins: [diglot(), vue()] })
+    expect((await server.environments.client.transformRequest('/src/Note.tsx'))!.code).not.toContain('@diglot/components/react')
+    await server.close()
+  })
+
   it('should serve only the source locale without a translations repository', async () => {
     const server = await createServer({ logLevel: 'silent', configFile: false, root, appType: 'custom', server: { middlewareMode: true, ws: false }, plugins: [diglot(), vue()] })
     expect((await server.ssrLoadModule('virtual:diglot')).default).toEqual({ sourceLocale: 'en', locales: {} })

@@ -20,14 +20,14 @@ const VIRTUAL = 'virtual:diglot'
 const RESOLVED = `\0${VIRTUAL}`
 const IGNORED = new Set(['node_modules', 'dist', 'build', 'coverage'])
 
-async function* components(dir: string): AsyncGenerator<string> {
+async function* components(dir: string, reads: (file: string) => boolean): AsyncGenerator<string> {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (IGNORED.has(entry.name) || entry.name.startsWith('.'))
       continue
     const path = join(dir, entry.name)
     if (entry.isDirectory())
-      yield* components(path)
-    else if (isComponent(entry.name))
+      yield* components(path, reads)
+    else if (reads(entry.name))
       yield path
   }
 }
@@ -47,6 +47,9 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
   let server: ViteDevServer | undefined
   let translations: string | undefined
   let policy: Partial<Policy> | undefined
+  /** JSX is read as React only when the app uses the React plugin, so that Vue JSX or Solid stays as it is. */
+  let react = false
+  const reads = (file: string) => isComponent(file) && (react || !/\.[jt]sx$/.test(file))
 
   function catalog(locale: string): Record<string, string> {
     const out: Record<string, string> = {}
@@ -66,6 +69,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
     enforce: 'pre',
     async configResolved(resolved) {
       config = resolved
+      react = config.plugins.some(plugin => plugin.name.startsWith('vite:react'))
       if (!options.translations)
         return
       translations = resolve(config.root, options.translations)
@@ -78,7 +82,7 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       if (!translations)
         return
       // Every component, not only the ones this build imports, so that no catalog misses a segment.
-      for await (const file of components(config.root)) {
+      for await (const file of components(config.root, reads)) {
         const key = relative(config.root, file)
         if (files.has(key))
           continue
@@ -117,17 +121,17 @@ export default function diglot(options: DiglotPluginOptions = {}): Plugin {
       }
     },
     async transform(code, id) {
-      if (!isComponent(id) || id.includes('/node_modules/') || /[?&]type=/.test(id))
+      // A query marks another view of the file, such as `?raw` or a block of a Vue component.
+      if (!reads(id) || id.includes('?') || id.includes('/node_modules/'))
         return
-      const path = id.replace(/[?#].*$/, '')
-      const key = relative(config.root, path)
+      const key = relative(config.root, id)
       const result = await transform(code, { file: key, policy })
       files.set(key, result?.segments ?? [])
       sendChanged()
       for (const skipped of result?.skipped ?? [])
         this.warn(`${key}:${skipped.line} is not translated (${skipped.reason}): ${skipped.text}`)
       if (result?.segments.length)
-        return { code: result.code, map: { ...result.map, sources: [path] } }
+        return { code: result.code, map: { ...result.map, sources: [id] } }
     },
     configureServer(devServer) {
       server = devServer

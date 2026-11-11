@@ -168,7 +168,12 @@ describe('react', () => {
     expect(result.skipped.map(s => [s.reason, s.text])).toEqual([['attribute outside a component', 'Name'], ['attribute outside a component', 'Close']])
   })
 
-  it('should not call the hook in functions passed to other functions, or in async components', async () => {
+  it('should call the hook in components passed to a higher-order component', async () => {
+    const result = await rewrite('const Page = () => <img alt="Logo" />\nexport default observer(Page)', 'x.tsx')
+    expect(result.code).toContain('const Page = () => { const __diglot = __useTranslate(); return (<img alt={__diglot(')
+  })
+
+  it('should not call the hook in functions passed to methods, or in async components', async () => {
     const result = await rewrite([
       `function Row(item) { return <li title="Item">{item}</li> }`,
       `export default async function Page({ items }) { return <ul title="List">{items.map(Row)}</ul> }`,

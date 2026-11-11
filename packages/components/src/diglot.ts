@@ -98,10 +98,13 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
     return promise
   }
 
+  const ready = load(locale)
+  // Rejections of `ready` belong to whoever awaits it.
+  ready.catch(() => {})
   const diglot: Diglot = {
     sourceLocale,
     initialLocale,
-    ready: load(locale),
+    ready,
     get locale() {
       return locale
     },
@@ -109,8 +112,9 @@ export function createDiglot(options: DiglotOptions = {}): Diglot {
       return [sourceLocale, ...new Set([...loaders.keys(), ...catalogs.keys()].filter(l => l !== sourceLocale))]
     },
     async setLocale(next) {
+      const loaded = load(next)
       requested = next
-      await load(next)
+      await loaded
       if (next !== requested || next === locale)
         return
       locale = next

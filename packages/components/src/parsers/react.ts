@@ -81,7 +81,7 @@ function componentFunction(node: Node | undefined): Node | undefined {
   return node?.type === 'CallExpression' && isWrapper(node) ? componentFunction(node.arguments[0]) : undefined
 }
 
-/** Capitalised functions the module calls directly or passes to another function, such as `items.map(Row)`: helpers that return JSX, not components. */
+/** Capitalised functions the module calls directly or passes to a method, such as `items.map(Row)`: helpers that return JSX, not components. A function passed to another function, as to `observer(Page)`, stays a component. */
 function helpers(node: unknown, out = new Set<string>()): Set<string> {
   if (Array.isArray(node)) {
     for (const child of node)
@@ -90,7 +90,7 @@ function helpers(node: unknown, out = new Set<string>()): Set<string> {
   else if (node && typeof node === 'object') {
     const current = node as Node
     if (current.type === 'CallExpression') {
-      for (const node of [current.callee, ...(isWrapper(current) ? [] : current.arguments)] as Node[]) {
+      for (const node of [current.callee, ...(current.callee.type === 'MemberExpression' && !isWrapper(current) ? current.arguments : [])] as Node[]) {
         if (node.type === 'Identifier' && isCapitalised(node.name))
           out.add(node.name)
       }

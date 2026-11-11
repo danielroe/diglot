@@ -36,6 +36,19 @@ describe('createDiglot', () => {
     expect(diglot.locale).toBe('de')
   })
 
+  it('should keep loading a locale when a locale without a catalog is asked for', async () => {
+    const diglot = createDiglot({ locales: { fr: async () => ({ abc: 'Bonjour' }) } })
+    const fr = diglot.setLocale('fr')
+    await expect(diglot.setLocale('xx')).rejects.toThrow('no catalog for the locale "xx"')
+    await fr
+    expect(diglot.locale).toBe('fr')
+  })
+
+  it('should leave a failed starting catalog to whoever awaits `ready`', async () => {
+    const diglot = createDiglot({ locale: 'fr', locales: { fr: () => Promise.reject(new Error('offline')) } })
+    await expect(diglot.ready).rejects.toThrow('offline')
+  })
+
   it('should retry a catalog that failed to load', async () => {
     const load = vi.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValue({ abc: 'Bonjour' })
     const diglot = createDiglot({ locales: { fr: load } })

@@ -6,7 +6,7 @@ Translate the text of Vue, React and Svelte components without keys or `t()` cal
 pnpm add @diglot/components
 ```
 
-Each framework needs its parser: `@vue/compiler-sfc` for Vue (it comes with `vue`), `oxc-parser` for React, and `svelte` for Svelte. `.jsx` and `.tsx` files are read as React. Install the parsers in the translations repository too, for `diglot extract`.
+Each framework needs its parser: `@vue/compiler-sfc` for Vue (it comes with `vue`), `oxc-parser` for React, and `svelte` for Svelte. `.jsx` and `.tsx` files are read as React when your Vite config uses the React plugin. Install the parsers in the translations repository too, for `diglot extract`.
 
 ## Usage
 
