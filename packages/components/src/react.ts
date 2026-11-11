@@ -22,6 +22,7 @@ const versions = new WeakMap<Diglot, Version>()
 // While React hydrates, it reads the server snapshot. The server rendered the page in the initial
 // locale, so components render in it until hydration ends and then again in the current locale. A
 // `setLocale` before hydration, such as a locale switcher's, never makes the first render differ from the HTML.
+// Without one, both snapshots match, so hydration renders once.
 const HYDRATING = -1
 const server = typeof window === 'undefined'
 
@@ -33,7 +34,7 @@ function useSubscription(): [Diglot, number, string | undefined] {
     const created: Version = {
       value: 0,
       get: () => created.value,
-      getServerSnapshot: () => server ? created.value : HYDRATING,
+      getServerSnapshot: () => server || diglot.locale === diglot.initialLocale ? created.value : HYDRATING,
       subscribe: listener => diglot.subscribe(listener),
     }
     diglot.subscribe(() => created.value++)
