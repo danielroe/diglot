@@ -50,7 +50,7 @@
     "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@x18n/core": "0.1.10",
-    "@x18n/node": "0.1.10"
+    "@x18n/core": "0.1.14",
+    "@x18n/node": "0.1.14"
   }
 }

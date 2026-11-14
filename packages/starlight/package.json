@@ -48,7 +48,7 @@
     "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@astrojs/starlight": "0.42.8",
-    "astro": "7.4.4"
+    "@astrojs/starlight": "0.42.11",
+    "astro": "7.4.11"
   }
 }
