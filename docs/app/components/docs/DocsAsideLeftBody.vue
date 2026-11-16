@@ -13,5 +13,9 @@ const contentNavVariants = useUIConfig('contentNavigation')
     :variant="contentNavVariants.variant ?? 'link'"
     :color="contentNavVariants.color"
     :navigation="sidebarNavigation"
-  />
+  >
+    <template #link-title="{ link }">
+      <DocsTruncatedLabel :text="link.title" />
+    </template>
+  </UContentNavigation>
 </template>
