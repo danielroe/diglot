@@ -42,7 +42,7 @@
   "dependencies": {
     "@diglot/code": "workspace:*",
     "@diglot/core": "workspace:*",
-    "comark": "^0.8.1",
+    "comark": "^0.9.0",
     "yaml": "^2.9.1"
   }
 }

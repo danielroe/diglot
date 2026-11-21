@@ -10,11 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@iconify-json/lucide": "1.2.150",
-    "@iconify-json/simple-icons": "1.2.101",
-    "@nuxt/content": "3.16.2",
+    "@iconify-json/lucide": "1.2.157",
+    "@iconify-json/simple-icons": "1.2.103",
+    "@nuxt/content": "3.17.0",
     "@nuxt/fonts": "1.2.0",
-    "@nuxt/icon": "2.6.2",
+    "@nuxt/icon": "2.6.3",
     "docus": "5.15.0",
     "nuxt": "4.6.4"
   }
