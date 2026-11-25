@@ -25,7 +25,14 @@ const explainIcon = computed(() => appConfig.assistant?.icons?.explain || 'i-luc
       v-if="appConfig.toc?.bottom?.links?.length"
       :title="appConfig.toc?.bottom?.title || t('docs.links')"
       :links="appConfig.toc?.bottom?.links"
-    />
+    >
+      <template #link-label="{ link }">
+        <DocsTruncatedLabel
+          :text="link.label"
+          side="left"
+        />
+      </template>
+    </UPageLinks>
 
     <USeparator
       v-if="appConfig.toc?.bottom?.links?.length && showExplainWithAi"
